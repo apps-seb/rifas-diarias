@@ -1,0 +1,70 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <title>Login de Administrador</title>
+    <style>
+        body { font-family: system-ui, sans-serif; display: flex; justify-content: center; align-items: center; height: 100vh; background-color: #f0f2f5; }
+        .login-card { padding: 40px; background: white; border-radius: 12px; box-shadow: 0 4px 20px rgba(0,0,0,0.1); text-align: center; }
+        h2 { margin-top: 0; }
+        input { display: block; width: 100%; padding: 10px; margin-bottom: 15px; border: 1px solid #ccc; border-radius: 4px; box-sizing: border-box; }
+        button { width: 100%; padding: 12px; background-color: #007bff; color: white; border: none; border-radius: 4px; cursor: pointer; font-size: 16px; }
+        button:hover { background-color: #0056b3; }
+        #message { margin-top: 15px; color: red; }
+    </style>
+</head>
+<body>
+
+<div class="login-card">
+    <h2>Acceso de Administrador</h2>
+    <input type="email" id="email" placeholder="Correo electrónico" required>
+    <input type="password" id="password" placeholder="Contraseña" required>
+    <button id="loginButton">Iniciar Sesión</button>
+    <p id="message"></p>
+</div>
+
+<script src="https://www.gstatic.com/firebasejs/8.10.0/firebase-app.js"></script>
+<script src="https://www.gstatic.com/firebasejs/8.10.0/firebase-auth.js"></script>
+
+<script>
+    // IMPORTANTE: Pega aquí la misma configuración de Firebase de tu archivo index.html
+    const firebaseConfig = {
+  apiKey: "AIzaSyDMBARLzKnhcmSI8euhiA2Wgsf7pJQM1_0",
+  authDomain: "control-rifas.firebaseapp.com",
+  projectId: "control-rifas",
+  storageBucket: "control-rifas.firebasestorage.app",
+  messagingSenderId: "519272574756",
+  appId: "1:519272574756:web:b5d7cf368be58fdf604db1"
+};
+    firebase.initializeApp(firebaseConfig);
+
+    const auth = firebase.auth();
+    const emailInput = document.getElementById('email');
+    const passwordInput = document.getElementById('password');
+    const loginButton = document.getElementById('loginButton');
+    const message = document.getElementById('message');
+
+    loginButton.addEventListener('click', () => {
+        const email = emailInput.value;
+        const password = passwordInput.value;
+
+        auth.signInWithEmailAndPassword(email, password)
+            .then((userCredential) => {
+                // ¡Éxito!
+                message.style.color = 'green';
+                message.textContent = '¡Inicio de sesión exitoso! Ya puedes ir a la página de la rifa.';
+                // Opcional: Redirigir automáticamente después de 2 segundos
+                setTimeout(() => {
+                    window.location.href = 'rifasdiarias.html'; // Cambia 'index.html' si tu archivo se llama diferente
+                }, 2000);
+            })
+            .catch((error) => {
+                // Error
+                message.style.color = 'red';
+                message.textContent = 'Error: ' + error.message;
+            });
+    });
+</script>
+
+</body>
+</html>
