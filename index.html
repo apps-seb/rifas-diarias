@@ -7,9 +7,9 @@
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" />
     <style>
         :root {
-            --color-disponible: #751FFF; /* Color morado modificado */
+            --color-disponible: #751FFF;
             --color-separado: #ffc107;
-            --color-pago: #84E059; /* Color verde modificado */
+            --color-pago: #84E059;
             --color-primary: #007bff;
             --border-color: #ddd;
             --shadow-color: rgba(0, 0, 0, 0.05);
@@ -26,106 +26,27 @@
         }
         .container { max-width: 800px; margin: auto; }
         h2 { text-align: center; color: var(--text-dark); }
-
-        /* --- INICIO: Estilos de Tarjetas de Resumen (Versión Definitiva Sin Scroll) --- */
-        .summary-panel {
-            display: flex;
-            flex-wrap: nowrap;
-            gap: 10px;
-            margin-bottom: 25px;
-        }
-        .summary-card {
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            justify-content: center;
-            padding: 12px 5px;
-            background-color: var(--background-card);
-            border-radius: 12px;
-            box-shadow: 0 5px 25px var(--shadow-color);
-            transition: transform 0.2s ease-in-out, box-shadow 0.2s ease-in-out;
-            border-top: 4px solid;
-            flex: 1 1 0;
-            min-width: 0;
-            text-align: center;
-        }
-        .summary-card:hover {
-            transform: translateY(-5px);
-            box-shadow: 0 10px 30px rgba(0,0,0,0.08);
-        }
+        .summary-panel { display: flex; flex-wrap: nowrap; gap: 10px; margin-bottom: 25px; }
+        .summary-card { display: flex; flex-direction: column; align-items: center; justify-content: center; padding: 12px 5px; background-color: var(--background-card); border-radius: 12px; box-shadow: 0 5px 25px var(--shadow-color); transition: transform 0.2s ease-in-out, box-shadow 0.2s ease-in-out; border-top: 4px solid; flex: 1 1 0; min-width: 0; text-align: center; }
+        .summary-card:hover { transform: translateY(-5px); box-shadow: 0 10px 30px rgba(0,0,0,0.08); }
         #card-pago { border-top-color: var(--color-pago); }
         #card-separado { border-top-color: var(--color-separado); }
         #card-disponible { border-top-color: var(--color-disponible); }
-
-        .card-icon {
-            width: 38px;
-            height: 38px;
-            border-radius: 50%;
-            margin-bottom: 8px;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            flex-shrink: 0;
-        }
-        .card-icon svg {
-            width: 20px;
-            height: 20px;
-            color: white;
-        }
+        .card-icon { width: 38px; height: 38px; border-radius: 50%; margin-bottom: 8px; display: flex; align-items: center; justify-content: center; flex-shrink: 0; }
+        .card-icon svg { width: 20px; height: 20px; color: white; }
         #card-pago .card-icon { background-color: var(--color-pago); }
         #card-separado .card-icon { background-color: var(--color-separado); }
         #card-disponible .card-icon { background-color: var(--color-disponible); }
-
-        .info-count {
-            font-size: clamp(1.5em, 4vw, 2.2em);
-            font-weight: 700;
-            color: var(--text-dark);
-            line-height: 1;
-        }
-        .info-label {
-            margin-top: 4px;
-            font-size: clamp(0.65em, 2.5vw, 0.8em);
-            color: var(--text-light);
-            text-transform: uppercase;
-            letter-spacing: 0.5px;
-            line-height: 1.1;
-        }
-        /* --- FIN: Estilos de Tarjetas de Resumen --- */
-
-        /* --- ESTILOS DEL BUSCADOR --- */
+        .info-count { font-size: clamp(1.5em, 4vw, 2.2em); font-weight: 700; color: var(--text-dark); line-height: 1; }
+        .info-label { margin-top: 4px; font-size: clamp(0.65em, 2.5vw, 0.8em); color: var(--text-light); text-transform: uppercase; letter-spacing: 0.5px; line-height: 1.1; }
         .search-section { background-color: var(--background-card); padding: 20px; border-radius: 12px; box-shadow: 0 4px 25px var(--shadow-color); margin-bottom: 25px; }
         .search-box { display: flex; align-items: center; gap: 10px; margin-bottom: 15px; }
         .search-input-wrapper { position: relative; flex-grow: 1; }
         .search-input-wrapper svg { position: absolute; left: 15px; top: 50%; transform: translateY(-50%); color: var(--text-light); width: 18px; height: 18px; pointer-events: none; }
-        #searchInput {
-            width: 100%;
-            height: 48px;
-            padding: 12px 12px 12px 45px;
-            border: 1px solid var(--border-color);
-            border-radius: 8px;
-            font-size: 16px;
-            transition: border-color 0.2s, box-shadow 0.2s;
-            box-sizing: border-box;
-        }
+        #searchInput { width: 100%; height: 48px; padding: 12px 12px 12px 45px; border: 1px solid var(--border-color); border-radius: 8px; font-size: 16px; transition: border-color 0.2s, box-shadow 0.2s; box-sizing: border-box; }
         #searchInput:focus { outline: none; border-color: var(--color-primary); box-shadow: 0 0 0 3px rgba(0, 123, 255, 0.25); }
-        #searchButton {
-            flex-shrink: 0;
-            width: 48px;
-            height: 48px;
-            padding: 0;
-            border: none;
-            background-color: var(--color-primary);
-            color: white;
-            font-size: 18px;
-            border-radius: 8px;
-            cursor: pointer;
-            transition: background-color 0.2s;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-        }
+        #searchButton { flex-shrink: 0; width: 48px; height: 48px; padding: 0; border: none; background-color: var(--color-primary); color: white; font-size: 18px; border-radius: 8px; cursor: pointer; transition: background-color 0.2s; display: flex; align-items: center; justify-content: center; }
         #searchButton:hover { background-color: #0056b3; }
-
         #searchResultsContainer { display: flex; flex-direction: column; gap: 12px; min-height: 50px; }
         @keyframes fadeIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
         .result-card { display: flex; align-items: center; gap: 15px; padding: 15px; background-color: var(--background-light); border-radius: 8px; border: 1px solid #e9ecef; animation: fadeIn 0.4s ease-out forwards; }
@@ -138,117 +59,20 @@
         .status-badge.status-separado { background-color: var(--color-separado); }
         .no-results-message { text-align: center; padding: 20px; color: var(--text-light); animation: fadeIn 0.4s ease-out forwards; }
         .no-results-message svg { width: 40px; height: 40px; margin-bottom: 10px; }
-
-        /* --- ESTILOS PARA LA SECCIÓN DE VERIFICAR GANADOR --- */
-        @keyframes popIn {
-            0% { transform: scale(0.8); opacity: 0; }
-            70% { transform: scale(1.15); opacity: 1; }
-            100% { transform: scale(1.1); opacity: 1; }
-        }
-        .winner-section {
-            text-align: center;
-            padding: 25px;
-            background-color: var(--background-card);
-            border: none;
-            border-radius: 16px;
-            margin-bottom: 20px;
-            box-shadow: 0 4px 25px var(--shadow-color);
-        }
-        .winner-section h2 {
-            margin-top: 0;
-            margin-bottom: 20px;
-            font-size: 2em;
-            font-weight: 700;
-            color: var(--text-dark);
-        }
-        .winner-section h2 span {
-            color: #ffc107;
-        }
-        .winner-input-display {
-            position: relative;
-            display: flex;
-            justify-content: center;
-            gap: 15px;
-            margin-bottom: 25px;
-            cursor: text;
-            transition: box-shadow 0.3s ease;
-            padding: 10px;
-            border-radius: 12px;
-        }
-        .winner-input-display:focus-within {
-            box-shadow: 0 0 0 4px rgba(255, 193, 7, 0.4);
-        }
-        .digit-circle {
-            width: clamp(40px, 10vw, 55px);
-            height: clamp(40px, 10vw, 55px);
-            border-radius: 50%;
-            border: 2px solid #e0e4e8;
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            font-size: clamp(1.4em, 5vw, 2em);
-            font-weight: bold;
-            color: #a0a8b2;
-            transition: all 0.3s ease;
-            background-color: #f0f2f5;
-            box-shadow: inset 0 2px 4px rgba(0,0,0,0.05);
-        }
-        .digit-circle.filled {
-            background: linear-gradient(135deg, var(--color-pago), #008200); /* Verde modificado */
-            border-color: var(--color-pago);
-            color: white;
-            text-shadow: 0 1px 2px rgba(0,0,0,0.2);
-            animation: popIn 0.3s ease-out forwards;
-        }
-        #realWinningInput {
-            position: absolute;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
-            opacity: 0;
-            border: none;
-            background: transparent;
-            outline: none;
-            -webkit-text-security: disc;
-        }
-        #checkWinnerButton {
-            padding: 12px 25px;
-            border: none;
-            border-radius: 8px;
-            cursor: pointer;
-            font-size: 1.1em;
-            background: linear-gradient(135deg, #007bff, #0056b3);
-            color: white;
-            font-weight: bold;
-            transition: all 0.3s ease;
-            box-shadow: 0 4px 15px rgba(0, 123, 255, 0.2);
-        }
-        #checkWinnerButton:hover {
-            transform: translateY(-2px);
-            box-shadow: 0 6px 20px rgba(0, 123, 255, 0.3);
-            filter: brightness(1.1);
-        }
-
-        #winnerResults {
-            margin-top: 20px;
-            display: flex;
-            flex-direction: column;
-            gap: 15px;
-            min-height: auto;
-            background-color: transparent;
-            padding: 0;
-            text-align: left;
-        }
-        .winner-card {
-            border-radius: 12px;
-            padding: 20px;
-            color: white;
-            box-shadow: 0 8px 25px rgba(0, 0, 0, 0.15);
-            transition: transform 0.3s ease, box-shadow 0.3s ease;
-            border: 1px solid rgba(255, 255, 255, 0.2);
-            animation: fadeIn 0.5s ease-out forwards;
-        }
+        @keyframes popIn { 0% { transform: scale(0.8); opacity: 0; } 70% { transform: scale(1.15); opacity: 1; } 100% { transform: scale(1.1); opacity: 1; } }
+        .winner-section { text-align: center; padding: 25px; background-color: var(--background-card); border: none; border-radius: 16px; margin-top: 25px; /* MODIFICADO */ box-shadow: 0 4px 25px var(--shadow-color); }
+        .winner-section h2 { margin-top: 0; margin-bottom: 20px; font-size: 2em; font-weight: 700; color: var(--text-dark); }
+        .winner-section h2 span { color: #ffc107; }
+        .winner-input-display { position: relative; display: flex; justify-content: center; gap: 15px; margin-bottom: 25px; cursor: text; transition: box-shadow 0.3s ease; padding: 10px; border-radius: 12px; }
+        .winner-input-display:focus-within { box-shadow: 0 0 0 4px rgba(255, 193, 7, 0.4); }
+        .digit-circle { width: clamp(40px, 10vw, 55px); height: clamp(40px, 10vw, 55px); border-radius: 50%; border: 2px solid #e0e4e8; display: flex; justify-content: center; align-items: center; font-size: clamp(1.4em, 5vw, 2em); font-weight: bold; color: #a0a8b2; transition: all 0.3s ease; background-color: #f0f2f5; box-shadow: inset 0 2px 4px rgba(0,0,0,0.05); }
+        .digit-circle.filled { background: linear-gradient(135deg, var(--color-pago), #008200); border-color: var(--color-pago); color: white; text-shadow: 0 1px 2px rgba(0,0,0,0.2); animation: popIn 0.3s ease-out forwards; }
+        #realWinningInput { position: absolute; top: 0; left: 0; width: 100%; height: 100%; opacity: 0; border: none; background: transparent; outline: none; -webkit-text-security: disc; }
+        #checkWinnerButton { padding: 12px 25px; border: none; border-radius: 8px; cursor: pointer; font-size: 1.1em; background: linear-gradient(135deg, #007bff, #0056b3); color: white; font-weight: bold; transition: all 0.3s ease; box-shadow: 0 4px 15px rgba(0, 123, 255, 0.2); }
+        #checkWinnerButton:hover { transform: translateY(-2px); box-shadow: 0 6px 20px rgba(0, 123, 255, 0.3); filter: brightness(1.1); }
+        #checkWinnerButton:disabled { background: #9e9e9e; cursor: not-allowed; transform: none; box-shadow: none; filter: none; }
+        #winnerResults { margin-top: 20px; display: flex; flex-direction: column; gap: 15px; min-height: auto; background-color: transparent; padding: 0; text-align: left; }
+        .winner-card { border-radius: 12px; padding: 20px; color: white; box-shadow: 0 8px 25px rgba(0, 0, 0, 0.15); transition: transform 0.3s ease, box-shadow 0.3s ease; border: 1px solid rgba(255, 255, 255, 0.2); animation: fadeIn 0.5s ease-out forwards; }
         .winner-card:hover { transform: translateY(-5px); box-shadow: 0 12px 30px rgba(0, 0, 0, 0.2); }
         .winner-card.gold { background: linear-gradient(135deg, #ffc107, #ff9800); }
         .winner-card.silver { background: linear-gradient(135deg, #e0e0e0, #bdbdbd); color: #333; }
@@ -262,33 +86,14 @@
         .prize-info .winner-name { font-size: 1.25em; font-weight: bold; margin: 10px 0 5px 0; }
         .prize-info .winner-phone { font-size: 1em; opacity: 0.9; margin: 0; }
         .prize-info .no-winner-text { font-size: 1.1em; font-weight: 500; font-style: italic; margin-top: 10px; }
-
-        /* --- Otros Estilos --- */
-        #gridContainer {
-            display: grid;
-            grid-template-columns: repeat(10, 1fr);
-            gap: 4px;
-            margin-top: 20px;
-        }
-        .grid-item {
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            aspect-ratio: 1 / 1;
-            border: 1px solid var(--border-color);
-            border-radius: 8px;
-            font-size: clamp(0.7em, 3vw, 1.5em);
-            font-weight: bold;
-            color: white;
-            cursor: pointer;
-            transition: transform 0.2s, background-color 0.2s, border-color 0.2s;
-        }
+        #gridContainer { display: grid; grid-template-columns: repeat(10, 1fr); gap: 4px; margin-top: 20px; }
+        .grid-item { display: flex; justify-content: center; align-items: center; aspect-ratio: 1 / 1; border: 1px solid var(--border-color); border-radius: 8px; font-size: clamp(0.7em, 3vw, 1.5em); font-weight: bold; color: white; cursor: pointer; transition: transform 0.2s, background-color 0.2s, border-color 0.2s; }
         .modal { display: none; position: fixed; z-index: 1000; left: 0; top: 0; width: 100%; height: 100%; overflow: auto; background-color: rgba(0,0,0,0.5); }
         .modal-content { background-color: #fefefe; margin: 15% auto; padding: 20px; border: 1px solid #888; width: 90%; max-width: 400px; border-radius: 8px; box-shadow: 0 4px 8px rgba(0,0,0,0.2); }
         .grid-item:hover { transform: scale(1.05); border-color: #333; }
-        .grid-item.status-disponible { background-color: var(--color-disponible); border-color: var(--color-disponible); } /* Modificado */
+        .grid-item.status-disponible { background-color: var(--color-disponible); border-color: var(--color-disponible); }
         .grid-item.status-separado { background-color: var(--color-separado); border-color: #e0a800; }
-        .grid-item.status-pago { background-color: var(--color-pago); border-color: var(--color-pago); } /* Modificado */
+        .grid-item.status-pago { background-color: var(--color-pago); border-color: var(--color-pago); }
         .highlighted { position: relative; overflow: hidden; z-index: 1; }
         .highlighted::after { content: ''; position: absolute; top: -100%; left: -45%; width: 200%; height: 300%; background: linear-gradient(120deg, transparent 0%, rgba(255,255,255,0.6) 50%, transparent 100%); transform: rotate(25deg); animation: mirrorEffect 2.5s linear infinite; pointer-events: none; }
         @keyframes mirrorEffect { 0% { top: -100%; left: -45%; } 100% { top: 100%; left: 55%; } }
@@ -306,79 +111,33 @@
 <body>
 
 <div class="container">
-
     <div class="summary-panel">
-        <div class="summary-card" id="card-pago">
-            <div class="card-icon">
-                <svg xmlns="http://www.w3.org/2000/svg" fill="currentColor" viewBox="0 0 16 16"><path d="M16 8A8 8 0 1 1 0 8a8 8 0 0 1 16 0zm-3.97-3.03a.75.75 0 0 0-1.08.022L7.477 9.417 5.384 7.323a.75.75 0 0 0-1.06 1.06L6.97 11.03a.75.75 0 0 0 1.079-.02l3.992-4.99a.75.75 0 0 0-.01-1.05z"/></svg>
-            </div>
-            <span class="info-count" id="summaryPago">0</span>
-            <p class="info-label">Pagados</p>
-        </div>
-        <div class="summary-card" id="card-separado">
-            <div class="card-icon">
-                <svg xmlns="http://www.w3.org/2000/svg" fill="currentColor" viewBox="0 0 16 16"><path d="M16 8A8 8 0 1 1 0 8a8 8 0 0 1 16 0zM8 3.5a.5.5 0 0 0-1 0V9a.5.5 0 0 0 .252.434l3.5 2a.5.5 0 0 0 .496-.868L8 8.71V3.5z"/></svg>
-            </div>
-            <span class="info-count" id="summarySeparado">0</span>
-            <p class="info-label">Separados</p>
-        </div>
-        <div class="summary-card" id="card-disponible">
-            <div class="card-icon">
-                <svg xmlns="http://www.w3.org/2000/svg" fill="currentColor" viewBox="0 0 16 16"> <path d="M0 4.5A1.5 1.5 0 0 1 1.5 3h13A1.5 1.5 0 0 1 16 4.5V6a.5.5 0 0 1-.5.5 1.5 1.5 0 0 0 0 3 .5.5 0 0 1 .5.5v1.5a1.5 1.5 0 0 1-1.5 1.5h-13A1.5 1.5 0 0 1 0 11.5V10a.5.5 0 0 1 .5-.5 1.5 1.5 0 1 0 0-3A.5.5 0 0 1 0 6V4.5Zm4 1a.5.5 0 0 0 .5.5h7a.5.5 0 0 0 0-1h-7a.5.5 0 0 0-.5.5Zm0 5a.5.5 0 0 0 .5.5h7a.5.5 0 0 0 0-1h-7a.5.5 0 0 0-.5.5ZM4 8.5a.5.5 0 0 0 .5.5h7a.5.5 0 0 0 0-1h-7a.5.5 0 0 0-.5.5Z"/></svg>
-            </div>
-            <span class="info-count" id="summaryDisponible">100</span>
-            <p class="info-label">Disponibles</p>
-        </div>
+        <div class="summary-card" id="card-pago"><div class="card-icon"><svg xmlns="http://www.w3.org/2000/svg" fill="currentColor" viewBox="0 0 16 16"><path d="M16 8A8 8 0 1 1 0 8a8 8 0 0 1 16 0zm-3.97-3.03a.75.75 0 0 0-1.08.022L7.477 9.417 5.384 7.323a.75.75 0 0 0-1.06 1.06L6.97 11.03a.75.75 0 0 0 1.079-.02l3.992-4.99a.75.75 0 0 0-.01-1.05z"/></svg></div><span class="info-count" id="summaryPago">0</span><p class="info-label">Pagados</p></div>
+        <div class="summary-card" id="card-separado"><div class="card-icon"><svg xmlns="http://www.w3.org/2000/svg" fill="currentColor" viewBox="0 0 16 16"><path d="M16 8A8 8 0 1 1 0 8a8 8 0 0 1 16 0zM8 3.5a.5.5 0 0 0-1 0V9a.5.5 0 0 0 .252.434l3.5 2a.5.5 0 0 0 .496-.868L8 8.71V3.5z"/></svg></div><span class="info-count" id="summarySeparado">0</span><p class="info-label">Separados</p></div>
+        <div class="summary-card" id="card-disponible"><div class="card-icon"><svg xmlns="http://www.w3.org/2000/svg" fill="currentColor" viewBox="0 0 16 16"> <path d="M0 4.5A1.5 1.5 0 0 1 1.5 3h13A1.5 1.5 0 0 1 16 4.5V6a.5.5 0 0 1-.5.5 1.5 1.5 0 0 0 0 3 .5.5 0 0 1 .5.5v1.5a1.5 1.5 0 0 1-1.5 1.5h-13A1.5 1.5 0 0 1 0 11.5V10a.5.5 0 0 1 .5-.5 1.5 1.5 0 1 0 0-3A.5.5 0 0 1 0 6V4.5Zm4 1a.5.5 0 0 0 .5.5h7a.5.5 0 0 0 0-1h-7a.5.5 0 0 0-.5.5Zm0 5a.5.5 0 0 0 .5.5h7a.5.5 0 0 0 0-1h-7a.5.5 0 0 0-.5.5ZM4 8.5a.5.5 0 0 0 .5.5h7a.5.5 0 0 0 0-1h-7a.5.5 0 0 0-.5.5Z"/></svg></div><span class="info-count" id="summaryDisponible">100</span><p class="info-label">Disponibles</p></div>
     </div>
-
     <div class="search-section">
         <div class="search-box">
-            <div class="search-input-wrapper">
-                <svg xmlns="http://www.w3.org/2000/svg" fill="currentColor" viewBox="0 0 16 16">
-                    <path d="M11.742 10.344a6.5 6.5 0 1 0-1.397 1.398h-.001c.03.04.062.078.098.115l3.85 3.85a1 1 0 0 0 1.415-1.414l-3.85-3.85a1.007 1.007 0 0 0-.115-.1zM12 6.5a5.5 5.5 0 1 1-11 0 5.5 5.5 0 0 1 11 0z"/>
-                </svg>
-                <input type="tel" id="searchInput" placeholder="Buscar por celular...">
-            </div>
+            <div class="search-input-wrapper"><svg xmlns="http://www.w3.org/2000/svg" fill="currentColor" viewBox="0 0 16 16"><path d="M11.742 10.344a6.5 6.5 0 1 0-1.397 1.398h-.001c.03.04.062.078.098.115l3.85 3.85a1 1 0 0 0 1.415-1.414l-3.85-3.85a1.007 1.007 0 0 0-.115-.1zM12 6.5a5.5 5.5 0 1 1-11 0 5.5 5.5 0 0 1 11 0z"/></svg><input type="tel" id="searchInput" placeholder="Ingresa 10 dígitos..." maxlength="10"></div>
             <button id="searchButton" aria-label="Buscar"><i class="fas fa-search"></i></button>
         </div>
         <div id="searchResultsContainer"></div>
     </div>
+    
+    <div id="gridContainer"></div>
 
     <div class="winner-section">
         <h2><span>🏆</span> Número Ganador <span>🏆</span></h2>
-        <div class="winner-input-display" id="winnerInputDisplay">
-            <div class="digit-circle"></div><div class="digit-circle"></div><div class="digit-circle"></div><div class="digit-circle"></div>
-            <input type="tel" id="realWinningInput" maxlength="4" autocomplete="off" />
-        </div>
+        <div class="winner-input-display" id="winnerInputDisplay"><div class="digit-circle"></div><div class="digit-circle"></div><div class="digit-circle"></div><div class="digit-circle"></div><input type="tel" id="realWinningInput" maxlength="4" autocomplete="off" /></div>
         <button id="checkWinnerButton">Verificar Ganadores</button>
         <div id="winnerResults">Ingresa el número de 4 cifras de la lotería para conocer a los ganadores.</div>
     </div>
-
-    <div id="gridContainer"></div>
-</div>
-
+    </div>
 <div id="dataModal" class="modal">
     <div class="modal-content">
-        <div class="modal-header">
-            <h2>Datos del Número <span id="modalNumber"></span></h2>
-            <span class="close-button">&times;</span>
-        </div>
-        <div class="modal-body">
-            <label for="inputStatus">Estado:</label>
-            <select id="inputStatus">
-                <option value="disponible">Disponible</option>
-                <option value="separado">Separado</option>
-                <option value="pago">Pago</option>
-            </select>
-            <label for="inputName">Nombre:</label>
-            <input type="text" id="inputName" placeholder="Ingresa el nombre completo">
-            <label for="inputPhone">Número de Celular:</label>
-            <input type="text" id="inputPhone" placeholder="Ingresa el número de celular">
-        </div>
-        <div class="modal-footer">
-            <button id="deleteButton">Limpiar Datos</button>
-            <button id="saveButton">Guardar</button>
-        </div>
+        <div class="modal-header"><h2>Datos del Número <span id="modalNumber"></span></h2><span class="close-button">&times;</span></div>
+        <div class="modal-body"><label for="inputStatus">Estado:</label><select id="inputStatus"><option value="disponible">Disponible</option><option value="separado">Separado</option><option value="pago">Pago</option></select><label for="inputName">Nombre:</label><input type="text" id="inputName" placeholder="Ingresa el nombre completo"><label for="inputPhone">Número de Celular:</label><input type="text" id="inputPhone" placeholder="Ingresa el número de celular"></div>
+        <div class="modal-footer"><button id="deleteButton">Limpiar Datos</button><button id="saveButton">Guardar</button></div>
     </div>
 </div>
 
@@ -387,11 +146,11 @@
 <script src="https://www.gstatic.com/firebasejs/8.10.0/firebase-firestore.js"></script>
 
 <script>
-    document.addEventListener('DOMContentLoaded', () => {
-        // ===================================================================
-        // CONFIGURACIÓN DE FIREBASE
-        // ===================================================================
-        const firebaseConfig = {
+document.addEventListener('DOMContentLoaded', () => {
+    // ===================================================================
+    // CONFIGURACIÓN DE FIREBASE (¡IMPORTANTE!)
+    // ===================================================================
+           const firebaseConfig = {
   apiKey: "AIzaSyDMBARLzKnhcmSI8euhiA2Wgsf7pJQM1_0",
   authDomain: "control-rifas.firebaseapp.com",
   projectId: "control-rifas",
@@ -399,130 +158,88 @@
   messagingSenderId: "519272574756",
   appId: "1:519272574756:web:b5d7cf368be58fdf604db1"
 };
-        const app = firebase.initializeApp(firebaseConfig);
-        const db = firebase.firestore();
+    const app = firebase.initializeApp(firebaseConfig);
+    const db = firebase.firestore();
 
-        // ===================================================================
-        // REFERENCIAS AL DOM
-        // ===================================================================
-        const checkWinnerButton = document.getElementById('checkWinnerButton');
-        const winnerResults = document.getElementById('winnerResults');
-        const winnerInputDisplay = document.getElementById('winnerInputDisplay');
-        const digitCircles = winnerInputDisplay.querySelectorAll('.digit-circle');
-        const realWinningInput = document.getElementById('realWinningInput');
-        const gridContainer = document.getElementById('gridContainer');
-        const searchInput = document.getElementById('searchInput');
-        const searchButton = document.getElementById('searchButton');
-        const searchResultsContainer = document.getElementById('searchResultsContainer');
-        const modal = document.getElementById('dataModal');
-        const modalNumber = document.getElementById('modalNumber');
-        const inputStatus = document.getElementById('inputStatus');
-        const inputName = document.getElementById('inputName');
-        const inputPhone = document.getElementById('inputPhone');
-        const saveButton = document.getElementById('saveButton');
-        const deleteButton = document.getElementById('deleteButton');
-        const closeButton = document.querySelector('.close-button');
-        const summaryPago = document.getElementById('summaryPago');
-        const summarySeparado = document.getElementById('summarySeparado');
-        const summaryDisponible = document.getElementById('summaryDisponible');
+    // ===================================================================
+    // REFERENCIAS AL DOM
+    // ===================================================================
+    const gridContainer = document.getElementById('gridContainer');
+    const summaryPago = document.getElementById('summaryPago');
+    const summarySeparado = document.getElementById('summarySeparado');
+    const summaryDisponible = document.getElementById('summaryDisponible');
+    const modal = document.getElementById('dataModal');
+    const modalNumber = document.getElementById('modalNumber');
+    const inputStatus = document.getElementById('inputStatus');
+    const inputName = document.getElementById('inputName');
+    const inputPhone = document.getElementById('inputPhone');
+    const saveButton = document.getElementById('saveButton');
+    const deleteButton = document.getElementById('deleteButton');
+    const closeButton = document.querySelector('.close-button');
+    const searchInput = document.getElementById('searchInput');
+    const searchButton = document.getElementById('searchButton');
+    const searchResultsContainer = document.getElementById('searchResultsContainer');
+    const checkWinnerButton = document.getElementById('checkWinnerButton');
+    const winnerResults = document.getElementById('winnerResults');
+    const winnerInputDisplay = document.getElementById('winnerInputDisplay');
+    const digitCircles = winnerInputDisplay.querySelectorAll('.digit-circle');
+    const realWinningInput = document.getElementById('realWinningInput');
 
-        let currentNumber = null;
-        let localRaffleData = {};
-        const totalNumbers = 100;
+    // ===================================================================
+    // ESTADO DE LA APLICACIÓN
+    // ===================================================================
+    let currentNumber = null;
+    let localRaffleData = {};
+    const totalNumbers = 100;
 
-        // ===================================================================
-        // LÓGICA DE LA APLICACIÓN
-        // ===================================================================
-
-        winnerInputDisplay.addEventListener('click', () => { realWinningInput.focus(); });
-        realWinningInput.addEventListener('input', () => {
-            const value = realWinningInput.value;
-            digitCircles.forEach((circle, index) => {
-                if (value[index]) {
-                    if (circle.textContent !== value[index]) {
-                        circle.textContent = value[index];
-                        circle.classList.add('filled');
-                        circle.style.animation = 'none';
-                        void circle.offsetWidth; 
-                        circle.style.animation = '';
-                    }
-                } else {
-                    circle.textContent = '';
-                    circle.classList.remove('filled');
-                }
-            });
+    // ===================================================================
+    // FUNCIONES PRINCIPALES
+    // ===================================================================
+    const updateSummary = () => {
+        let pagoCount = 0;
+        let separadoCount = 0;
+        Object.values(localRaffleData).forEach(data => {
+            if (data.status === 'pago') pagoCount++;
+            else if (data.status === 'separado') separadoCount++;
         });
+        const vendidoCount = pagoCount + separadoCount;
+        const disponibleCount = totalNumbers - vendidoCount;
+        summaryPago.textContent = pagoCount;
+        summarySeparado.textContent = separadoCount;
+        summaryDisponible.textContent = disponibleCount;
+    };
+
+    const updateCellAppearance = (number, status) => {
+        const cell = document.querySelector(`.grid-item[data-number='${number}']`);
+        if (cell) {
+            cell.className = 'grid-item';
+            cell.classList.add(`status-${status}`);
+        }
+    };
+
+    const initializeGrid = () => {
+        gridContainer.innerHTML = '';
+        for (let i = 0; i < totalNumbers; i++) {
+            const numberStr = i.toString().padStart(2, '0');
+            const cell = document.createElement('div');
+            cell.classList.add('grid-item', 'status-disponible');
+            cell.textContent = numberStr;
+            cell.dataset.number = numberStr;
+            cell.addEventListener('click', () => openModal(numberStr));
+            gridContainer.appendChild(cell);
+        }
+    };
+
+    const updateAllCells = () => {
+        for (let i = 0; i < totalNumbers; i++) {
+            const numberStr = i.toString().padStart(2, '0');
+            const data = localRaffleData[numberStr];
+            const status = data ? data.status : 'disponible';
+            updateCellAppearance(numberStr, status);
+        }
+    };
     
-        const getWinnerInfo = (raffleNumber) => {
-            const data = localRaffleData[raffleNumber];
-            if (data && data.status === 'pago') {
-                return {
-                    isWinner: true,
-                    html: `
-                        <div class="winner-name">${data.name || 'N/A'}</div>
-                        <div class="winner-phone">Cel: ${data.phone || 'N/A'}</div>
-                    `
-                };
-            }
-            const reason = data ? `no fue pagado` : 'está disponible';
-            return {
-                isWinner: false,
-                html: `<div class="no-winner-text">Sin ganador (El número ${raffleNumber} ${reason}).</div>`
-            };
-        };
-
-        const checkWinners = () => {
-            const winningNumber = realWinningInput.value.trim();
-            winnerResults.innerHTML = ''; 
-
-            if (!/^\d{4}$/.test(winningNumber)) {
-                winnerResults.innerHTML = '<div class="no-results-message">Ingresa un número válido de 4 cifras.</div>';
-                return;
-            }
-        
-            const prizes = [
-                { title: '🥇 Premio Mayor', number: winningNumber.substring(2, 4), style: 'gold' },
-                { title: '🥈 Segundo Premio', number: winningNumber.substring(0, 2), style: 'silver' },
-                { title: '🥉 Tercer Premio', number: winningNumber.substring(1, 3), style: 'bronze' }
-            ];
-
-            prizes.forEach(prize => {
-                const winnerDetails = getWinnerInfo(prize.number);
-                const cardStyle = winnerDetails.isWinner ? prize.style : 'no-winner';
-
-                const cardHTML = `
-                    <div class="winner-card ${cardStyle}">
-                        <div class="prize-header">
-                            <h3>${prize.title}</h3>
-                            <span class="prize-number-tag">Nº ${prize.number}</span>
-                        </div>
-                        <div class="prize-info">
-                            ${winnerDetails.html}
-                        </div>
-                    </div>
-                `;
-                winnerResults.insertAdjacentHTML('beforeend', cardHTML);
-            });
-        };
-
-        const initializeGrid = () => {
-            for (let i = 0; i < totalNumbers; i++) {
-                const numberStr = i.toString().padStart(2, '0');
-                const cell = document.createElement('div');
-                cell.classList.add('grid-item', 'status-disponible');
-                cell.textContent = numberStr;
-                cell.dataset.number = numberStr;
-                cell.addEventListener('click', () => openModal(numberStr));
-                gridContainer.appendChild(cell);
-            }
-        };
-
-        const openModal = (number) => {
-    // VERIFICAMOS SI HAY UN USUARIO AUTENTICADO
-    const currentUser = firebase.auth().currentUser;
-
-    if (currentUser) {
-        // Si hay un usuario (eres tú), abre el modal como siempre
+    const openModal = (number) => {
         currentNumber = number;
         modalNumber.textContent = number;
         const data = localRaffleData[number];
@@ -536,129 +253,151 @@
             inputPhone.value = '';
         }
         modal.style.display = 'block';
-    } else {
-        // Si no hay nadie autenticado, no hace nada.
-        console.log("Acción solo para administradores.");
-        // Opcional: podrías poner una alerta aquí si quisieras
-        // alert("Debes iniciar sesión como administrador para editar.");
-    }
-};
+    };
 
-        const closeModal = () => {
-            modal.style.display = 'none';
-            currentNumber = null;
-        };
+    const closeModal = () => {
+        modal.style.display = 'none';
+        currentNumber = null;
+    };
 
-        const saveData = () => {
-            if (!currentNumber) return;
-            const status = inputStatus.value;
-            const name = inputName.value.trim();
-            const phone = inputPhone.value.trim();
-            if (status === 'disponible') {
-                db.collection("numeros").doc(currentNumber).delete().then(closeModal);
-            } else {
-                const dataToSave = { status, name, phone };
-                db.collection("numeros").doc(currentNumber).set(dataToSave).then(closeModal);
-            }
-        };
-
-        const deleteData = () => {
-            if (!currentNumber) return;
+    const saveData = () => {
+        if (!currentNumber) return;
+        const status = inputStatus.value;
+        const name = inputName.value.trim();
+        const phone = inputPhone.value.trim();
+        if (status === 'disponible') {
             db.collection("numeros").doc(currentNumber).delete().then(closeModal);
-        };
-
-        const updateCellAppearance = (number, status) => {
-            const cell = document.querySelector(`.grid-item[data-number='${number}']`);
-            if (cell) {
-                cell.className = 'grid-item';
-                cell.classList.add(`status-${status}`);
-            }
-        };
-
-        const updateSummary = () => {
-            let pagoCount = 0;
-            let separadoCount = 0;
-            Object.values(localRaffleData).forEach(data => {
-                if (data.status === 'pago') pagoCount++;
-                else if (data.status === 'separado') separadoCount++;
-            });
-        
-            const vendidoCount = pagoCount + separadoCount;
-            const disponibleCount = totalNumbers - vendidoCount;
-
-            summaryPago.textContent = pagoCount;
-            summarySeparado.textContent = separadoCount;
-            summaryDisponible.textContent = disponibleCount;
-        };
-
-        const updateSearchResults = () => {
-            const query = searchInput.value.trim();
-            searchResultsContainer.innerHTML = '';
-            document.querySelectorAll('.grid-item.highlighted').forEach(item => item.classList.remove('highlighted'));
-
-            if (query === "") {
-                searchResultsContainer.innerHTML = `<div class="no-results-message">Escribe un celular para buscar.</div>`;
+        } else {
+            if (!name || !phone) {
+                alert("El nombre y el celular son obligatorios para los estados 'Separado' y 'Pago'.");
                 return;
             }
+            const dataToSave = { status, name, phone };
+            db.collection("numeros").doc(currentNumber).set(dataToSave).then(closeModal);
+        }
+    };
 
-            const matched = [];
-            for (const [number, data] of Object.entries(localRaffleData)) {
-                if (data.phone && data.phone.includes(query)) {
-                    matched.push({ number, ...data });
-                    const cell = document.querySelector(`.grid-item[data-number='${number}']`);
-                    if (cell) cell.classList.add('highlighted');
-                }
-            }
+    const deleteData = () => {
+        if (!currentNumber) return;
+        inputStatus.value = 'disponible';
+        inputName.value = '';
+        inputPhone.value = '';
+        db.collection("numeros").doc(currentNumber).delete().then(closeModal);
+    };
 
-            if (matched.length > 0) {
-                matched.forEach(m => {
-                    const card = `
-                        <div class="result-card">
-                            <div class="result-number">${m.number}</div>
-                            <div class="result-info">
-                                <p class="name">${m.name || 'Sin nombre'}</p>
-                                <p class="phone">${m.phone}</p>
-                            </div>
-                            <span class="status-badge status-${m.status}">${m.status}</span>
+    const performSearch = () => {
+        const query = searchInput.value.trim();
+        searchResultsContainer.innerHTML = '';
+        document.querySelectorAll('.grid-item.highlighted').forEach(item => item.classList.remove('highlighted'));
+        
+        const matched = Object.entries(localRaffleData)
+            .filter(([_, data]) => data.phone && data.phone.includes(query))
+            .map(([number, data]) => ({ number, ...data }));
+
+        if (matched.length > 0) {
+            matched.forEach(m => {
+                const card = `
+                    <div class="result-card">
+                        <div class="result-number">${m.number}</div>
+                        <div class="result-info">
+                            <p class="name">${m.name || 'Sin nombre'}</p>
+                            <p class="phone">${m.phone}</p>
                         </div>
-                    `;
-                    searchResultsContainer.insertAdjacentHTML('beforeend', card);
-                });
-            } else {
-                searchResultsContainer.innerHTML = `
-                    <div class="no-results-message">
-                        <svg xmlns="http://www.w3.org/2000/svg" fill="currentColor" viewBox="0 0 16 16">
-                            <path d="M11.742 10.344a6.5 6.5 0 1 0-1.397 1.398h-.001c.03.04.062.078.098.115l3.85 3.85a1 1 0 0 0 1.415-1.414l-3.85-3.85a1.007 1.007 0 0 0-.115-.1zM12 6.5a5.5 5.5 0 1 1-11 0 5.5 5.5 0 0 1 11 0z"/>
-                        </svg>
-                        <div>No se encontraron coincidencias.</div>
-                    </div>
-                `;
-            }
-        };
+                        <span class="status-badge status-${m.status}">${m.status}</span>
+                    </div>`;
+                searchResultsContainer.insertAdjacentHTML('beforeend', card);
+                const cell = document.querySelector(`.grid-item[data-number='${m.number}']`);
+                if (cell) cell.classList.add('highlighted');
+            });
+        } else {
+            searchResultsContainer.innerHTML = `
+                <div class="no-results-message">
+                    <svg xmlns="http://www.w3.org/2000/svg" fill="currentColor" viewBox="0 0 16 16"><path d="M11.742 10.344a6.5 6.5 0 1 0-1.397 1.398h-.001c.03.04.062.078.098.115l3.85 3.85a1 1 0 0 0 1.415-1.414l-3.85-3.85a1.007 1.007 0 0 0-.115-.1zM12 6.5a5.5 5.5 0 1 1-11 0 5.5 5.5 0 0 1 11 0z"/></svg>
+                    <div>No se encontraron coincidencias.</div>
+                </div>`;
+        }
+    };
+    
+    const getWinnerInfo = (raffleNumber) => {
+        const data = localRaffleData[raffleNumber];
+        if (data && data.status === 'pago') {
+            return { isWinner: true, html: `<div class="winner-name">${data.name || 'N/A'}</div><div class="winner-phone">Cel: ${data.phone || 'N/A'}</div>` };
+        }
+        const reason = data ? `no fue pagado (estado: ${data.status})` : 'está disponible';
+        return { isWinner: false, html: `<div class="no-winner-text">Sin ganador (El número ${raffleNumber} ${reason}).</div>` };
+    };
 
-        // --- INICIALIZACIÓN Y EVENTOS ---
-        initializeGrid();
-        updateSearchResults();
-        closeButton.addEventListener('click', closeModal);
-        saveButton.addEventListener('click', saveData);
-        deleteButton.addEventListener('click', deleteData);
-        checkWinnerButton.addEventListener('click', checkWinners);
-        searchInput.addEventListener('input', updateSearchResults);
-        searchButton.addEventListener('click', updateSearchResults);
-        window.addEventListener('click', (event) => { if (event.target === modal) closeModal(); });
-
-        db.collection("numeros").onSnapshot(snapshot => {
-            localRaffleData = {};
-            snapshot.forEach(doc => { localRaffleData[doc.id] = doc.data(); });
-            for (let i = 0; i < totalNumbers; i++) {
-                const numberStr = i.toString().padStart(2, '0');
-                const status = localRaffleData[numberStr] ? localRaffleData[numberStr].status : 'disponible';
-                updateCellAppearance(numberStr, status);
-            }
-            updateSummary();
-            updateSearchResults();
+    const checkWinners = () => {
+        const winningNumber = realWinningInput.value;
+        winnerResults.innerHTML = ''; 
+        if (!/^\d{4}$/.test(winningNumber)) {
+            winnerResults.innerHTML = '<div class="no-results-message">Ingresa un número válido de 4 cifras.</div>';
+            return;
+        }
+        const prizes = [
+            { title: '🥇 Premio Mayor', number: winningNumber.substring(2, 4), style: 'gold' },
+            { title: '🥈 Segundo Premio', number: winningNumber.substring(0, 2), style: 'silver' },
+            { title: '🥉 Tercer Premio', number: winningNumber.substring(1, 3), style: 'bronze' }
+        ];
+        prizes.forEach(prize => {
+            const winnerDetails = getWinnerInfo(prize.number);
+            const cardStyle = winnerDetails.isWinner ? prize.style : 'no-winner';
+            const cardHTML = `<div class="winner-card ${cardStyle}"><div class="prize-header"><h3>${prize.title}</h3><span class="prize-number-tag">Nº ${prize.number}</span></div><div class="prize-info">${winnerDetails.html}</div></div>`;
+            winnerResults.insertAdjacentHTML('beforeend', cardHTML);
         });
+    };
+
+    // ===================================================================
+    // EVENT LISTENERS Y INICIALIZACIÓN
+    // ===================================================================
+    closeButton.addEventListener('click', closeModal);
+    saveButton.addEventListener('click', saveData);
+    deleteButton.addEventListener('click', deleteData);
+    window.addEventListener('click', (event) => { if (event.target === modal) closeModal(); });
+
+    searchButton.addEventListener('click', () => {
+        const query = searchInput.value.trim();
+        if (query.length === 10) {
+            performSearch();
+        } else {
+            searchResultsContainer.innerHTML = '<div class="no-results-message">Debes ingresar un número de 10 cifras para buscar.</div>';
+            document.querySelectorAll('.grid-item.highlighted').forEach(item => item.classList.remove('highlighted'));
+        }
     });
+    
+    checkWinnerButton.addEventListener('click', checkWinners);
+    winnerInputDisplay.addEventListener('click', () => { realWinningInput.focus(); });
+    realWinningInput.addEventListener('input', () => {
+        const value = realWinningInput.value;
+        digitCircles.forEach((circle, index) => {
+            const digit = value[index];
+            if (digit && circle.textContent !== digit) {
+                circle.textContent = digit;
+                circle.classList.add('filled');
+                circle.style.animation = 'none';
+                void circle.offsetWidth; 
+                circle.style.animation = '';
+            } else if (!digit) {
+                circle.textContent = '';
+                circle.classList.remove('filled');
+            }
+        });
+        checkWinnerButton.disabled = value.length !== 4;
+    });
+
+    db.collection("numeros").onSnapshot(snapshot => {
+        localRaffleData = {};
+        snapshot.forEach(doc => {
+            localRaffleData[doc.id] = doc.data();
+        });
+        updateAllCells();
+        updateSummary();
+    });
+
+    initializeGrid();
+    searchResultsContainer.innerHTML = '<div class="no-results-message">Ingresa 10 dígitos y presiona la lupa.</div>';
+    checkWinnerButton.disabled = true;
+});
 </script>
 
 </body>
