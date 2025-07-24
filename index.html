@@ -7,9 +7,9 @@
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" />
     <style>
         :root {
-            --color-disponible: #751FFF;
+            --color-disponible: #751FFF; /* Color morado modificado */
             --color-separado: #ffc107;
-            --color-pago: #84E059;
+            --color-pago: #84E059; /* Color verde modificado */
             --color-primary: #007bff;
             --border-color: #ddd;
             --shadow-color: rgba(0, 0, 0, 0.05);
@@ -60,7 +60,7 @@
         .no-results-message { text-align: center; padding: 20px; color: var(--text-light); animation: fadeIn 0.4s ease-out forwards; }
         .no-results-message svg { width: 40px; height: 40px; margin-bottom: 10px; }
         @keyframes popIn { 0% { transform: scale(0.8); opacity: 0; } 70% { transform: scale(1.15); opacity: 1; } 100% { transform: scale(1.1); opacity: 1; } }
-        .winner-section { text-align: center; padding: 25px; background-color: var(--background-card); border: none; border-radius: 16px; margin-top: 25px; /* MODIFICADO */ box-shadow: 0 4px 25px var(--shadow-color); }
+        .winner-section { text-align: center; padding: 25px; background-color: var(--background-card); border: none; border-radius: 16px; margin-top: 25px; box-shadow: 0 4px 25px var(--shadow-color); }
         .winner-section h2 { margin-top: 0; margin-bottom: 20px; font-size: 2em; font-weight: 700; color: var(--text-dark); }
         .winner-section h2 span { color: #ffc107; }
         .winner-input-display { position: relative; display: flex; justify-content: center; gap: 15px; margin-bottom: 25px; cursor: text; transition: box-shadow 0.3s ease; padding: 10px; border-radius: 12px; }
@@ -132,7 +132,8 @@
         <button id="checkWinnerButton">Verificar Ganadores</button>
         <div id="winnerResults">Ingresa el número de 4 cifras de la lotería para conocer a los ganadores.</div>
     </div>
-    </div>
+
+</div>
 <div id="dataModal" class="modal">
     <div class="modal-content">
         <div class="modal-header"><h2>Datos del Número <span id="modalNumber"></span></h2><span class="close-button">&times;</span></div>
@@ -148,26 +149,31 @@
 <script>
 document.addEventListener('DOMContentLoaded', () => {
     // ===================================================================
-    // CONFIGURACIÓN DE FIREBASE (¡IMPORTANTE!)
+    // CONFIGURACIÓN DE FIREBASE
     // ===================================================================
-           const firebaseConfig = {
-  apiKey: "AIzaSyDMBARLzKnhcmSI8euhiA2Wgsf7pJQM1_0",
-  authDomain: "control-rifas.firebaseapp.com",
-  projectId: "control-rifas",
-  storageBucket: "control-rifas.firebasestorage.app",
-  messagingSenderId: "519272574756",
-  appId: "1:519272574756:web:b5d7cf368be58fdf604db1"
-};
+    const firebaseConfig = {
+        apiKey: "AIzaSyDMBARLzKnhcmSI8euhiA2Wgsf7pJQM1_0",
+        authDomain: "control-rifas.firebaseapp.com",
+        projectId: "control-rifas",
+        storageBucket: "control-rifas.firebasestorage.app",
+        messagingSenderId: "519272574756",
+        appId: "1:519272574756:web:b5d7cf368be58fdf604db1"
+    };
     const app = firebase.initializeApp(firebaseConfig);
     const db = firebase.firestore();
 
     // ===================================================================
     // REFERENCIAS AL DOM
     // ===================================================================
+    const checkWinnerButton = document.getElementById('checkWinnerButton');
+    const winnerResults = document.getElementById('winnerResults');
+    const winnerInputDisplay = document.getElementById('winnerInputDisplay');
+    const digitCircles = winnerInputDisplay.querySelectorAll('.digit-circle');
+    const realWinningInput = document.getElementById('realWinningInput');
     const gridContainer = document.getElementById('gridContainer');
-    const summaryPago = document.getElementById('summaryPago');
-    const summarySeparado = document.getElementById('summarySeparado');
-    const summaryDisponible = document.getElementById('summaryDisponible');
+    const searchInput = document.getElementById('searchInput');
+    const searchButton = document.getElementById('searchButton');
+    const searchResultsContainer = document.getElementById('searchResultsContainer');
     const modal = document.getElementById('dataModal');
     const modalNumber = document.getElementById('modalNumber');
     const inputStatus = document.getElementById('inputStatus');
@@ -176,49 +182,91 @@ document.addEventListener('DOMContentLoaded', () => {
     const saveButton = document.getElementById('saveButton');
     const deleteButton = document.getElementById('deleteButton');
     const closeButton = document.querySelector('.close-button');
-    const searchInput = document.getElementById('searchInput');
-    const searchButton = document.getElementById('searchButton');
-    const searchResultsContainer = document.getElementById('searchResultsContainer');
-    const checkWinnerButton = document.getElementById('checkWinnerButton');
-    const winnerResults = document.getElementById('winnerResults');
-    const winnerInputDisplay = document.getElementById('winnerInputDisplay');
-    const digitCircles = winnerInputDisplay.querySelectorAll('.digit-circle');
-    const realWinningInput = document.getElementById('realWinningInput');
+    const summaryPago = document.getElementById('summaryPago');
+    const summarySeparado = document.getElementById('summarySeparado');
+    const summaryDisponible = document.getElementById('summaryDisponible');
 
-    // ===================================================================
-    // ESTADO DE LA APLICACIÓN
-    // ===================================================================
     let currentNumber = null;
     let localRaffleData = {};
     const totalNumbers = 100;
 
     // ===================================================================
-    // FUNCIONES PRINCIPALES
+    // LÓGICA DE LA APLICACIÓN
     // ===================================================================
-    const updateSummary = () => {
-        let pagoCount = 0;
-        let separadoCount = 0;
-        Object.values(localRaffleData).forEach(data => {
-            if (data.status === 'pago') pagoCount++;
-            else if (data.status === 'separado') separadoCount++;
+
+    winnerInputDisplay.addEventListener('click', () => { realWinningInput.focus(); });
+    realWinningInput.addEventListener('input', () => {
+        const value = realWinningInput.value;
+        digitCircles.forEach((circle, index) => {
+            if (value[index]) {
+                if (circle.textContent !== value[index]) {
+                    circle.textContent = value[index];
+                    circle.classList.add('filled');
+                    circle.style.animation = 'none';
+                    void circle.offsetWidth; 
+                    circle.style.animation = '';
+                }
+            } else {
+                circle.textContent = '';
+                circle.classList.remove('filled');
+            }
         });
-        const vendidoCount = pagoCount + separadoCount;
-        const disponibleCount = totalNumbers - vendidoCount;
-        summaryPago.textContent = pagoCount;
-        summarySeparado.textContent = separadoCount;
-        summaryDisponible.textContent = disponibleCount;
+        checkWinnerButton.disabled = value.length !== 4; // Agregado para habilitar/deshabilitar
+    });
+    
+    const getWinnerInfo = (raffleNumber) => {
+        const data = localRaffleData[raffleNumber];
+        if (data && data.status === 'pago') {
+            return {
+                isWinner: true,
+                html: `
+                    <div class="winner-name">${data.name || 'N/A'}</div>
+                    <div class="winner-phone">Cel: ${data.phone || 'N/A'}</div>
+                `
+            };
+        }
+        const reason = data ? `no fue pagado` : 'está disponible';
+        return {
+            isWinner: false,
+            html: `<div class="no-winner-text">Sin ganador (El número ${raffleNumber} ${reason}).</div>`
+        };
     };
 
-    const updateCellAppearance = (number, status) => {
-        const cell = document.querySelector(`.grid-item[data-number='${number}']`);
-        if (cell) {
-            cell.className = 'grid-item';
-            cell.classList.add(`status-${status}`);
+    const checkWinners = () => {
+        const winningNumber = realWinningInput.value.trim();
+        winnerResults.innerHTML = ''; 
+
+        if (!/^\d{4}$/.test(winningNumber)) {
+            winnerResults.innerHTML = '<div class="no-results-message">Ingresa un número válido de 4 cifras.</div>';
+            return;
         }
+    
+        const prizes = [
+            { title: '🥇 Premio Mayor', number: winningNumber.substring(2, 4), style: 'gold' },
+            { title: '🥈 Segundo Premio', number: winningNumber.substring(0, 2), style: 'silver' },
+            { title: '🥉 Tercer Premio', number: winningNumber.substring(1, 3), style: 'bronze' }
+        ];
+
+        prizes.forEach(prize => {
+            const winnerDetails = getWinnerInfo(prize.number);
+            const cardStyle = winnerDetails.isWinner ? prize.style : 'no-winner';
+
+            const cardHTML = `
+                <div class="winner-card ${cardStyle}">
+                    <div class="prize-header">
+                        <h3>${prize.title}</h3>
+                        <span class="prize-number-tag">Nº ${prize.number}</span>
+                    </div>
+                    <div class="prize-info">
+                        ${winnerDetails.html}
+                    </div>
+                </div>
+            `;
+            winnerResults.insertAdjacentHTML('beforeend', cardHTML);
+        });
     };
 
     const initializeGrid = () => {
-        gridContainer.innerHTML = '';
         for (let i = 0; i < totalNumbers; i++) {
             const numberStr = i.toString().padStart(2, '0');
             const cell = document.createElement('div');
@@ -230,29 +278,26 @@ document.addEventListener('DOMContentLoaded', () => {
         }
     };
 
-    const updateAllCells = () => {
-        for (let i = 0; i < totalNumbers; i++) {
-            const numberStr = i.toString().padStart(2, '0');
-            const data = localRaffleData[numberStr];
-            const status = data ? data.status : 'disponible';
-            updateCellAppearance(numberStr, status);
-        }
-    };
-    
+    // LÓGICA DE ADMIN ORIGINAL RESTAURADA Y SIN CAMBIOS
     const openModal = (number) => {
-        currentNumber = number;
-        modalNumber.textContent = number;
-        const data = localRaffleData[number];
-        if (data) {
-            inputStatus.value = data.status;
-            inputName.value = data.name || '';
-            inputPhone.value = data.phone || '';
+        const currentUser = firebase.auth().currentUser;
+        if (currentUser) {
+            currentNumber = number;
+            modalNumber.textContent = number;
+            const data = localRaffleData[number];
+            if (data) {
+                inputStatus.value = data.status;
+                inputName.value = data.name || '';
+                inputPhone.value = data.phone || '';
+            } else {
+                inputStatus.value = 'disponible';
+                inputName.value = '';
+                inputPhone.value = '';
+            }
+            modal.style.display = 'block';
         } else {
-            inputStatus.value = 'disponible';
-            inputName.value = '';
-            inputPhone.value = '';
+            console.log("Acción solo para administradores.");
         }
-        modal.style.display = 'block';
     };
 
     const closeModal = () => {
@@ -268,10 +313,6 @@ document.addEventListener('DOMContentLoaded', () => {
         if (status === 'disponible') {
             db.collection("numeros").doc(currentNumber).delete().then(closeModal);
         } else {
-            if (!name || !phone) {
-                alert("El nombre y el celular son obligatorios para los estados 'Separado' y 'Pago'.");
-                return;
-            }
             const dataToSave = { status, name, phone };
             db.collection("numeros").doc(currentNumber).set(dataToSave).then(closeModal);
         }
@@ -279,20 +320,47 @@ document.addEventListener('DOMContentLoaded', () => {
 
     const deleteData = () => {
         if (!currentNumber) return;
-        inputStatus.value = 'disponible';
-        inputName.value = '';
-        inputPhone.value = '';
         db.collection("numeros").doc(currentNumber).delete().then(closeModal);
     };
 
+    const updateCellAppearance = (number, status) => {
+        const cell = document.querySelector(`.grid-item[data-number='${number}']`);
+        if (cell) {
+            cell.className = 'grid-item';
+            cell.classList.add(`status-${status}`);
+        }
+    };
+
+    const updateSummary = () => {
+        let pagoCount = 0;
+        let separadoCount = 0;
+        Object.values(localRaffleData).forEach(data => {
+            if (data.status === 'pago') pagoCount++;
+            else if (data.status === 'separado') separadoCount++;
+        });
+    
+        const vendidoCount = pagoCount + separadoCount;
+        const disponibleCount = totalNumbers - vendidoCount;
+
+        summaryPago.textContent = pagoCount;
+        summarySeparado.textContent = separadoCount;
+        summaryDisponible.textContent = disponibleCount;
+    };
+
+    // LÓGICA DE BÚSQUEDA MODIFICADA
     const performSearch = () => {
         const query = searchInput.value.trim();
         searchResultsContainer.innerHTML = '';
         document.querySelectorAll('.grid-item.highlighted').forEach(item => item.classList.remove('highlighted'));
-        
-        const matched = Object.entries(localRaffleData)
-            .filter(([_, data]) => data.phone && data.phone.includes(query))
-            .map(([number, data]) => ({ number, ...data }));
+
+        const matched = [];
+        for (const [number, data] of Object.entries(localRaffleData)) {
+            if (data.phone && data.phone.includes(query)) {
+                matched.push({ number, ...data });
+                const cell = document.querySelector(`.grid-item[data-number='${number}']`);
+                if (cell) cell.classList.add('highlighted');
+            }
+        }
 
         if (matched.length > 0) {
             matched.forEach(m => {
@@ -304,57 +372,34 @@ document.addEventListener('DOMContentLoaded', () => {
                             <p class="phone">${m.phone}</p>
                         </div>
                         <span class="status-badge status-${m.status}">${m.status}</span>
-                    </div>`;
+                    </div>
+                `;
                 searchResultsContainer.insertAdjacentHTML('beforeend', card);
-                const cell = document.querySelector(`.grid-item[data-number='${m.number}']`);
-                if (cell) cell.classList.add('highlighted');
             });
         } else {
             searchResultsContainer.innerHTML = `
                 <div class="no-results-message">
-                    <svg xmlns="http://www.w3.org/2000/svg" fill="currentColor" viewBox="0 0 16 16"><path d="M11.742 10.344a6.5 6.5 0 1 0-1.397 1.398h-.001c.03.04.062.078.098.115l3.85 3.85a1 1 0 0 0 1.415-1.414l-3.85-3.85a1.007 1.007 0 0 0-.115-.1zM12 6.5a5.5 5.5 0 1 1-11 0 5.5 5.5 0 0 1 11 0z"/></svg>
+                    <svg xmlns="http://www.w3.org/2000/svg" fill="currentColor" viewBox="0 0 16 16">
+                        <path d="M11.742 10.344a6.5 6.5 0 1 0-1.397 1.398h-.001c.03.04.062.078.098.115l3.85 3.85a1 1 0 0 0 1.415-1.414l-3.85-3.85a1.007 1.007 0 0 0-.115-.1zM12 6.5a5.5 5.5 0 1 1-11 0 5.5 5.5 0 0 1 11 0z"/>
+                    </svg>
                     <div>No se encontraron coincidencias.</div>
-                </div>`;
+                </div>
+            `;
         }
-    };
-    
-    const getWinnerInfo = (raffleNumber) => {
-        const data = localRaffleData[raffleNumber];
-        if (data && data.status === 'pago') {
-            return { isWinner: true, html: `<div class="winner-name">${data.name || 'N/A'}</div><div class="winner-phone">Cel: ${data.phone || 'N/A'}</div>` };
-        }
-        const reason = data ? `no fue pagado (estado: ${data.status})` : 'está disponible';
-        return { isWinner: false, html: `<div class="no-winner-text">Sin ganador (El número ${raffleNumber} ${reason}).</div>` };
     };
 
-    const checkWinners = () => {
-        const winningNumber = realWinningInput.value;
-        winnerResults.innerHTML = ''; 
-        if (!/^\d{4}$/.test(winningNumber)) {
-            winnerResults.innerHTML = '<div class="no-results-message">Ingresa un número válido de 4 cifras.</div>';
-            return;
-        }
-        const prizes = [
-            { title: '🥇 Premio Mayor', number: winningNumber.substring(2, 4), style: 'gold' },
-            { title: '🥈 Segundo Premio', number: winningNumber.substring(0, 2), style: 'silver' },
-            { title: '🥉 Tercer Premio', number: winningNumber.substring(1, 3), style: 'bronze' }
-        ];
-        prizes.forEach(prize => {
-            const winnerDetails = getWinnerInfo(prize.number);
-            const cardStyle = winnerDetails.isWinner ? prize.style : 'no-winner';
-            const cardHTML = `<div class="winner-card ${cardStyle}"><div class="prize-header"><h3>${prize.title}</h3><span class="prize-number-tag">Nº ${prize.number}</span></div><div class="prize-info">${winnerDetails.html}</div></div>`;
-            winnerResults.insertAdjacentHTML('beforeend', cardHTML);
-        });
-    };
+    // --- INICIALIZACIÓN Y EVENTOS ---
+    initializeGrid();
+    searchResultsContainer.innerHTML = '<div class="no-results-message">Ingresa 10 dígitos y presiona la lupa.</div>';
+    checkWinnerButton.disabled = true;
 
-    // ===================================================================
-    // EVENT LISTENERS Y INICIALIZACIÓN
-    // ===================================================================
     closeButton.addEventListener('click', closeModal);
     saveButton.addEventListener('click', saveData);
     deleteButton.addEventListener('click', deleteData);
+    checkWinnerButton.addEventListener('click', checkWinners);
     window.addEventListener('click', (event) => { if (event.target === modal) closeModal(); });
-
+    
+    // Listener de búsqueda modificado
     searchButton.addEventListener('click', () => {
         const query = searchInput.value.trim();
         if (query.length === 10) {
@@ -364,39 +409,18 @@ document.addEventListener('DOMContentLoaded', () => {
             document.querySelectorAll('.grid-item.highlighted').forEach(item => item.classList.remove('highlighted'));
         }
     });
-    
-    checkWinnerButton.addEventListener('click', checkWinners);
-    winnerInputDisplay.addEventListener('click', () => { realWinningInput.focus(); });
-    realWinningInput.addEventListener('input', () => {
-        const value = realWinningInput.value;
-        digitCircles.forEach((circle, index) => {
-            const digit = value[index];
-            if (digit && circle.textContent !== digit) {
-                circle.textContent = digit;
-                circle.classList.add('filled');
-                circle.style.animation = 'none';
-                void circle.offsetWidth; 
-                circle.style.animation = '';
-            } else if (!digit) {
-                circle.textContent = '';
-                circle.classList.remove('filled');
-            }
-        });
-        checkWinnerButton.disabled = value.length !== 4;
-    });
 
     db.collection("numeros").onSnapshot(snapshot => {
         localRaffleData = {};
-        snapshot.forEach(doc => {
-            localRaffleData[doc.id] = doc.data();
-        });
-        updateAllCells();
+        snapshot.forEach(doc => { localRaffleData[doc.id] = doc.data(); });
+        for (let i = 0; i < totalNumbers; i++) {
+            const numberStr = i.toString().padStart(2, '0');
+            const status = localRaffleData[numberStr] ? localRaffleData[numberStr].status : 'disponible';
+            updateCellAppearance(numberStr, status);
+        }
         updateSummary();
+        // Se eliminó la actualización de búsqueda desde aquí para no causar conflictos.
     });
-
-    initializeGrid();
-    searchResultsContainer.innerHTML = '<div class="no-results-message">Ingresa 10 dígitos y presiona la lupa.</div>';
-    checkWinnerButton.disabled = true;
 });
 </script>
 
