@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-    <title>Control de Rifas - Versión Final</title>
+    <title>Control de Rifas</title>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" />
     <style>
         :root {
@@ -11,23 +11,45 @@
             --color-separado: #ffc107;
             --color-pago: #84E059;
             --color-primary: #007bff;
+            --color-danger: #dc3545;
             --border-color: #ddd;
             --shadow-color: rgba(0, 0, 0, 0.05);
             --background-light: #f8f9fa;
             --background-card: #fff;
             --text-dark: #343a40;
             --text-light: #6c757d;
+            --body-bg: #f8f9fa;
+            --body-color: #333;
+            --modal-bg: #fefefe;
+            --winner-card-silver-bg: linear-gradient(135deg, #e0e0e0, #bdbdbd);
+            --winner-card-silver-color: #333;
+            --transition-speed: 0.3s;
         }
+        .dark-mode {
+            --border-color: #4d4d4d;
+            --shadow-color: rgba(0, 0, 0, 0.2);
+            --background-light: #2c2c2e;
+            --background-card: #1c1c1e;
+            --text-dark: #f2f2f7;
+            --text-light: #a0a0a5;
+            --body-bg: #121212;
+            --body-color: #f2f2f7;
+            --modal-bg: #2c2c2e;
+            --winner-card-silver-bg: linear-gradient(135deg, #a8a8a8, #8c8c8c);
+            --winner-card-silver-color: #f2f2f7;
+        }
+
         body {
             font-family: system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, 'Open Sans', 'Helvetica Neue', sans-serif;
-            background-color: var(--background-light);
+            background-color: var(--body-bg);
             padding: 10px;
-            color: #333;
+            color: var(--body-color);
+            transition: background-color var(--transition-speed) ease, color var(--transition-speed) ease;
         }
-        .container { max-width: 800px; margin: auto; }
+        .container { max-width: 800px; margin: auto; padding-top: 20px; }
         h2 { text-align: center; color: var(--text-dark); }
         .summary-panel { display: flex; flex-wrap: nowrap; gap: 10px; margin-bottom: 25px; }
-        .summary-card { display: flex; flex-direction: column; align-items: center; justify-content: center; padding: 12px 5px; background-color: var(--background-card); border-radius: 12px; box-shadow: 0 5px 25px var(--shadow-color); transition: transform 0.2s ease-in-out, box-shadow 0.2s ease-in-out; border-top: 4px solid; flex: 1 1 0; min-width: 0; text-align: center; }
+        .summary-card { display: flex; flex-direction: column; align-items: center; justify-content: center; padding: 12px 5px; background-color: var(--background-card); border-radius: 12px; box-shadow: 0 5px 25px var(--shadow-color); transition: transform 0.2s ease, box-shadow 0.2s ease, background-color var(--transition-speed) ease; border-top: 4px solid; flex: 1 1 0; min-width: 0; text-align: center; }
         .summary-card:hover { transform: translateY(-5px); box-shadow: 0 10px 30px rgba(0,0,0,0.08); }
         #card-pago { border-top-color: var(--color-pago); }
         #card-separado { border-top-color: var(--color-separado); }
@@ -37,19 +59,15 @@
         #card-pago .card-icon { background-color: var(--color-pago); }
         #card-separado .card-icon { background-color: var(--color-separado); }
         #card-disponible .card-icon { background-color: var(--color-disponible); }
-        .info-count { font-size: clamp(1.5em, 4vw, 2.2em); font-weight: 700; color: var(--text-dark); line-height: 1; }
+        .info-count { font-size: clamp(1.5em, 4vw, 2.2em); font-weight: 700; color: var(--text-dark); }
         .info-label { margin-top: 4px; font-size: clamp(0.65em, 2.5vw, 0.8em); color: var(--text-light); text-transform: uppercase; letter-spacing: 0.5px; line-height: 1.1; }
-        .search-section { background-color: var(--background-card); padding: 20px; border-radius: 12px; box-shadow: 0 4px 25px var(--shadow-color); margin-bottom: 25px; }
-        .search-box { display: flex; align-items: center; gap: 10px; margin-bottom: 15px; }
-        .search-input-wrapper { position: relative; flex-grow: 1; }
-        .search-input-wrapper svg { position: absolute; left: 15px; top: 50%; transform: translateY(-50%); color: var(--text-light); width: 18px; height: 18px; pointer-events: none; }
-        #searchInput { width: 100%; height: 48px; padding: 12px 12px 12px 45px; border: 1px solid var(--border-color); border-radius: 8px; font-size: 16px; transition: border-color 0.2s, box-shadow 0.2s; box-sizing: border-box; }
-        #searchInput:focus { outline: none; border-color: var(--color-primary); box-shadow: 0 0 0 3px rgba(0, 123, 255, 0.25); }
-        #searchButton { flex-shrink: 0; width: 48px; height: 48px; padding: 0; border: none; background-color: var(--color-primary); color: white; font-size: 18px; border-radius: 8px; cursor: pointer; transition: background-color 0.2s; display: flex; align-items: center; justify-content: center; }
+        .search-section, .raffle-manager, .winner-section { background-color: var(--background-card); padding: 20px; border-radius: 12px; box-shadow: 0 4px 25px var(--shadow-color); margin-bottom: 25px; transition: background-color var(--transition-speed) ease; }
+        .search-box { display: flex; align-items: flex-start; gap: 10px; margin-bottom: 15px; }
+        #searchButton { margin-top: 18px; flex-shrink: 0; width: 48px; height: 48px; padding: 0; border: none; background-color: var(--color-primary); color: white; font-size: 18px; border-radius: 8px; cursor: pointer; transition: background-color 0.2s; display: flex; align-items: center; justify-content: center; }
         #searchButton:hover { background-color: #0056b3; }
         #searchResultsContainer { display: flex; flex-direction: column; gap: 12px; min-height: 50px; }
         @keyframes fadeIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
-        .result-card { display: flex; align-items: center; gap: 15px; padding: 15px; background-color: var(--background-light); border-radius: 8px; border: 1px solid #e9ecef; animation: fadeIn 0.4s ease-out forwards; }
+        .result-card { display: flex; align-items: center; gap: 15px; padding: 15px; background-color: var(--background-light); border-radius: 8px; border: 1px solid var(--border-color); animation: fadeIn 0.4s ease-out forwards; }
         .result-number { flex-shrink: 0; width: 45px; height: 45px; border-radius: 50%; background-color: var(--color-primary); color: white; display: flex; justify-content: center; align-items: center; font-size: 1.4em; font-weight: bold; }
         .result-info { flex-grow: 1; min-width: 0; }
         .result-info .name { font-weight: bold; color: var(--text-dark); margin: 0; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
@@ -60,12 +78,11 @@
         .no-results-message { text-align: center; padding: 20px; color: var(--text-light); animation: fadeIn 0.4s ease-out forwards; }
         .no-results-message svg { width: 40px; height: 40px; margin-bottom: 10px; }
         @keyframes popIn { 0% { transform: scale(0.8); opacity: 0; } 70% { transform: scale(1.15); opacity: 1; } 100% { transform: scale(1.1); opacity: 1; } }
-        .winner-section { text-align: center; padding: 25px; background-color: var(--background-card); border: none; border-radius: 16px; margin-top: 25px; box-shadow: 0 4px 25px var(--shadow-color); }
         .winner-section h2 { margin-top: 0; margin-bottom: 20px; font-size: 2em; font-weight: 700; color: var(--text-dark); }
         .winner-section h2 span { color: #ffc107; }
         .winner-input-display { position: relative; display: flex; justify-content: center; gap: 15px; margin-bottom: 25px; cursor: text; transition: box-shadow 0.3s ease; padding: 10px; border-radius: 12px; }
         .winner-input-display:focus-within { box-shadow: 0 0 0 4px rgba(255, 193, 7, 0.4); }
-        .digit-circle { width: clamp(40px, 10vw, 55px); height: clamp(40px, 10vw, 55px); border-radius: 50%; border: 2px solid #e0e4e8; display: flex; justify-content: center; align-items: center; font-size: clamp(1.4em, 5vw, 2em); font-weight: bold; color: #a0a8b2; transition: all 0.3s ease; background-color: #f0f2f5; box-shadow: inset 0 2px 4px rgba(0,0,0,0.05); }
+        .digit-circle { width: clamp(40px, 10vw, 55px); height: clamp(40px, 10vw, 55px); border-radius: 50%; border: 2px solid var(--border-color); display: flex; justify-content: center; align-items: center; font-size: clamp(1.4em, 5vw, 2em); font-weight: bold; color: var(--text-light); transition: all 0.3s ease; background-color: var(--background-light); box-shadow: inset 0 2px 4px rgba(0,0,0,0.05); }
         .digit-circle.filled { background: linear-gradient(135deg, var(--color-pago), #008200); border-color: var(--color-pago); color: white; text-shadow: 0 1px 2px rgba(0,0,0,0.2); animation: popIn 0.3s ease-out forwards; }
         #realWinningInput { position: absolute; top: 0; left: 0; width: 100%; height: 100%; opacity: 0; border: none; background: transparent; outline: none; -webkit-text-security: disc; }
         #checkWinnerButton { padding: 12px 25px; border: none; border-radius: 8px; cursor: pointer; font-size: 1.1em; background: linear-gradient(135deg, #007bff, #0056b3); color: white; font-weight: bold; transition: all 0.3s ease; box-shadow: 0 4px 15px rgba(0, 123, 255, 0.2); }
@@ -75,113 +92,140 @@
         .winner-card { border-radius: 12px; padding: 20px; color: white; box-shadow: 0 8px 25px rgba(0, 0, 0, 0.15); transition: transform 0.3s ease, box-shadow 0.3s ease; border: 1px solid rgba(255, 255, 255, 0.2); animation: fadeIn 0.5s ease-out forwards; }
         .winner-card:hover { transform: translateY(-5px); box-shadow: 0 12px 30px rgba(0, 0, 0, 0.2); }
         .winner-card.gold { background: linear-gradient(135deg, #ffc107, #ff9800); }
-        .winner-card.silver { background: linear-gradient(135deg, #e0e0e0, #bdbdbd); color: #333; }
+        .winner-card.silver { background: var(--winner-card-silver-bg); color: var(--winner-card-silver-color); }
         .winner-card.bronze { background: linear-gradient(135deg, #d39c6f, #b87333); }
         .winner-card.no-winner { background: linear-gradient(135deg, #6c757d, #495057); }
         .prize-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 12px; border-bottom: 1px solid rgba(255, 255, 255, 0.3); padding-bottom: 10px; }
         .winner-card.silver .prize-header { border-bottom-color: rgba(0, 0, 0, 0.1); }
         .prize-header h3 { margin: 0; font-size: 1.4em; font-weight: 700; }
         .prize-number-tag { background-color: rgba(0, 0, 0, 0.2); color: white; padding: 5px 12px; border-radius: 15px; font-size: 1.1em; font-weight: bold; }
-        .winner-card.silver .prize-number-tag { background-color: rgba(0, 0, 0, 0.1); color: #333; }
+        .winner-card.silver .prize-number-tag { background-color: rgba(0, 0, 0, 0.1); color: var(--winner-card-silver-color); }
         .prize-info .winner-name { font-size: 1.25em; font-weight: bold; margin: 10px 0 5px 0; }
         .prize-info .winner-phone { font-size: 1em; opacity: 0.9; margin: 0; }
         .prize-info .no-winner-text { font-size: 1.1em; font-weight: 500; font-style: italic; margin-top: 10px; }
         #gridContainer { display: grid; grid-template-columns: repeat(10, 1fr); gap: 4px; margin-top: 20px; }
         .grid-item { display: flex; justify-content: center; align-items: center; aspect-ratio: 1 / 1; border: 1px solid var(--border-color); border-radius: 8px; font-size: clamp(0.7em, 3vw, 1.5em); font-weight: bold; color: white; cursor: pointer; transition: transform 0.2s, background-color 0.2s, border-color 0.2s; }
-        .modal { display: none; position: fixed; z-index: 1000; left: 0; top: 0; width: 100%; height: 100%; overflow: auto; background-color: rgba(0,0,0,0.5); }
-        .modal-content { background-color: #fefefe; margin: 15% auto; padding: 20px; border: 1px solid #888; width: 90%; max-width: 400px; border-radius: 8px; box-shadow: 0 4px 8px rgba(0,0,0,0.2); }
-        .grid-item:hover { transform: scale(1.05); border-color: #333; }
-        .grid-item.status-disponible { background-color: var(--color-disponible); border-color: var(--color-disponible); }
-        .grid-item.status-separado { background-color: var(--color-separado); border-color: #e0a800; }
-        .grid-item.status-pago { background-color: var(--color-pago); border-color: var(--color-pago); }
+        .modal { display: none; position: fixed; z-index: 1000; left: 0; top: 0; width: 100%; height: 100%; overflow: auto; background-color: rgba(0,0,0,0.6); }
+        .modal-content { background-color: var(--modal-bg); margin: 15% auto; padding: 20px; border: 1px solid var(--border-color); width: 90%; max-width: 400px; border-radius: 8px; box-shadow: 0 4px 8px rgba(0,0,0,0.2); transition: background-color var(--transition-speed) ease; }
+        .grid-item:hover { transform: scale(1.05); }
+        .grid-item.status-disponible { background-color: var(--color-disponible); }
+        .grid-item.status-separado { background-color: var(--color-separado); }
+        .grid-item.status-pago { background-color: var(--color-pago); }
         .highlighted { position: relative; overflow: hidden; z-index: 1; }
         .highlighted::after { content: ''; position: absolute; top: -100%; left: -45%; width: 200%; height: 300%; background: linear-gradient(120deg, transparent 0%, rgba(255,255,255,0.6) 50%, transparent 100%); transform: rotate(25deg); animation: mirrorEffect 2.5s linear infinite; pointer-events: none; }
         @keyframes mirrorEffect { 0% { top: -100%; left: -45%; } 100% { top: 100%; left: 55%; } }
-        .modal-header { display: flex; justify-content: space-between; align-items: center; border-bottom: 1px solid #eee; padding-bottom: 10px; margin-bottom: 20px; }
+        .modal-header { display: flex; justify-content: space-between; align-items: center; border-bottom: 1px solid var(--border-color); padding-bottom: 10px; margin-bottom: 20px; }
         #modalNumber { color: var(--color-primary); }
         .close-button { color: #aaa; font-size: 28px; font-weight: bold; cursor: pointer; }
-        .modal-body label { display: block; margin-top: 15px; margin-bottom: 5px; color: #333; }
-        .modal-body input, .modal-body select { width: 100%; padding: 10px; border: 1px solid var(--border-color); border-radius: 4px; box-sizing: border-box; }
+        .modal-body label { display: block; margin-top: 15px; margin-bottom: 5px; color: var(--text-dark); }
+        .modal-body input, .modal-body select { width: 100%; padding: 10px; border: 1px solid var(--border-color); border-radius: 4px; box-sizing: border-box; background-color: var(--background-light); color: var(--text-dark); }
         .modal-footer { text-align: right; margin-top: 20px; }
         .modal-footer button { padding: 10px 20px; border: none; border-radius: 5px; cursor: pointer; font-size: 16px; }
         #saveButton { background-color: var(--color-primary); color: white; }
-        #deleteButton { background-color: #dc3545; color: white; margin-right: 10px; }
-
-        /* Estilos para el manejador de rifas */
-        .raffle-manager {
-            background-color: #fff;
-            padding: 20px;
-            border-radius: 12px;
-            margin-bottom: 25px;
-            box-shadow: 0 4px 25px rgba(0, 0, 0, 0.05);
-            display: flex;
-            flex-wrap: wrap;
-            gap: 20px;
-            align-items: flex-end;
-        }
-        .raffle-selector {
-            flex: 1 1 100%; /* Ocupa todo el ancho por defecto */
-        }
-        .raffle-creator {
-            flex: 1 1 300px;
-            display: flex;
-            flex-direction: row;
-            gap: 10px;
-            display: none; /* MODIFICACIÓN: Oculto por defecto */
-        }
-        body.admin-view .raffle-creator {
-            display: flex; /* MODIFICACIÓN: Se muestra solo para administradores */
-        }
-        .raffle-manager label {
-            margin-bottom: 8px;
-            font-weight: bold;
-            color: var(--text-dark);
-        }
-        .raffle-manager input, .raffle-manager select {
-            width: 100%;
-            height: 48px;
-            padding: 0 15px;
+        #deleteButton { background-color: var(--color-danger); color: white; margin-right: 10px; }
+        .raffle-manager { display: flex; flex-wrap: wrap; gap: 10px; align-items: flex-end; }
+        .raffle-selector-container { flex-grow: 1; }
+        .raffle-creator { flex: 1 1 300px; display: none; }
+        body.admin-view .raffle-creator { display: flex; }
+        .raffle-manager label { margin-bottom: 8px; font-weight: bold; color: var(--text-dark); display: block; }
+        .raffle-manager input { width: 100%; height: 48px; padding: 0 15px; border: 1px solid var(--border-color); border-radius: 8px; font-size: 16px; box-sizing: border-box; background-color: var(--background-card); color: var(--text-dark); }
+        .raffle-manager button { height: 48px; padding: 0 20px; border: none; background-color: var(--color-pago); color: white; font-size: 16px; font-weight: bold; border-radius: 8px; cursor: pointer; transition: background-color 0.2s; }
+        body.admin-view .raffle-creator { flex-direction: column; gap: 10px; }
+        .raffle-creator input { flex-grow: 1; }
+        .raffle-creator button { flex-shrink: 0; }
+        .raffle-creator button:hover { background-color: #6aaa48; }
+        .custom-select-wrapper { position: relative; user-select: none; }
+        .select-selected { background-color: var(--background-card); border: 1px solid var(--border-color); border-radius: 8px; padding: 0 40px 0 15px; font-size: 16px; color: var(--text-dark); width: 100%; height: 48px; cursor: pointer; transition: border-color 0.2s, box-shadow 0.2s; display: flex; align-items: center; box-sizing: border-box; }
+        .select-selected.select-arrow-active { border-color: var(--color-primary); box-shadow: 0 0 0 3px rgba(0, 123, 255, 0.25); }
+        .select-selected::after { content: ""; position: absolute; right: 15px; top: 50%; transform: translateY(-50%); width: 0; height: 0; border-left: 6px solid transparent; border-right: 6px solid transparent; border-top: 6px solid var(--text-light); transition: all 0.3s ease; }
+        .select-selected.select-arrow-active::after { transform: translateY(-50%) rotate(180deg); }
+        .select-items { position: absolute; background-color: var(--background-card); top: 100%; left: 0; right: 0; z-index: 99; border: 1px solid var(--border-color); border-radius: 8px; margin-top: 5px; max-height: 200px; overflow-y: auto; box-shadow: 0 8px 16px rgba(0,0,0,0.1); opacity: 0; visibility: hidden; transform: translateY(-10px); transition: all 0.3s ease; }
+        .select-items div { color: var(--text-dark); padding: 12px 16px; cursor: pointer; transition: background-color 0.2s ease, color 0.2s ease; border-bottom: 1px solid var(--border-color); }
+        .select-items div:last-child { border-bottom: none; }
+        .select-items div:hover { background-color: var(--background-light); }
+        .select-hide { opacity: 0; visibility: hidden; transform: translateY(-10px); }
+        .select-show { opacity: 1; visibility: visible; transform: translateY(0); }
+        .search-input-group { position: relative; flex-grow: 1; }
+        .search-input-group .search-icon { position: absolute; left: 15px; top: 33px; transform: translateY(-50%); color: var(--text-light); width: 18px; height: 18px; pointer-events: none; z-index: 1;}
+        .search-input-group label { position: absolute; pointer-events: none; left: 45px; top: 33px; transform: translateY(-50%); color: var(--text-light); transition: all 0.2s ease-in-out; background-color: var(--background-card); padding: 0 5px; }
+        #searchInput { width: 100%; height: 48px; padding: 12px 12px 12px 45px; border: 1px solid var(--border-color); border-radius: 8px; font-size: 16px; transition: border-color 0.2s, box-shadow 0.2s; box-sizing: border-box; margin-top: 18px; background-color: transparent; color: var(--text-dark); }
+        #searchInput:focus { outline: none; border-color: var(--color-primary); box-shadow: 0 0 0 3px rgba(0, 123, 255, 0.25); }
+        #searchInput:focus + label, #searchInput:not(:placeholder-shown) + label { top: 9px; font-size: 12px; color: var(--color-primary); }
+        @keyframes slideInUp { from { opacity: 0; transform: translateY(20px); } to { opacity: 1; transform: translateY(0); } }
+        .result-card-staggered { animation: slideInUp 0.5s ease-out forwards; opacity: 0; }
+        
+        /* === NUEVOS ESTILOS: BOTÓN DARK MODE === */
+        #darkModeToggle {
+            position: fixed;
+            top: 15px;
+            right: 15px;
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
             border: 1px solid var(--border-color);
-            border-radius: 8px;
-            font-size: 16px;
+            background-color: var(--background-card);
+            color: var(--text-light);
+            font-size: 18px;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            z-index: 1001;
+            transition: all var(--transition-speed) ease;
         }
-        .raffle-manager button {
+        #darkModeToggle:hover {
+            color: var(--text-dark);
+            border-color: var(--color-primary);
+        }
+
+        /* === NUEVOS ESTILOS: BOTÓN BORRAR RIFA === */
+        #deleteRifaButton {
+            display: none; /* Oculto por defecto */
+            align-items: center;
+            justify-content: center;
             height: 48px;
-            padding: 0 20px;
-            border: none;
-            background-color: var(--color-pago);
-            color: white;
-            font-size: 16px;
-            font-weight: bold;
+            width: 48px;
+            padding: 0;
+            background-color: transparent;
+            border: 1px solid var(--color-danger);
+            color: var(--color-danger);
             border-radius: 8px;
             cursor: pointer;
-            transition: background-color 0.2s;
+            transition: all 0.2s ease;
         }
-        .raffle-creator input {
-            flex-grow: 1;
+        body.admin-view #deleteRifaButton.visible {
+            display: flex; /* Visible para admin y si hay rifa activa */
         }
-        .raffle-creator button {
-            flex-shrink: 0;
+        #deleteRifaButton:hover {
+            background-color: var(--color-danger);
+            color: white;
         }
-        .raffle-creator button:hover {
-            background-color: #6aaa48;
-        }
+
     </style>
 </head>
 <body>
 
-<div class="container">
-    <h2 style="margin-bottom: 25px;">Control de Rifas</h2>
+<button id="darkModeToggle" aria-label="Cambiar tema"><i class="fas fa-moon"></i></button>
 
+<div class="container">
     <div class="raffle-manager">
-        <div class="raffle-selector">
+        <div class="raffle-selector-container">
             <label for="rifaSelect">Selecciona una Rifa:</label>
-            <select id="rifaSelect">
-                <option value="">-- Cargando rifas... --</option>
-            </select>
+            <div class="custom-select-wrapper">
+                <div id="rifaSelect" class="select-selected">
+                    -- Cargando rifas... --
+                </div>
+                <div id="rifaSelectItems" class="select-items select-hide"></div>
+            </div>
         </div>
+        
+        <button id="deleteRifaButton" title="Eliminar rifa seleccionada"><i class="fas fa-trash-alt"></i></button>
+
         <div class="raffle-creator">
-            <input type="text" id="newRifaName" placeholder="Nombre de la nueva rifa">
+            <div>
+                <label for="newRifaName">Nombre de la nueva rifa</label>
+                <input type="text" id="newRifaName" placeholder="Ej: Rifa de Verano">
+            </div>
             <button id="createRifaButton">Crear Rifa</button>
         </div>
     </div>
@@ -191,9 +235,14 @@
         <div class="summary-card" id="card-separado"><div class="card-icon"><svg xmlns="http://www.w3.org/2000/svg" fill="currentColor" viewBox="0 0 16 16"><path d="M16 8A8 8 0 1 1 0 8a8 8 0 0 1 16 0zM8 3.5a.5.5 0 0 0-1 0V9a.5.5 0 0 0 .252.434l3.5 2a.5.5 0 0 0 .496-.868L8 8.71V3.5z"/></svg></div><span class="info-count" id="summarySeparado">0</span><p class="info-label">Separados</p></div>
         <div class="summary-card" id="card-disponible"><div class="card-icon"><svg xmlns="http://www.w3.org/2000/svg" fill="currentColor" viewBox="0 0 16 16"> <path d="M0 4.5A1.5 1.5 0 0 1 1.5 3h13A1.5 1.5 0 0 1 16 4.5V6a.5.5 0 0 1-.5.5 1.5 1.5 0 0 0 0 3 .5.5 0 0 1 .5.5v1.5a1.5 1.5 0 0 1-1.5 1.5h-13A1.5 1.5 0 0 1 0 11.5V10a.5.5 0 0 1 .5-.5 1.5 1.5 0 1 0 0-3A.5.5 0 0 1 0 6V4.5Zm4 1a.5.5 0 0 0 .5.5h7a.5.5 0 0 0 0-1h-7a.5.5 0 0 0-.5.5Zm0 5a.5.5 0 0 0 .5.5h7a.5.5 0 0 0 0-1h-7a.5.5 0 0 0-.5.5ZM4 8.5a.5.5 0 0 0 .5.5h7a.5.5 0 0 0 0-1h-7a.5.5 0 0 0-.5.5Z"/></svg></div><span class="info-count" id="summaryDisponible">100</span><p class="info-label">Disponibles</p></div>
     </div>
+    
     <div class="search-section">
         <div class="search-box">
-            <div class="search-input-wrapper"><svg xmlns="http://www.w3.org/2000/svg" fill="currentColor" viewBox="0 0 16 16"><path d="M11.742 10.344a6.5 6.5 0 1 0-1.397 1.398h-.001c.03.04.062.078.098.115l3.85 3.85a1 1 0 0 0 1.415-1.414l-3.85-3.85a1.007 1.007 0 0 0-.115-.1zM12 6.5a5.5 5.5 0 1 1-11 0 5.5 5.5 0 0 1 11 0z"/></svg><input type="tel" id="searchInput" placeholder="Ingresa 10 dígitos..." maxlength="10"></div>
+            <div class="search-input-group">
+                <svg class="search-icon" xmlns="http://www.w3.org/2000/svg" fill="currentColor" viewBox="0 0 16 16"><path d="M11.742 10.344a6.5 6.5 0 1 0-1.397 1.398h-.001c.03.04.062.078.098.115l3.85 3.85a1 1 0 0 0 1.415-1.414l-3.85-3.85a1.007 1.007 0 0 0-.115-.1zM12 6.5a5.5 5.5 0 1 1-11 0 5.5 5.5 0 0 1 11 0z"/></svg>
+                <input type="tel" id="searchInput" placeholder=" " maxlength="10">
+                <label for="searchInput">Buscar por celular (10 dígitos)</label>
+            </div>
             <button id="searchButton" aria-label="Buscar"><i class="fas fa-search"></i></button>
         </div>
         <div id="searchResultsContainer"></div>
@@ -236,9 +285,12 @@ document.addEventListener('DOMContentLoaded', () => {
     const db = firebase.firestore();
 
     // --- REFERENCIAS AL DOM ---
-    const rifaSelect = document.getElementById('rifaSelect');
+    const rifaSelect = document.getElementById('rifaSelect'); 
+    const rifaSelectItems = document.getElementById('rifaSelectItems');
     const newRifaName = document.getElementById('newRifaName');
     const createRifaButton = document.getElementById('createRifaButton');
+    const deleteRifaButton = document.getElementById('deleteRifaButton');
+    const darkModeToggle = document.getElementById('darkModeToggle');
     const gridContainer = document.getElementById('gridContainer');
     const checkWinnerButton = document.getElementById('checkWinnerButton');
     const winnerResults = document.getElementById('winnerResults');
@@ -268,37 +320,83 @@ document.addEventListener('DOMContentLoaded', () => {
     const totalNumbers = 100;
 
     // ===================================================================
-    // NUEVO: MANEJO DE VISTA DE ADMINISTRADOR
+    // LÓGICA DE TEMAS (DARK MODE)
+    // ===================================================================
+    const applyTheme = (theme) => {
+        const icon = darkModeToggle.querySelector('i');
+        if (theme === 'dark') {
+            document.body.classList.add('dark-mode');
+            icon.classList.remove('fa-moon');
+            icon.classList.add('fa-sun');
+        } else {
+            document.body.classList.remove('dark-mode');
+            icon.classList.remove('fa-sun');
+            icon.classList.add('fa-moon');
+        }
+    };
+
+    darkModeToggle.addEventListener('click', () => {
+        const currentTheme = document.body.classList.contains('dark-mode') ? 'light' : 'dark';
+        localStorage.setItem('theme', currentTheme);
+        applyTheme(currentTheme);
+    });
+
+    // ===================================================================
+    // MANEJO DE VISTA DE ADMINISTRADOR
     // ===================================================================
     firebase.auth().onAuthStateChanged(user => {
         if (user) {
-            // El usuario es un administrador y ha iniciado sesión
-            console.log("Admin detectado, mostrando controles.");
             document.body.classList.add('admin-view');
         } else {
-            // El usuario no ha iniciado sesión (es un cliente)
-            console.log("Visitante detectado, ocultando controles.");
             document.body.classList.remove('admin-view');
         }
     });
 
     // ===================================================================
-    // MANEJO DE RIFAS
+    // GESTIÓN DE RIFAS (CARGAR, CREAR, ELIMINAR)
     // ===================================================================
     const cargarRifas = async () => {
         const rifasSnapshot = await db.collection("rifas").orderBy("fechaCreacion", "desc").get();
-        rifaSelect.innerHTML = '<option value="">-- Selecciona una rifa --</option>';
+        rifaSelectItems.innerHTML = ''; 
+        
         if (rifasSnapshot.empty) {
-            rifaSelect.innerHTML = '<option value="">-- No hay rifas --</option>';
+            rifaSelect.textContent = '-- No hay rifas --';
+            rifaSelect.dataset.value = "";
             return;
         }
+        
+        rifaSelect.textContent = '-- Selecciona una rifa --';
+        rifaSelect.dataset.value = "";
+        
         rifasSnapshot.forEach(doc => {
-            const option = document.createElement('option');
-            option.value = doc.id;
+            const option = document.createElement('div');
             option.textContent = doc.data().nombre;
-            rifaSelect.appendChild(option);
+            option.dataset.value = doc.id;
+            
+            option.addEventListener('click', function(e) {
+                e.stopPropagation(); 
+                if (rifaSelect.dataset.value === this.dataset.value) return; // No hacer nada si se selecciona la misma
+                rifaSelect.textContent = this.textContent;
+                rifaSelect.dataset.value = this.dataset.value;
+                rifaSelectItems.classList.remove('select-show');
+                rifaSelect.classList.remove('select-arrow-active');
+                cambiarRifaActiva();
+            });
+            rifaSelectItems.appendChild(option);
         });
     };
+    
+    rifaSelect.addEventListener('click', () => {
+        rifaSelectItems.classList.toggle('select-show');
+        rifaSelect.classList.toggle('select-arrow-active');
+    });
+
+    window.addEventListener('click', (e) => {
+        if (!rifaSelect.parentElement.contains(e.target)) {
+            rifaSelectItems.classList.remove('select-show');
+            rifaSelect.classList.remove('select-arrow-active');
+        }
+    });
 
     const crearNuevaRifa = async () => {
         const nombre = newRifaName.value.trim();
@@ -307,29 +405,80 @@ document.addEventListener('DOMContentLoaded', () => {
             return;
         }
         try {
-            await db.collection("rifas").add({
+            const newRaffle = await db.collection("rifas").add({
                 nombre: nombre,
                 fechaCreacion: firebase.firestore.FieldValue.serverTimestamp()
             });
             newRifaName.value = '';
             alert(`¡Rifa "${nombre}" creada con éxito!`);
             await cargarRifas();
+            
+            rifaSelect.textContent = nombre;
+            rifaSelect.dataset.value = newRaffle.id;
+            cambiarRifaActiva();
+
         } catch (error) {
             console.error("Error al crear la rifa: ", error);
             alert("Ocurrió un error al crear la rifa.");
         }
     };
 
-    const cambiarRifaActiva = () => {
+    const deleteRifaActual = async () => {
+        if (!rifaActivaId) {
+            alert("No hay una rifa seleccionada para eliminar.");
+            return;
+        }
+
+        const rifaNombre = rifaSelect.textContent;
+        const confirmacion = confirm(`¿Estás seguro de que quieres borrar la rifa "${rifaNombre}"?\n\n¡ESTA ACCIÓN ES IRREVERSIBLE Y BORRARÁ TODOS SUS DATOS!`);
+
+        if (!confirmacion) return;
+
+        try {
+            const numerosRef = db.collection("rifas").doc(rifaActivaId).collection("numeros");
+            const numerosSnapshot = await numerosRef.get();
+            
+            // Borrar subcolección en un batch
+            const batch = db.batch();
+            numerosSnapshot.docs.forEach(doc => {
+                batch.delete(doc.ref);
+            });
+            await batch.commit();
+
+            // Borrar documento principal
+            await db.collection("rifas").doc(rifaActivaId).delete();
+
+            alert(`Rifa "${rifaNombre}" eliminada con éxito.`);
+            
+            // Resetear vista
+            cambiarRifaActiva(true); // Pasar true para forzar reseteo completo
+            await cargarRifas();
+
+        } catch (error) {
+            console.error("Error al eliminar la rifa:", error);
+            alert("Ocurrió un error al eliminar la rifa.");
+        }
+    };
+
+    const cambiarRifaActiva = (forzarReseteo = false) => {
         if (unsubRifaListener) {
             unsubRifaListener();
         }
         
-        rifaActivaId = rifaSelect.value;
+        rifaActivaId = forzarReseteo ? null : rifaSelect.dataset.value;
+        
+        // Controlar visibilidad del botón de borrado
+        if (rifaActivaId) {
+            deleteRifaButton.classList.add('visible');
+        } else {
+            deleteRifaButton.classList.remove('visible');
+            rifaSelect.textContent = '-- Selecciona una rifa --';
+        }
+
         localRaffleData = {};
         updateSummary();
         initializeGrid();
-        searchResultsContainer.innerHTML = '';
+        searchResultsContainer.innerHTML = '<div class="no-results-message">Ingresa un teléfono y presiona la lupa.</div>';
 
         if (!rifaActivaId) {
             return;
@@ -352,7 +501,7 @@ document.addEventListener('DOMContentLoaded', () => {
     };
 
     // ===================================================================
-    // FUNCIONES PRINCIPALES
+    // FUNCIONES PRINCIPALES (MODAL, GRID, DATOS)
     // ===================================================================
     const initializeGrid = () => {
         gridContainer.innerHTML = '';
@@ -362,6 +511,7 @@ document.addEventListener('DOMContentLoaded', () => {
             cell.classList.add('grid-item', 'status-disponible');
             cell.textContent = numberStr;
             cell.dataset.number = numberStr;
+            cell.id = `grid-item-${numberStr}`;
             cell.addEventListener('click', () => openModal(numberStr));
             gridContainer.appendChild(cell);
         }
@@ -443,27 +593,35 @@ document.addEventListener('DOMContentLoaded', () => {
         const query = searchInput.value.trim();
         searchResultsContainer.innerHTML = '';
         document.querySelectorAll('.grid-item.highlighted').forEach(item => item.classList.remove('highlighted'));
+        
         const matched = Object.entries(localRaffleData)
             .filter(([_, data]) => data.phone && data.phone.includes(query))
             .map(([number, data]) => ({ number, ...data }));
+
         if (matched.length > 0) {
-            matched.forEach(m => {
-                const card = `<div class="result-card"><div class="result-number">${m.number}</div><div class="result-info"><p class="name">${m.name || 'Sin nombre'}</p><p class="phone">${m.phone}</p></div><span class="status-badge status-${m.status}">${m.status}</span></div>`;
+            matched.forEach((m, index) => {
+                const card = `<div class="result-card result-card-staggered" style="animation-delay: ${index * 100}ms;"><div class="result-number">${m.number}</div><div class="result-info"><p class="name">${m.name || 'Sin nombre'}</p><p class="phone">${m.phone}</p></div><span class="status-badge status-${m.status}">${m.status}</span></div>`;
                 searchResultsContainer.insertAdjacentHTML('beforeend', card);
                 const cell = document.querySelector(`.grid-item[data-number='${m.number}']`);
                 if (cell) cell.classList.add('highlighted');
             });
+            
+            const firstResultCell = document.getElementById(`grid-item-${matched[0].number}`);
+            if(firstResultCell) {
+                firstResultCell.scrollIntoView({ behavior: 'smooth', block: 'center' });
+            }
+            
         } else {
             searchResultsContainer.innerHTML = `<div class="no-results-message"><svg xmlns="http://www.w3.org/2000/svg" fill="currentColor" viewBox="0 0 16 16"><path d="M11.742 10.344a6.5 6.5 0 1 0-1.397 1.398h-.001c.03.04.062.078.098.115l3.85 3.85a1 1 0 0 0 1.415-1.414l-3.85-3.85a1.007 1.007 0 0 0-.115-.1zM12 6.5a5.5 5.5 0 1 1-11 0 5.5 5.5 0 0 1 11 0z"/></svg><div>No se encontraron coincidencias.</div></div>`;
         }
     };
-
+    
     const getWinnerInfo = (raffleNumber) => {
         const data = localRaffleData[raffleNumber];
         if (data && data.status === 'pago') {
             return { isWinner: true, html: `<div class="winner-name">${data.name || 'N/A'}</div><div class="winner-phone">Cel: ${data.phone || 'N/A'}</div>` };
         }
-        const reason = data ? `no fue pagado` : 'está disponible';
+        const reason = data ? `no fue pagado (estado: ${data.status})` : 'está disponible';
         return { isWinner: false, html: `<div class="no-winner-text">Sin ganador (El número ${raffleNumber} ${reason}).</div>` };
     };
 
@@ -474,7 +632,11 @@ document.addEventListener('DOMContentLoaded', () => {
             winnerResults.innerHTML = '<div class="no-results-message">Ingresa un número válido de 4 cifras.</div>';
             return;
         }
-        const prizes = [{ title: '🥇 Premio Mayor', number: winningNumber.substring(2, 4), style: 'gold' }, { title: '🥈 Segundo Premio', number: winningNumber.substring(0, 2), style: 'silver' }, { title: '🥉 Tercer Premio', number: winningNumber.substring(1, 3), style: 'bronze' }];
+        const prizes = [
+            { title: '🥇 Premio Mayor', number: winningNumber.substring(2, 4), style: 'gold' }, 
+            { title: '🥈 Segundo Premio', number: winningNumber.substring(0, 2), style: 'silver' }, 
+            { title: '🥉 Tercer Premio', number: winningNumber.substring(1, 3), style: 'bronze' }
+        ];
         prizes.forEach(prize => {
             const winnerDetails = getWinnerInfo(prize.number);
             const cardStyle = winnerDetails.isWinner ? prize.style : 'no-winner';
@@ -485,7 +647,7 @@ document.addEventListener('DOMContentLoaded', () => {
     
     // --- INICIALIZACIÓN Y EVENT LISTENERS ---
     createRifaButton.addEventListener('click', crearNuevaRifa);
-    rifaSelect.addEventListener('change', cambiarRifaActiva);
+    deleteRifaButton.addEventListener('click', deleteRifaActual);
     closeButton.addEventListener('click', closeModal);
     saveButton.addEventListener('click', saveData);
     deleteButton.addEventListener('click', deleteData);
@@ -524,6 +686,8 @@ document.addEventListener('DOMContentLoaded', () => {
     });
 
     // Carga inicial
+    const savedTheme = localStorage.getItem('theme') || 'light';
+    applyTheme(savedTheme);
     initializeGrid();
     cargarRifas();
     checkWinnerButton.disabled = true;
