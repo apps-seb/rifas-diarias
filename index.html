@@ -7,9 +7,9 @@
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" />
     <style>
         :root {
-            --color-disponible: #751FFF; /* Color morado modificado */
+            --color-disponible: #751FFF;
             --color-separado: #ffc107;
-            --color-pago: #84E059; /* Color verde modificado */
+            --color-pago: #84E059;
             --color-primary: #007bff;
             --border-color: #ddd;
             --shadow-color: rgba(0, 0, 0, 0.05);
@@ -106,11 +106,86 @@
         .modal-footer button { padding: 10px 20px; border: none; border-radius: 5px; cursor: pointer; font-size: 16px; }
         #saveButton { background-color: var(--color-primary); color: white; }
         #deleteButton { background-color: #dc3545; color: white; margin-right: 10px; }
+
+        /* Estilos para el manejador de rifas */
+        .raffle-manager {
+            background-color: #fff;
+            padding: 20px;
+            border-radius: 12px;
+            margin-bottom: 25px;
+            box-shadow: 0 4px 25px rgba(0, 0, 0, 0.05);
+            display: flex;
+            flex-wrap: wrap;
+            gap: 20px;
+            align-items: flex-end;
+        }
+        .raffle-selector {
+            flex: 1 1 100%; /* Ocupa todo el ancho por defecto */
+        }
+        .raffle-creator {
+            flex: 1 1 300px;
+            display: flex;
+            flex-direction: row;
+            gap: 10px;
+            display: none; /* MODIFICACIÓN: Oculto por defecto */
+        }
+        body.admin-view .raffle-creator {
+            display: flex; /* MODIFICACIÓN: Se muestra solo para administradores */
+        }
+        .raffle-manager label {
+            margin-bottom: 8px;
+            font-weight: bold;
+            color: var(--text-dark);
+        }
+        .raffle-manager input, .raffle-manager select {
+            width: 100%;
+            height: 48px;
+            padding: 0 15px;
+            border: 1px solid var(--border-color);
+            border-radius: 8px;
+            font-size: 16px;
+        }
+        .raffle-manager button {
+            height: 48px;
+            padding: 0 20px;
+            border: none;
+            background-color: var(--color-pago);
+            color: white;
+            font-size: 16px;
+            font-weight: bold;
+            border-radius: 8px;
+            cursor: pointer;
+            transition: background-color 0.2s;
+        }
+        .raffle-creator input {
+            flex-grow: 1;
+        }
+        .raffle-creator button {
+            flex-shrink: 0;
+        }
+        .raffle-creator button:hover {
+            background-color: #6aaa48;
+        }
     </style>
 </head>
 <body>
 
 <div class="container">
+    <h2 style="margin-bottom: 25px;">Control de Rifas</h2>
+
+    <div class="raffle-manager">
+        <div class="raffle-selector">
+            <label for="rifaSelect">Selecciona una Rifa:</label>
+            <select id="rifaSelect">
+                <option value="">-- Cargando rifas... --</option>
+            </select>
+        </div>
+        <div class="raffle-creator">
+            <input type="text" id="newRifaName" placeholder="Nombre de la nueva rifa">
+            <button id="createRifaButton">Crear Rifa</button>
+        </div>
+    </div>
+
     <div class="summary-panel">
         <div class="summary-card" id="card-pago"><div class="card-icon"><svg xmlns="http://www.w3.org/2000/svg" fill="currentColor" viewBox="0 0 16 16"><path d="M16 8A8 8 0 1 1 0 8a8 8 0 0 1 16 0zm-3.97-3.03a.75.75 0 0 0-1.08.022L7.477 9.417 5.384 7.323a.75.75 0 0 0-1.06 1.06L6.97 11.03a.75.75 0 0 0 1.079-.02l3.992-4.99a.75.75 0 0 0-.01-1.05z"/></svg></div><span class="info-count" id="summaryPago">0</span><p class="info-label">Pagados</p></div>
         <div class="summary-card" id="card-separado"><div class="card-icon"><svg xmlns="http://www.w3.org/2000/svg" fill="currentColor" viewBox="0 0 16 16"><path d="M16 8A8 8 0 1 1 0 8a8 8 0 0 1 16 0zM8 3.5a.5.5 0 0 0-1 0V9a.5.5 0 0 0 .252.434l3.5 2a.5.5 0 0 0 .496-.868L8 8.71V3.5z"/></svg></div><span class="info-count" id="summarySeparado">0</span><p class="info-label">Separados</p></div>
@@ -148,9 +223,7 @@
 
 <script>
 document.addEventListener('DOMContentLoaded', () => {
-    // ===================================================================
-    // CONFIGURACIÓN DE FIREBASE
-    // ===================================================================
+    // --- CONFIGURACIÓN DE FIREBASE ---
     const firebaseConfig = {
         apiKey: "AIzaSyDMBARLzKnhcmSI8euhiA2Wgsf7pJQM1_0",
         authDomain: "control-rifas.firebaseapp.com",
@@ -162,15 +235,16 @@ document.addEventListener('DOMContentLoaded', () => {
     const app = firebase.initializeApp(firebaseConfig);
     const db = firebase.firestore();
 
-    // ===================================================================
-    // REFERENCIAS AL DOM
-    // ===================================================================
+    // --- REFERENCIAS AL DOM ---
+    const rifaSelect = document.getElementById('rifaSelect');
+    const newRifaName = document.getElementById('newRifaName');
+    const createRifaButton = document.getElementById('createRifaButton');
+    const gridContainer = document.getElementById('gridContainer');
     const checkWinnerButton = document.getElementById('checkWinnerButton');
     const winnerResults = document.getElementById('winnerResults');
     const winnerInputDisplay = document.getElementById('winnerInputDisplay');
     const digitCircles = winnerInputDisplay.querySelectorAll('.digit-circle');
     const realWinningInput = document.getElementById('realWinningInput');
-    const gridContainer = document.getElementById('gridContainer');
     const searchInput = document.getElementById('searchInput');
     const searchButton = document.getElementById('searchButton');
     const searchResultsContainer = document.getElementById('searchResultsContainer');
@@ -186,87 +260,102 @@ document.addEventListener('DOMContentLoaded', () => {
     const summarySeparado = document.getElementById('summarySeparado');
     const summaryDisponible = document.getElementById('summaryDisponible');
 
+    // --- ESTADO DE LA APLICACIÓN ---
+    let rifaActivaId = null;
+    let unsubRifaListener = null;
     let currentNumber = null;
     let localRaffleData = {};
     const totalNumbers = 100;
 
     // ===================================================================
-    // LÓGICA DE LA APLICACIÓN
+    // NUEVO: MANEJO DE VISTA DE ADMINISTRADOR
     // ===================================================================
-
-    winnerInputDisplay.addEventListener('click', () => { realWinningInput.focus(); });
-    realWinningInput.addEventListener('input', () => {
-        const value = realWinningInput.value;
-        digitCircles.forEach((circle, index) => {
-            if (value[index]) {
-                if (circle.textContent !== value[index]) {
-                    circle.textContent = value[index];
-                    circle.classList.add('filled');
-                    circle.style.animation = 'none';
-                    void circle.offsetWidth; 
-                    circle.style.animation = '';
-                }
-            } else {
-                circle.textContent = '';
-                circle.classList.remove('filled');
-            }
-        });
-        checkWinnerButton.disabled = value.length !== 4; // Agregado para habilitar/deshabilitar
-    });
-    
-    const getWinnerInfo = (raffleNumber) => {
-        const data = localRaffleData[raffleNumber];
-        if (data && data.status === 'pago') {
-            return {
-                isWinner: true,
-                html: `
-                    <div class="winner-name">${data.name || 'N/A'}</div>
-                    <div class="winner-phone">Cel: ${data.phone || 'N/A'}</div>
-                `
-            };
+    firebase.auth().onAuthStateChanged(user => {
+        if (user) {
+            // El usuario es un administrador y ha iniciado sesión
+            console.log("Admin detectado, mostrando controles.");
+            document.body.classList.add('admin-view');
+        } else {
+            // El usuario no ha iniciado sesión (es un cliente)
+            console.log("Visitante detectado, ocultando controles.");
+            document.body.classList.remove('admin-view');
         }
-        const reason = data ? `no fue pagado` : 'está disponible';
-        return {
-            isWinner: false,
-            html: `<div class="no-winner-text">Sin ganador (El número ${raffleNumber} ${reason}).</div>`
-        };
-    };
+    });
 
-    const checkWinners = () => {
-        const winningNumber = realWinningInput.value.trim();
-        winnerResults.innerHTML = ''; 
-
-        if (!/^\d{4}$/.test(winningNumber)) {
-            winnerResults.innerHTML = '<div class="no-results-message">Ingresa un número válido de 4 cifras.</div>';
+    // ===================================================================
+    // MANEJO DE RIFAS
+    // ===================================================================
+    const cargarRifas = async () => {
+        const rifasSnapshot = await db.collection("rifas").orderBy("fechaCreacion", "desc").get();
+        rifaSelect.innerHTML = '<option value="">-- Selecciona una rifa --</option>';
+        if (rifasSnapshot.empty) {
+            rifaSelect.innerHTML = '<option value="">-- No hay rifas --</option>';
             return;
         }
-    
-        const prizes = [
-            { title: '🥇 Premio Mayor', number: winningNumber.substring(2, 4), style: 'gold' },
-            { title: '🥈 Segundo Premio', number: winningNumber.substring(0, 2), style: 'silver' },
-            { title: '🥉 Tercer Premio', number: winningNumber.substring(1, 3), style: 'bronze' }
-        ];
-
-        prizes.forEach(prize => {
-            const winnerDetails = getWinnerInfo(prize.number);
-            const cardStyle = winnerDetails.isWinner ? prize.style : 'no-winner';
-
-            const cardHTML = `
-                <div class="winner-card ${cardStyle}">
-                    <div class="prize-header">
-                        <h3>${prize.title}</h3>
-                        <span class="prize-number-tag">Nº ${prize.number}</span>
-                    </div>
-                    <div class="prize-info">
-                        ${winnerDetails.html}
-                    </div>
-                </div>
-            `;
-            winnerResults.insertAdjacentHTML('beforeend', cardHTML);
+        rifasSnapshot.forEach(doc => {
+            const option = document.createElement('option');
+            option.value = doc.id;
+            option.textContent = doc.data().nombre;
+            rifaSelect.appendChild(option);
         });
     };
 
+    const crearNuevaRifa = async () => {
+        const nombre = newRifaName.value.trim();
+        if (!nombre) {
+            alert("Por favor, dale un nombre a la nueva rifa.");
+            return;
+        }
+        try {
+            await db.collection("rifas").add({
+                nombre: nombre,
+                fechaCreacion: firebase.firestore.FieldValue.serverTimestamp()
+            });
+            newRifaName.value = '';
+            alert(`¡Rifa "${nombre}" creada con éxito!`);
+            await cargarRifas();
+        } catch (error) {
+            console.error("Error al crear la rifa: ", error);
+            alert("Ocurrió un error al crear la rifa.");
+        }
+    };
+
+    const cambiarRifaActiva = () => {
+        if (unsubRifaListener) {
+            unsubRifaListener();
+        }
+        
+        rifaActivaId = rifaSelect.value;
+        localRaffleData = {};
+        updateSummary();
+        initializeGrid();
+        searchResultsContainer.innerHTML = '';
+
+        if (!rifaActivaId) {
+            return;
+        }
+        
+        const rifaNumerosRef = db.collection("rifas").doc(rifaActivaId).collection("numeros");
+        unsubRifaListener = rifaNumerosRef.onSnapshot(snapshot => {
+            localRaffleData = {};
+            snapshot.forEach(doc => {
+                localRaffleData[doc.id] = doc.data();
+            });
+            
+            for (let i = 0; i < totalNumbers; i++) {
+                const numberStr = i.toString().padStart(2, '0');
+                const status = localRaffleData[numberStr] ? localRaffleData[numberStr].status : 'disponible';
+                updateCellAppearance(numberStr, status);
+            }
+            updateSummary();
+        });
+    };
+
+    // ===================================================================
+    // FUNCIONES PRINCIPALES
+    // ===================================================================
     const initializeGrid = () => {
+        gridContainer.innerHTML = '';
         for (let i = 0; i < totalNumbers; i++) {
             const numberStr = i.toString().padStart(2, '0');
             const cell = document.createElement('div');
@@ -278,26 +367,30 @@ document.addEventListener('DOMContentLoaded', () => {
         }
     };
 
-    // LÓGICA DE ADMIN ORIGINAL RESTAURADA Y SIN CAMBIOS
     const openModal = (number) => {
         const currentUser = firebase.auth().currentUser;
-        if (currentUser) {
-            currentNumber = number;
-            modalNumber.textContent = number;
-            const data = localRaffleData[number];
-            if (data) {
-                inputStatus.value = data.status;
-                inputName.value = data.name || '';
-                inputPhone.value = data.phone || '';
-            } else {
-                inputStatus.value = 'disponible';
-                inputName.value = '';
-                inputPhone.value = '';
-            }
-            modal.style.display = 'block';
-        } else {
+        if (!currentUser) {
             console.log("Acción solo para administradores.");
+            return;
         }
+        if (!rifaActivaId) {
+            alert("Por favor, selecciona una rifa primero.");
+            return;
+        }
+        
+        currentNumber = number;
+        modalNumber.textContent = number;
+        const data = localRaffleData[number];
+        if (data) {
+            inputStatus.value = data.status;
+            inputName.value = data.name || '';
+            inputPhone.value = data.phone || '';
+        } else {
+            inputStatus.value = 'disponible';
+            inputName.value = '';
+            inputPhone.value = '';
+        }
+        modal.style.display = 'block';
     };
 
     const closeModal = () => {
@@ -306,21 +399,22 @@ document.addEventListener('DOMContentLoaded', () => {
     };
 
     const saveData = () => {
-        if (!currentNumber) return;
+        if (!currentNumber || !rifaActivaId) return;
         const status = inputStatus.value;
         const name = inputName.value.trim();
         const phone = inputPhone.value.trim();
+        const docRef = db.collection("rifas").doc(rifaActivaId).collection("numeros").doc(currentNumber);
         if (status === 'disponible') {
-            db.collection("numeros").doc(currentNumber).delete().then(closeModal);
+            docRef.delete().then(closeModal);
         } else {
             const dataToSave = { status, name, phone };
-            db.collection("numeros").doc(currentNumber).set(dataToSave).then(closeModal);
+            docRef.set(dataToSave).then(closeModal);
         }
     };
 
     const deleteData = () => {
-        if (!currentNumber) return;
-        db.collection("numeros").doc(currentNumber).delete().then(closeModal);
+        if (!currentNumber || !rifaActivaId) return;
+        db.collection("rifas").doc(rifaActivaId).collection("numeros").doc(currentNumber).delete().then(closeModal);
     };
 
     const updateCellAppearance = (number, status) => {
@@ -338,69 +432,69 @@ document.addEventListener('DOMContentLoaded', () => {
             if (data.status === 'pago') pagoCount++;
             else if (data.status === 'separado') separadoCount++;
         });
-    
         const vendidoCount = pagoCount + separadoCount;
         const disponibleCount = totalNumbers - vendidoCount;
-
         summaryPago.textContent = pagoCount;
         summarySeparado.textContent = separadoCount;
         summaryDisponible.textContent = disponibleCount;
     };
 
-    // LÓGICA DE BÚSQUEDA MODIFICADA
     const performSearch = () => {
         const query = searchInput.value.trim();
         searchResultsContainer.innerHTML = '';
         document.querySelectorAll('.grid-item.highlighted').forEach(item => item.classList.remove('highlighted'));
-
-        const matched = [];
-        for (const [number, data] of Object.entries(localRaffleData)) {
-            if (data.phone && data.phone.includes(query)) {
-                matched.push({ number, ...data });
-                const cell = document.querySelector(`.grid-item[data-number='${number}']`);
-                if (cell) cell.classList.add('highlighted');
-            }
-        }
-
+        const matched = Object.entries(localRaffleData)
+            .filter(([_, data]) => data.phone && data.phone.includes(query))
+            .map(([number, data]) => ({ number, ...data }));
         if (matched.length > 0) {
             matched.forEach(m => {
-                const card = `
-                    <div class="result-card">
-                        <div class="result-number">${m.number}</div>
-                        <div class="result-info">
-                            <p class="name">${m.name || 'Sin nombre'}</p>
-                            <p class="phone">${m.phone}</p>
-                        </div>
-                        <span class="status-badge status-${m.status}">${m.status}</span>
-                    </div>
-                `;
+                const card = `<div class="result-card"><div class="result-number">${m.number}</div><div class="result-info"><p class="name">${m.name || 'Sin nombre'}</p><p class="phone">${m.phone}</p></div><span class="status-badge status-${m.status}">${m.status}</span></div>`;
                 searchResultsContainer.insertAdjacentHTML('beforeend', card);
+                const cell = document.querySelector(`.grid-item[data-number='${m.number}']`);
+                if (cell) cell.classList.add('highlighted');
             });
         } else {
-            searchResultsContainer.innerHTML = `
-                <div class="no-results-message">
-                    <svg xmlns="http://www.w3.org/2000/svg" fill="currentColor" viewBox="0 0 16 16">
-                        <path d="M11.742 10.344a6.5 6.5 0 1 0-1.397 1.398h-.001c.03.04.062.078.098.115l3.85 3.85a1 1 0 0 0 1.415-1.414l-3.85-3.85a1.007 1.007 0 0 0-.115-.1zM12 6.5a5.5 5.5 0 1 1-11 0 5.5 5.5 0 0 1 11 0z"/>
-                    </svg>
-                    <div>No se encontraron coincidencias.</div>
-                </div>
-            `;
+            searchResultsContainer.innerHTML = `<div class="no-results-message"><svg xmlns="http://www.w3.org/2000/svg" fill="currentColor" viewBox="0 0 16 16"><path d="M11.742 10.344a6.5 6.5 0 1 0-1.397 1.398h-.001c.03.04.062.078.098.115l3.85 3.85a1 1 0 0 0 1.415-1.414l-3.85-3.85a1.007 1.007 0 0 0-.115-.1zM12 6.5a5.5 5.5 0 1 1-11 0 5.5 5.5 0 0 1 11 0z"/></svg><div>No se encontraron coincidencias.</div></div>`;
         }
     };
 
-    // --- INICIALIZACIÓN Y EVENTOS ---
-    initializeGrid();
-    searchResultsContainer.innerHTML = '<div class="no-results-message">Ingresa 10 dígitos y presiona la lupa.</div>';
-    checkWinnerButton.disabled = true;
+    const getWinnerInfo = (raffleNumber) => {
+        const data = localRaffleData[raffleNumber];
+        if (data && data.status === 'pago') {
+            return { isWinner: true, html: `<div class="winner-name">${data.name || 'N/A'}</div><div class="winner-phone">Cel: ${data.phone || 'N/A'}</div>` };
+        }
+        const reason = data ? `no fue pagado` : 'está disponible';
+        return { isWinner: false, html: `<div class="no-winner-text">Sin ganador (El número ${raffleNumber} ${reason}).</div>` };
+    };
 
+    const checkWinners = () => {
+        const winningNumber = realWinningInput.value.trim();
+        winnerResults.innerHTML = '';
+        if (!/^\d{4}$/.test(winningNumber)) {
+            winnerResults.innerHTML = '<div class="no-results-message">Ingresa un número válido de 4 cifras.</div>';
+            return;
+        }
+        const prizes = [{ title: '🥇 Premio Mayor', number: winningNumber.substring(2, 4), style: 'gold' }, { title: '🥈 Segundo Premio', number: winningNumber.substring(0, 2), style: 'silver' }, { title: '🥉 Tercer Premio', number: winningNumber.substring(1, 3), style: 'bronze' }];
+        prizes.forEach(prize => {
+            const winnerDetails = getWinnerInfo(prize.number);
+            const cardStyle = winnerDetails.isWinner ? prize.style : 'no-winner';
+            const cardHTML = `<div class="winner-card ${cardStyle}"><div class="prize-header"><h3>${prize.title}</h3><span class="prize-number-tag">Nº ${prize.number}</span></div><div class="prize-info">${winnerDetails.html}</div></div>`;
+            winnerResults.insertAdjacentHTML('beforeend', cardHTML);
+        });
+    };
+    
+    // --- INICIALIZACIÓN Y EVENT LISTENERS ---
+    createRifaButton.addEventListener('click', crearNuevaRifa);
+    rifaSelect.addEventListener('change', cambiarRifaActiva);
     closeButton.addEventListener('click', closeModal);
     saveButton.addEventListener('click', saveData);
     deleteButton.addEventListener('click', deleteData);
-    checkWinnerButton.addEventListener('click', checkWinners);
     window.addEventListener('click', (event) => { if (event.target === modal) closeModal(); });
-    
-    // Listener de búsqueda modificado
     searchButton.addEventListener('click', () => {
+        if (!rifaActivaId) {
+            alert("Selecciona una rifa para poder buscar.");
+            return;
+        }
         const query = searchInput.value.trim();
         if (query.length === 10) {
             performSearch();
@@ -409,18 +503,30 @@ document.addEventListener('DOMContentLoaded', () => {
             document.querySelectorAll('.grid-item.highlighted').forEach(item => item.classList.remove('highlighted'));
         }
     });
-
-    db.collection("numeros").onSnapshot(snapshot => {
-        localRaffleData = {};
-        snapshot.forEach(doc => { localRaffleData[doc.id] = doc.data(); });
-        for (let i = 0; i < totalNumbers; i++) {
-            const numberStr = i.toString().padStart(2, '0');
-            const status = localRaffleData[numberStr] ? localRaffleData[numberStr].status : 'disponible';
-            updateCellAppearance(numberStr, status);
-        }
-        updateSummary();
-        // Se eliminó la actualización de búsqueda desde aquí para no causar conflictos.
+    checkWinnerButton.addEventListener('click', checkWinners);
+    winnerInputDisplay.addEventListener('click', () => { realWinningInput.focus(); });
+    realWinningInput.addEventListener('input', () => {
+        const value = realWinningInput.value;
+        digitCircles.forEach((circle, index) => {
+            const digit = value[index];
+            if (digit && circle.textContent !== digit) {
+                circle.textContent = digit;
+                circle.classList.add('filled');
+                circle.style.animation = 'none';
+                void circle.offsetWidth;
+                circle.style.animation = '';
+            } else if (!digit) {
+                circle.textContent = '';
+                circle.classList.remove('filled');
+            }
+        });
+        checkWinnerButton.disabled = value.length !== 4;
     });
+
+    // Carga inicial
+    initializeGrid();
+    cargarRifas();
+    checkWinnerButton.disabled = true;
 });
 </script>
 
