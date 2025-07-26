@@ -38,16 +38,9 @@
             --winner-card-silver-bg: linear-gradient(135deg, #a8a8a8, #8c8c8c);
             --winner-card-silver-color: #f2f2f7;
         }
-
-        body {
-            font-family: system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, 'Open Sans', 'Helvetica Neue', sans-serif;
-            background-color: var(--body-bg);
-            padding: 10px;
-            color: var(--body-color);
-            transition: background-color var(--transition-speed) ease, color var(--transition-speed) ease;
-        }
+        body { font-family: system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, 'Open Sans', 'Helvetica Neue', sans-serif; background-color: var(--body-bg); padding: 10px; color: var(--body-color); transition: background-color var(--transition-speed) ease, color var(--transition-speed) ease; }
         .container { max-width: 800px; margin: auto; padding-top: 20px; }
-        h2 { text-align: center; color: var(--text-dark); }
+        h2, h3, h4 { text-align: center; color: var(--text-dark); }
         .summary-panel { display: flex; flex-wrap: nowrap; gap: 10px; margin-bottom: 25px; }
         .summary-card { display: flex; flex-direction: column; align-items: center; justify-content: center; padding: 12px 5px; background-color: var(--background-card); border-radius: 12px; box-shadow: 0 5px 25px var(--shadow-color); transition: transform 0.2s ease, box-shadow 0.2s ease, background-color var(--transition-speed) ease; border-top: 4px solid; flex: 1 1 0; min-width: 0; text-align: center; }
         .summary-card:hover { transform: translateY(-5px); box-shadow: 0 10px 30px rgba(0,0,0,0.08); }
@@ -59,11 +52,11 @@
         #card-pago .card-icon { background-color: var(--color-pago); }
         #card-separado .card-icon { background-color: var(--color-separado); }
         #card-disponible .card-icon { background-color: var(--color-disponible); }
-        .info-count { font-size: clamp(1.5em, 4vw, 2.2em); font-weight: 700; color: var(--text-dark); }
-        .info-label { margin-top: 4px; font-size: clamp(0.65em, 2.5vw, 0.8em); color: var(--text-light); text-transform: uppercase; letter-spacing: 0.5px; line-height: 1.1; }
+        .info-count { font-size: clamp(1.8em, 4vw, 2.2em); font-weight: 700; color: var(--text-dark); }
+        .info-label { font-size: clamp(0.7em, 2.5vw, 0.8em); margin-top: 4px; color: var(--text-light); text-transform: uppercase; letter-spacing: 0.5px; line-height: 1.1; }
         .search-section, .raffle-manager, .winner-section { background-color: var(--background-card); padding: 20px; border-radius: 12px; box-shadow: 0 4px 25px var(--shadow-color); margin-bottom: 25px; transition: background-color var(--transition-speed) ease; }
         .search-box { display: flex; align-items: flex-start; gap: 10px; margin-bottom: 15px; }
-        #searchButton { margin-top: 18px; flex-shrink: 0; width: 48px; height: 48px; padding: 0; border: none; background-color: var(--color-primary); color: white; font-size: 18px; border-radius: 8px; cursor: pointer; transition: background-color 0.2s; display: flex; align-items: center; justify-content: center; }
+        #searchButton { flex-shrink: 0; width: 48px; height: 48px; padding: 0; border: none; background-color: var(--color-primary); color: white; font-size: 18px; border-radius: 8px; cursor: pointer; transition: background-color 0.2s; display: flex; align-items: center; justify-content: center; }
         #searchButton:hover { background-color: #0056b3; }
         #searchResultsContainer { display: flex; flex-direction: column; gap: 12px; min-height: 50px; }
         @keyframes fadeIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
@@ -78,17 +71,17 @@
         .no-results-message { text-align: center; padding: 20px; color: var(--text-light); animation: fadeIn 0.4s ease-out forwards; }
         .no-results-message svg { width: 40px; height: 40px; margin-bottom: 10px; }
         @keyframes popIn { 0% { transform: scale(0.8); opacity: 0; } 70% { transform: scale(1.15); opacity: 1; } 100% { transform: scale(1.1); opacity: 1; } }
-        .winner-section h2 { margin-top: 0; margin-bottom: 20px; font-size: 2em; font-weight: 700; color: var(--text-dark); }
-        .winner-section h2 span { color: #ffc107; }
+        .winner-section h2, #prizeModal h2 { margin-top: 0; margin-bottom: 25px; font-size: clamp(1.8em, 5vw, 2.5em); font-weight: 700; color: var(--text-dark); }
+        .winner-section h2 span { color: var(--color-separado); }
         .winner-input-display { position: relative; display: flex; justify-content: center; gap: 15px; margin-bottom: 25px; cursor: text; transition: box-shadow 0.3s ease; padding: 10px; border-radius: 12px; }
         .winner-input-display:focus-within { box-shadow: 0 0 0 4px rgba(255, 193, 7, 0.4); }
-        .digit-circle { width: clamp(40px, 10vw, 55px); height: clamp(40px, 10vw, 55px); border-radius: 50%; border: 2px solid var(--border-color); display: flex; justify-content: center; align-items: center; font-size: clamp(1.4em, 5vw, 2em); font-weight: bold; color: var(--text-light); transition: all 0.3s ease; background-color: var(--background-light); box-shadow: inset 0 2px 4px rgba(0,0,0,0.05); }
+        .digit-circle { width: clamp(40px, 12vw, 65px); height: clamp(40px, 12vw, 65px); border-radius: 50%; border: 2px solid var(--border-color); display: flex; justify-content: center; align-items: center; font-size: clamp(1.6em, 5vw, 2.4em); font-weight: bold; color: var(--text-light); transition: all 0.3s ease; background-color: var(--background-light); box-shadow: inset 0 2px 4px rgba(0,0,0,0.05); }
         .digit-circle.filled { background: linear-gradient(135deg, var(--color-pago), #008200); border-color: var(--color-pago); color: white; text-shadow: 0 1px 2px rgba(0,0,0,0.2); animation: popIn 0.3s ease-out forwards; }
         #realWinningInput { position: absolute; top: 0; left: 0; width: 100%; height: 100%; opacity: 0; border: none; background: transparent; outline: none; -webkit-text-security: disc; }
-        #checkWinnerButton { padding: 12px 25px; border: none; border-radius: 8px; cursor: pointer; font-size: 1.1em; background: linear-gradient(135deg, #007bff, #0056b3); color: white; font-weight: bold; transition: all 0.3s ease; box-shadow: 0 4px 15px rgba(0, 123, 255, 0.2); }
+        #checkWinnerButton { padding: 14px 30px; border: none; border-radius: 8px; cursor: pointer; font-size: 1.2em; background: linear-gradient(135deg, #007bff, #0056b3); color: white; font-weight: bold; transition: all 0.3s ease; box-shadow: 0 4px 15px rgba(0, 123, 255, 0.2); }
         #checkWinnerButton:hover { transform: translateY(-2px); box-shadow: 0 6px 20px rgba(0, 123, 255, 0.3); filter: brightness(1.1); }
         #checkWinnerButton:disabled { background: #9e9e9e; cursor: not-allowed; transform: none; box-shadow: none; filter: none; }
-        #winnerResults { margin-top: 20px; display: flex; flex-direction: column; gap: 15px; min-height: auto; background-color: transparent; padding: 0; text-align: left; }
+        #winnerResults, #modalWinnerResults { margin-top: 20px; display: flex; flex-direction: column; gap: 15px; min-height: auto; text-align: left; font-size: 1.1em; }
         .winner-card { border-radius: 12px; padding: 20px; color: white; box-shadow: 0 8px 25px rgba(0, 0, 0, 0.15); transition: transform 0.3s ease, box-shadow 0.3s ease; border: 1px solid rgba(255, 255, 255, 0.2); animation: fadeIn 0.5s ease-out forwards; }
         .winner-card:hover { transform: translateY(-5px); box-shadow: 0 12px 30px rgba(0, 0, 0, 0.2); }
         .winner-card.gold { background: linear-gradient(135deg, #ffc107, #ff9800); }
@@ -97,16 +90,18 @@
         .winner-card.no-winner { background: linear-gradient(135deg, #6c757d, #495057); }
         .prize-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 12px; border-bottom: 1px solid rgba(255, 255, 255, 0.3); padding-bottom: 10px; }
         .winner-card.silver .prize-header { border-bottom-color: rgba(0, 0, 0, 0.1); }
-        .prize-header h3 { margin: 0; font-size: 1.4em; font-weight: 700; }
+        .prize-header h3 { margin: 0; font-size: 1.4em; font-weight: 700; text-align: left;}
         .prize-number-tag { background-color: rgba(0, 0, 0, 0.2); color: white; padding: 5px 12px; border-radius: 15px; font-size: 1.1em; font-weight: bold; }
         .winner-card.silver .prize-number-tag { background-color: rgba(0, 0, 0, 0.1); color: var(--winner-card-silver-color); }
         .prize-info .winner-name { font-size: 1.25em; font-weight: bold; margin: 10px 0 5px 0; }
         .prize-info .winner-phone { font-size: 1em; opacity: 0.9; margin: 0; }
         .prize-info .no-winner-text { font-size: 1.1em; font-weight: 500; font-style: italic; margin-top: 10px; }
+        .prize-value { font-size: 1.1em; font-weight: bold; margin-top: 8px; }
         #gridContainer { display: grid; grid-template-columns: repeat(10, 1fr); gap: 4px; margin-top: 20px; }
         .grid-item { display: flex; justify-content: center; align-items: center; aspect-ratio: 1 / 1; border: 1px solid var(--border-color); border-radius: 8px; font-size: clamp(0.7em, 3vw, 1.5em); font-weight: bold; color: white; cursor: pointer; transition: transform 0.2s, background-color 0.2s, border-color 0.2s; }
-        .modal { display: none; position: fixed; z-index: 1000; left: 0; top: 0; width: 100%; height: 100%; overflow: auto; background-color: rgba(0,0,0,0.6); }
-        .modal-content { background-color: var(--modal-bg); margin: 15% auto; padding: 20px; border: 1px solid var(--border-color); width: 90%; max-width: 400px; border-radius: 8px; box-shadow: 0 4px 8px rgba(0,0,0,0.2); transition: background-color var(--transition-speed) ease; }
+        .modal { display: none; position: fixed; z-index: 1000; left: 0; top: 0; width: 100%; height: 100%; overflow: auto; background-color: rgba(0,0,0,0.6); animation: fadeIn 0.3s; }
+        .modal-content { background-color: var(--modal-bg); margin: 5vh auto; padding: 20px; border: 1px solid var(--border-color); width: 90%; max-width: 500px; border-radius: 8px; box-shadow: 0 4px 8px rgba(0,0,0,0.2); transition: background-color var(--transition-speed) ease; }
+        #prizeModal .modal-content { max-width: 600px; }
         .grid-item:hover { transform: scale(1.05); }
         .grid-item.status-disponible { background-color: var(--color-disponible); }
         .grid-item.status-separado { background-color: var(--color-separado); }
@@ -118,54 +113,100 @@
         #modalNumber { color: var(--color-primary); }
         .close-button { color: #aaa; font-size: 28px; font-weight: bold; cursor: pointer; }
         .modal-body label { display: block; margin-top: 15px; margin-bottom: 5px; color: var(--text-dark); }
-        .modal-body input, .modal-body select { width: 100%; padding: 10px; border: 1px solid var(--border-color); border-radius: 4px; box-sizing: border-box; background-color: var(--background-light); color: var(--text-dark); }
+        .modal-body input, .modal-body select, .modal-body textarea { width: 100%; padding: 10px; border: 1px solid var(--border-color); border-radius: 4px; box-sizing: border-box; background-color: var(--background-light); color: var(--text-dark); }
         .modal-footer { text-align: right; margin-top: 20px; }
-        .modal-footer button { padding: 10px 20px; border: none; border-radius: 5px; cursor: pointer; font-size: 16px; }
-        #saveButton { background-color: var(--color-primary); color: white; }
+        .modal-footer button { padding: 10px 20px; border: none; border-radius: 5px; cursor: pointer; font-size: 16px; transition: background-color 0.2s, transform 0.2s; }
+        .modal-footer button:hover { transform: translateY(-2px); }
+        #saveButton, #savePrizeButton { background-color: var(--color-primary); color: white; }
         #deleteButton { background-color: var(--color-danger); color: white; margin-right: 10px; }
         .raffle-manager { display: flex; flex-wrap: wrap; gap: 10px; align-items: flex-end; }
-        .raffle-selector-container { flex-grow: 1; }
-        .raffle-creator { flex: 1 1 300px; display: none; }
+        .raffle-selector-container { flex-grow: 1; min-width: 200px; }
+        .selector-wrapper-with-button { display: flex; align-items: center; gap: 10px; }
+        .raffle-creator { flex: 1 1 100%; display: none; }
         body.admin-view .raffle-creator { display: flex; }
         .raffle-manager label { margin-bottom: 8px; font-weight: bold; color: var(--text-dark); display: block; }
         .raffle-manager input { width: 100%; height: 48px; padding: 0 15px; border: 1px solid var(--border-color); border-radius: 8px; font-size: 16px; box-sizing: border-box; background-color: var(--background-card); color: var(--text-dark); }
         .raffle-manager button { height: 48px; padding: 0 20px; border: none; background-color: var(--color-pago); color: white; font-size: 16px; font-weight: bold; border-radius: 8px; cursor: pointer; transition: background-color 0.2s; }
         body.admin-view .raffle-creator { flex-direction: column; gap: 10px; }
-        .raffle-creator input { flex-grow: 1; }
-        .raffle-creator button { flex-shrink: 0; }
-        .raffle-creator button:hover { background-color: #6aaa48; }
-        .custom-select-wrapper { position: relative; user-select: none; }
+        .custom-select-wrapper { position: relative; user-select: none; flex-grow: 1; }
         .select-selected { background-color: var(--background-card); border: 1px solid var(--border-color); border-radius: 8px; padding: 0 40px 0 15px; font-size: 16px; color: var(--text-dark); width: 100%; height: 48px; cursor: pointer; transition: border-color 0.2s, box-shadow 0.2s; display: flex; align-items: center; box-sizing: border-box; }
-        .select-selected.select-arrow-active { border-color: var(--color-primary); box-shadow: 0 0 0 3px rgba(0, 123, 255, 0.25); }
-        .select-selected::after { content: ""; position: absolute; right: 15px; top: 50%; transform: translateY(-50%); width: 0; height: 0; border-left: 6px solid transparent; border-right: 6px solid transparent; border-top: 6px solid var(--text-light); transition: all 0.3s ease; }
-        .select-selected.select-arrow-active::after { transform: translateY(-50%) rotate(180deg); }
         .select-items { position: absolute; background-color: var(--background-card); top: 100%; left: 0; right: 0; z-index: 99; border: 1px solid var(--border-color); border-radius: 8px; margin-top: 5px; max-height: 200px; overflow-y: auto; box-shadow: 0 8px 16px rgba(0,0,0,0.1); opacity: 0; visibility: hidden; transform: translateY(-10px); transition: all 0.3s ease; }
-        .select-items div { color: var(--text-dark); padding: 12px 16px; cursor: pointer; transition: background-color 0.2s ease, color 0.2s ease; border-bottom: 1px solid var(--border-color); }
-        .select-items div:last-child { border-bottom: none; }
-        .select-items div:hover { background-color: var(--background-light); }
-        .select-hide { opacity: 0; visibility: hidden; transform: translateY(-10px); }
-        .select-show { opacity: 1; visibility: visible; transform: translateY(0); }
+        .select-items div { color: var(--text-dark); padding: 12px 16px; cursor: pointer; border-bottom: 1px solid var(--border-color); }
+        
+        /* --- ESTILOS CORREGIDOS DEL BUSCADOR --- */
         .search-input-group { position: relative; flex-grow: 1; }
-        .search-input-group .search-icon { position: absolute; left: 15px; top: 33px; transform: translateY(-50%); color: var(--text-light); width: 18px; height: 18px; pointer-events: none; z-index: 1;}
-        .search-input-group label { position: absolute; pointer-events: none; left: 45px; top: 33px; transform: translateY(-50%); color: var(--text-light); transition: all 0.2s ease-in-out; background-color: var(--background-card); padding: 0 5px; }
-        #searchInput { width: 100%; height: 48px; padding: 12px 12px 12px 45px; border: 1px solid var(--border-color); border-radius: 8px; font-size: 16px; transition: border-color 0.2s, box-shadow 0.2s; box-sizing: border-box; margin-top: 18px; background-color: transparent; color: var(--text-dark); }
-        #searchInput:focus { outline: none; border-color: var(--color-primary); box-shadow: 0 0 0 3px rgba(0, 123, 255, 0.25); }
-        #searchInput:focus + label, #searchInput:not(:placeholder-shown) + label { top: 9px; font-size: 12px; color: var(--color-primary); }
-        @keyframes slideInUp { from { opacity: 0; transform: translateY(20px); } to { opacity: 1; transform: translateY(0); } }
-        .result-card-staggered { animation: slideInUp 0.5s ease-out forwards; opacity: 0; }
-        #darkModeToggle { position: fixed; top: 15px; right: 15px; width: 40px; height: 40px; border-radius: 50%; border: 1px solid var(--border-color); background-color: var(--background-card); color: var(--text-light); font-size: 18px; cursor: pointer; display: flex; align-items: center; justify-content: center; z-index: 1001; transition: all var(--transition-speed) ease; }
-        #darkModeToggle:hover { color: var(--text-dark); border-color: var(--color-primary); }
-        #deleteRifaButton { display: none; align-items: center; justify-content: center; height: 48px; width: 48px; padding: 0; background-color: transparent; border: 1px solid var(--color-danger); color: var(--color-danger); border-radius: 8px; cursor: pointer; transition: all 0.2s ease; }
-        body.admin-view #deleteRifaButton.visible { display: flex; }
-        #deleteRifaButton:hover { background-color: var(--color-danger); color: white; }
-
-        @media (max-width: 380px) {
-            .result-card { gap: 8px; padding: 12px; }
-            .result-info .name { font-size: 0.9em; }
-            .status-badge { padding: 3px 8px; font-size: 0.75em; }
-            /* AJUSTE FINAL PARA LA ETIQUETA DEL BUSCADOR */
-            .search-input-group label { font-size: 13.5px; }
+        .search-input-group .search-icon {
+            position: absolute;
+            left: 15px;
+            top: 50%;
+            transform: translateY(-50%);
+            color: var(--text-light);
+            width: 18px; /* Tamaño definido */
+            height: 18px; /* Tamaño definido */
+            z-index: 10; /* Asegurar que esté visible */
         }
+        #searchInput {
+            width: 100%;
+            height: 48px;
+            padding: 12px 12px 12px 45px; /* Padding izquierdo para el ícono */
+            border: 1px solid var(--border-color);
+            border-radius: 8px;
+            font-size: 16px;
+            transition: border-color 0.2s, box-shadow 0.2s;
+            box-sizing: border-box;
+            background-color: transparent;
+            color: var(--text-dark);
+        }
+        .search-input-group label {
+            position: absolute;
+            pointer-events: none;
+            left: 45px;
+            top: 50%;
+            transform: translateY(-50%);
+            color: var(--text-light);
+            transition: all 0.2s ease-in-out;
+            background-color: var(--background-card);
+            padding: 0 5px;
+        }
+        #searchInput:focus { outline: none; border-color: var(--color-primary); box-shadow: 0 0 0 3px rgba(0, 123, 255, 0.25); }
+        #searchInput:focus + label, #searchInput:not(:placeholder-shown) + label {
+            transform: translateY(-150%) scale(0.8); /* Transformación ajustada */
+            color: var(--color-primary);
+        }
+
+        #darkModeToggle { position: fixed; top: 15px; right: 15px; width: 40px; height: 40px; border-radius: 50%; border: 1px solid var(--border-color); background-color: var(--background-card); color: var(--text-light); font-size: 18px; cursor: pointer; display: flex; align-items: center; justify-content: center; z-index: 1001; transition: all var(--transition-speed) ease; }
+        #prizeButton, #deleteRifaButton { display: none; align-items: center; justify-content: center; height: 48px; width: 48px; padding: 0; background-color: transparent; border-radius: 8px; cursor: pointer; transition: all 0.2s ease; flex-shrink: 0; }
+        body.admin-view #deleteRifaButton.visible, #prizeButton.visible { display: flex; }
+        #deleteRifaButton { border: 1px solid var(--color-danger); color: var(--color-danger); }
+        #deleteRifaButton:hover { background-color: var(--color-danger); color: white; }
+        #prizeButton { position: relative; overflow: hidden; border: 1px solid var(--color-separado); color: var(--color-separado); font-size: 1.2em; }
+        #prizeButton .fa-trophy { transition: transform 0.3s ease; }
+        #prizeButton:hover .fa-trophy { animation: jiggle 0.5s; }
+        #prizeButton::after { content: ''; position: absolute; top: 0; left: -200%; width: 75%; height: 100%; background: linear-gradient(to right, rgba(255, 255, 255, 0) 0%, rgba(255, 215, 0, 0.4) 50%, rgba(255, 255, 255, 0) 100%); transform: skewX(-25deg); animation: shimmer 4s infinite; }
+        @keyframes shimmer { 0% { left: -200%; } 40% { left: 200%; } 100% { left: 200%; } }
+        @keyframes jiggle { 0%, 100% { transform: rotate(0); } 25% { transform: rotate(-10deg) scale(1.1); } 75% { transform: rotate(10deg) scale(1.1); } }
+        
+        /* --- Estilos del Modal de Premio --- */
+        #prize-info-section { background: var(--background-light); padding: 15px; border-radius: 8px; margin-bottom: 25px; }
+        .prize-value-display, .prize-value-inputs { display: grid; grid-template-columns: repeat(auto-fit, minmax(150px, 1fr)); gap: 15px; margin-top: 15px; }
+        .prize-value-item span { font-weight: bold; color: var(--text-dark); }
+        .prize-value-item p { margin: 5px 0 0; color: var(--color-primary); font-size: 1.2em; }
+        .prize-value-inputs label { font-size: 0.9em; font-weight: bold; }
+        .prize-value-inputs input { padding: 8px; font-size: 1em; }
+        #prize-simulator-section { padding: 20px; border: 2px dashed var(--border-color); border-radius: 8px; text-align: center; }
+        .digit-slots-container { display: flex; justify-content: center; gap: 10px; margin-bottom: 20px; position: relative; cursor: text; }
+        .digit-slot { width: clamp(45px, 12vw, 70px); height: clamp(60px, 16vw, 90px); background-color: var(--background-light); border: 2px solid var(--border-color); border-radius: 8px; display: flex; align-items: center; justify-content: center; font-size: clamp(2em, 8vw, 3.5em); font-weight: bold; color: var(--text-dark); transition: all 0.3s; box-shadow: inset 0 2px 5px rgba(0,0,0,0.1); }
+        #modalWinningInput { position: absolute; opacity: 0; width: 100%; height: 100%; top: 0; left: 0; border: none; background: transparent; -webkit-text-security: disc;}
+        .prize-zones-container { position: absolute; top: 0; left: 0; width: 100%; height: 100%; display: flex; justify-content: center; gap: 10px; visibility: hidden; }
+        .prize-zones-container.active { visibility: visible; }
+        .prize-zone { position: absolute; height: 100%; border: 2px solid transparent; border-radius: 12px; cursor: pointer; transition: all 0.3s ease; display: flex; align-items: flex-end; justify-content: center; padding-bottom: 5px; }
+        .prize-zone::after { content: attr(data-label); position: absolute; bottom: -25px; background: var(--color-primary); color: white; padding: 2px 8px; border-radius: 10px; font-size: 0.7em; font-weight: bold; opacity: 0; transition: opacity 0.3s; pointer-events: none; }
+        .prize-zone:hover { background: rgba(0, 123, 255, 0.1); border-color: var(--color-primary); }
+        .prize-zone:hover::after { opacity: 1; }
+        #prizeZoneSecond { left: 0; width: calc(50% - 5px); }
+        #prizeZoneThird { left: calc(25% + 5px); width: calc(50% - 10px); }
+        #prizeZoneMayor { right: 0; width: calc(50% - 5px); }
+        @media (max-width: 600px) { body { padding: 5px; } .raffle-manager { flex-direction: column; align-items: stretch; gap: 20px; } }
     </style>
 </head>
 <body>
@@ -176,16 +217,15 @@
     <div class="raffle-manager">
         <div class="raffle-selector-container">
             <label for="rifaSelect">Selecciona una Rifa:</label>
-            <div class="custom-select-wrapper">
-                <div id="rifaSelect" class="select-selected">
-                    -- Cargando... --
+            <div class="selector-wrapper-with-button">
+                <div class="custom-select-wrapper">
+                    <div id="rifaSelect" class="select-selected">-- Cargando... --</div>
+                    <div id="rifaSelectItems" class="select-items select-hide"></div>
                 </div>
-                <div id="rifaSelectItems" class="select-items select-hide"></div>
+                <button id="prizeButton" title="Ver/Editar Premio"><i class="fas fa-trophy"></i></button>
             </div>
         </div>
-        
         <button id="deleteRifaButton" title="Eliminar rifa seleccionada"><i class="fas fa-trash-alt"></i></button>
-
         <div class="raffle-creator">
             <div>
                 <label for="newRifaName">Nombre de la nueva rifa</label>
@@ -194,40 +234,68 @@
             <button id="createRifaButton">Crear Rifa</button>
         </div>
     </div>
-
     <div class="summary-panel">
         <div class="summary-card" id="card-pago"><div class="card-icon"><svg xmlns="http://www.w3.org/2000/svg" fill="currentColor" viewBox="0 0 16 16"><path d="M16 8A8 8 0 1 1 0 8a8 8 0 0 1 16 0zm-3.97-3.03a.75.75 0 0 0-1.08.022L7.477 9.417 5.384 7.323a.75.75 0 0 0-1.06 1.06L6.97 11.03a.75.75 0 0 0 1.079-.02l3.992-4.99a.75.75 0 0 0-.01-1.05z"/></svg></div><span class="info-count" id="summaryPago">0</span><p class="info-label">Pagados</p></div>
         <div class="summary-card" id="card-separado"><div class="card-icon"><svg xmlns="http://www.w3.org/2000/svg" fill="currentColor" viewBox="0 0 16 16"><path d="M16 8A8 8 0 1 1 0 8a8 8 0 0 1 16 0zM8 3.5a.5.5 0 0 0-1 0V9a.5.5 0 0 0 .252.434l3.5 2a.5.5 0 0 0 .496-.868L8 8.71V3.5z"/></svg></div><span class="info-count" id="summarySeparado">0</span><p class="info-label">Separados</p></div>
         <div class="summary-card" id="card-disponible"><div class="card-icon"><svg xmlns="http://www.w3.org/2000/svg" fill="currentColor" viewBox="0 0 16 16"> <path d="M0 4.5A1.5 1.5 0 0 1 1.5 3h13A1.5 1.5 0 0 1 16 4.5V6a.5.5 0 0 1-.5.5 1.5 1.5 0 0 0 0 3 .5.5 0 0 1 .5.5v1.5a1.5 1.5 0 0 1-1.5 1.5h-13A1.5 1.5 0 0 1 0 11.5V10a.5.5 0 0 1 .5-.5 1.5 1.5 0 1 0 0-3A.5.5 0 0 1 0 6V4.5Zm4 1a.5.5 0 0 0 .5.5h7a.5.5 0 0 0 0-1h-7a.5.5 0 0 0-.5.5Zm0 5a.5.5 0 0 0 .5.5h7a.5.5 0 0 0 0-1h-7a.5.5 0 0 0-.5.5ZM4 8.5a.5.5 0 0 0 .5.5h7a.5.5 0 0 0 0-1h-7a.5.5 0 0 0-.5.5Z"/></svg></div><span class="info-count" id="summaryDisponible">100</span><p class="info-label">Disponibles</p></div>
     </div>
-    
     <div class="search-section">
         <div class="search-box">
-            <div class="search-input-group">
-                <svg class="search-icon" xmlns="http://www.w3.org/2000/svg" fill="currentColor" viewBox="0 0 16 16"><path d="M11.742 10.344a6.5 6.5 0 1 0-1.397 1.398h-.001c.03.04.062.078.098.115l3.85 3.85a1 1 0 0 0 1.415-1.414l-3.85-3.85a1.007 1.007 0 0 0-.115-.1zM12 6.5a5.5 5.5 0 1 1-11 0 5.5 5.5 0 0 1 11 0z"/></svg>
-                <input type="tel" id="searchInput" placeholder=" " maxlength="10">
-                <label for="searchInput">Buscar por celular (10 dígitos)</label>
-            </div>
+            <div class="search-input-group"><svg class="search-icon" xmlns="http://www.w3.org/2000/svg" fill="currentColor" viewBox="0 0 16 16"><path d="M11.742 10.344a6.5 6.5 0 1 0-1.397 1.398h-.001c.03.04.062.078.098.115l3.85 3.85a1 1 0 0 0 1.415-1.414l-3.85-3.85a1.007 1.007 0 0 0-.115-.1zM12 6.5a5.5 5.5 0 1 1-11 0 5.5 5.5 0 0 1 11 0z"/></svg><input type="tel" id="searchInput" placeholder=" " maxlength="10"><label for="searchInput">Buscar por celular (10 dígitos)</label></div>
             <button id="searchButton" aria-label="Buscar"><i class="fas fa-search"></i></button>
         </div>
-        <div id="searchResultsContainer"></div>
+        <div id="searchResultsContainer"><div class="no-results-message">Escribe un número de celular y presiona la lupa para buscar.</div></div>
     </div>
-    
     <div id="gridContainer"></div>
-
     <div class="winner-section">
-        <h2><span>🏆</span> Número Ganador <span>🏆</span></h2>
+        <h2><span>🏆</span> Sorteo y Ganadores <span>🏆</span></h2>
         <div class="winner-input-display" id="winnerInputDisplay"><div class="digit-circle"></div><div class="digit-circle"></div><div class="digit-circle"></div><div class="digit-circle"></div><input type="tel" id="realWinningInput" maxlength="4" autocomplete="off" /></div>
         <button id="checkWinnerButton">Verificar Ganadores</button>
         <div id="winnerResults">Ingresa el número de 4 cifras de la lotería para conocer a los ganadores.</div>
     </div>
-
 </div>
+
 <div id="dataModal" class="modal">
     <div class="modal-content">
         <div class="modal-header"><h2>Datos del Número <span id="modalNumber"></span></h2><span class="close-button">&times;</span></div>
         <div class="modal-body"><label for="inputStatus">Estado:</label><select id="inputStatus"><option value="disponible">Disponible</option><option value="separado">Separado</option><option value="pago">Pago</option></select><label for="inputName">Nombre:</label><input type="text" id="inputName" placeholder="Ingresa el nombre completo"><label for="inputPhone">Número de Celular:</label><input type="text" id="inputPhone" placeholder="Ingresa el número de celular"></div>
         <div class="modal-footer"><button id="deleteButton">Limpiar Datos</button><button id="saveButton">Guardar</button></div>
+    </div>
+</div>
+
+<div id="prizeModal" class="modal">
+    <div class="modal-content">
+        <div class="modal-header"><h2 style="display: flex; align-items: center; gap: 10px;"><i class="fas fa-trophy" style="color: var(--color-separado);"></i> Centro de Premios</h2><span class="close-button">&times;</span></div>
+        <div class="modal-body">
+            <div id="prize-info-section">
+                <p id="prizeDescriptionDisplay" style="font-style: italic; color: var(--text-light); text-align: center;"></p>
+                <div class="prize-value-display" style="display: none;">
+                    <div class="prize-value-item"><span>Premio Mayor:</span><p id="mayorValueDisplay"></p></div>
+                    <div class="prize-value-item"><span>Segundo Premio:</span><p id="segundoValueDisplay"></p></div>
+                    <div class="prize-value-item"><span>Tercer Premio:</span><p id="terceroValueDisplay"></p></div>
+                </div>
+                <div class="prize-value-inputs" style="display: none;">
+                    <div><label for="mayorValueInput">Valor Premio Mayor ($)</label><input type="number" id="mayorValueInput" placeholder="0"></div>
+                    <div><label for="segundoValueInput">Valor Segundo Premio ($)</label><input type="number" id="segundoValueInput" placeholder="0"></div>
+                    <div><label for="terceroValueInput">Valor Tercer Premio ($)</label><input type="number" id="terceroValueInput" placeholder="0"></div>
+                </div>
+            </div>
+            <hr style="margin: 25px 0; border-color: var(--border-color); opacity: 0.5;">
+            <div id="prize-simulator-section">
+                <h4>Simulador de Sorteo</h4>
+                <div class="digit-slots-container">
+                    <div class="digit-slot"></div><div class="digit-slot"></div><div class="digit-slot"></div><div class="digit-slot"></div>
+                    <input type="tel" id="modalWinningInput" maxlength="4" autocomplete="off" />
+                    <div class="prize-zones-container">
+                        <div class="prize-zone" id="prizeZoneSecond" data-prize="segundo" data-label="2do Premio"></div>
+                        <div class="prize-zone" id="prizeZoneThird" data-prize="tercero" data-label="3er Premio"></div>
+                        <div class="prize-zone" id="prizeZoneMayor" data-prize="mayor" data-label="Premio Mayor"></div>
+                    </div>
+                </div>
+                <div id="modalWinnerResults"></div>
+            </div>
+        </div>
+        <div class="modal-footer"><button id="savePrizeButton" style="display: none;">Guardar Valores</button></div>
     </div>
 </div>
 
@@ -247,187 +315,100 @@ document.addEventListener('DOMContentLoaded', () => {
     };
     const app = firebase.initializeApp(firebaseConfig);
     const db = firebase.firestore();
-
-    const rifaSelect = document.getElementById('rifaSelect'); 
-    const rifaSelectItems = document.getElementById('rifaSelectItems');
-    const newRifaName = document.getElementById('newRifaName');
-    const createRifaButton = document.getElementById('createRifaButton');
-    const deleteRifaButton = document.getElementById('deleteRifaButton');
-    const darkModeToggle = document.getElementById('darkModeToggle');
-    const gridContainer = document.getElementById('gridContainer');
-    const checkWinnerButton = document.getElementById('checkWinnerButton');
-    const winnerResults = document.getElementById('winnerResults');
-    const winnerInputDisplay = document.getElementById('winnerInputDisplay');
-    const digitCircles = winnerInputDisplay.querySelectorAll('.digit-circle');
-    const realWinningInput = document.getElementById('realWinningInput');
-    const searchInput = document.getElementById('searchInput');
-    const searchButton = document.getElementById('searchButton');
-    const searchResultsContainer = document.getElementById('searchResultsContainer');
-    const modal = document.getElementById('dataModal');
-    const modalNumber = document.getElementById('modalNumber');
-    const inputStatus = document.getElementById('inputStatus');
-    const inputName = document.getElementById('inputName');
-    const inputPhone = document.getElementById('inputPhone');
-    const saveButton = document.getElementById('saveButton');
-    const deleteButton = document.getElementById('deleteButton');
-    const closeButton = document.querySelector('.close-button');
-    const summaryPago = document.getElementById('summaryPago');
-    const summarySeparado = document.getElementById('summarySeparado');
-    const summaryDisponible = document.getElementById('summaryDisponible');
-
-    let rifaActivaId = null;
-    let unsubRifaListener = null;
-    let currentNumber = null;
-    let localRaffleData = {};
-    const totalNumbers = 100;
-
-    const applyTheme = (theme) => {
-        const icon = darkModeToggle.querySelector('i');
-        if (theme === 'dark') {
-            document.body.classList.add('dark-mode');
-            icon.classList.remove('fa-moon');
-            icon.classList.add('fa-sun');
-        } else {
-            document.body.classList.remove('dark-mode');
-            icon.classList.remove('fa-sun');
-            icon.classList.add('fa-moon');
-        }
+    const DOM = {
+        rifaSelect: document.getElementById('rifaSelect'), rifaSelectItems: document.getElementById('rifaSelectItems'),
+        newRifaName: document.getElementById('newRifaName'), createRifaButton: document.getElementById('createRifaButton'),
+        deleteRifaButton: document.getElementById('deleteRifaButton'), prizeButton: document.getElementById('prizeButton'),
+        darkModeToggle: document.getElementById('darkModeToggle'), gridContainer: document.getElementById('gridContainer'),
+        winnerInputDisplay: document.getElementById('winnerInputDisplay'), digitCircles: document.querySelectorAll('.winner-input-display .digit-circle'),
+        realWinningInput: document.getElementById('realWinningInput'), checkWinnerButton: document.getElementById('checkWinnerButton'),
+        winnerResults: document.getElementById('winnerResults'), searchInput: document.getElementById('searchInput'),
+        searchButton: document.getElementById('searchButton'), searchResultsContainer: document.getElementById('searchResultsContainer'),
+        dataModal: document.getElementById('dataModal'), modalNumber: document.getElementById('modalNumber'),
+        inputStatus: document.getElementById('inputStatus'), inputName: document.getElementById('inputName'),
+        inputPhone: document.getElementById('inputPhone'), saveButton: document.getElementById('saveButton'),
+        deleteButton: document.getElementById('deleteButton'), closeDataModalButton: document.querySelector('#dataModal .close-button'),
+        prizeModal: document.getElementById('prizeModal'), prizeDescriptionDisplay: document.getElementById('prizeDescriptionDisplay'),
+        prizeValueDisplay: document.querySelector('.prize-value-display'), prizeValueInputs: document.querySelector('.prize-value-inputs'),
+        mayorValueDisplay: document.getElementById('mayorValueDisplay'), segundoValueDisplay: document.getElementById('segundoValueDisplay'),
+        terceroValueDisplay: document.getElementById('terceroValueDisplay'), mayorValueInput: document.getElementById('mayorValueInput'),
+        segundoValueInput: document.getElementById('segundoValueInput'), terceroValueInput: document.getElementById('terceroValueInput'),
+        savePrizeButton: document.getElementById('savePrizeButton'), prizeSimulatorSlots: document.querySelectorAll('.digit-slot'),
+        modalWinningInput: document.getElementById('modalWinningInput'), prizeZonesContainer: document.querySelector('.prize-zones-container'),
+        prizeZones: document.querySelectorAll('.prize-zone'), modalWinnerResults: document.getElementById('modalWinnerResults'),
+        closePrizeModalButton: document.querySelector('#prizeModal .close-button'),
+        summaryPago: document.getElementById('summaryPago'), summarySeparado: document.getElementById('summarySeparado'), summaryDisponible: document.getElementById('summaryDisponible')
     };
-
-    darkModeToggle.addEventListener('click', () => {
-        const currentTheme = document.body.classList.contains('dark-mode') ? 'light' : 'dark';
-        localStorage.setItem('theme', currentTheme);
-        applyTheme(currentTheme);
-    });
-
-    firebase.auth().onAuthStateChanged(user => {
-        document.body.classList.toggle('admin-view', !!user);
-    });
-
+    let rifaActivaId = null, unsubRifaListener = null, currentNumber = null, localRaffleData = {}, currentPrizeData = {};
+    const totalNumbers = 100;
+    const formatCurrency = (value) => new Intl.NumberFormat('es-CO', { style: 'currency', currency: 'COP', minimumFractionDigits: 0 }).format(value);
+    const applyTheme = (theme) => {
+        const icon = DOM.darkModeToggle.querySelector('i');
+        if (theme === 'dark') { document.body.classList.add('dark-mode'); icon.classList.remove('fa-moon'); icon.classList.add('fa-sun'); } 
+        else { document.body.classList.remove('dark-mode'); icon.classList.remove('fa-sun'); icon.classList.add('fa-moon'); }
+    };
+    firebase.auth().onAuthStateChanged(user => { document.body.classList.toggle('admin-view', !!user); });
     const cargarRifas = async () => {
         const rifasSnapshot = await db.collection("rifas").orderBy("fechaCreacion", "desc").get();
-        rifaSelectItems.innerHTML = ''; 
-        
+        DOM.rifaSelectItems.innerHTML = ''; 
         if (rifasSnapshot.empty) {
-            rifaSelect.textContent = '-- No hay rifas --';
-            rifaSelect.dataset.value = "";
-            cambiarRifaActiva(true);
-            return;
+            DOM.rifaSelect.textContent = '-- No hay rifas --'; DOM.rifaSelect.dataset.value = "";
+            cambiarRifaActiva(true); return;
         }
-        
         rifasSnapshot.forEach(doc => {
             const option = document.createElement('div');
-            option.textContent = doc.data().nombre;
-            option.dataset.value = doc.id;
-            
+            option.textContent = doc.data().nombre; option.dataset.value = doc.id;
             option.addEventListener('click', function(e) {
-                e.stopPropagation(); 
-                if (rifaSelect.dataset.value === this.dataset.value) return;
-                rifaSelect.textContent = this.textContent;
-                rifaSelect.dataset.value = this.dataset.value;
-                rifaSelectItems.classList.remove('select-show');
-                rifaSelect.classList.remove('select-arrow-active');
+                e.stopPropagation(); if (DOM.rifaSelect.dataset.value === this.dataset.value) return;
+                DOM.rifaSelect.textContent = this.textContent; DOM.rifaSelect.dataset.value = this.dataset.value;
+                DOM.rifaSelectItems.classList.remove('select-show'); DOM.rifaSelect.classList.remove('select-arrow-active');
                 cambiarRifaActiva();
             });
-            rifaSelectItems.appendChild(option);
+            DOM.rifaSelectItems.appendChild(option);
         });
-
         const primeraRifaDoc = rifasSnapshot.docs[0];
-        rifaSelect.textContent = primeraRifaDoc.data().nombre;
-        rifaSelect.dataset.value = primeraRifaDoc.id;
+        DOM.rifaSelect.textContent = primeraRifaDoc.data().nombre; DOM.rifaSelect.dataset.value = primeraRifaDoc.id;
         cambiarRifaActiva();
     };
-    
-    rifaSelect.addEventListener('click', () => {
-        rifaSelectItems.classList.toggle('select-show');
-        rifaSelect.classList.toggle('select-arrow-active');
-    });
-
-    window.addEventListener('click', (e) => {
-        if (!rifaSelect.parentElement.contains(e.target)) {
-            rifaSelectItems.classList.remove('select-show');
-            rifaSelect.classList.remove('select-arrow-active');
-        }
-    });
-
     const crearNuevaRifa = async () => {
-        const nombre = newRifaName.value.trim();
-        if (!nombre) {
-            alert("Por favor, dale un nombre a la nueva rifa.");
-            return;
-        }
+        const nombre = DOM.newRifaName.value.trim();
+        if (!nombre) { alert("Por favor, dale un nombre a la nueva rifa."); return; }
         try {
-            const newRaffle = await db.collection("rifas").add({
-                nombre: nombre,
-                fechaCreacion: firebase.firestore.FieldValue.serverTimestamp()
+            await db.collection("rifas").add({
+                nombre: nombre, fechaCreacion: firebase.firestore.FieldValue.serverTimestamp(),
+                premioPrincipal: "Edita la descripción del premio en el modal del trofeo.",
+                premios: { mayor: { valor: 0 }, segundo: { valor: 0 }, tercero: { valor: 0 } }
             });
-            newRifaName.value = '';
-            alert(`¡Rifa "${nombre}" creada con éxito!`);
-            await cargarRifas();
-
-        } catch (error) {
-            console.error("Error al crear la rifa: ", error);
-            alert("Ocurrió un error al crear la rifa.");
-        }
+            DOM.newRifaName.value = ''; alert(`¡Rifa "${nombre}" creada con éxito!`); await cargarRifas();
+        } catch (error) { console.error("Error al crear la rifa: ", error); alert("Ocurrió un error al crear la rifa."); }
     };
-
     const deleteRifaActual = async () => {
-        if (!rifaActivaId) {
-            alert("No hay una rifa seleccionada para eliminar.");
-            return;
-        }
-
-        const rifaNombre = rifaSelect.textContent;
-        const confirmacion = confirm(`¿Estás seguro de que quieres borrar la rifa "${rifaNombre}"?\n\n¡ESTA ACCIÓN ES IRREVERSIBLE Y BORRARÁ TODOS SUS DATOS!`);
-
-        if (!confirmacion) return;
-
+        if (!rifaActivaId) { alert("No hay una rifa seleccionada para eliminar."); return; }
+        const rifaNombre = DOM.rifaSelect.textContent;
+        if (!confirm(`¿Estás seguro de que quieres borrar la rifa "${rifaNombre}"?\n\n¡ESTA ACCIÓN ES IRREVERSIBLE Y BORRARÁ TODOS SUS DATOS!`)) return;
         try {
             const numerosRef = db.collection("rifas").doc(rifaActivaId).collection("numeros");
             const numerosSnapshot = await numerosRef.get();
-            
             const batch = db.batch();
-            numerosSnapshot.docs.forEach(doc => {
-                batch.delete(doc.ref);
-            });
-            await batch.commit();
-
-            await db.collection("rifas").doc(rifaActivaId).delete();
-
-            alert(`Rifa "${rifaNombre}" eliminada con éxito.`);
-            
-            await cargarRifas();
-
-        } catch (error) {
-            console.error("Error al eliminar la rifa:", error);
-            alert("Ocurrió un error al eliminar la rifa.");
-        }
+            numerosSnapshot.docs.forEach(doc => { batch.delete(doc.ref); });
+            await batch.commit(); await db.collection("rifas").doc(rifaActivaId).delete();
+            alert(`Rifa "${rifaNombre}" eliminada con éxito.`); await cargarRifas();
+        } catch (error) { console.error("Error al eliminar la rifa:", error); alert("Ocurrió un error al eliminar la rifa."); }
     };
-
     const cambiarRifaActiva = (forzarReseteo = false) => {
-        if (unsubRifaListener) {
-            unsubRifaListener();
-        }
-        
-        rifaActivaId = forzarReseteo ? null : rifaSelect.dataset.value;
-        
-        deleteRifaButton.classList.toggle('visible', !!rifaActivaId);
-
+        if (unsubRifaListener) unsubRifaListener();
+        rifaActivaId = forzarReseteo ? null : DOM.rifaSelect.dataset.value;
+        const hayRifaActiva = !!rifaActivaId;
+        DOM.deleteRifaButton.classList.toggle('visible', hayRifaActiva);
+        DOM.prizeButton.classList.toggle('visible', hayRifaActiva);
         if (!rifaActivaId) {
-            localRaffleData = {};
-            updateSummary();
-            initializeGrid();
-            searchResultsContainer.innerHTML = '<div class="no-results-message">Crea o selecciona una rifa.</div>';
-            return;
+            localRaffleData = {}; updateSummary(); initializeGrid();
+            DOM.searchResultsContainer.innerHTML = '<div class="no-results-message">Crea o selecciona una rifa para empezar.</div>'; return;
         }
-        
+        DOM.searchResultsContainer.innerHTML = '<div class="no-results-message">Escribe un número de celular y presiona la lupa para buscar.</div>';
         const rifaNumerosRef = db.collection("rifas").doc(rifaActivaId).collection("numeros");
         unsubRifaListener = rifaNumerosRef.onSnapshot(snapshot => {
-            localRaffleData = {};
-            snapshot.forEach(doc => {
-                localRaffleData[doc.id] = doc.data();
-            });
-            
+            localRaffleData = {}; snapshot.forEach(doc => { localRaffleData[doc.id] = doc.data(); });
             for (let i = 0; i < totalNumbers; i++) {
                 const numberStr = i.toString().padStart(2, '0');
                 const status = localRaffleData[numberStr] ? localRaffleData[numberStr].status : 'disponible';
@@ -436,190 +417,175 @@ document.addEventListener('DOMContentLoaded', () => {
             updateSummary();
         });
     };
-
     const initializeGrid = () => {
-        gridContainer.innerHTML = '';
+        DOM.gridContainer.innerHTML = '';
         for (let i = 0; i < totalNumbers; i++) {
             const numberStr = i.toString().padStart(2, '0');
             const cell = document.createElement('div');
-            cell.classList.add('grid-item', 'status-disponible');
-            cell.textContent = numberStr;
-            cell.dataset.number = numberStr;
-            cell.id = `grid-item-${numberStr}`;
-            cell.addEventListener('click', () => openModal(numberStr));
-            gridContainer.appendChild(cell);
+            cell.className = 'grid-item status-disponible'; cell.textContent = numberStr;
+            cell.dataset.number = numberStr; cell.id = `grid-item-${numberStr}`;
+            cell.addEventListener('click', () => openDataModal(numberStr));
+            DOM.gridContainer.appendChild(cell);
         }
     };
-
-    const openModal = (number) => {
-        const currentUser = firebase.auth().currentUser;
-        if (!currentUser) { return; }
-        if (!rifaActivaId) {
-            alert("Por favor, selecciona una rifa primero.");
-            return;
-        }
-        
-        currentNumber = number;
-        modalNumber.textContent = number;
+    const openDataModal = (number) => {
+        if (!firebase.auth().currentUser || !rifaActivaId) return;
+        currentNumber = number; DOM.modalNumber.textContent = number;
         const data = localRaffleData[number];
-        if (data) {
-            inputStatus.value = data.status;
-            inputName.value = data.name || '';
-            inputPhone.value = data.phone || '';
-        } else {
-            inputStatus.value = 'disponible';
-            inputName.value = '';
-            inputPhone.value = '';
-        }
-        modal.style.display = 'block';
+        if (data) { DOM.inputStatus.value = data.status; DOM.inputName.value = data.name || ''; DOM.inputPhone.value = data.phone || ''; } 
+        else { DOM.inputStatus.value = 'disponible'; DOM.inputName.value = ''; DOM.inputPhone.value = ''; }
+        DOM.dataModal.style.display = 'block';
     };
-
-    const closeModal = () => {
-        modal.style.display = 'none';
-        currentNumber = null;
-    };
-
+    const closeDataModal = () => { DOM.dataModal.style.display = 'none'; currentNumber = null; };
     const saveData = () => {
         if (!currentNumber || !rifaActivaId) return;
-        const status = inputStatus.value;
-        const name = inputName.value.trim();
-        const phone = inputPhone.value.trim();
+        const status = DOM.inputStatus.value, name = DOM.inputName.value.trim(), phone = DOM.inputPhone.value.trim();
         const docRef = db.collection("rifas").doc(rifaActivaId).collection("numeros").doc(currentNumber);
-        if (status === 'disponible') {
-            docRef.delete().then(closeModal);
-        } else {
-            const dataToSave = { status, name, phone };
-            docRef.set(dataToSave).then(closeModal);
-        }
+        if (status === 'disponible') { docRef.delete().then(closeDataModal); }
+        else { docRef.set({ status, name, phone }).then(closeDataModal); }
     };
-
     const deleteData = () => {
         if (!currentNumber || !rifaActivaId) return;
-        db.collection("rifas").doc(rifaActivaId).collection("numeros").doc(currentNumber).delete().then(closeModal);
+        db.collection("rifas").doc(rifaActivaId).collection("numeros").doc(currentNumber).delete().then(closeDataModal);
     };
-
+    const openPrizeModal = async () => {
+        if (!rifaActivaId) return;
+        const rifaDoc = await db.collection("rifas").doc(rifaActivaId).get();
+        const rifaData = rifaDoc.data() || {};
+        currentPrizeData = rifaData.premios || { mayor: { valor: 0 }, segundo: { valor: 0 }, tercero: { valor: 0 } };
+        const description = rifaData.premioPrincipal || "Descripción no definida.";
+        const user = firebase.auth().currentUser;
+        DOM.prizeDescriptionDisplay.textContent = description;
+        if (user) {
+            DOM.prizeValueDisplay.style.display = 'none'; DOM.prizeValueInputs.style.display = 'grid';
+            DOM.savePrizeButton.style.display = 'inline-block';
+            DOM.mayorValueInput.value = currentPrizeData.mayor.valor;
+            DOM.segundoValueInput.value = currentPrizeData.segundo.valor;
+            DOM.terceroValueInput.value = currentPrizeData.tercero.valor;
+        } else {
+            DOM.prizeValueDisplay.style.display = 'grid'; DOM.prizeValueInputs.style.display = 'none';
+            DOM.savePrizeButton.style.display = 'none';
+            DOM.mayorValueDisplay.textContent = formatCurrency(currentPrizeData.mayor.valor);
+            DOM.segundoValueDisplay.textContent = formatCurrency(currentPrizeData.segundo.valor);
+            DOM.terceroValueDisplay.textContent = formatCurrency(currentPrizeData.tercero.valor);
+        }
+        DOM.modalWinningInput.value = '';
+        DOM.prizeSimulatorSlots.forEach(slot => slot.textContent = '');
+        DOM.prizeZonesContainer.classList.remove('active');
+        DOM.modalWinnerResults.innerHTML = '';
+        DOM.prizeModal.style.display = 'block';
+    };
+    const savePrizeValues = async () => {
+        if (!rifaActivaId || !firebase.auth().currentUser) return;
+        const newPrizeData = {
+            mayor: { valor: Number(DOM.mayorValueInput.value) || 0 },
+            segundo: { valor: Number(DOM.segundoValueInput.value) || 0 },
+            tercero: { valor: Number(DOM.terceroValueInput.value) || 0 }
+        };
+        try {
+            await db.collection("rifas").doc(rifaActivaId).update({ premios: newPrizeData });
+            alert("Valores de premios guardados con éxito.");
+            currentPrizeData = newPrizeData; // Update local state
+        } catch (error) { console.error("Error al guardar valores:", error); alert("No se pudo guardar los valores."); }
+    };
     const updateCellAppearance = (number, status) => {
         const cell = document.querySelector(`.grid-item[data-number='${number}']`);
-        if (cell) {
-            cell.className = 'grid-item';
-            cell.classList.add(`status-${status}`);
-        }
+        if (cell) { cell.className = 'grid-item'; cell.classList.add(`status-${status}`); }
     };
-
     const updateSummary = () => {
-        let pagoCount = 0;
-        let separadoCount = 0;
-        Object.values(localRaffleData).forEach(data => {
-            if (data.status === 'pago') pagoCount++;
-            else if (data.status === 'separado') separadoCount++;
-        });
-        const vendidoCount = pagoCount + separadoCount;
-        const disponibleCount = totalNumbers - vendidoCount;
-        summaryPago.textContent = pagoCount;
-        summarySeparado.textContent = separadoCount;
-        summaryDisponible.textContent = disponibleCount;
+        let pago = 0, separado = 0;
+        Object.values(localRaffleData).forEach(data => { if (data.status === 'pago') pago++; else if (data.status === 'separado') separado++; });
+        DOM.summaryPago.textContent = pago; DOM.summarySeparado.textContent = separado;
+        DOM.summaryDisponible.textContent = totalNumbers - (pago + separado);
     };
-
     const performSearch = () => {
-        const query = searchInput.value.trim();
-        searchResultsContainer.innerHTML = '';
+        const query = DOM.searchInput.value.trim();
+        DOM.searchResultsContainer.innerHTML = '';
         document.querySelectorAll('.grid-item.highlighted').forEach(item => item.classList.remove('highlighted'));
-        
-        const matched = Object.entries(localRaffleData)
-            .filter(([_, data]) => data.phone && data.phone.includes(query))
-            .map(([number, data]) => ({ number, ...data }));
-
+        const matched = Object.entries(localRaffleData).filter(([_, data]) => data.phone && data.phone.includes(query)).map(([number, data]) => ({ number, ...data }));
         if (matched.length > 0) {
             matched.forEach((m, index) => {
-                const card = `<div class="result-card result-card-staggered" style="animation-delay: ${index * 100}ms;"><div class="result-number">${m.number}</div><div class="result-info"><p class="name">${m.name || 'Sin nombre'}</p><p class="phone">${m.phone}</p></div><span class="status-badge status-${m.status}">${m.status}</span></div>`;
-                searchResultsContainer.insertAdjacentHTML('beforeend', card);
-                const cell = document.querySelector(`.grid-item[data-number='${m.number}']`);
-                if (cell) cell.classList.add('highlighted');
+                DOM.searchResultsContainer.insertAdjacentHTML('beforeend', `<div class="result-card result-card-staggered" style="animation-delay: ${index * 100}ms;"><div class="result-number">${m.number}</div><div class="result-info"><p class="name">${m.name || 'Sin nombre'}</p><p class="phone">${m.phone}</p></div><span class="status-badge status-${m.status}">${m.status}</span></div>`);
+                const cell = document.getElementById(`grid-item-${m.number}`); if (cell) cell.classList.add('highlighted');
             });
-            
-            const firstResultCell = document.getElementById(`grid-item-${matched[0].number}`);
-            if(firstResultCell) {
-                firstResultCell.scrollIntoView({ behavior: 'smooth', block: 'center' });
-            }
-            
+            const firstCell = document.getElementById(`grid-item-${matched[0].number}`); if(firstCell) firstCell.scrollIntoView({ behavior: 'smooth', block: 'center' });
         } else {
-            searchResultsContainer.innerHTML = `<div class="no-results-message"><svg xmlns="http://www.w3.org/2000/svg" fill="currentColor" viewBox="0 0 16 16"><path d="M11.742 10.344a6.5 6.5 0 1 0-1.397 1.398h-.001c.03.04.062.078.098.115l3.85 3.85a1 1 0 0 0 1.415-1.414l-3.85-3.85a1.007 1.007 0 0 0-.115-.1zM12 6.5a5.5 5.5 0 1 1-11 0 5.5 5.5 0 0 1 11 0z"/></svg><div>No se encontraron coincidencias.</div></div>`;
+            DOM.searchResultsContainer.innerHTML = `<div class="no-results-message"><svg xmlns="http://www.w3.org/2000/svg" fill="currentColor" viewBox="0 0 16 16"><path d="M11.742 10.344a6.5 6.5 0 1 0-1.397 1.398h-.001c.03.04.062.078.098.115l3.85 3.85a1 1 0 0 0 1.415-1.414l-3.85-3.85a1.007 1.007 0 0 0-.115-.1zM12 6.5a5.5 5.5 0 1 1-11 0 5.5 5.5 0 0 1 11 0z"/></svg><div>No se encontraron coincidencias.</div></div>`;
         }
     };
-    
-    const getWinnerInfo = (raffleNumber) => {
+    const getWinnerInfo = (raffleNumber, prizeTier, prizeValue) => {
         const data = localRaffleData[raffleNumber];
+        const prizeLabels = { mayor: '🥇 Premio Mayor', segundo: '🥈 Segundo Premio', tercero: '🥉 Tercer Premio' };
+        const prizeStyles = { mayor: 'gold', segundo: 'silver', tercero: 'bronze' };
+        let winnerHTML;
         if (data && data.status === 'pago') {
-            return { isWinner: true, html: `<div class="winner-name">${data.name || 'N/A'}</div><div class="winner-phone">Cel: ${data.phone || 'N/A'}</div>` };
-        }
-        const reason = data ? `no fue pagado (estado: ${data.status})` : 'está disponible';
-        return { isWinner: false, html: `<div class="no-winner-text">Sin ganador (El número ${raffleNumber} ${reason}).</div>` };
-    };
-
-    const checkWinners = () => {
-        const winningNumber = realWinningInput.value.trim();
-        winnerResults.innerHTML = '';
-        if (!/^\d{4}$/.test(winningNumber)) {
-            winnerResults.innerHTML = '<div class="no-results-message">Ingresa un número válido de 4 cifras.</div>';
-            return;
-        }
-        const prizes = [
-            { title: '🥇 Premio Mayor', number: winningNumber.substring(2, 4), style: 'gold' }, 
-            { title: '🥈 Segundo Premio', number: winningNumber.substring(0, 2), style: 'silver' }, 
-            { title: '🥉 Tercer Premio', number: winningNumber.substring(1, 3), style: 'bronze' }
-        ];
-        prizes.forEach(prize => {
-            const winnerDetails = getWinnerInfo(prize.number);
-            const cardStyle = winnerDetails.isWinner ? prize.style : 'no-winner';
-            const cardHTML = `<div class="winner-card ${cardStyle}"><div class="prize-header"><h3>${prize.title}</h3><span class="prize-number-tag">Nº ${prize.number}</span></div><div class="prize-info">${winnerDetails.html}</div></div>`;
-            winnerResults.insertAdjacentHTML('beforeend', cardHTML);
-        });
-    };
-    
-    createRifaButton.addEventListener('click', crearNuevaRifa);
-    deleteRifaButton.addEventListener('click', deleteRifaActual);
-    closeButton.addEventListener('click', closeModal);
-    saveButton.addEventListener('click', saveData);
-    deleteButton.addEventListener('click', deleteData);
-    window.addEventListener('click', (event) => { if (event.target === modal) closeModal(); });
-    searchButton.addEventListener('click', () => {
-        if (!rifaActivaId) {
-            alert("Selecciona una rifa para poder buscar.");
-            return;
-        }
-        const query = searchInput.value.trim();
-        if (query.length === 10) {
-            performSearch();
+            winnerHTML = `<div class="prize-info"><div class="winner-name">${data.name || 'N/A'}</div><div class="winner-phone">Cel: ${data.phone || 'N/A'}</div><div class="prize-value">Valor: ${formatCurrency(prizeValue)}</div></div>`;
         } else {
-            searchResultsContainer.innerHTML = '<div class="no-results-message">Debes ingresar un número de 10 cifras para buscar.</div>';
-            document.querySelectorAll('.grid-item.highlighted').forEach(item => item.classList.remove('highlighted'));
+            const reason = data ? `no fue pagado (estado: ${data.status})` : 'está disponible';
+            winnerHTML = `<div class="prize-info"><div class="no-winner-text">Sin ganador (El número ${raffleNumber} ${reason}).</div></div>`;
         }
+        return `<div class="winner-card ${data && data.status === 'pago' ? prizeStyles[prizeTier] : 'no-winner'}"><div class="prize-header"><h3>${prizeLabels[prizeTier]}</h3><span class="prize-number-tag">Nº ${raffleNumber}</span></div>${winnerHTML}</div>`;
+    };
+    const checkWinners = async () => {
+        const winningNumber = DOM.realWinningInput.value.trim();
+        DOM.winnerResults.innerHTML = '';
+        if (!/^\d{4}$/.test(winningNumber)) {
+            DOM.winnerResults.innerHTML = '<div class="no-results-message">Ingresa un número válido de 4 cifras.</div>'; return;
+        }
+        const rifaDoc = await db.collection("rifas").doc(rifaActivaId).get();
+        const prizesData = rifaDoc.data().premios || { mayor: { valor: 0 }, segundo: { valor: 0 }, tercero: { valor: 0 } };
+        const prizeChecks = [
+            { tier: 'mayor', number: winningNumber.substring(2, 4), value: prizesData.mayor.valor },
+            { tier: 'segundo', number: winningNumber.substring(0, 2), value: prizesData.segundo.valor },
+            { tier: 'tercero', number: winningNumber.substring(1, 3), value: prizesData.tercero.valor }
+        ];
+        prizeChecks.forEach(p => DOM.winnerResults.insertAdjacentHTML('beforeend', getWinnerInfo(p.number, p.tier, p.value)));
+    };
+    DOM.darkModeToggle.addEventListener('click', () => { const newTheme = document.body.classList.contains('dark-mode') ? 'light' : 'dark'; localStorage.setItem('theme', newTheme); applyTheme(newTheme); });
+    DOM.createRifaButton.addEventListener('click', crearNuevaRifa); DOM.deleteRifaButton.addEventListener('click', deleteRifaActual);
+    DOM.closeDataModalButton.addEventListener('click', closeDataModal); DOM.saveButton.addEventListener('click', saveData); DOM.deleteButton.addEventListener('click', deleteData);
+    DOM.prizeButton.addEventListener('click', openPrizeModal); DOM.closePrizeModalButton.addEventListener('click', () => DOM.prizeModal.style.display = 'none');
+    DOM.savePrizeButton.addEventListener('click', savePrizeValues);
+    DOM.rifaSelect.addEventListener('click', () => { DOM.rifaSelectItems.classList.toggle('select-show'); DOM.rifaSelect.classList.toggle('select-arrow-active'); });
+    window.addEventListener('click', (event) => { 
+        if (event.target === DOM.dataModal) closeDataModal(); if (event.target === DOM.prizeModal) DOM.prizeModal.style.display = 'none';
+        if (!DOM.rifaSelect.parentElement.contains(event.target)) { DOM.rifaSelectItems.classList.remove('select-show'); DOM.rifaSelect.classList.remove('select-arrow-active'); }
     });
-    checkWinnerButton.addEventListener('click', checkWinners);
-    winnerInputDisplay.addEventListener('click', () => { realWinningInput.focus(); });
-    realWinningInput.addEventListener('input', () => {
-        const value = realWinningInput.value;
-        digitCircles.forEach((circle, index) => {
-            const digit = value[index];
-            if (digit && circle.textContent !== digit) {
-                circle.textContent = digit;
-                circle.classList.add('filled');
-                circle.style.animation = 'none';
-                void circle.offsetWidth;
-                circle.style.animation = '';
-            } else if (!digit) {
-                circle.textContent = '';
-                circle.classList.remove('filled');
-            }
+    DOM.searchButton.addEventListener('click', () => {
+        if (!rifaActivaId) { alert("Selecciona una rifa para poder buscar."); return; }
+        if (DOM.searchInput.value.trim().length === 10) performSearch();
+        else { DOM.searchResultsContainer.innerHTML = '<div class="no-results-message">Debes ingresar un número de 10 cifras para buscar.</div>'; document.querySelectorAll('.grid-item.highlighted').forEach(item => item.classList.remove('highlighted')); }
+    });
+    DOM.checkWinnerButton.addEventListener('click', checkWinners);
+    DOM.realWinningInput.addEventListener('input', () => {
+        const value = DOM.realWinningInput.value;
+        DOM.digitCircles.forEach((circle, index) => {
+            const digit = value[index]; if (digit) { circle.textContent = digit; circle.classList.add('filled'); } else { circle.textContent = ''; circle.classList.remove('filled'); }
         });
-        checkWinnerButton.disabled = value.length !== 4;
+        DOM.checkWinnerButton.disabled = value.length !== 4;
     });
-
-    const savedTheme = localStorage.getItem('theme') || 'light';
-    applyTheme(savedTheme);
+    DOM.modalWinningInput.addEventListener('input', () => {
+        const value = DOM.modalWinningInput.value;
+        DOM.prizeSimulatorSlots.forEach((slot, index) => { slot.textContent = value[index] || ''; });
+        DOM.prizeZonesContainer.classList.toggle('active', value.length === 4);
+        if (value.length < 4) DOM.modalWinnerResults.innerHTML = '';
+    });
+    DOM.prizeZones.forEach(zone => {
+        zone.addEventListener('click', () => {
+            const fullNumber = DOM.modalWinningInput.value;
+            if (fullNumber.length !== 4) return;
+            const prizeTier = zone.dataset.prize;
+            let numberToCheck;
+            if (prizeTier === 'mayor') numberToCheck = fullNumber.substring(2, 4);
+            else if (prizeTier === 'segundo') numberToCheck = fullNumber.substring(0, 2);
+            else if (prizeTier === 'tercero') numberToCheck = fullNumber.substring(1, 3);
+            DOM.modalWinnerResults.innerHTML = getWinnerInfo(numberToCheck, prizeTier, currentPrizeData[prizeTier].valor);
+        });
+    });
+    applyTheme(localStorage.getItem('theme') || 'light');
     initializeGrid();
     cargarRifas();
-    checkWinnerButton.disabled = true;
+    DOM.checkWinnerButton.disabled = true;
 });
 </script>
 
