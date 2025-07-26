@@ -21,7 +21,7 @@
             --body-bg: #f8f9fa;
             --body-color: #333;
             --modal-bg: #fefefe;
-            --modal-glass-bg: rgba(255, 255, 255, 0.75);
+            --modal-glass-bg: rgba(255, 255, 255, 0.10);
             --winner-card-silver-bg: linear-gradient(135deg, #e0e0e0, #bdbdbd);
             --winner-card-silver-color: #333;
             --transition-speed: 0.3s;
@@ -110,14 +110,14 @@
             left: 0;
             width: 100%;
             height: 100%;
-            background-color: rgba(0,0,0,0.5);
+            background-color: rgba(0,0,0,0.1);
             opacity: 0;
             z-index: 999;
             transition: opacity 0.3s ease-in-out;
         }
         .modal-backdrop.visible {
             display: block;
-            opacity: 1;
+            opacity: 0.5;
         }
         .modal {
             display: flex;
@@ -344,7 +344,7 @@
 
 <div id="prizeModal" class="modal">
     <div class="modal-content">
-        <div class="modal-header"><h2 style="display: flex; align-items: center; gap: 10px;"><i class="fas fa-trophy" style="color: var(--color-separado);"></i> Centro de Premios</h2><span class="close-button">&times;</span></div>
+        <div class="modal-header"><h2 style="display: flex; align-items: center; gap: 10px;"><i class="fas fa-trophy" style="color: var(--color-separado);"></i> PREMIOS</h2><span class="close-button">&times;</span></div>
         <div class="modal-body">
             <div id="prize-info-section"></div>
             <hr style="margin: 25px 0; border-color: var(--border-color); opacity: 0.5;">
