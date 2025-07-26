@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-    <title>Control de Rifas</title>
+    <title>Control de Rifas Inmersivo</title>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" />
     <style>
         :root {
@@ -21,6 +21,7 @@
             --body-bg: #f8f9fa;
             --body-color: #333;
             --modal-bg: #fefefe;
+            --modal-glass-bg: rgba(255, 255, 255, 0.15); /* ✨ Color para efecto cristal */
             --winner-card-silver-bg: linear-gradient(135deg, #e0e0e0, #bdbdbd);
             --winner-card-silver-color: #333;
             --transition-speed: 0.3s;
@@ -35,11 +36,13 @@
             --body-bg: #121212;
             --body-color: #f2f2f7;
             --modal-bg: #2c2c2e;
+            --modal-glass-bg: rgba(44, 44, 46, 0.5); /* ✨ Color para efecto cristal en modo oscuro */
             --winner-card-silver-bg: linear-gradient(135deg, #a8a8a8, #8c8c8c);
             --winner-card-silver-color: #f2f2f7;
         }
         body { font-family: system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, 'Open Sans', 'Helvetica Neue', sans-serif; background-color: var(--body-bg); padding: 10px; color: var(--body-color); transition: background-color var(--transition-speed) ease, color var(--transition-speed) ease; }
-        .container { max-width: 800px; margin: auto; padding-top: 20px; }
+        .container { max-width: 800px; margin: auto; padding-top: 20px; transition: filter 0.3s ease-in-out; }
+        .container.page-blur { filter: blur(5px) brightness(0.7); pointer-events: none; }
         h2, h3, h4 { text-align: center; color: var(--text-dark); }
         .summary-panel { display: flex; flex-wrap: nowrap; gap: 10px; margin-bottom: 25px; }
         .summary-card { display: flex; flex-direction: column; align-items: center; justify-content: center; padding: 12px 5px; background-color: var(--background-card); border-radius: 12px; box-shadow: 0 5px 25px var(--shadow-color); transition: transform 0.2s ease, box-shadow 0.2s ease, background-color var(--transition-speed) ease; border-top: 4px solid; flex: 1 1 0; min-width: 0; text-align: center; }
@@ -96,12 +99,85 @@
         .prize-info .winner-name { font-size: 1.25em; font-weight: bold; margin: 10px 0 5px 0; }
         .prize-info .winner-phone { font-size: 1em; opacity: 0.9; margin: 0; }
         .prize-info .no-winner-text { font-size: 1.1em; font-weight: 500; font-style: italic; margin-top: 10px; }
-        .prize-value { font-size: 1.1em; font-weight: bold; margin-top: 8px; }
+        .prize-value { font-size: 1em; font-weight: bold; margin-top: 8px; }
         #gridContainer { display: grid; grid-template-columns: repeat(10, 1fr); gap: 4px; margin-top: 20px; }
         .grid-item { display: flex; justify-content: center; align-items: center; aspect-ratio: 1 / 1; border: 1px solid var(--border-color); border-radius: 8px; font-size: clamp(0.7em, 3vw, 1.5em); font-weight: bold; color: white; cursor: pointer; transition: transform 0.2s, background-color 0.2s, border-color 0.2s; }
-        .modal { display: none; position: fixed; z-index: 1000; left: 0; top: 0; width: 100%; height: 100%; overflow: auto; background-color: rgba(0,0,0,0.6); animation: fadeIn 0.3s; }
-        .modal-content { background-color: var(--modal-bg); margin: 5vh auto; padding: 20px; border: 1px solid var(--border-color); width: 90%; max-width: 500px; border-radius: 8px; box-shadow: 0 4px 8px rgba(0,0,0,0.2); transition: background-color var(--transition-speed) ease; }
-        #prizeModal .modal-content { max-width: 600px; }
+        
+        .modal-backdrop {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-color: rgba(0,0,0,0.5);
+            opacity: 0;
+            z-index: 999;
+            transition: opacity 0.3s ease-in-out;
+        }
+        .modal-backdrop.visible {
+            display: block;
+            opacity: 1;
+        }
+        .modal {
+            display: flex;
+            justify-content: center;
+            align-items: flex-start;
+            position: fixed;
+            z-index: 1000;
+            left: 0;
+            top: 0;
+            width: 100%;
+            height: 100%;
+            overflow: auto;
+            opacity: 0;
+            visibility: hidden;
+            transition: opacity 0.3s ease-in-out, visibility 0.3s;
+        }
+        #prizeModal {
+            padding: 0;
+        }
+        .modal.visible {
+            opacity: 1;
+            visibility: visible;
+        }
+        @keyframes modal-slide-in {
+            from {
+                transform: translateY(-50px) scale(0.95);
+                opacity: 0;
+            }
+            to {
+                transform: translateY(0) scale(1);
+                opacity: 1;
+            }
+        }
+        .modal.visible .modal-content {
+            animation: modal-slide-in 0.4s cubic-bezier(0.25, 0.46, 0.45, 0.94) forwards;
+        }
+
+        .modal-content { background-color: var(--modal-bg); padding: 20px; border: 1px solid var(--border-color); width: 90%; max-width: 500px; border-radius: 8px; box-shadow: 0 4px 8px rgba(0,0,0,0.2); transition: background-color var(--transition-speed) ease; }
+        
+        #prizeModal .modal-content {
+            width: 100%;
+            height: 100%;
+            max-width: none;
+            border-radius: 0;
+            border: none;
+            background-color: var(--modal-glass-bg);
+            backdrop-filter: blur(10px);
+            -webkit-backdrop-filter: blur(10px);
+            box-shadow: none;
+            display: flex;
+            flex-direction: column;
+            justify-content: flex-start; /* ✨ CORRECCIÓN: Alinea el contenido arriba */
+            padding: 60px 20px 20px 20px; /* ✨ CORRECCIÓN: Padding superior para no pegar al borde */
+            box-sizing: border-box;
+        }
+        #prizeModal h2 { margin-bottom: 15px; }
+        #prizeModal hr { margin: 15px 0; }
+        #prizeModal h4 { margin-top: 0; margin-bottom: 15px; }
+
+
         .grid-item:hover { transform: scale(1.05); }
         .grid-item.status-disponible { background-color: var(--color-disponible); }
         .grid-item.status-separado { background-color: var(--color-separado); }
@@ -149,22 +225,57 @@
         @keyframes shimmer { 0% { left: -200%; } 40% { left: 200%; } 100% { left: 200%; } }
         @keyframes jiggle { 0%, 100% { transform: rotate(0); } 25% { transform: rotate(-10deg) scale(1.1); } 75% { transform: rotate(10deg) scale(1.1); } }
         
-        /* --- NUEVOS Estilos del Modal de Premio --- */
-        #prize-info-section { display: grid; grid-template-columns: repeat(auto-fit, minmax(150px, 1fr)); gap: 15px; }
-        .prize-card { padding: 15px; border-radius: 12px; text-align: center; transition: all 0.3s ease; }
-        .prize-card.highlight { transform: translateY(-5px); box-shadow: 0 8px 25px rgba(0,0,0,0.2); }
-        .prize-card-title { font-size: 1.1em; font-weight: bold; display: flex; align-items: center; justify-content: center; gap: 8px; }
-        .prize-card-value { font-size: 1.4em; font-weight: bold; margin-top: 8px; }
-        .prize-card-input { padding: 8px; font-size: 1em; margin-top: 8px; width: 100%; box-sizing: border-box; border: 1px solid rgba(0,0,0,0.2); border-radius: 4px; }
+        #prize-info-section {
+            display: flex;
+            gap: 10px;
+        }
+        .prize-card { 
+            transition: all 0.3s ease;
+            text-align: center;
+            border-radius: 12px;
+            padding: 15px;
+            flex: 1;
+            min-width: 0;
+        }
+        @keyframes card-pulse-glow {
+            50% {
+                transform: scale(1.07);
+                box-shadow: 0 0 25px 5px var(--glow-color, #fff);
+            }
+        }
+        .prize-card.highlight { transform: translateY(-5px) scale(1.02); box-shadow: 0 8px 25px rgba(0,0,0,0.2); }
+        .prize-card-title { font-size: 0.9em; font-weight: bold; display: flex; align-items: center; justify-content: center; gap: 8px; }
+        .prize-card-value {
+            font-size: 0.9em;
+            font-weight: bold;
+            margin-top: 8px;
+        }
+        .prize-card-input { padding: 8px; font-size: 0.9em; margin-top: 8px; width: 100%; box-sizing: border-box; border: 1px solid rgba(0,0,0,0.2); border-radius: 4px; }
+        
         .prize-card.mayor { background: linear-gradient(135deg, #ffeb3b, #ffc107); color: #333; }
         .prize-card.segundo { background: linear-gradient(135deg, #f5f5f5, #bdbdbd); color: #333; }
         .prize-card.tercero { background: linear-gradient(135deg, #ffc8a1, #b87333); color: white; }
         
-        @keyframes dropIn { from { transform: translateY(-50px) scale(0.8); opacity: 0; } to { transform: translateY(0) scale(1); opacity: 1; } }
-        #prize-simulator-section { padding: 20px; border: 2px dashed var(--border-color); border-radius: 8px; text-align: center; animation: dropIn 0.5s ease-out backwards; }
+        #prize-simulator-section { padding: 20px; border: 2px dashed var(--border-color); border-radius: 8px; text-align: center; margin-top: 20px; }
         .digit-slots-container { display: flex; justify-content: center; gap: 15px; margin-bottom: 20px; position: relative; cursor: text; }
-        .digit-circle-simulator { width: clamp(45px, 12vw, 70px); aspect-ratio: 1/1; background-color: var(--background-light); border: 2px solid var(--border-color); border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: clamp(2em, 8vw, 3em); font-weight: bold; color: var(--text-dark); transition: all 0.3s; box-shadow: inset 0 2px 5px rgba(0,0,0,0.1); }
-        .digit-circle-simulator.filled { animation: popIn 0.3s ease-out; border-color: var(--color-primary); color: var(--color-primary); }
+        .digit-circle-simulator { position: relative; overflow: hidden; width: clamp(45px, 12vw, 70px); aspect-ratio: 1/1; background-color: var(--background-light); border: 2px solid var(--border-color); border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: clamp(2em, 8vw, 3em); font-weight: bold; color: var(--text-dark); transition: all 0.3s; box-shadow: inset 0 2px 5px rgba(0,0,0,0.1); }
+        .digit-circle-simulator::before { content: ''; position: absolute; bottom: 0; left: 0; right: 0; height: 0; background: linear-gradient(to top, var(--color-primary), #4dabf7); transition: height 0.4s ease-in-out; z-index: 0; }
+        .digit-circle-simulator.liquid-filled::before { height: 100%; }
+        .digit-circle-simulator span { position: relative; z-index: 1; color: var(--text-dark); transition: color 0.3s; display: inline-block; }
+        .digit-circle-simulator.liquid-filled span { color: white; }
+        .digit-circle-simulator.selected-digit { background-color: var(--color-pago); border-color: #69c340; }
+        .digit-circle-simulator.selected-digit span {
+            color: white;
+            animation: digit-depth-glow 0.8s ease-in-out;
+        }
+        .digit-circle-simulator.selected-digit::before { height: 0; }
+        
+        @keyframes digit-depth-glow {
+            0% { transform: scale(1); text-shadow: none; }
+            50% { transform: scale(1.1); text-shadow: 0 0 12px rgba(255, 255, 150, 0.8); }
+            100% { transform: scale(1); text-shadow: none; }
+        }
+
         #modalWinningInput { position: absolute; opacity: 0; width: 100%; height: 100%; top: 0; left: 0; border: none; background: transparent; -webkit-text-security: disc;}
         .prize-zones-container { position: absolute; top: 0; left: 0; width: 100%; height: 100%; display: flex; justify-content: center; gap: 15px; visibility: hidden; }
         .prize-zones-container.active { visibility: visible; }
@@ -173,14 +284,14 @@
         #prizeZoneSecond { left: -7.5px; width: calc(50% + 7.5px); }
         #prizeZoneThird { left: calc(25% - 7.5px); width: calc(50% + 7.5px); }
         #prizeZoneMayor { right: -7.5px; width: calc(50% + 7.5px); }
+
         @media (max-width: 600px) { body { padding: 5px; } .raffle-manager { flex-direction: column; align-items: stretch; gap: 20px; } }
     </style>
 </head>
 <body>
 
-<button id="darkModeToggle" aria-label="Cambiar tema"><i class="fas fa-moon"></i></button>
-
-<div class="container">
+<div class="container" id="main-container">
+    <button id="darkModeToggle" aria-label="Cambiar tema"><i class="fas fa-moon"></i></button>
     <div class="raffle-manager">
         <div class="raffle-selector-container">
             <label for="rifaSelect">Selecciona una Rifa:</label>
@@ -234,13 +345,12 @@
     <div class="modal-content">
         <div class="modal-header"><h2 style="display: flex; align-items: center; gap: 10px;"><i class="fas fa-trophy" style="color: var(--color-separado);"></i> Centro de Premios</h2><span class="close-button">&times;</span></div>
         <div class="modal-body">
-            <div id="prize-info-section">
-                </div>
+            <div id="prize-info-section"></div>
             <hr style="margin: 25px 0; border-color: var(--border-color); opacity: 0.5;">
             <div id="prize-simulator-section">
                 <h4>Simulador de Sorteo</h4>
                 <div class="digit-slots-container">
-                    <div class="digit-circle-simulator"></div><div class="digit-circle-simulator"></div><div class="digit-circle-simulator"></div><div class="digit-circle-simulator"></div>
+                    <div class="digit-circle-simulator"><span></span></div><div class="digit-circle-simulator"><span></span></div><div class="digit-circle-simulator"><span></span></div><div class="digit-circle-simulator"><span></span></div>
                     <input type="tel" id="modalWinningInput" maxlength="4" autocomplete="off" />
                     <div class="prize-zones-container">
                         <div class="prize-zone" id="prizeZoneSecond" data-prize="segundo"></div>
@@ -254,6 +364,8 @@
         <div class="modal-footer"><button id="savePrizeButton" style="display: none;">Guardar Valores</button></div>
     </div>
 </div>
+
+<div class="modal-backdrop" id="modal-backdrop"></div>
 
 <script src="https://www.gstatic.com/firebasejs/8.10.0/firebase-app.js"></script>
 <script src="https://www.gstatic.com/firebasejs/8.10.0/firebase-auth.js"></script>
@@ -272,6 +384,8 @@ document.addEventListener('DOMContentLoaded', () => {
     const app = firebase.initializeApp(firebaseConfig);
     const db = firebase.firestore();
     const DOM = {
+        mainContainer: document.getElementById('main-container'),
+        modalBackdrop: document.getElementById('modal-backdrop'),
         rifaSelect: document.getElementById('rifaSelect'), rifaSelectItems: document.getElementById('rifaSelectItems'),
         newRifaName: document.getElementById('newRifaName'), createRifaButton: document.getElementById('createRifaButton'),
         deleteRifaButton: document.getElementById('deleteRifaButton'), prizeButton: document.getElementById('prizeButton'),
@@ -294,6 +408,8 @@ document.addEventListener('DOMContentLoaded', () => {
     let rifaActivaId = null, unsubRifaListener = null, currentNumber = null, localRaffleData = {}, currentPrizeData = {};
     const totalNumbers = 100;
     const formatCurrency = (value) => new Intl.NumberFormat('es-CO', { style: 'currency', currency: 'COP', minimumFractionDigits: 0 }).format(value);
+    const sleep = ms => new Promise(resolve => setTimeout(resolve, ms));
+
     const applyTheme = (theme) => {
         const icon = DOM.darkModeToggle.querySelector('i');
         if (theme === 'dark') { document.body.classList.add('dark-mode'); icon.classList.remove('fa-moon'); icon.classList.add('fa-sun'); } 
@@ -390,9 +506,9 @@ document.addEventListener('DOMContentLoaded', () => {
         const data = localRaffleData[number];
         if (data) { DOM.inputStatus.value = data.status; DOM.inputName.value = data.name || ''; DOM.inputPhone.value = data.phone || ''; } 
         else { DOM.inputStatus.value = 'disponible'; DOM.inputName.value = ''; DOM.inputPhone.value = ''; }
-        DOM.dataModal.style.display = 'block';
+        DOM.dataModal.classList.add('visible');
     };
-    const closeDataModal = () => { DOM.dataModal.style.display = 'none'; currentNumber = null; };
+    const closeDataModal = () => { DOM.dataModal.classList.remove('visible'); currentNumber = null; };
     const saveData = () => {
         if (!currentNumber || !rifaActivaId) return;
         const status = DOM.inputStatus.value, name = DOM.inputName.value.trim(), phone = DOM.inputPhone.value.trim();
@@ -404,49 +520,93 @@ document.addEventListener('DOMContentLoaded', () => {
         if (!currentNumber || !rifaActivaId) return;
         db.collection("rifas").doc(rifaActivaId).collection("numeros").doc(currentNumber).delete().then(closeDataModal);
     };
+    const closePrizeModal = () => {
+        DOM.mainContainer.classList.remove('page-blur');
+        DOM.modalBackdrop.classList.remove('visible');
+        DOM.prizeModal.classList.remove('visible');
+    }
+
+    const animatePrizeCard = (card, glowColor) => {
+        if (!card) return;
+        card.style.setProperty('--glow-color', glowColor);
+        card.style.animation = 'card-pulse-glow 1.5s ease-in-out';
+        setTimeout(() => {
+            card.style.animation = '';
+            card.style.removeProperty('--glow-color');
+        }, 1500);
+    };
+
+    const runSimulatorIntroAnimation = async () => {
+        DOM.modalWinningInput.disabled = true;
+        const slots = DOM.prizeSimulatorSlots;
+        const cards = {
+            mayor: DOM.prizeInfoSection.querySelector('.prize-card.mayor'),
+            segundo: DOM.prizeInfoSection.querySelector('.prize-card.segundo'),
+            tercero: DOM.prizeInfoSection.querySelector('.prize-card.tercero'),
+        };
+
+        for (let i = 0; i < 2; i++) {
+            slots.forEach(slot => slot.classList.remove('selected-digit'));
+            
+            "1234".split('').forEach((digit, index) => {
+                slots[index].querySelector('span').textContent = digit;
+            });
+            await sleep(500);
+
+            animatePrizeCard(cards.mayor, 'var(--color-separado)');
+            slots[2].classList.add('selected-digit');
+            slots[3].classList.add('selected-digit');
+            await sleep(1800);
+
+            slots[2].classList.remove('selected-digit');
+            slots[3].classList.remove('selected-digit');
+            animatePrizeCard(cards.segundo, '#AAA');
+            slots[0].classList.add('selected-digit');
+            slots[1].classList.add('selected-digit');
+            await sleep(1800);
+
+            slots[0].classList.remove('selected-digit');
+            slots[1].classList.remove('selected-digit');
+            animatePrizeCard(cards.tercero, '#d39c6f');
+            slots[1].classList.add('selected-digit');
+            slots[2].classList.add('selected-digit');
+            await sleep(1800);
+        }
+
+        slots.forEach(slot => {
+            slot.classList.remove('selected-digit');
+            slot.querySelector('span').textContent = '';
+        });
+        DOM.modalWinningInput.disabled = false;
+        DOM.modalWinningInput.focus();
+    };
+
     const openPrizeModal = async () => {
         if (!rifaActivaId) return;
+        DOM.mainContainer.classList.add('page-blur');
+        DOM.modalBackdrop.classList.add('visible');
+        DOM.prizeModal.classList.add('visible');
         const rifaDoc = await db.collection("rifas").doc(rifaActivaId).get();
         const rifaData = rifaDoc.data() || {};
         currentPrizeData = rifaData.premios || { mayor: { valor: 0 }, segundo: { valor: 0 }, tercero: { valor: 0 } };
         const user = firebase.auth().currentUser;
         DOM.prizeInfoSection.innerHTML = '';
         if (user) {
-            DOM.prizeInfoSection.innerHTML = `
-                <div class="prize-card mayor">
-                    <div class="prize-card-title">🥇 Premio Mayor</div>
-                    <input type="number" class="prize-card-input" id="mayorValueInput" value="${currentPrizeData.mayor.valor}">
-                </div>
-                <div class="prize-card segundo">
-                    <div class="prize-card-title">🥈 Segundo Premio</div>
-                    <input type="number" class="prize-card-input" id="segundoValueInput" value="${currentPrizeData.segundo.valor}">
-                </div>
-                <div class="prize-card tercero">
-                    <div class="prize-card-title">🥉 Tercer Premio</div>
-                    <input type="number" class="prize-card-input" id="terceroValueInput" value="${currentPrizeData.tercero.valor}">
-                </div>`;
+            DOM.prizeInfoSection.innerHTML = `<div class="prize-card mayor"><div class="prize-card-title">🥇 Premio Mayor</div><input type="number" class="prize-card-input" id="mayorValueInput" value="${currentPrizeData.mayor.valor}"></div><div class="prize-card segundo"><div class="prize-card-title">🥈 Segundo Premio</div><input type="number" class="prize-card-input" id="segundoValueInput" value="${currentPrizeData.segundo.valor}"></div><div class="prize-card tercero"><div class="prize-card-title">🥉 Tercer Premio</div><input type="number" class="prize-card-input" id="terceroValueInput" value="${currentPrizeData.tercero.valor}"></div>`;
             DOM.savePrizeButton.style.display = 'inline-block';
         } else {
-            DOM.prizeInfoSection.innerHTML = `
-                <div class="prize-card mayor">
-                    <div class="prize-card-title">🥇 Premio Mayor</div>
-                    <div class="prize-card-value">${formatCurrency(currentPrizeData.mayor.valor)}</div>
-                </div>
-                <div class="prize-card segundo">
-                    <div class="prize-card-title">🥈 Segundo Premio</div>
-                    <div class="prize-card-value">${formatCurrency(currentPrizeData.segundo.valor)}</div>
-                </div>
-                <div class="prize-card tercero">
-                    <div class="prize-card-title">🥉 Tercer Premio</div>
-                    <div class="prize-card-value">${formatCurrency(currentPrizeData.tercero.valor)}</div>
-                </div>`;
+            DOM.prizeInfoSection.innerHTML = `<div class="prize-card mayor"><div class="prize-card-title">🥇 Premio Mayor</div><div class="prize-card-value">${formatCurrency(currentPrizeData.mayor.valor)}</div></div><div class="prize-card segundo"><div class="prize-card-title">🥈 Segundo Premio</div><div class="prize-card-value">${formatCurrency(currentPrizeData.segundo.valor)}</div></div><div class="prize-card tercero"><div class="prize-card-title">🥉 Tercer Premio</div><div class="prize-card-value">${formatCurrency(currentPrizeData.tercero.valor)}</div></div>`;
             DOM.savePrizeButton.style.display = 'none';
         }
         DOM.modalWinningInput.value = '';
-        DOM.prizeSimulatorSlots.forEach(slot => { slot.textContent = ''; slot.classList.remove('filled'); });
+        DOM.prizeSimulatorSlots.forEach(slot => { 
+            slot.querySelector('span').textContent = ''; 
+            slot.classList.remove('liquid-filled', 'selected-digit'); 
+        });
         DOM.prizeZonesContainer.classList.remove('active');
         DOM.modalWinnerResults.innerHTML = '';
-        DOM.prizeModal.style.display = 'block';
+
+        runSimulatorIntroAnimation();
     };
     const savePrizeValues = async () => {
         if (!rifaActivaId || !firebase.auth().currentUser) return;
@@ -517,11 +677,16 @@ document.addEventListener('DOMContentLoaded', () => {
     DOM.darkModeToggle.addEventListener('click', () => { const newTheme = document.body.classList.contains('dark-mode') ? 'light' : 'dark'; localStorage.setItem('theme', newTheme); applyTheme(newTheme); });
     DOM.createRifaButton.addEventListener('click', crearNuevaRifa); DOM.deleteRifaButton.addEventListener('click', deleteRifaActual);
     DOM.closeDataModalButton.addEventListener('click', closeDataModal); DOM.saveButton.addEventListener('click', saveData); DOM.deleteButton.addEventListener('click', deleteData);
-    DOM.prizeButton.addEventListener('click', openPrizeModal); DOM.closePrizeModalButton.addEventListener('click', () => DOM.prizeModal.style.display = 'none');
+    
+    DOM.prizeButton.addEventListener('click', openPrizeModal);
+    DOM.closePrizeModalButton.addEventListener('click', closePrizeModal);
+    DOM.modalBackdrop.addEventListener('click', closePrizeModal);
+
     DOM.savePrizeButton.addEventListener('click', savePrizeValues);
     DOM.rifaSelect.addEventListener('click', () => { DOM.rifaSelectItems.classList.toggle('select-show'); DOM.rifaSelect.classList.toggle('select-arrow-active'); });
     window.addEventListener('click', (event) => { 
-        if (event.target === DOM.dataModal) closeDataModal(); if (event.target === DOM.prizeModal) DOM.prizeModal.style.display = 'none';
+        if (!DOM.dataModal.contains(event.target) && event.target !== DOM.dataModal && DOM.dataModal.classList.contains('visible')) {
+        }
         if (DOM.rifaSelect.parentElement && !DOM.rifaSelect.parentElement.contains(event.target)) { DOM.rifaSelectItems.classList.remove('select-show'); DOM.rifaSelect.classList.remove('select-arrow-active'); }
     });
     DOM.searchButton.addEventListener('click', () => {
@@ -537,31 +702,54 @@ document.addEventListener('DOMContentLoaded', () => {
         });
         DOM.checkWinnerButton.disabled = value.length !== 4;
     });
+
     DOM.modalWinningInput.addEventListener('input', () => {
         const value = DOM.modalWinningInput.value;
         DOM.prizeSimulatorSlots.forEach((slot, index) => { 
+            const digitSpan = slot.querySelector('span');
             const digit = value[index];
-            slot.textContent = digit || '';
-            slot.classList.toggle('filled', !!digit);
+            digitSpan.textContent = digit || '';
+            slot.classList.toggle('liquid-filled', !!digit);
         });
         DOM.prizeZonesContainer.classList.toggle('active', value.length === 4);
-        if (value.length < 4) DOM.modalWinnerResults.innerHTML = '';
+        if (value.length < 4) {
+            DOM.modalWinnerResults.innerHTML = '';
+            DOM.prizeSimulatorSlots.forEach(slot => slot.classList.remove('selected-digit'));
+        }
     });
+    
     DOM.prizeZones.forEach(zone => {
         const prizeTier = zone.dataset.prize;
         const card = DOM.prizeInfoSection.querySelector(`.prize-card.${prizeTier}`);
+        
         zone.addEventListener('mouseenter', () => card?.classList.add('highlight'));
         zone.addEventListener('mouseleave', () => card?.classList.remove('highlight'));
+
         zone.addEventListener('click', () => {
             const fullNumber = DOM.modalWinningInput.value;
             if (fullNumber.length !== 4) return;
+            
+            DOM.prizeSimulatorSlots.forEach(slot => slot.classList.remove('selected-digit'));
+
+            let targetIndices = [];
             let numberToCheck;
-            if (prizeTier === 'mayor') numberToCheck = fullNumber.substring(2, 4);
-            else if (prizeTier === 'segundo') numberToCheck = fullNumber.substring(0, 2);
-            else if (prizeTier === 'tercero') numberToCheck = fullNumber.substring(1, 3);
+            if (prizeTier === 'mayor') {
+                targetIndices = [2, 3];
+                numberToCheck = fullNumber.substring(2, 4);
+            } else if (prizeTier === 'segundo') {
+                targetIndices = [0, 1];
+                numberToCheck = fullNumber.substring(0, 2);
+            } else if (prizeTier === 'tercero') {
+                targetIndices = [1, 2];
+                numberToCheck = fullNumber.substring(1, 3);
+            }
+            
+            targetIndices.forEach(i => DOM.prizeSimulatorSlots[i].classList.add('selected-digit'));
+            
             DOM.modalWinnerResults.innerHTML = getWinnerInfo(numberToCheck, prizeTier, currentPrizeData[prizeTier].valor);
         });
     });
+
     applyTheme(localStorage.getItem('theme') || 'light');
     initializeGrid();
     cargarRifas();
