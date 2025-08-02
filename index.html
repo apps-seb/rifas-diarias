@@ -118,7 +118,25 @@
         @keyframes modal-slide-in { from { transform: translateY(-50px) scale(0.95); opacity: 0; } to { transform: translateY(0) scale(1); opacity: 1; } }
         .modal.visible .modal-content { animation: modal-slide-in 0.4s cubic-bezier(0.25, 0.46, 0.45, 0.94) forwards; }
         .modal-content { background-color: var(--modal-bg); padding: 20px; border: 1px solid var(--border-color); width: 90%; max-width: 500px; border-radius: 8px; box-shadow: 0 4px 8px rgba(0,0,0,0.2); transition: background-color var(--transition-speed) ease; }
-        #prizeModal .modal-content { width: 100%; height: 100%; max-width: none; border-radius: 0; border: none; background-color: var(--modal-glass-bg); backdrop-filter: blur(10px); -webkit-backdrop-filter: blur(10px); box-shadow: none; display: flex; flex-direction: column; justify-content: flex-start; padding: 60px 20px 20px 20px; box-sizing: border-box; }
+        
+        /* --- CAMBIO: Se reduce el padding superior de 60px a 30px --- */
+        #prizeModal .modal-content {
+            width: 100%;
+            height: 100%;
+            max-width: none;
+            border-radius: 0;
+            border: none;
+            background-color: var(--modal-glass-bg);
+            backdrop-filter: blur(10px);
+            -webkit-backdrop-filter: blur(10px);
+            box-shadow: none;
+            display: flex;
+            flex-direction: column;
+            justify-content: flex-start;
+            padding: 30px 20px 20px 20px; /* <- AQUÍ EL CAMBIO */
+            box-sizing: border-box;
+        }
+
         #prizeModal h2 { margin-bottom: 15px; }
         #prizeModal hr { margin: 15px 0; }
         #prizeModal h4 { margin-top: 0; margin-bottom: 15px; }
@@ -315,6 +333,7 @@
 <script src="https://www.gstatic.com/firebasejs/8.10.0/firebase-app.js"></script>
 <script src="https://www.gstatic.com/firebasejs/8.10.0/firebase-auth.js"></script>
 <script src="https://www.gstatic.com/firebasejs/8.10.0/firebase-firestore.js"></script>
+
 <script>
 document.addEventListener('DOMContentLoaded', () => {
     const firebaseConfig = {
@@ -462,7 +481,6 @@ document.addEventListener('DOMContentLoaded', () => {
         await cambiarRifaActiva();
     };
 
-    // --- CAMBIO: Se inicializan los premios con 2 URLs vacías ---
     const crearNuevaRifa = async () => {
         const nombre = DOM.newRifaName.value.trim();
         if (!nombre) { alert("Por favor, dale un nombre a la nueva rifa."); return; }
@@ -613,7 +631,6 @@ document.addEventListener('DOMContentLoaded', () => {
         DOM.modalWinningInput.focus();
     };
     
-    // --- CAMBIO: Lógica de vista de admin ahora crea dos inputs de URL ---
     const openPrizeModal = async () => {
         if (!rifaActivaId) return;
         DOM.mainContainer.classList.add('page-blur');
@@ -635,13 +652,10 @@ document.addEventListener('DOMContentLoaded', () => {
                     <div class="prize-card-admin-view">
                         <label for="${tier}DescInput">Descripción:</label>
                         <input type="text" id="${tier}DescInput" placeholder="Ej: Una Moto 0km" value="${prize.descripcion || ''}">
-                        
                         <label for="${tier}ValorInput">Valor (si aplica):</label>
                         <input type="number" id="${tier}ValorInput" placeholder="0" value="${prize.valor || 0}">
-
                         <label for="${tier}ImgUrl1Input">URL de Imagen/Video 1:</label>
                         <input type="url" id="${tier}ImgUrl1Input" placeholder="https://ejemplo.com/foto1.jpg" value="${prize.imgUrl1 || ''}">
-                        
                         <label for="${tier}ImgUrl2Input">URL de Imagen/Video 2:</label>
                         <input type="url" id="${tier}ImgUrl2Input" placeholder="https://ejemplo.com/foto2.jpg" value="${prize.imgUrl2 || ''}">
                     </div>`;
@@ -666,7 +680,6 @@ document.addEventListener('DOMContentLoaded', () => {
         runSimulatorIntroAnimation();
     };
     
-    // --- CAMBIO: Lógica de guardado simplificada para leer de los inputs de URL ---
     const savePrizeValues = async () => {
         if (!rifaActivaId || !firebase.auth().currentUser) return;
         DOM.savePrizeButton.disabled = true;
