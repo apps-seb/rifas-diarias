@@ -119,7 +119,6 @@
         .modal.visible .modal-content { animation: modal-slide-in 0.4s cubic-bezier(0.25, 0.46, 0.45, 0.94) forwards; }
         .modal-content { background-color: var(--modal-bg); padding: 20px; border: 1px solid var(--border-color); width: 90%; max-width: 500px; border-radius: 8px; box-shadow: 0 4px 8px rgba(0,0,0,0.2); transition: background-color var(--transition-speed) ease; }
         
-        /* --- CAMBIO: Se reduce el padding superior de 60px a 30px --- */
         #prizeModal .modal-content {
             width: 100%;
             height: 100%;
@@ -133,7 +132,8 @@
             display: flex;
             flex-direction: column;
             justify-content: flex-start;
-            padding: 30px 20px 20px 20px; /* <- AQUÍ EL CAMBIO */
+            /* --- CAMBIO: Se reduce el padding superior para subir los elementos --- */
+            padding: 20px;
             box-sizing: border-box;
         }
 
@@ -194,8 +194,24 @@
         #prizeButton::after { content: ''; position: absolute; top: 0; left: -200%; width: 75%; height: 100%; background: linear-gradient(to right, rgba(255, 255, 255, 0) 0%, rgba(255, 215, 0, 0.4) 50%, rgba(255, 255, 255, 0) 100%); transform: skewX(-25deg); animation: shimmer 4s infinite; }
         @keyframes shimmer { 0% { left: -200%; } 40% { left: 200%; } 100% { left: 200%; } }
         @keyframes jiggle { 0%, 100% { transform: rotate(0); } 25% { transform: rotate(-10deg) scale(1.1); } 75% { transform: rotate(10deg) scale(1.1); } }
-        #prize-info-section { display: flex; flex-wrap: wrap; gap: 10px; }
-        .prize-card { transition: all 0.3s ease; text-align: center; border-radius: 12px; padding: 15px; flex: 1; min-width: 0; }
+        
+        /* --- CAMBIO: Se centra el contenedor de tarjetas --- */
+        #prize-info-section {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 10px;
+            justify-content: center;
+        }
+        /* --- CAMBIO: Se ajusta el tamaño de las tarjetas para que se organicen mejor --- */
+        .prize-card {
+            transition: all 0.3s ease;
+            text-align: center;
+            border-radius: 12px;
+            padding: 15px;
+            flex: 1 1 250px; /* Crece, se encoge, y su base es 250px */
+            max-width: 320px; /* Evita que se estire demasiado */
+        }
+
         @keyframes card-pulse-glow { 50% { transform: scale(1.07); box-shadow: 0 0 25px 5px var(--glow-color, #fff); } }
         .prize-card.highlight { transform: translateY(-5px) scale(1.02); box-shadow: 0 8px 25px rgba(0,0,0,0.2); }
         .prize-card-title { font-size: 0.9em; font-weight: bold; display: flex; align-items: center; justify-content: center; gap: 8px; margin-bottom: 10px; }
@@ -335,6 +351,8 @@
 <script src="https://www.gstatic.com/firebasejs/8.10.0/firebase-firestore.js"></script>
 
 <script>
+// El script de Javascript no tuvo cambios en esta actualización.
+// Se pega completo para mantener la integridad del archivo.
 document.addEventListener('DOMContentLoaded', () => {
     const firebaseConfig = {
         apiKey: "AIzaSyDMBARLzKnhcmSI8euhiA2Wgsf7pJQM1_0",
