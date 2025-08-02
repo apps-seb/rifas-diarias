@@ -101,13 +101,13 @@
         .prize-info .no-winner-text { font-size: 1.1em; font-weight: 500; font-style: italic; margin-top: 10px; }
         .prize-details { margin-top: 10px; text-align: center; }
         .prize-details .prize-description { font-size: 1.1em; font-weight: 500; margin: 0 0 10px 0; }
-        .prize-details .prize-media { max-width: 100%; height: auto; border-radius: 8px; margin-top: 8px; background-color: rgba(0,0,0,0.1); }
+        .prize-media-container { display: flex; gap: 10px; justify-content: center; align-items: center; }
+        .prize-media-container .prize-media { flex: 1; max-width: 50%; height: auto; border-radius: 8px; background-color: rgba(0,0,0,0.1); object-fit: cover; }
         .prize-value { font-size: 1.2em; font-weight: bold; margin-top: 8px; text-align: center; }
         .prize-card-value { font-size: 1.4em; font-weight: bold; }
         .prize-card-admin-view { display: flex; flex-direction: column; gap: 8px; }
         .prize-card-admin-view label { font-size: 0.8em; text-align: left; margin-bottom: -4px; opacity: 0.8; }
         .prize-card-admin-view input { font-size: 0.9em !important; padding: 8px !important; }
-        .upload-progress { font-size: 0.8em; color: var(--color-primary); margin-top: 4px; height: 1em; }
         #gridContainer { display: grid; grid-template-columns: repeat(10, 1fr); gap: 4px; margin-top: 20px; }
         .grid-item { display: flex; justify-content: center; align-items: center; aspect-ratio: 1 / 1; border: 1px solid var(--border-color); border-radius: 8px; font-size: clamp(0.7em, 3vw, 1.5em); font-weight: bold; color: white; cursor: pointer; transition: transform 0.2s, background-color 0.2s, border-color 0.2s; }
         .modal-backdrop { display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background-color: rgba(0,0,0,0.1); opacity: 0; z-index: 999; transition: opacity 0.3s ease-in-out; }
@@ -159,12 +159,8 @@
         #searchInput:focus + label, #searchInput:not(:placeholder-shown) + label { transform: translateY(-150%) scale(0.8); color: var(--color-primary); }
         #darkModeToggle { position: fixed; top: 15px; right: 15px; width: 40px; height: 40px; border-radius: 50%; border: 1px solid var(--border-color); background-color: var(--background-card); color: var(--text-light); font-size: 18px; cursor: pointer; display: flex; align-items: center; justify-content: center; z-index: 1001; transition: all var(--transition-speed) ease; }
         #prizeButton, #deleteRifaButton, #settingsButton { display: none; align-items: center; justify-content: center; height: 48px; width: 48px; padding: 0; background-color: transparent; border-radius: 8px; cursor: pointer; transition: all 0.2s ease; flex-shrink: 0; }
-        
-        /* --- CAMBIO: Se permite que el botón de premios sea visible para todos --- */
         #prizeButton.visible { display: flex; }
-        body.admin-view #deleteRifaButton.visible, 
-        body.admin-view #settingsButton.visible { display: flex; }
-
+        body.admin-view #deleteRifaButton.visible, body.admin-view #settingsButton.visible { display: flex; }
         #settingsButton { border: 1px solid var(--color-primary); color: var(--color-primary); }
         #settingsButton:hover { background-color: var(--color-primary); color: white; }
         .color-setting { display: flex; align-items: center; justify-content: space-between; gap: 15px; margin-bottom: 20px; }
@@ -319,8 +315,6 @@
 <script src="https://www.gstatic.com/firebasejs/8.10.0/firebase-app.js"></script>
 <script src="https://www.gstatic.com/firebasejs/8.10.0/firebase-auth.js"></script>
 <script src="https://www.gstatic.com/firebasejs/8.10.0/firebase-firestore.js"></script>
-<script src="https://www.gstatic.com/firebasejs/8.10.0/firebase-storage.js"></script>
-
 <script>
 document.addEventListener('DOMContentLoaded', () => {
     const firebaseConfig = {
@@ -333,8 +327,6 @@ document.addEventListener('DOMContentLoaded', () => {
     };
     const app = firebase.initializeApp(firebaseConfig);
     const db = firebase.firestore();
-    // --- CAMBIO: Se obtiene referencia a Firebase Storage ---
-    const storage = firebase.storage();
     
     const DOM = {
         mainContainer: document.getElementById('main-container'),
@@ -370,24 +362,31 @@ document.addEventListener('DOMContentLoaded', () => {
     const formatCurrency = (value) => new Intl.NumberFormat('es-CO', { style: 'currency', currency: 'COP', minimumFractionDigits: 0, maximumFractionDigits: 0 }).format(value);
     const sleep = ms => new Promise(resolve => setTimeout(resolve, ms));
 
-    // --- CAMBIO: La función ahora diferencia entre imagen y video ---
-    const generarHtmlDePremio = (premio) => {
-        if (!premio) {
-            return '<div class="prize-details"><p class="prize-description">Premio no definido</p></div>';
+    const generateMediaTag = (url) => {
+        if (!url) return '';
+        const lowerUrl = url.toLowerCase();
+        if (lowerUrl.includes('.mp4') || lowerUrl.includes('.webm')) {
+            return `<video src="${url}" class="prize-media" autoplay muted loop playsinline></video>`;
+        } else {
+            return `<img src="${url}" alt="Premio" class="prize-media">`;
         }
+    };
+
+    const generarHtmlDePremio = (premio) => {
+        if (!premio) return '<div class="prize-details"><p class="prize-description">Premio no definido</p></div>';
         if (premio.valor && premio.valor > 0) {
             return `<div class="prize-card-value">${formatCurrency(premio.valor)}</div>`;
         }
         if (premio.descripcion) {
             let html = `<div class="prize-details"><p class="prize-description">${premio.descripcion}</p>`;
-            if (premio.imgUrl) {
-                const url = premio.imgUrl.toLowerCase();
-                if (url.includes('.mp4') || url.includes('.webm')) {
-                    html += `<video src="${premio.imgUrl}" class="prize-media" autoplay muted loop playsinline></video>`;
-                } else {
-                    html += `<img src="${premio.imgUrl}" alt="${premio.descripcion}" class="prize-media">`;
-                }
+            let mediaContainer = '';
+            if (premio.imgUrl1 || premio.imgUrl2) {
+                mediaContainer += '<div class="prize-media-container">';
+                mediaContainer += generateMediaTag(premio.imgUrl1);
+                mediaContainer += generateMediaTag(premio.imgUrl2);
+                mediaContainer += '</div>';
             }
+            html += mediaContainer;
             html += `</div>`;
             return html;
         }
@@ -462,11 +461,13 @@ document.addEventListener('DOMContentLoaded', () => {
         DOM.rifaSelect.textContent = primeraRifaDoc.data().nombre; DOM.rifaSelect.dataset.value = primeraRifaDoc.id;
         await cambiarRifaActiva();
     };
+
+    // --- CAMBIO: Se inicializan los premios con 2 URLs vacías ---
     const crearNuevaRifa = async () => {
         const nombre = DOM.newRifaName.value.trim();
         if (!nombre) { alert("Por favor, dale un nombre a la nueva rifa."); return; }
         try {
-            const premioDefault = { valor: 0, descripcion: "", imgUrl: "" };
+            const premioDefault = { valor: 0, descripcion: "", imgUrl1: "", imgUrl2: "" };
             await db.collection("rifas").add({
                 nombre: nombre, 
                 fechaCreacion: firebase.firestore.FieldValue.serverTimestamp(),
@@ -479,6 +480,7 @@ document.addEventListener('DOMContentLoaded', () => {
             DOM.newRifaName.value = ''; alert(`¡Rifa "${nombre}" creada con éxito!`); await cargarRifas();
         } catch (error) { console.error("Error al crear la rifa: ", error); alert("Ocurrió un error al crear la rifa."); }
     };
+    
     const deleteRifaActual = async () => {
         if (!rifaActivaId) { alert("No hay una rifa seleccionada para eliminar."); return; }
         const rifaNombre = DOM.rifaSelect.textContent;
@@ -611,6 +613,7 @@ document.addEventListener('DOMContentLoaded', () => {
         DOM.modalWinningInput.focus();
     };
     
+    // --- CAMBIO: Lógica de vista de admin ahora crea dos inputs de URL ---
     const openPrizeModal = async () => {
         if (!rifaActivaId) return;
         DOM.mainContainer.classList.add('page-blur');
@@ -625,19 +628,22 @@ document.addEventListener('DOMContentLoaded', () => {
         const prizeLabels = { mayor: '🥇 Premio Mayor', segundo: '🥈 Segundo Premio', tercero: '🥉 Tercer Premio' };
 
         prizeTiers.forEach(tier => {
-            const prize = currentPrizeData[tier] || { descripcion: '', valor: 0, imgUrl: '' };
+            const prize = currentPrizeData[tier] || { descripcion: '', valor: 0, imgUrl1: '', imgUrl2: '' };
             let contentHtml = '';
             if (user) {
-                // --- CAMBIO: Se usa input de tipo "file" y se añade un span para el progreso ---
                 contentHtml = `
                     <div class="prize-card-admin-view">
                         <label for="${tier}DescInput">Descripción:</label>
                         <input type="text" id="${tier}DescInput" placeholder="Ej: Una Moto 0km" value="${prize.descripcion || ''}">
+                        
                         <label for="${tier}ValorInput">Valor (si aplica):</label>
                         <input type="number" id="${tier}ValorInput" placeholder="0" value="${prize.valor || 0}">
-                        <label for="${tier}FileInput">Cargar Imagen o Video:</label>
-                        <input type="file" id="${tier}FileInput" accept="image/*,video/mp4,video/webm">
-                        <div class="upload-progress" id="${tier}Progress"></div>
+
+                        <label for="${tier}ImgUrl1Input">URL de Imagen/Video 1:</label>
+                        <input type="url" id="${tier}ImgUrl1Input" placeholder="https://ejemplo.com/foto1.jpg" value="${prize.imgUrl1 || ''}">
+                        
+                        <label for="${tier}ImgUrl2Input">URL de Imagen/Video 2:</label>
+                        <input type="url" id="${tier}ImgUrl2Input" placeholder="https://ejemplo.com/foto2.jpg" value="${prize.imgUrl2 || ''}">
                     </div>`;
             } else {
                 contentHtml = generarHtmlDePremio(prize);
@@ -650,8 +656,6 @@ document.addEventListener('DOMContentLoaded', () => {
         });
         
         DOM.savePrizeButton.style.display = user ? 'inline-block' : 'none';
-        if(user) DOM.savePrizeButton.disabled = false;
-
         DOM.modalWinningInput.value = '';
         DOM.prizeSimulatorSlots.forEach(slot => { 
             slot.querySelector('span').textContent = ''; 
@@ -661,53 +665,35 @@ document.addEventListener('DOMContentLoaded', () => {
         DOM.modalWinnerResults.innerHTML = '';
         runSimulatorIntroAnimation();
     };
-
-    // --- CAMBIO: Lógica completamente nueva para guardar, incluyendo la subida de archivos ---
+    
+    // --- CAMBIO: Lógica de guardado simplificada para leer de los inputs de URL ---
     const savePrizeValues = async () => {
         if (!rifaActivaId || !firebase.auth().currentUser) return;
         DOM.savePrizeButton.disabled = true;
         DOM.savePrizeButton.textContent = 'Guardando...';
 
         try {
-            const prizeTiers = ['mayor', 'segundo', 'tercero'];
-            const newPrizeData = JSON.parse(JSON.stringify(currentPrizeData)); // Clonar datos actuales
-
-            for (const tier of prizeTiers) {
-                // Actualizar descripción y valor
-                newPrizeData[tier].descripcion = document.getElementById(`${tier}DescInput`).value.trim();
-                newPrizeData[tier].valor = Number(document.getElementById(`${tier}ValorInput`).value) || 0;
-
-                const fileInput = document.getElementById(`${tier}FileInput`);
-                const progressIndicator = document.getElementById(`${tier}Progress`);
-                const file = fileInput.files[0];
-
-                if (file) {
-                    // Si hay un archivo nuevo, subirlo
-                    const fileRef = storage.ref(`rifas/${rifaActivaId}/premio_${tier}_${Date.now()}`);
-                    const uploadTask = fileRef.put(file);
-
-                    // Listener para el progreso de subida
-                    uploadTask.on('state_changed', 
-                        (snapshot) => {
-                            const progress = (snapshot.bytesTransferred / snapshot.totalBytes) * 100;
-                            progressIndicator.textContent = `Subiendo: ${Math.round(progress)}%`;
-                        }, 
-                        (error) => {
-                            console.error(`Error al subir archivo para ${tier}:`, error);
-                            progressIndicator.textContent = 'Error de subida.';
-                        },
-                        async () => {
-                            // Cuando la subida termina, obtenemos la URL y la guardamos
-                            const downloadURL = await uploadTask.snapshot.ref.getDownloadURL();
-                            newPrizeData[tier].imgUrl = downloadURL;
-                            progressIndicator.textContent = '¡Subido!';
-                        }
-                    );
-                    await uploadTask; // Esperar a que esta subida termine antes de continuar
+            const newPrizeData = {
+                mayor: {
+                    descripcion: document.getElementById('mayorDescInput').value.trim(),
+                    valor: Number(document.getElementById('mayorValorInput').value) || 0,
+                    imgUrl1: document.getElementById('mayorImgUrl1Input').value.trim(),
+                    imgUrl2: document.getElementById('mayorImgUrl2Input').value.trim()
+                },
+                segundo: {
+                    descripcion: document.getElementById('segundoDescInput').value.trim(),
+                    valor: Number(document.getElementById('segundoValorInput').value) || 0,
+                    imgUrl1: document.getElementById('segundoImgUrl1Input').value.trim(),
+                    imgUrl2: document.getElementById('segundoImgUrl2Input').value.trim()
+                },
+                tercero: {
+                    descripcion: document.getElementById('terceroDescInput').value.trim(),
+                    valor: Number(document.getElementById('terceroValorInput').value) || 0,
+                    imgUrl1: document.getElementById('terceroImgUrl1Input').value.trim(),
+                    imgUrl2: document.getElementById('terceroImgUrl2Input').value.trim()
                 }
-            }
+            };
 
-            // Guardar todo en Firestore
             await db.collection("rifas").doc(rifaActivaId).update({ premios: newPrizeData });
             currentPrizeData = newPrizeData;
             alert("Premios guardados con éxito.");
