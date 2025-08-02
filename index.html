@@ -6,6 +6,7 @@
     <title>Control de Rifas Inmersivo</title>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" />
     <style>
+        /* ESTILOS EXISTENTES (SIN CAMBIOS) */
         :root {
             --color-disponible: #751FFF;
             --color-separado: #ffc107;
@@ -102,82 +103,18 @@
         .prize-value { font-size: 1em; font-weight: bold; margin-top: 8px; text-align: center; }
         #gridContainer { display: grid; grid-template-columns: repeat(10, 1fr); gap: 4px; margin-top: 20px; }
         .grid-item { display: flex; justify-content: center; align-items: center; aspect-ratio: 1 / 1; border: 1px solid var(--border-color); border-radius: 8px; font-size: clamp(0.7em, 3vw, 1.5em); font-weight: bold; color: white; cursor: pointer; transition: transform 0.2s, background-color 0.2s, border-color 0.2s; }
-        
-        .modal-backdrop {
-            display: none;
-            position: fixed;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
-            background-color: rgba(0,0,0,0.1);
-            opacity: 0;
-            z-index: 999;
-            transition: opacity 0.3s ease-in-out;
-        }
-        .modal-backdrop.visible {
-            display: block;
-            opacity: 0.5;
-        }
-        .modal {
-            display: flex;
-            justify-content: center;
-            align-items: flex-start;
-            position: fixed;
-            z-index: 1000;
-            left: 0;
-            top: 0;
-            width: 100%;
-            height: 100%;
-            overflow: auto;
-            opacity: 0;
-            visibility: hidden;
-            transition: opacity 0.3s ease-in-out, visibility 0.3s;
-        }
-        #prizeModal {
-            padding: 0;
-        }
-        .modal.visible {
-            opacity: 1;
-            visibility: visible;
-        }
-        @keyframes modal-slide-in {
-            from {
-                transform: translateY(-50px) scale(0.95);
-                opacity: 0;
-            }
-            to {
-                transform: translateY(0) scale(1);
-                opacity: 1;
-            }
-        }
-        .modal.visible .modal-content {
-            animation: modal-slide-in 0.4s cubic-bezier(0.25, 0.46, 0.45, 0.94) forwards;
-        }
-
+        .modal-backdrop { display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background-color: rgba(0,0,0,0.1); opacity: 0; z-index: 999; transition: opacity 0.3s ease-in-out; }
+        .modal-backdrop.visible { display: block; opacity: 0.5; }
+        .modal { display: flex; justify-content: center; align-items: flex-start; position: fixed; z-index: 1000; left: 0; top: 0; width: 100%; height: 100%; overflow: auto; opacity: 0; visibility: hidden; transition: opacity 0.3s ease-in-out, visibility 0.3s; }
+        #prizeModal { padding: 0; }
+        .modal.visible { opacity: 1; visibility: visible; }
+        @keyframes modal-slide-in { from { transform: translateY(-50px) scale(0.95); opacity: 0; } to { transform: translateY(0) scale(1); opacity: 1; } }
+        .modal.visible .modal-content { animation: modal-slide-in 0.4s cubic-bezier(0.25, 0.46, 0.45, 0.94) forwards; }
         .modal-content { background-color: var(--modal-bg); padding: 20px; border: 1px solid var(--border-color); width: 90%; max-width: 500px; border-radius: 8px; box-shadow: 0 4px 8px rgba(0,0,0,0.2); transition: background-color var(--transition-speed) ease; }
-        
-        #prizeModal .modal-content {
-            width: 100%;
-            height: 100%;
-            max-width: none;
-            border-radius: 0;
-            border: none;
-            background-color: var(--modal-glass-bg);
-            backdrop-filter: blur(10px);
-            -webkit-backdrop-filter: blur(10px);
-            box-shadow: none;
-            display: flex;
-            flex-direction: column;
-            justify-content: flex-start;
-            padding: 60px 20px 20px 20px;
-            box-sizing: border-box;
-        }
+        #prizeModal .modal-content { width: 100%; height: 100%; max-width: none; border-radius: 0; border: none; background-color: var(--modal-glass-bg); backdrop-filter: blur(10px); -webkit-backdrop-filter: blur(10px); box-shadow: none; display: flex; flex-direction: column; justify-content: flex-start; padding: 60px 20px 20px 20px; box-sizing: border-box; }
         #prizeModal h2 { margin-bottom: 15px; }
         #prizeModal hr { margin: 15px 0; }
         #prizeModal h4 { margin-top: 0; margin-bottom: 15px; }
-
-
         .grid-item:hover { transform: scale(1.05); }
         .grid-item.status-disponible { background-color: var(--color-disponible); }
         .grid-item.status-separado { background-color: var(--color-separado); }
@@ -189,7 +126,7 @@
         .modal-footer { text-align: right; margin-top: 20px; }
         .modal-footer button { padding: 10px 20px; border: none; border-radius: 5px; cursor: pointer; font-size: 16px; transition: background-color 0.2s, transform 0.2s; }
         .modal-footer button:hover { transform: translateY(-2px); }
-        #saveButton, #savePrizeButton { background-color: var(--color-primary); color: white; }
+        #saveButton, #savePrizeButton, #saveColorsButton { background-color: var(--color-primary); color: white; }
         #deleteButton { background-color: var(--color-danger); color: white; margin-right: 10px; }
         .raffle-manager { display: flex; flex-wrap: wrap; gap: 10px; align-items: flex-end; }
         .raffle-selector-container { flex-grow: 1; min-width: 200px; }
@@ -214,8 +151,31 @@
         #searchInput:focus { outline: none; border-color: var(--color-primary); box-shadow: 0 0 0 3px rgba(0, 123, 255, 0.25); }
         #searchInput:focus + label, #searchInput:not(:placeholder-shown) + label { transform: translateY(-150%) scale(0.8); color: var(--color-primary); }
         #darkModeToggle { position: fixed; top: 15px; right: 15px; width: 40px; height: 40px; border-radius: 50%; border: 1px solid var(--border-color); background-color: var(--background-card); color: var(--text-light); font-size: 18px; cursor: pointer; display: flex; align-items: center; justify-content: center; z-index: 1001; transition: all var(--transition-speed) ease; }
-        #prizeButton, #deleteRifaButton { display: none; align-items: center; justify-content: center; height: 48px; width: 48px; padding: 0; background-color: transparent; border-radius: 8px; cursor: pointer; transition: all 0.2s ease; flex-shrink: 0; }
-        body.admin-view #deleteRifaButton.visible, #prizeButton.visible { display: flex; }
+        
+        /* --- INICIO: NUEVOS ESTILOS --- */
+        #prizeButton, #deleteRifaButton, #settingsButton { 
+            display: none; align-items: center; justify-content: center; height: 48px; width: 48px; 
+            padding: 0; background-color: transparent; border-radius: 8px; cursor: pointer; 
+            transition: all 0.2s ease; flex-shrink: 0; 
+        }
+        body.admin-view #deleteRifaButton.visible, 
+        body.admin-view #prizeButton.visible, 
+        body.admin-view #settingsButton.visible { 
+            display: flex; 
+        }
+        #settingsButton { border: 1px solid var(--color-primary); color: var(--color-primary); }
+        #settingsButton:hover { background-color: var(--color-primary); color: white; }
+        .color-setting { display: flex; align-items: center; justify-content: space-between; gap: 15px; margin-bottom: 20px; }
+        .color-setting label { margin: 0; font-weight: 500; color: var(--text-dark); }
+        .color-setting input[type="color"] {
+            -webkit-appearance: none; -moz-appearance: none; appearance: none;
+            width: 60px; height: 35px; background-color: transparent;
+            border: 1px solid var(--border-color); border-radius: 5px; cursor: pointer;
+        }
+        .color-setting input[type="color"]::-webkit-color-swatch-wrapper { padding: 0; }
+        .color-setting input[type="color"]::-webkit-color-swatch { border: none; border-radius: 4px; }
+        /* --- FIN: NUEVOS ESTILOS --- */
+
         #deleteRifaButton { border: 1px solid var(--color-danger); color: var(--color-danger); }
         #deleteRifaButton:hover { background-color: var(--color-danger); color: white; }
         #prizeButton { position: relative; overflow: hidden; border: 1px solid var(--color-separado); color: var(--color-separado); font-size: 1.2em; }
@@ -224,39 +184,16 @@
         #prizeButton::after { content: ''; position: absolute; top: 0; left: -200%; width: 75%; height: 100%; background: linear-gradient(to right, rgba(255, 255, 255, 0) 0%, rgba(255, 215, 0, 0.4) 50%, rgba(255, 255, 255, 0) 100%); transform: skewX(-25deg); animation: shimmer 4s infinite; }
         @keyframes shimmer { 0% { left: -200%; } 40% { left: 200%; } 100% { left: 200%; } }
         @keyframes jiggle { 0%, 100% { transform: rotate(0); } 25% { transform: rotate(-10deg) scale(1.1); } 75% { transform: rotate(10deg) scale(1.1); } }
-        
-        #prize-info-section {
-            display: flex;
-            gap: 10px;
-        }
-        .prize-card { 
-            transition: all 0.3s ease;
-            text-align: center;
-            border-radius: 12px;
-            padding: 15px;
-            flex: 1;
-            min-width: 0;
-        }
-        @keyframes card-pulse-glow {
-            50% {
-                transform: scale(1.07);
-                box-shadow: 0 0 25px 5px var(--glow-color, #fff);
-            }
-        }
+        #prize-info-section { display: flex; gap: 10px; }
+        .prize-card { transition: all 0.3s ease; text-align: center; border-radius: 12px; padding: 15px; flex: 1; min-width: 0; }
+        @keyframes card-pulse-glow { 50% { transform: scale(1.07); box-shadow: 0 0 25px 5px var(--glow-color, #fff); } }
         .prize-card.highlight { transform: translateY(-5px) scale(1.02); box-shadow: 0 8px 25px rgba(0,0,0,0.2); }
         .prize-card-title { font-size: 0.9em; font-weight: bold; display: flex; align-items: center; justify-content: center; gap: 8px; }
-        .prize-card-value {
-            font-size: 0.9em;
-            font-weight: bold;
-            margin-top: 8px;
-            text-align: center;
-        }
+        .prize-card-value { font-size: 0.9em; font-weight: bold; margin-top: 8px; text-align: center; }
         .prize-card-input { padding: 8px; font-size: 0.9em; margin-top: 8px; width: 100%; box-sizing: border-box; border: 1px solid rgba(0,0,0,0.2); border-radius: 4px; text-align: center; }
-        
         .prize-card.mayor { background: linear-gradient(135deg, #ffeb3b, #ffc107); color: #333; }
         .prize-card.segundo { background: linear-gradient(135deg, #f5f5f5, #bdbdbd); color: #333; }
         .prize-card.tercero { background: linear-gradient(135deg, #ffc8a1, #b87333); color: white; }
-        
         #prize-simulator-section { padding: 20px; border: 2px dashed var(--border-color); border-radius: 8px; text-align: center; margin-top: 20px; }
         .digit-slots-container { display: flex; justify-content: center; gap: 15px; margin-bottom: 20px; position: relative; cursor: text; }
         .digit-circle-simulator { position: relative; overflow: hidden; width: clamp(45px, 12vw, 70px); aspect-ratio: 1/1; background-color: var(--background-light); border: 2px solid var(--border-color); border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: clamp(2em, 8vw, 3em); font-weight: bold; color: var(--text-dark); transition: all 0.3s; box-shadow: inset 0 2px 5px rgba(0,0,0,0.1); }
@@ -265,18 +202,9 @@
         .digit-circle-simulator span { position: relative; z-index: 1; color: var(--text-dark); transition: color 0.3s; display: inline-block; }
         .digit-circle-simulator.liquid-filled span { color: white; }
         .digit-circle-simulator.selected-digit { background-color: var(--color-pago); border-color: #69c340; }
-        .digit-circle-simulator.selected-digit span {
-            color: white;
-            animation: digit-depth-glow 0.8s ease-in-out;
-        }
+        .digit-circle-simulator.selected-digit span { color: white; animation: digit-depth-glow 0.8s ease-in-out; }
         .digit-circle-simulator.selected-digit::before { height: 0; }
-        
-        @keyframes digit-depth-glow {
-            0% { transform: scale(1); text-shadow: none; }
-            50% { transform: scale(1.1); text-shadow: 0 0 12px rgba(255, 255, 150, 0.8); }
-            100% { transform: scale(1); text-shadow: none; }
-        }
-
+        @keyframes digit-depth-glow { 0% { transform: scale(1); text-shadow: none; } 50% { transform: scale(1.1); text-shadow: 0 0 12px rgba(255, 255, 150, 0.8); } 100% { transform: scale(1); text-shadow: none; } }
         #modalWinningInput { position: absolute; opacity: 0; width: 100%; height: 100%; top: 0; left: 0; border: none; background: transparent; -webkit-text-security: disc;}
         .prize-zones-container { position: absolute; top: 0; left: 0; width: 100%; height: 100%; display: flex; justify-content: center; gap: 15px; visibility: hidden; }
         .prize-zones-container.active { visibility: visible; }
@@ -285,7 +213,6 @@
         #prizeZoneSecond { left: -7.5px; width: calc(50% + 7.5px); }
         #prizeZoneThird { left: calc(25% - 7.5px); width: calc(50% + 7.5px); }
         #prizeZoneMayor { right: -7.5px; width: calc(50% + 7.5px); }
-
         @media (max-width: 600px) { body { padding: 5px; } .raffle-manager { flex-direction: column; align-items: stretch; gap: 20px; } }
     </style>
 </head>
@@ -301,10 +228,11 @@
                     <div id="rifaSelect" class="select-selected">-- Cargando... --</div>
                     <div id="rifaSelectItems" class="select-items select-hide"></div>
                 </div>
+                <button id="settingsButton" title="Configurar Colores"><i class="fas fa-cog"></i></button>
                 <button id="prizeButton" title="Ver/Editar Premio"><i class="fas fa-trophy"></i></button>
-            </div>
+                <button id="deleteRifaButton" title="Eliminar rifa seleccionada"><i class="fas fa-trash-alt"></i></button>
+                 </div>
         </div>
-        <button id="deleteRifaButton" title="Eliminar rifa seleccionada"><i class="fas fa-trash-alt"></i></button>
         <div class="raffle-creator">
             <div>
                 <label for="newRifaName">Nombre de la nueva rifa</label>
@@ -366,6 +294,31 @@
     </div>
 </div>
 
+<div id="settingsModal" class="modal">
+    <div class="modal-content">
+        <div class="modal-header">
+            <h2><i class="fas fa-palette"></i> Configurar Colores</h2>
+            <span class="close-button">&times;</span>
+        </div>
+        <div class="modal-body">
+            <div class="color-setting">
+                <label for="colorDisponible">Color Disponible:</label>
+                <input type="color" id="colorDisponible">
+            </div>
+            <div class="color-setting">
+                <label for="colorSeparado">Color Separado:</label>
+                <input type="color" id="colorSeparado">
+            </div>
+            <div class="color-setting">
+                <label for="colorPago">Color Pagado:</label>
+                <input type="color" id="colorPago">
+            </div>
+        </div>
+        <div class="modal-footer">
+            <button id="saveColorsButton">Guardar Colores</button>
+        </div>
+    </div>
+</div>
 <div class="modal-backdrop" id="modal-backdrop"></div>
 
 <script src="https://www.gstatic.com/firebasejs/8.10.0/firebase-app.js"></script>
@@ -384,12 +337,15 @@ document.addEventListener('DOMContentLoaded', () => {
     };
     const app = firebase.initializeApp(firebaseConfig);
     const db = firebase.firestore();
+
+    // --- INICIO: SE AÑADEN ELEMENTOS DEL NUEVO MODAL ---
     const DOM = {
         mainContainer: document.getElementById('main-container'),
         modalBackdrop: document.getElementById('modal-backdrop'),
         rifaSelect: document.getElementById('rifaSelect'), rifaSelectItems: document.getElementById('rifaSelectItems'),
         newRifaName: document.getElementById('newRifaName'), createRifaButton: document.getElementById('createRifaButton'),
         deleteRifaButton: document.getElementById('deleteRifaButton'), prizeButton: document.getElementById('prizeButton'),
+        settingsButton: document.getElementById('settingsButton'), // Nuevo
         darkModeToggle: document.getElementById('darkModeToggle'), gridContainer: document.getElementById('gridContainer'),
         winnerInputDisplay: document.getElementById('winnerInputDisplay'), digitCircles: document.querySelectorAll('.winner-input-display .digit-circle'),
         realWinningInput: document.getElementById('realWinningInput'), checkWinnerButton: document.getElementById('checkWinnerButton'),
@@ -404,12 +360,65 @@ document.addEventListener('DOMContentLoaded', () => {
         modalWinningInput: document.getElementById('modalWinningInput'), prizeZonesContainer: document.querySelector('.prize-zones-container'),
         prizeZones: document.querySelectorAll('.prize-zone'), modalWinnerResults: document.getElementById('modalWinnerResults'),
         closePrizeModalButton: document.querySelector('#prizeModal .close-button'),
-        summaryPago: document.getElementById('summaryPago'), summarySeparado: document.getElementById('summarySeparado'), summaryDisponible: document.getElementById('summaryDisponible')
+        summaryPago: document.getElementById('summaryPago'), summarySeparado: document.getElementById('summarySeparado'), summaryDisponible: document.getElementById('summaryDisponible'),
+        // Nuevos elementos del modal de colores
+        settingsModal: document.getElementById('settingsModal'),
+        closeSettingsModalButton: document.querySelector('#settingsModal .close-button'),
+        colorDisponible: document.getElementById('colorDisponible'),
+        colorSeparado: document.getElementById('colorSeparado'),
+        colorPago: document.getElementById('colorPago'),
+        saveColorsButton: document.getElementById('saveColorsButton'),
     };
+    // --- FIN: SE AÑADEN ELEMENTOS DEL NUEVO MODAL ---
+
     let rifaActivaId = null, unsubRifaListener = null, currentNumber = null, localRaffleData = {}, currentPrizeData = {};
     const totalNumbers = 100;
     const formatCurrency = (value) => new Intl.NumberFormat('es-CO', { style: 'currency', currency: 'COP', minimumFractionDigits: 0, maximumFractionDigits: 0 }).format(value).replace(/\s/g, '');
     const sleep = ms => new Promise(resolve => setTimeout(resolve, ms));
+
+    // --- INICIO: NUEVAS FUNCIONES PARA MANEJAR COLORES ---
+    const aplicarColoresPersonalizados = (colores) => {
+        document.documentElement.style.setProperty('--color-disponible', colores.disponible);
+        document.documentElement.style.setProperty('--color-separado', colores.separado);
+        document.documentElement.style.setProperty('--color-pago', colores.pago);
+    };
+
+    const restaurarColoresDefault = () => {
+        document.documentElement.style.removeProperty('--color-disponible');
+        document.documentElement.style.removeProperty('--color-separado');
+        document.documentElement.style.removeProperty('--color-pago');
+    };
+
+    const openSettingsModal = () => {
+        if (!rifaActivaId || !firebase.auth().currentUser) return;
+        // Obtener colores actuales (ya sean default o personalizados)
+        const rootStyles = getComputedStyle(document.documentElement);
+        DOM.colorDisponible.value = rootStyles.getPropertyValue('--color-disponible').trim();
+        DOM.colorSeparado.value = rootStyles.getPropertyValue('--color-separado').trim();
+        DOM.colorPago.value = rootStyles.getPropertyValue('--color-pago').trim();
+        DOM.settingsModal.classList.add('visible');
+    };
+
+    const closeSettingsModal = () => DOM.settingsModal.classList.remove('visible');
+
+    const saveColors = async () => {
+        if (!rifaActivaId || !firebase.auth().currentUser) return;
+        const nuevosColores = {
+            disponible: DOM.colorDisponible.value,
+            separado: DOM.colorSeparado.value,
+            pago: DOM.colorPago.value,
+        };
+        try {
+            await db.collection("rifas").doc(rifaActivaId).update({ colores: nuevosColores });
+            aplicarColoresPersonalizados(nuevosColores);
+            alert("Colores actualizados correctamente.");
+            closeSettingsModal();
+        } catch (error) {
+            console.error("Error al guardar los colores:", error);
+            alert("No se pudieron guardar los colores.");
+        }
+    };
+    // --- FIN: NUEVAS FUNCIONES PARA MANEJAR COLORES ---
 
     const applyTheme = (theme) => {
         const icon = DOM.darkModeToggle.querySelector('i');
@@ -422,12 +431,12 @@ document.addEventListener('DOMContentLoaded', () => {
         DOM.rifaSelectItems.innerHTML = ''; 
         if (rifasSnapshot.empty) {
             DOM.rifaSelect.textContent = '-- No hay rifas --'; DOM.rifaSelect.dataset.value = "";
-            cambiarRifaActiva(true); return;
+            await cambiarRifaActiva(true); return;
         }
         rifasSnapshot.forEach(doc => {
             const option = document.createElement('div');
             option.textContent = doc.data().nombre; option.dataset.value = doc.id;
-            option.addEventListener('click', function(e) {
+            option.addEventListener('click', async function(e) {
                 e.stopPropagation(); if (DOM.rifaSelect.dataset.value === this.dataset.value) {
                     DOM.rifaSelectItems.classList.remove('select-show');
                     DOM.rifaSelect.classList.remove('select-arrow-active');
@@ -435,13 +444,13 @@ document.addEventListener('DOMContentLoaded', () => {
                 };
                 DOM.rifaSelect.textContent = this.textContent; DOM.rifaSelect.dataset.value = this.dataset.value;
                 DOM.rifaSelectItems.classList.remove('select-show'); DOM.rifaSelect.classList.remove('select-arrow-active');
-                cambiarRifaActiva();
+                await cambiarRifaActiva();
             });
             DOM.rifaSelectItems.appendChild(option);
         });
         const primeraRifaDoc = rifasSnapshot.docs[0];
         DOM.rifaSelect.textContent = primeraRifaDoc.data().nombre; DOM.rifaSelect.dataset.value = primeraRifaDoc.id;
-        cambiarRifaActiva();
+        await cambiarRifaActiva();
     };
     const crearNuevaRifa = async () => {
         const nombre = DOM.newRifaName.value.trim();
@@ -451,6 +460,7 @@ document.addEventListener('DOMContentLoaded', () => {
                 nombre: nombre, fechaCreacion: firebase.firestore.FieldValue.serverTimestamp(),
                 premioPrincipal: "Edita la descripción del premio en el modal del trofeo.",
                 premios: { mayor: { valor: 0 }, segundo: { valor: 0 }, tercero: { valor: 0 } }
+                // No se añade el campo `colores` para que use los default
             });
             DOM.newRifaName.value = ''; alert(`¡Rifa "${nombre}" creada con éxito!`); await cargarRifas();
         } catch (error) { console.error("Error al crear la rifa: ", error); alert("Ocurrió un error al crear la rifa."); }
@@ -468,16 +478,35 @@ document.addEventListener('DOMContentLoaded', () => {
             alert(`Rifa "${rifaNombre}" eliminada con éxito.`); await cargarRifas();
         } catch (error) { console.error("Error al eliminar la rifa:", error); alert("Ocurrió un error al eliminar la rifa."); }
     };
-    const cambiarRifaActiva = (forzarReseteo = false) => {
+    
+    // --- INICIO: FUNCIÓN MODIFICADA PARA CARGAR COLORES ---
+    const cambiarRifaActiva = async (forzarReseteo = false) => {
         if (unsubRifaListener) unsubRifaListener();
         rifaActivaId = forzarReseteo ? null : DOM.rifaSelect.dataset.value;
         const hayRifaActiva = !!rifaActivaId;
         DOM.deleteRifaButton.classList.toggle('visible', hayRifaActiva);
         DOM.prizeButton.classList.toggle('visible', hayRifaActiva);
+        DOM.settingsButton.classList.toggle('visible', hayRifaActiva); // Nuevo
+
         if (!rifaActivaId) {
+            restaurarColoresDefault(); // Restaurar colores si no hay rifa
             localRaffleData = {}; updateSummary(); initializeGrid();
             DOM.searchResultsContainer.innerHTML = '<div class="no-results-message">Crea o selecciona una rifa para empezar.</div>'; return;
         }
+
+        // Cargar colores de la rifa activa
+        try {
+            const rifaDoc = await db.collection("rifas").doc(rifaActivaId).get();
+            if(rifaDoc.exists && rifaDoc.data().colores) {
+                aplicarColoresPersonalizados(rifaDoc.data().colores);
+            } else {
+                restaurarColoresDefault();
+            }
+        } catch(error) {
+            console.error("Error al cargar colores de la rifa:", error);
+            restaurarColoresDefault();
+        }
+
         DOM.searchResultsContainer.innerHTML = '<div class="no-results-message">Escribe un número de celular y presiona la lupa para buscar.</div>';
         const rifaNumerosRef = db.collection("rifas").doc(rifaActivaId).collection("numeros");
         unsubRifaListener = rifaNumerosRef.onSnapshot(snapshot => {
@@ -490,6 +519,8 @@ document.addEventListener('DOMContentLoaded', () => {
             updateSummary();
         });
     };
+    // --- FIN: FUNCIÓN MODIFICADA PARA CARGAR COLORES ---
+
     const initializeGrid = () => {
         DOM.gridContainer.innerHTML = '';
         for (let i = 0; i < totalNumbers; i++) {
@@ -526,7 +557,6 @@ document.addEventListener('DOMContentLoaded', () => {
         DOM.modalBackdrop.classList.remove('visible');
         DOM.prizeModal.classList.remove('visible');
     }
-
     const animatePrizeCard = (card, glowColor) => {
         if (!card) return;
         card.style.setProperty('--glow-color', glowColor);
@@ -536,7 +566,6 @@ document.addEventListener('DOMContentLoaded', () => {
             card.style.removeProperty('--glow-color');
         }, 1500);
     };
-
     const runSimulatorIntroAnimation = async () => {
         DOM.modalWinningInput.disabled = true;
         const slots = DOM.prizeSimulatorSlots;
@@ -545,27 +574,22 @@ document.addEventListener('DOMContentLoaded', () => {
             segundo: DOM.prizeInfoSection.querySelector('.prize-card.segundo'),
             tercero: DOM.prizeInfoSection.querySelector('.prize-card.tercero'),
         };
-
         for (let i = 0; i < 2; i++) {
             slots.forEach(slot => slot.classList.remove('selected-digit'));
-            
             "1234".split('').forEach((digit, index) => {
                 slots[index].querySelector('span').textContent = digit;
             });
             await sleep(500);
-
             animatePrizeCard(cards.mayor, 'var(--color-separado)');
             slots[2].classList.add('selected-digit');
             slots[3].classList.add('selected-digit');
             await sleep(1800);
-
             slots[2].classList.remove('selected-digit');
             slots[3].classList.remove('selected-digit');
             animatePrizeCard(cards.segundo, '#AAA');
             slots[0].classList.add('selected-digit');
             slots[1].classList.add('selected-digit');
             await sleep(1800);
-
             slots[0].classList.remove('selected-digit');
             slots[1].classList.remove('selected-digit');
             animatePrizeCard(cards.tercero, '#d39c6f');
@@ -573,7 +597,6 @@ document.addEventListener('DOMContentLoaded', () => {
             slots[2].classList.add('selected-digit');
             await sleep(1800);
         }
-
         slots.forEach(slot => {
             slot.classList.remove('selected-digit');
             slot.querySelector('span').textContent = '';
@@ -581,7 +604,6 @@ document.addEventListener('DOMContentLoaded', () => {
         DOM.modalWinningInput.disabled = false;
         DOM.modalWinningInput.focus();
     };
-
     const openPrizeModal = async () => {
         if (!rifaActivaId) return;
         DOM.mainContainer.classList.add('page-blur');
@@ -606,7 +628,6 @@ document.addEventListener('DOMContentLoaded', () => {
         });
         DOM.prizeZonesContainer.classList.remove('active');
         DOM.modalWinnerResults.innerHTML = '';
-
         runSimulatorIntroAnimation();
     };
     const savePrizeValues = async () => {
@@ -675,19 +696,27 @@ document.addEventListener('DOMContentLoaded', () => {
         ];
         prizeChecks.forEach(p => DOM.winnerResults.insertAdjacentHTML('beforeend', getWinnerInfo(p.number, p.tier, p.value)));
     };
+
+    // --- INICIO: NUEVOS EVENT LISTENERS ---
+    DOM.settingsButton.addEventListener('click', openSettingsModal);
+    DOM.closeSettingsModalButton.addEventListener('click', closeSettingsModal);
+    DOM.saveColorsButton.addEventListener('click', saveColors);
+    // --- FIN: NUEVOS EVENT LISTENERS ---
+
     DOM.darkModeToggle.addEventListener('click', () => { const newTheme = document.body.classList.contains('dark-mode') ? 'light' : 'dark'; localStorage.setItem('theme', newTheme); applyTheme(newTheme); });
     DOM.createRifaButton.addEventListener('click', crearNuevaRifa); DOM.deleteRifaButton.addEventListener('click', deleteRifaActual);
     DOM.closeDataModalButton.addEventListener('click', closeDataModal); DOM.saveButton.addEventListener('click', saveData); DOM.deleteButton.addEventListener('click', deleteData);
-    
     DOM.prizeButton.addEventListener('click', openPrizeModal);
     DOM.closePrizeModalButton.addEventListener('click', closePrizeModal);
-    DOM.modalBackdrop.addEventListener('click', closePrizeModal);
-
+    DOM.modalBackdrop.addEventListener('click', (e) => {
+        if (e.target === DOM.modalBackdrop) {
+            closePrizeModal();
+        }
+    });
     DOM.savePrizeButton.addEventListener('click', savePrizeValues);
     DOM.rifaSelect.addEventListener('click', () => { DOM.rifaSelectItems.classList.toggle('select-show'); DOM.rifaSelect.classList.toggle('select-arrow-active'); });
     window.addEventListener('click', (event) => { 
-        if (!DOM.dataModal.contains(event.target) && event.target !== DOM.dataModal && DOM.dataModal.classList.contains('visible')) {
-        }
+        if (!DOM.dataModal.contains(event.target) && event.target !== DOM.dataModal && DOM.dataModal.classList.contains('visible')) { }
         if (DOM.rifaSelect.parentElement && !DOM.rifaSelect.parentElement.contains(event.target)) { DOM.rifaSelectItems.classList.remove('select-show'); DOM.rifaSelect.classList.remove('select-arrow-active'); }
     });
     DOM.searchButton.addEventListener('click', () => {
@@ -703,7 +732,6 @@ document.addEventListener('DOMContentLoaded', () => {
         });
         DOM.checkWinnerButton.disabled = value.length !== 4;
     });
-
     DOM.modalWinningInput.addEventListener('input', () => {
         const value = DOM.modalWinningInput.value;
         DOM.prizeSimulatorSlots.forEach((slot, index) => { 
@@ -718,20 +746,15 @@ document.addEventListener('DOMContentLoaded', () => {
             DOM.prizeSimulatorSlots.forEach(slot => slot.classList.remove('selected-digit'));
         }
     });
-    
     DOM.prizeZones.forEach(zone => {
         const prizeTier = zone.dataset.prize;
         const card = DOM.prizeInfoSection.querySelector(`.prize-card.${prizeTier}`);
-        
         zone.addEventListener('mouseenter', () => card?.classList.add('highlight'));
         zone.addEventListener('mouseleave', () => card?.classList.remove('highlight'));
-
         zone.addEventListener('click', () => {
             const fullNumber = DOM.modalWinningInput.value;
             if (fullNumber.length !== 4) return;
-            
             DOM.prizeSimulatorSlots.forEach(slot => slot.classList.remove('selected-digit'));
-
             let targetIndices = [];
             let numberToCheck;
             if (prizeTier === 'mayor') {
@@ -744,13 +767,10 @@ document.addEventListener('DOMContentLoaded', () => {
                 targetIndices = [1, 2];
                 numberToCheck = fullNumber.substring(1, 3);
             }
-            
             targetIndices.forEach(i => DOM.prizeSimulatorSlots[i].classList.add('selected-digit'));
-            
             DOM.modalWinnerResults.innerHTML = getWinnerInfo(numberToCheck, prizeTier, currentPrizeData[prizeTier].valor);
         });
     });
-
     applyTheme(localStorage.getItem('theme') || 'light');
     initializeGrid();
     cargarRifas();
