@@ -6,7 +6,6 @@
     <title>Control de Rifas Inmersivo</title>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" />
     <style>
-        /* ESTILOS EXISTENTES (SIN CAMBIOS) */
         :root {
             --color-disponible: #751FFF;
             --color-separado: #ffc107;
@@ -100,7 +99,16 @@
         .prize-info .winner-name { font-size: 1.25em; font-weight: bold; margin: 10px 0 5px 0; }
         .prize-info .winner-phone { font-size: 1em; opacity: 0.9; margin: 0; }
         .prize-info .no-winner-text { font-size: 1.1em; font-weight: 500; font-style: italic; margin-top: 10px; }
-        .prize-value { font-size: 1em; font-weight: bold; margin-top: 8px; text-align: center; }
+        /* --- INICIO: ESTILOS PARA PREMIOS CON IMAGEN --- */
+        .prize-details { margin-top: 10px; text-align: center; }
+        .prize-details .prize-description { font-size: 1.1em; font-weight: 500; margin: 0 0 10px 0; }
+        .prize-details .prize-image { max-width: 100%; height: auto; border-radius: 8px; margin-top: 8px; }
+        .prize-value { font-size: 1.2em; font-weight: bold; margin-top: 8px; text-align: center; }
+        .prize-card-value { font-size: 1.4em; font-weight: bold; }
+        .prize-card-admin-view { display: flex; flex-direction: column; gap: 8px; }
+        .prize-card-admin-view label { font-size: 0.8em; text-align: left; margin-bottom: -4px; opacity: 0.8; }
+        .prize-card-admin-view input { font-size: 0.9em !important; padding: 8px !important; }
+        /* --- FIN: ESTILOS PARA PREMIOS CON IMAGEN --- */
         #gridContainer { display: grid; grid-template-columns: repeat(10, 1fr); gap: 4px; margin-top: 20px; }
         .grid-item { display: flex; justify-content: center; align-items: center; aspect-ratio: 1 / 1; border: 1px solid var(--border-color); border-radius: 8px; font-size: clamp(0.7em, 3vw, 1.5em); font-weight: bold; color: white; cursor: pointer; transition: transform 0.2s, background-color 0.2s, border-color 0.2s; }
         .modal-backdrop { display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background-color: rgba(0,0,0,0.1); opacity: 0; z-index: 999; transition: opacity 0.3s ease-in-out; }
@@ -151,31 +159,15 @@
         #searchInput:focus { outline: none; border-color: var(--color-primary); box-shadow: 0 0 0 3px rgba(0, 123, 255, 0.25); }
         #searchInput:focus + label, #searchInput:not(:placeholder-shown) + label { transform: translateY(-150%) scale(0.8); color: var(--color-primary); }
         #darkModeToggle { position: fixed; top: 15px; right: 15px; width: 40px; height: 40px; border-radius: 50%; border: 1px solid var(--border-color); background-color: var(--background-card); color: var(--text-light); font-size: 18px; cursor: pointer; display: flex; align-items: center; justify-content: center; z-index: 1001; transition: all var(--transition-speed) ease; }
-        
-        /* --- INICIO: NUEVOS ESTILOS --- */
-        #prizeButton, #deleteRifaButton, #settingsButton { 
-            display: none; align-items: center; justify-content: center; height: 48px; width: 48px; 
-            padding: 0; background-color: transparent; border-radius: 8px; cursor: pointer; 
-            transition: all 0.2s ease; flex-shrink: 0; 
-        }
-        body.admin-view #deleteRifaButton.visible, 
-        body.admin-view #prizeButton.visible, 
-        body.admin-view #settingsButton.visible { 
-            display: flex; 
-        }
+        #prizeButton, #deleteRifaButton, #settingsButton { display: none; align-items: center; justify-content: center; height: 48px; width: 48px; padding: 0; background-color: transparent; border-radius: 8px; cursor: pointer; transition: all 0.2s ease; flex-shrink: 0; }
+        body.admin-view #deleteRifaButton.visible, body.admin-view #prizeButton.visible, body.admin-view #settingsButton.visible { display: flex; }
         #settingsButton { border: 1px solid var(--color-primary); color: var(--color-primary); }
         #settingsButton:hover { background-color: var(--color-primary); color: white; }
         .color-setting { display: flex; align-items: center; justify-content: space-between; gap: 15px; margin-bottom: 20px; }
         .color-setting label { margin: 0; font-weight: 500; color: var(--text-dark); }
-        .color-setting input[type="color"] {
-            -webkit-appearance: none; -moz-appearance: none; appearance: none;
-            width: 60px; height: 35px; background-color: transparent;
-            border: 1px solid var(--border-color); border-radius: 5px; cursor: pointer;
-        }
+        .color-setting input[type="color"] { -webkit-appearance: none; -moz-appearance: none; appearance: none; width: 60px; height: 35px; background-color: transparent; border: 1px solid var(--border-color); border-radius: 5px; cursor: pointer; }
         .color-setting input[type="color"]::-webkit-color-swatch-wrapper { padding: 0; }
         .color-setting input[type="color"]::-webkit-color-swatch { border: none; border-radius: 4px; }
-        /* --- FIN: NUEVOS ESTILOS --- */
-
         #deleteRifaButton { border: 1px solid var(--color-danger); color: var(--color-danger); }
         #deleteRifaButton:hover { background-color: var(--color-danger); color: white; }
         #prizeButton { position: relative; overflow: hidden; border: 1px solid var(--color-separado); color: var(--color-separado); font-size: 1.2em; }
@@ -184,13 +176,11 @@
         #prizeButton::after { content: ''; position: absolute; top: 0; left: -200%; width: 75%; height: 100%; background: linear-gradient(to right, rgba(255, 255, 255, 0) 0%, rgba(255, 215, 0, 0.4) 50%, rgba(255, 255, 255, 0) 100%); transform: skewX(-25deg); animation: shimmer 4s infinite; }
         @keyframes shimmer { 0% { left: -200%; } 40% { left: 200%; } 100% { left: 200%; } }
         @keyframes jiggle { 0%, 100% { transform: rotate(0); } 25% { transform: rotate(-10deg) scale(1.1); } 75% { transform: rotate(10deg) scale(1.1); } }
-        #prize-info-section { display: flex; gap: 10px; }
+        #prize-info-section { display: flex; flex-wrap: wrap; gap: 10px; }
         .prize-card { transition: all 0.3s ease; text-align: center; border-radius: 12px; padding: 15px; flex: 1; min-width: 0; }
         @keyframes card-pulse-glow { 50% { transform: scale(1.07); box-shadow: 0 0 25px 5px var(--glow-color, #fff); } }
         .prize-card.highlight { transform: translateY(-5px) scale(1.02); box-shadow: 0 8px 25px rgba(0,0,0,0.2); }
-        .prize-card-title { font-size: 0.9em; font-weight: bold; display: flex; align-items: center; justify-content: center; gap: 8px; }
-        .prize-card-value { font-size: 0.9em; font-weight: bold; margin-top: 8px; text-align: center; }
-        .prize-card-input { padding: 8px; font-size: 0.9em; margin-top: 8px; width: 100%; box-sizing: border-box; border: 1px solid rgba(0,0,0,0.2); border-radius: 4px; text-align: center; }
+        .prize-card-title { font-size: 0.9em; font-weight: bold; display: flex; align-items: center; justify-content: center; gap: 8px; margin-bottom: 10px; }
         .prize-card.mayor { background: linear-gradient(135deg, #ffeb3b, #ffc107); color: #333; }
         .prize-card.segundo { background: linear-gradient(135deg, #f5f5f5, #bdbdbd); color: #333; }
         .prize-card.tercero { background: linear-gradient(135deg, #ffc8a1, #b87333); color: white; }
@@ -213,7 +203,7 @@
         #prizeZoneSecond { left: -7.5px; width: calc(50% + 7.5px); }
         #prizeZoneThird { left: calc(25% - 7.5px); width: calc(50% + 7.5px); }
         #prizeZoneMayor { right: -7.5px; width: calc(50% + 7.5px); }
-        @media (max-width: 600px) { body { padding: 5px; } .raffle-manager { flex-direction: column; align-items: stretch; gap: 20px; } }
+        @media (max-width: 600px) { body { padding: 5px; } .raffle-manager { flex-direction: column; align-items: stretch; gap: 20px; } .prize-card { min-width: 100%;} }
     </style>
 </head>
 <body>
@@ -231,7 +221,7 @@
                 <button id="settingsButton" title="Configurar Colores"><i class="fas fa-cog"></i></button>
                 <button id="prizeButton" title="Ver/Editar Premio"><i class="fas fa-trophy"></i></button>
                 <button id="deleteRifaButton" title="Eliminar rifa seleccionada"><i class="fas fa-trash-alt"></i></button>
-                 </div>
+            </div>
         </div>
         <div class="raffle-creator">
             <div>
@@ -290,7 +280,7 @@
                 <div id="modalWinnerResults"></div>
             </div>
         </div>
-        <div class="modal-footer"><button id="savePrizeButton" style="display: none;">Guardar Valores</button></div>
+        <div class="modal-footer"><button id="savePrizeButton" style="display: none;">Guardar Premios</button></div>
     </div>
 </div>
 
@@ -319,6 +309,7 @@
         </div>
     </div>
 </div>
+
 <div class="modal-backdrop" id="modal-backdrop"></div>
 
 <script src="https://www.gstatic.com/firebasejs/8.10.0/firebase-app.js"></script>
@@ -337,15 +328,13 @@ document.addEventListener('DOMContentLoaded', () => {
     };
     const app = firebase.initializeApp(firebaseConfig);
     const db = firebase.firestore();
-
-    // --- INICIO: SE AÑADEN ELEMENTOS DEL NUEVO MODAL ---
     const DOM = {
         mainContainer: document.getElementById('main-container'),
         modalBackdrop: document.getElementById('modal-backdrop'),
         rifaSelect: document.getElementById('rifaSelect'), rifaSelectItems: document.getElementById('rifaSelectItems'),
         newRifaName: document.getElementById('newRifaName'), createRifaButton: document.getElementById('createRifaButton'),
         deleteRifaButton: document.getElementById('deleteRifaButton'), prizeButton: document.getElementById('prizeButton'),
-        settingsButton: document.getElementById('settingsButton'), // Nuevo
+        settingsButton: document.getElementById('settingsButton'),
         darkModeToggle: document.getElementById('darkModeToggle'), gridContainer: document.getElementById('gridContainer'),
         winnerInputDisplay: document.getElementById('winnerInputDisplay'), digitCircles: document.querySelectorAll('.winner-input-display .digit-circle'),
         realWinningInput: document.getElementById('realWinningInput'), checkWinnerButton: document.getElementById('checkWinnerButton'),
@@ -361,7 +350,6 @@ document.addEventListener('DOMContentLoaded', () => {
         prizeZones: document.querySelectorAll('.prize-zone'), modalWinnerResults: document.getElementById('modalWinnerResults'),
         closePrizeModalButton: document.querySelector('#prizeModal .close-button'),
         summaryPago: document.getElementById('summaryPago'), summarySeparado: document.getElementById('summarySeparado'), summaryDisponible: document.getElementById('summaryDisponible'),
-        // Nuevos elementos del modal de colores
         settingsModal: document.getElementById('settingsModal'),
         closeSettingsModalButton: document.querySelector('#settingsModal .close-button'),
         colorDisponible: document.getElementById('colorDisponible'),
@@ -369,38 +357,56 @@ document.addEventListener('DOMContentLoaded', () => {
         colorPago: document.getElementById('colorPago'),
         saveColorsButton: document.getElementById('saveColorsButton'),
     };
-    // --- FIN: SE AÑADEN ELEMENTOS DEL NUEVO MODAL ---
-
     let rifaActivaId = null, unsubRifaListener = null, currentNumber = null, localRaffleData = {}, currentPrizeData = {};
     const totalNumbers = 100;
-    const formatCurrency = (value) => new Intl.NumberFormat('es-CO', { style: 'currency', currency: 'COP', minimumFractionDigits: 0, maximumFractionDigits: 0 }).format(value).replace(/\s/g, '');
+    const formatCurrency = (value) => new Intl.NumberFormat('es-CO', { style: 'currency', currency: 'COP', minimumFractionDigits: 0, maximumFractionDigits: 0 }).format(value);
     const sleep = ms => new Promise(resolve => setTimeout(resolve, ms));
 
-    // --- INICIO: NUEVAS FUNCIONES PARA MANEJAR COLORES ---
+    // --- INICIO: NUEVA FUNCIÓN PARA MOSTRAR PREMIOS (DINERO O IMAGEN) ---
+    const generarHtmlDePremio = (premio) => {
+        // Fallback por si el objeto premio no existe
+        if (!premio) {
+            return '<div class="prize-details"><p class="prize-description">Premio no definido</p></div>';
+        }
+
+        // Si el valor es mayor a 0, se muestra el dinero
+        if (premio.valor && premio.valor > 0) {
+            return `<div class="prize-card-value">${formatCurrency(premio.valor)}</div>`;
+        }
+        // Si no hay valor, pero sí descripción, se muestra la descripción y la imagen (si existe)
+        if (premio.descripcion) {
+            let html = `<div class="prize-details">
+                            <p class="prize-description">${premio.descripcion}</p>`;
+            if (premio.imgUrl) {
+                html += `<img src="${premio.imgUrl}" alt="${premio.descripcion}" class="prize-image">`;
+            }
+            html += `</div>`;
+            return html;
+        }
+        // Si no hay nada, se muestra un mensaje por defecto
+        return '<div class="prize-details"><p class="prize-description">Premio no definido</p></div>';
+    };
+    // --- FIN: NUEVA FUNCIÓN PARA MOSTRAR PREMIOS ---
+
     const aplicarColoresPersonalizados = (colores) => {
         document.documentElement.style.setProperty('--color-disponible', colores.disponible);
         document.documentElement.style.setProperty('--color-separado', colores.separado);
         document.documentElement.style.setProperty('--color-pago', colores.pago);
     };
-
     const restaurarColoresDefault = () => {
         document.documentElement.style.removeProperty('--color-disponible');
         document.documentElement.style.removeProperty('--color-separado');
         document.documentElement.style.removeProperty('--color-pago');
     };
-
     const openSettingsModal = () => {
         if (!rifaActivaId || !firebase.auth().currentUser) return;
-        // Obtener colores actuales (ya sean default o personalizados)
         const rootStyles = getComputedStyle(document.documentElement);
         DOM.colorDisponible.value = rootStyles.getPropertyValue('--color-disponible').trim();
         DOM.colorSeparado.value = rootStyles.getPropertyValue('--color-separado').trim();
         DOM.colorPago.value = rootStyles.getPropertyValue('--color-pago').trim();
         DOM.settingsModal.classList.add('visible');
     };
-
     const closeSettingsModal = () => DOM.settingsModal.classList.remove('visible');
-
     const saveColors = async () => {
         if (!rifaActivaId || !firebase.auth().currentUser) return;
         const nuevosColores = {
@@ -418,8 +424,6 @@ document.addEventListener('DOMContentLoaded', () => {
             alert("No se pudieron guardar los colores.");
         }
     };
-    // --- FIN: NUEVAS FUNCIONES PARA MANEJAR COLORES ---
-
     const applyTheme = (theme) => {
         const icon = DOM.darkModeToggle.querySelector('i');
         if (theme === 'dark') { document.body.classList.add('dark-mode'); icon.classList.remove('fa-moon'); icon.classList.add('fa-sun'); } 
@@ -452,19 +456,27 @@ document.addEventListener('DOMContentLoaded', () => {
         DOM.rifaSelect.textContent = primeraRifaDoc.data().nombre; DOM.rifaSelect.dataset.value = primeraRifaDoc.id;
         await cambiarRifaActiva();
     };
+
+    // --- INICIO: FUNCIÓN MODIFICADA PARA CREAR RIFAS CON EL NUEVO FORMATO DE PREMIOS ---
     const crearNuevaRifa = async () => {
         const nombre = DOM.newRifaName.value.trim();
         if (!nombre) { alert("Por favor, dale un nombre a la nueva rifa."); return; }
         try {
+            const premioDefault = { valor: 0, descripcion: "", imgUrl: "" };
             await db.collection("rifas").add({
-                nombre: nombre, fechaCreacion: firebase.firestore.FieldValue.serverTimestamp(),
-                premioPrincipal: "Edita la descripción del premio en el modal del trofeo.",
-                premios: { mayor: { valor: 0 }, segundo: { valor: 0 }, tercero: { valor: 0 } }
-                // No se añade el campo `colores` para que use los default
+                nombre: nombre, 
+                fechaCreacion: firebase.firestore.FieldValue.serverTimestamp(),
+                premios: {
+                    mayor: { ...premioDefault, descripcion: "Premio Mayor" },
+                    segundo: { ...premioDefault, descripcion: "Segundo Premio" },
+                    tercero: { ...premioDefault, descripcion: "Tercer Premio" }
+                }
             });
             DOM.newRifaName.value = ''; alert(`¡Rifa "${nombre}" creada con éxito!`); await cargarRifas();
         } catch (error) { console.error("Error al crear la rifa: ", error); alert("Ocurrió un error al crear la rifa."); }
     };
+    // --- FIN: FUNCIÓN MODIFICADA PARA CREAR RIFAS ---
+
     const deleteRifaActual = async () => {
         if (!rifaActivaId) { alert("No hay una rifa seleccionada para eliminar."); return; }
         const rifaNombre = DOM.rifaSelect.textContent;
@@ -478,23 +490,18 @@ document.addEventListener('DOMContentLoaded', () => {
             alert(`Rifa "${rifaNombre}" eliminada con éxito.`); await cargarRifas();
         } catch (error) { console.error("Error al eliminar la rifa:", error); alert("Ocurrió un error al eliminar la rifa."); }
     };
-    
-    // --- INICIO: FUNCIÓN MODIFICADA PARA CARGAR COLORES ---
     const cambiarRifaActiva = async (forzarReseteo = false) => {
         if (unsubRifaListener) unsubRifaListener();
         rifaActivaId = forzarReseteo ? null : DOM.rifaSelect.dataset.value;
         const hayRifaActiva = !!rifaActivaId;
         DOM.deleteRifaButton.classList.toggle('visible', hayRifaActiva);
         DOM.prizeButton.classList.toggle('visible', hayRifaActiva);
-        DOM.settingsButton.classList.toggle('visible', hayRifaActiva); // Nuevo
-
+        DOM.settingsButton.classList.toggle('visible', hayRifaActiva);
         if (!rifaActivaId) {
-            restaurarColoresDefault(); // Restaurar colores si no hay rifa
+            restaurarColoresDefault();
             localRaffleData = {}; updateSummary(); initializeGrid();
             DOM.searchResultsContainer.innerHTML = '<div class="no-results-message">Crea o selecciona una rifa para empezar.</div>'; return;
         }
-
-        // Cargar colores de la rifa activa
         try {
             const rifaDoc = await db.collection("rifas").doc(rifaActivaId).get();
             if(rifaDoc.exists && rifaDoc.data().colores) {
@@ -506,7 +513,6 @@ document.addEventListener('DOMContentLoaded', () => {
             console.error("Error al cargar colores de la rifa:", error);
             restaurarColoresDefault();
         }
-
         DOM.searchResultsContainer.innerHTML = '<div class="no-results-message">Escribe un número de celular y presiona la lupa para buscar.</div>';
         const rifaNumerosRef = db.collection("rifas").doc(rifaActivaId).collection("numeros");
         unsubRifaListener = rifaNumerosRef.onSnapshot(snapshot => {
@@ -519,8 +525,6 @@ document.addEventListener('DOMContentLoaded', () => {
             updateSummary();
         });
     };
-    // --- FIN: FUNCIÓN MODIFICADA PARA CARGAR COLORES ---
-
     const initializeGrid = () => {
         DOM.gridContainer.innerHTML = '';
         for (let i = 0; i < totalNumbers; i++) {
@@ -604,6 +608,8 @@ document.addEventListener('DOMContentLoaded', () => {
         DOM.modalWinningInput.disabled = false;
         DOM.modalWinningInput.focus();
     };
+    
+    // --- INICIO: FUNCIÓN MODIFICADA PARA ABRIR EL MODAL DE PREMIOS ---
     const openPrizeModal = async () => {
         if (!rifaActivaId) return;
         DOM.mainContainer.classList.add('page-blur');
@@ -611,16 +617,44 @@ document.addEventListener('DOMContentLoaded', () => {
         DOM.prizeModal.classList.add('visible');
         const rifaDoc = await db.collection("rifas").doc(rifaActivaId).get();
         const rifaData = rifaDoc.data() || {};
-        currentPrizeData = rifaData.premios || { mayor: { valor: 0 }, segundo: { valor: 0 }, tercero: { valor: 0 } };
+        currentPrizeData = rifaData.premios || { mayor: {}, segundo: {}, tercero: {} };
+        
         const user = firebase.auth().currentUser;
-        DOM.prizeInfoSection.innerHTML = '';
-        if (user) {
-            DOM.prizeInfoSection.innerHTML = `<div class="prize-card mayor"><div class="prize-card-title">🥇 Premio Mayor</div><input type="number" class="prize-card-input" id="mayorValueInput" value="${currentPrizeData.mayor.valor}"></div><div class="prize-card segundo"><div class="prize-card-title">🥈 Segundo Premio</div><input type="number" class="prize-card-input" id="segundoValueInput" value="${currentPrizeData.segundo.valor}"></div><div class="prize-card tercero"><div class="prize-card-title">🥉 Tercer Premio</div><input type="number" class="prize-card-input" id="terceroValueInput" value="${currentPrizeData.tercero.valor}"></div>`;
-            DOM.savePrizeButton.style.display = 'inline-block';
-        } else {
-            DOM.prizeInfoSection.innerHTML = `<div class="prize-card mayor"><div class="prize-card-title">🥇 Premio Mayor</div><div class="prize-card-value">${formatCurrency(currentPrizeData.mayor.valor)}</div></div><div class="prize-card segundo"><div class="prize-card-title">🥈 Segundo Premio</div><div class="prize-card-value">${formatCurrency(currentPrizeData.segundo.valor)}</div></div><div class="prize-card tercero"><div class="prize-card-title">🥉 Tercer Premio</div><div class="prize-card-value">${formatCurrency(currentPrizeData.tercero.valor)}</div></div>`;
-            DOM.savePrizeButton.style.display = 'none';
-        }
+        DOM.prizeInfoSection.innerHTML = ''; // Limpiar antes de poblar
+        const prizeTiers = ['mayor', 'segundo', 'tercero'];
+        const prizeLabels = { mayor: '🥇 Premio Mayor', segundo: '🥈 Segundo Premio', tercero: '🥉 Tercer Premio' };
+
+        prizeTiers.forEach(tier => {
+            const prize = currentPrizeData[tier] || {};
+            let contentHtml = '';
+            if (user) {
+                // Vista de Administrador con inputs
+                contentHtml = `
+                    <div class="prize-card-admin-view">
+                        <label for="${tier}DescInput">Descripción:</label>
+                        <input type="text" id="${tier}DescInput" placeholder="Ej: Una Moto 0km" value="${prize.descripcion || ''}">
+                        
+                        <label for="${tier}ValorInput">Valor (si aplica):</label>
+                        <input type="number" id="${tier}ValorInput" placeholder="0" value="${prize.valor || 0}">
+
+                        <label for="${tier}ImgInput">URL de la Imagen (opcional):</label>
+                        <input type="url" id="${tier}ImgInput" placeholder="https://ejemplo.com/foto.jpg" value="${prize.imgUrl || ''}">
+                    </div>
+                `;
+            } else {
+                // Vista pública
+                contentHtml = generarHtmlDePremio(prize);
+            }
+
+            DOM.prizeInfoSection.innerHTML += `
+                <div class="prize-card ${tier}">
+                    <div class="prize-card-title">${prizeLabels[tier]}</div>
+                    ${contentHtml}
+                </div>`;
+        });
+        
+        DOM.savePrizeButton.style.display = user ? 'inline-block' : 'none';
+        
         DOM.modalWinningInput.value = '';
         DOM.prizeSimulatorSlots.forEach(slot => { 
             slot.querySelector('span').textContent = ''; 
@@ -630,19 +664,36 @@ document.addEventListener('DOMContentLoaded', () => {
         DOM.modalWinnerResults.innerHTML = '';
         runSimulatorIntroAnimation();
     };
+    // --- FIN: FUNCIÓN MODIFICADA PARA ABRIR EL MODAL DE PREMIOS ---
+
+    // --- INICIO: FUNCIÓN MODIFICADA PARA GUARDAR LOS PREMIOS ---
     const savePrizeValues = async () => {
         if (!rifaActivaId || !firebase.auth().currentUser) return;
         const newPrizeData = {
-            mayor: { valor: Number(document.getElementById('mayorValueInput').value) || 0 },
-            segundo: { valor: Number(document.getElementById('segundoValueInput').value) || 0 },
-            tercero: { valor: Number(document.getElementById('terceroValueInput').value) || 0 }
+            mayor: {
+                descripcion: document.getElementById('mayorDescInput').value.trim(),
+                valor: Number(document.getElementById('mayorValorInput').value) || 0,
+                imgUrl: document.getElementById('mayorImgInput').value.trim()
+            },
+            segundo: {
+                descripcion: document.getElementById('segundoDescInput').value.trim(),
+                valor: Number(document.getElementById('segundoValorInput').value) || 0,
+                imgUrl: document.getElementById('segundoImgInput').value.trim()
+            },
+            tercero: {
+                descripcion: document.getElementById('terceroDescInput').value.trim(),
+                valor: Number(document.getElementById('terceroValorInput').value) || 0,
+                imgUrl: document.getElementById('terceroImgInput').value.trim()
+            }
         };
         try {
             await db.collection("rifas").doc(rifaActivaId).update({ premios: newPrizeData });
-            alert("Valores de premios guardados con éxito.");
+            alert("Premios guardados con éxito.");
             currentPrizeData = newPrizeData;
-        } catch (error) { console.error("Error al guardar valores:", error); alert("No se pudo guardar los valores."); }
+        } catch (error) { console.error("Error al guardar valores:", error); alert("No se pudo guardar la información de los premios."); }
     };
+    // --- FIN: FUNCIÓN MODIFICADA PARA GUARDAR LOS PREMIOS ---
+
     const updateCellAppearance = (number, status) => {
         const cell = document.querySelector(`.grid-item[data-number='${number}']`);
         if (cell) { cell.className = 'grid-item'; cell.classList.add(`status-${status}`); }
@@ -668,19 +719,31 @@ document.addEventListener('DOMContentLoaded', () => {
             DOM.searchResultsContainer.innerHTML = `<div class="no-results-message"><svg xmlns="http://www.w3.org/2000/svg" fill="currentColor" viewBox="0 0 16 16"><path d="M11.742 10.344a6.5 6.5 0 1 0-1.397 1.398h-.001c.03.04.062.078.098.115l3.85 3.85a1 1 0 0 0 1.415-1.414l-3.85-3.85a1.007 1.007 0 0 0-.115-.1zM12 6.5a5.5 5.5 0 1 1-11 0 5.5 5.5 0 0 1 11 0z"/></svg><div>No se encontraron coincidencias.</div></div>`;
         }
     };
-    const getWinnerInfo = (raffleNumber, prizeTier, prizeValue) => {
+    
+    // --- INICIO: FUNCIÓN MODIFICADA PARA MOSTRAR LA INFO DEL GANADOR ---
+    const getWinnerInfo = (raffleNumber, prizeTier, prizeObject) => {
         const data = localRaffleData[raffleNumber];
         const prizeLabels = { mayor: '🥇 Premio Mayor', segundo: '🥈 Segundo Premio', tercero: '🥉 Tercer Premio' };
         const prizeStyles = { mayor: 'gold', segundo: 'silver', tercero: 'bronze' };
         let winnerHTML;
         if (data && data.status === 'pago') {
-            winnerHTML = `<div class="prize-info"><div class="winner-name">${data.name || 'N/A'}</div><div class="winner-phone">Cel: ${data.phone || 'N/A'}</div><div class="prize-value">Valor: ${formatCurrency(prizeValue)}</div></div>`;
+            winnerHTML = `<div class="prize-info">
+                            <div class="winner-name">${data.name || 'N/A'}</div>
+                            <div class="winner-phone">Cel: ${data.phone || 'N/A'}</div>
+                            <hr style="border-color: rgba(255,255,255,0.2); margin: 10px 0;">
+                            ${generarHtmlDePremio(prizeObject)}
+                         </div>`;
         } else {
             const reason = data ? `no fue pagado (estado: ${data.status})` : 'está disponible';
             winnerHTML = `<div class="prize-info"><div class="no-winner-text">Sin ganador (El número ${raffleNumber} ${reason}).</div></div>`;
         }
-        return `<div class="winner-card ${data && data.status === 'pago' ? prizeStyles[prizeTier] : 'no-winner'}"><div class="prize-header"><h3>${prizeLabels[prizeTier]}</h3><span class="prize-number-tag">Nº ${raffleNumber}</span></div>${winnerHTML}</div>`;
+        return `<div class="winner-card ${data && data.status === 'pago' ? prizeStyles[prizeTier] : 'no-winner'}">
+                    <div class="prize-header"><h3>${prizeLabels[prizeTier]}</h3><span class="prize-number-tag">Nº ${raffleNumber}</span></div>
+                    ${winnerHTML}
+                </div>`;
     };
+    // --- FIN: FUNCIÓN MODIFICADA PARA MOSTRAR LA INFO DEL GANADOR ---
+
     const checkWinners = async () => {
         const winningNumber = DOM.realWinningInput.value.trim();
         DOM.winnerResults.innerHTML = '';
@@ -688,21 +751,19 @@ document.addEventListener('DOMContentLoaded', () => {
             DOM.winnerResults.innerHTML = '<div class="no-results-message">Ingresa un número válido de 4 cifras.</div>'; return;
         }
         const rifaDoc = await db.collection("rifas").doc(rifaActivaId).get();
-        const prizesData = rifaDoc.data().premios || { mayor: { valor: 0 }, segundo: { valor: 0 }, tercero: { valor: 0 } };
+        const prizesData = rifaDoc.data().premios || { mayor: {}, segundo: {}, tercero: {} };
         const prizeChecks = [
-            { tier: 'mayor', number: winningNumber.substring(2, 4), value: prizesData.mayor.valor },
-            { tier: 'segundo', number: winningNumber.substring(0, 2), value: prizesData.segundo.valor },
-            { tier: 'tercero', number: winningNumber.substring(1, 3), value: prizesData.tercero.valor }
+            { tier: 'mayor', number: winningNumber.substring(2, 4) },
+            { tier: 'segundo', number: winningNumber.substring(0, 2) },
+            { tier: 'tercero', number: winningNumber.substring(1, 3) }
         ];
-        prizeChecks.forEach(p => DOM.winnerResults.insertAdjacentHTML('beforeend', getWinnerInfo(p.number, p.tier, p.value)));
+        // Se pasa el objeto de premio completo a getWinnerInfo
+        prizeChecks.forEach(p => DOM.winnerResults.insertAdjacentHTML('beforeend', getWinnerInfo(p.number, p.tier, prizesData[p.tier])));
     };
 
-    // --- INICIO: NUEVOS EVENT LISTENERS ---
     DOM.settingsButton.addEventListener('click', openSettingsModal);
     DOM.closeSettingsModalButton.addEventListener('click', closeSettingsModal);
     DOM.saveColorsButton.addEventListener('click', saveColors);
-    // --- FIN: NUEVOS EVENT LISTENERS ---
-
     DOM.darkModeToggle.addEventListener('click', () => { const newTheme = document.body.classList.contains('dark-mode') ? 'light' : 'dark'; localStorage.setItem('theme', newTheme); applyTheme(newTheme); });
     DOM.createRifaButton.addEventListener('click', crearNuevaRifa); DOM.deleteRifaButton.addEventListener('click', deleteRifaActual);
     DOM.closeDataModalButton.addEventListener('click', closeDataModal); DOM.saveButton.addEventListener('click', saveData); DOM.deleteButton.addEventListener('click', deleteData);
@@ -711,12 +772,13 @@ document.addEventListener('DOMContentLoaded', () => {
     DOM.modalBackdrop.addEventListener('click', (e) => {
         if (e.target === DOM.modalBackdrop) {
             closePrizeModal();
+            closeSettingsModal();
+            closeDataModal();
         }
     });
     DOM.savePrizeButton.addEventListener('click', savePrizeValues);
     DOM.rifaSelect.addEventListener('click', () => { DOM.rifaSelectItems.classList.toggle('select-show'); DOM.rifaSelect.classList.toggle('select-arrow-active'); });
     window.addEventListener('click', (event) => { 
-        if (!DOM.dataModal.contains(event.target) && event.target !== DOM.dataModal && DOM.dataModal.classList.contains('visible')) { }
         if (DOM.rifaSelect.parentElement && !DOM.rifaSelect.parentElement.contains(event.target)) { DOM.rifaSelectItems.classList.remove('select-show'); DOM.rifaSelect.classList.remove('select-arrow-active'); }
     });
     DOM.searchButton.addEventListener('click', () => {
@@ -768,7 +830,7 @@ document.addEventListener('DOMContentLoaded', () => {
                 numberToCheck = fullNumber.substring(1, 3);
             }
             targetIndices.forEach(i => DOM.prizeSimulatorSlots[i].classList.add('selected-digit'));
-            DOM.modalWinnerResults.innerHTML = getWinnerInfo(numberToCheck, prizeTier, currentPrizeData[prizeTier].valor);
+            DOM.modalWinnerResults.innerHTML = getWinnerInfo(numberToCheck, prizeTier, currentPrizeData[prizeTier]);
         });
     });
     applyTheme(localStorage.getItem('theme') || 'light');
