@@ -132,7 +132,6 @@
             display: flex;
             flex-direction: column;
             justify-content: flex-start;
-            /* --- CAMBIO: Se reduce el padding superior para subir los elementos --- */
             padding: 20px;
             box-sizing: border-box;
         }
@@ -154,7 +153,15 @@
         #saveButton, #savePrizeButton, #saveColorsButton { background-color: var(--color-primary); color: white; }
         #deleteButton { background-color: var(--color-danger); color: white; margin-right: 10px; }
         .raffle-manager { display: flex; flex-wrap: wrap; gap: 10px; align-items: flex-end; }
-        .raffle-selector-container { flex-grow: 1; min-width: 200px; }
+        
+        .raffle-selector-container {
+            flex-grow: 1;
+            min-width: 200px;
+            display: flex;
+            flex-direction: column;
+            gap: 10px;
+        }
+
         .selector-wrapper-with-button { display: flex; align-items: center; gap: 10px; }
         .raffle-creator { flex: 1 1 100%; display: none; }
         body.admin-view .raffle-creator { display: flex; }
@@ -176,8 +183,8 @@
         #searchInput:focus { outline: none; border-color: var(--color-primary); box-shadow: 0 0 0 3px rgba(0, 123, 255, 0.25); }
         #searchInput:focus + label, #searchInput:not(:placeholder-shown) + label { transform: translateY(-150%) scale(0.8); color: var(--color-primary); }
         #darkModeToggle { position: fixed; top: 15px; right: 15px; width: 40px; height: 40px; border-radius: 50%; border: 1px solid var(--border-color); background-color: var(--background-card); color: var(--text-light); font-size: 18px; cursor: pointer; display: flex; align-items: center; justify-content: center; z-index: 1001; transition: all var(--transition-speed) ease; }
-        #prizeButton, #deleteRifaButton, #settingsButton { display: none; align-items: center; justify-content: center; height: 48px; width: 48px; padding: 0; background-color: transparent; border-radius: 8px; cursor: pointer; transition: all 0.2s ease; flex-shrink: 0; }
-        #prizeButton.visible { display: flex; }
+        #deleteRifaButton, #settingsButton { display: none; align-items: center; justify-content: center; height: 48px; width: 48px; padding: 0; background-color: transparent; border-radius: 8px; cursor: pointer; transition: all 0.2s ease; flex-shrink: 0; }
+        #prizeButton.visible { display: block; }
         body.admin-view #deleteRifaButton.visible, body.admin-view #settingsButton.visible { display: flex; }
         #settingsButton { border: 1px solid var(--color-primary); color: var(--color-primary); }
         #settingsButton:hover { background-color: var(--color-primary); color: white; }
@@ -188,30 +195,62 @@
         .color-setting input[type="color"]::-webkit-color-swatch { border: none; border-radius: 4px; }
         #deleteRifaButton { border: 1px solid var(--color-danger); color: var(--color-danger); }
         #deleteRifaButton:hover { background-color: var(--color-danger); color: white; }
-        #prizeButton { position: relative; overflow: hidden; border: 1px solid var(--color-separado); color: var(--color-separado); font-size: 1.2em; }
-        #prizeButton .fa-trophy { transition: transform 0.3s ease; }
-        #prizeButton:hover .fa-trophy { animation: jiggle 0.5s; }
-        #prizeButton::after { content: ''; position: absolute; top: 0; left: -200%; width: 75%; height: 100%; background: linear-gradient(to right, rgba(255, 255, 255, 0) 0%, rgba(255, 215, 0, 0.4) 50%, rgba(255, 255, 255, 0) 100%); transform: skewX(-25deg); animation: shimmer 4s infinite; }
-        @keyframes shimmer { 0% { left: -200%; } 40% { left: 200%; } 100% { left: 200%; } }
-        @keyframes jiggle { 0%, 100% { transform: rotate(0); } 25% { transform: rotate(-10deg) scale(1.1); } 75% { transform: rotate(10deg) scale(1.1); } }
+       
+        /* --- CAMBIO: Se elimina la animación de pulso y se ajusta la de espejo --- */
+        @keyframes prizeButtonShimmer {
+            0% { transform: translateX(-100%) skewX(-20deg); }
+            100% { transform: translateX(100%) skewX(-20deg); }
+        }
+        #prizeButton {
+            display: none;
+            position: relative;
+            width: 100%;
+            padding: 12px 20px;
+            font-size: 1.1em;
+            font-weight: bold;
+            color: white; /* Color de texto blanco */
+            background: linear-gradient(135deg, #84E059, #6ACF4F);
+            border: none;
+            border-radius: 8px;
+            cursor: pointer;
+            box-shadow: 0 4px 15px rgba(132, 224, 89, 0.2);
+            transition: all 0.3s cubic-bezier(0.25, 0.8, 0.25, 1);
+            overflow: hidden;
+            background-size: 100% 100%;
+            /* Se eliminó la animación 'prizeButtonPulse' de aquí */
+        }
+        #prizeButton::after {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 50%;
+            height: 100%;
+            background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.4), transparent);
+            transform: translateX(-100%) skewX(-20deg);
+            animation: prizeButtonShimmer 3s infinite;
+            animation-delay: 1s;
+        }
+        #prizeButton:hover {
+            transform: translateY(-4px);
+            background-size: 120% 120%;
+            box-shadow: 0 8px 25px rgba(132, 224, 89, 0.3);
+            filter: brightness(1.05);
+        }
+        #prizeButton:active {
+            transform: translateY(0);
+        }
+        .prize-icon {
+            display: inline-block;
+            transition: transform 0.3s ease;
+        }
+        #prizeButton:hover .prize-icon {
+            transform: scale(1.2) rotate(8deg);
+        }
+        #prizeButton.visible { display: block; }
         
-        /* --- CAMBIO: Se centra el contenedor de tarjetas --- */
-        #prize-info-section {
-            display: flex;
-            flex-wrap: wrap;
-            gap: 10px;
-            justify-content: center;
-        }
-        /* --- CAMBIO: Se ajusta el tamaño de las tarjetas para que se organicen mejor --- */
-        .prize-card {
-            transition: all 0.3s ease;
-            text-align: center;
-            border-radius: 12px;
-            padding: 15px;
-            flex: 1 1 250px; /* Crece, se encoge, y su base es 250px */
-            max-width: 320px; /* Evita que se estire demasiado */
-        }
-
+        #prize-info-section { display: flex; flex-wrap: wrap; gap: 10px; justify-content: center; }
+        .prize-card { transition: all 0.3s ease; text-align: center; border-radius: 12px; padding: 15px; flex: 1 1 250px; max-width: 320px; }
         @keyframes card-pulse-glow { 50% { transform: scale(1.07); box-shadow: 0 0 25px 5px var(--glow-color, #fff); } }
         .prize-card.highlight { transform: translateY(-5px) scale(1.02); box-shadow: 0 8px 25px rgba(0,0,0,0.2); }
         .prize-card-title { font-size: 0.9em; font-weight: bold; display: flex; align-items: center; justify-content: center; gap: 8px; margin-bottom: 10px; }
@@ -253,9 +292,9 @@
                     <div id="rifaSelectItems" class="select-items select-hide"></div>
                 </div>
                 <button id="settingsButton" title="Configurar Colores"><i class="fas fa-cog"></i></button>
-                <button id="prizeButton" title="Ver/Editar Premios"><i class="fas fa-trophy"></i></button>
                 <button id="deleteRifaButton" title="Eliminar rifa seleccionada"><i class="fas fa-trash-alt"></i></button>
             </div>
+            <button id="prizeButton" title="Ver/Editar Premios">VER PREMIOS <span class="prize-icon">🏆</span></button>
         </div>
         <div class="raffle-creator">
             <div>
@@ -352,7 +391,6 @@
 
 <script>
 // El script de Javascript no tuvo cambios en esta actualización.
-// Se pega completo para mantener la integridad del archivo.
 document.addEventListener('DOMContentLoaded', () => {
     const firebaseConfig = {
         apiKey: "AIzaSyDMBARLzKnhcmSI8euhiA2Wgsf7pJQM1_0",
@@ -781,7 +819,7 @@ document.addEventListener('DOMContentLoaded', () => {
             winnerHTML = `<div class="prize-info"><div class="no-winner-text">Sin ganador (El número ${raffleNumber} ${reason}).</div></div>`;
         }
         return `<div class="winner-card ${data && data.status === 'pago' ? prizeStyles[prizeTier] : 'no-winner'}">
-                    <div class="prize-header"><h3>${prizeLabels[prizeTier]}</h3><span class="prize-number-tag">Nº ${raffleNumber}</span></div>
+                    <div class="prize-header"><h3>${prizeLabels[tier]}</h3><span class="prize-number-tag">Nº ${raffleNumber}</span></div>
                     ${winnerHTML}
                 </div>`;
     };
