@@ -139,7 +139,7 @@
         .modal-footer { text-align: right; margin-top: 20px; }
         .modal-footer button { padding: 10px 20px; border: none; border-radius: 5px; cursor: pointer; font-size: 16px; transition: background-color 0.2s, transform 0.2s; }
         .modal-footer button:hover { transform: translateY(-2px); }
-        #saveButton, #saveAllPrizesButton, #saveColorsButton { background-color: var(--color-primary); color: white; }
+        #saveButton, #saveMainPrizesButton, #saveColorsButton { background-color: var(--color-primary); color: white; }
         #deleteButton { background-color: var(--color-danger); color: white; margin-right: 10px; }
         .raffle-manager { display: flex; flex-wrap: wrap; gap: 10px; align-items: flex-end; }
         .raffle-selector-container { flex-grow: 1; min-width: 200px; display: flex; flex-direction: column; gap: 10px; }
@@ -365,7 +365,7 @@
                 <div id="modalWinnerResults"></div>
             </div>
         </div>
-        <div class="modal-footer"><button id="saveAllPrizesButton" style="display: none;">Guardar Cambios en Premios Principales</button></div>
+        <div class="modal-footer"><button id="saveMainPrizesButton" style="display: none;">Guardar Premios Principales</button></div>
     </div>
 </div>
 
@@ -388,6 +388,7 @@
 <script src="https://www.gstatic.com/firebasejs/8.10.0/firebase-firestore.js"></script>
 
 <script>
+// El script ahora incluye la lógica corregida y funcional para agregar, editar y eliminar premios anticipados.
 document.addEventListener('DOMContentLoaded', () => {
     const firebaseConfig = {
         apiKey: "AIzaSyDMBARLzKnhcmSI8euhiA2Wgsf7pJQM1_0",
@@ -417,7 +418,7 @@ document.addEventListener('DOMContentLoaded', () => {
         inputPhone: document.getElementById('inputPhone'), saveButton: document.getElementById('saveButton'),
         deleteButton: document.getElementById('deleteButton'), closeDataModalButton: document.querySelector('#dataModal .close-button'),
         prizeModal: document.getElementById('prizeModal'), prizeInfoSection: document.getElementById('prize-info-section'),
-        saveAllPrizesButton: document.getElementById('saveAllPrizesButton'), prizeSimulatorSlots: document.querySelectorAll('.digit-circle-simulator'),
+        saveMainPrizesButton: document.getElementById('saveMainPrizesButton'), prizeSimulatorSlots: document.querySelectorAll('.digit-circle-simulator'),
         modalWinningInput: document.getElementById('modalWinningInput'), prizeZonesContainer: document.querySelector('.prize-zones-container'),
         prizeZones: document.querySelectorAll('.prize-zone'), modalWinnerResults: document.getElementById('modalWinnerResults'),
         closePrizeModalButton: document.querySelector('#prizeModal .close-button'),
@@ -428,6 +429,7 @@ document.addEventListener('DOMContentLoaded', () => {
         colorSeparado: document.getElementById('colorSeparado'),
         colorPago: document.getElementById('colorPago'),
         saveColorsButton: document.getElementById('saveColorsButton'),
+        adminAnticipadoForm: document.getElementById('admin-anticipado-form'),
         formAnticipadoTitle: document.getElementById('formAnticipadoTitle'),
         editingAnticipadoId: document.getElementById('editingAnticipadoId'),
         anticipadoValor: document.getElementById('anticipadoValor'),
@@ -628,26 +630,16 @@ document.addEventListener('DOMContentLoaded', () => {
     const runSimulatorIntroAnimation = async () => {
         DOM.modalWinningInput.disabled = true;
         const slots = DOM.prizeSimulatorSlots;
-        const cards = { mayor: DOM.prizeInfoSection.querySelector('.prize-card.mayor'), segundo: DOM.prizeInfoSection.querySelector('.prize-card.segundo'), tercero: DOM.prizeInfoSection.querySelector('.prize-card.tercero'), };
-        for (let i = 0; i < 1; i++) { // Reduced loops for faster demo
-            slots.forEach(slot => slot.classList.remove('selected-digit'));
-            "1234".split('').forEach((digit, index) => { slots[index].querySelector('span').textContent = digit; });
-            await sleep(400); animatePrizeCard(cards.mayor, 'var(--color-separado)'); slots[2].classList.add('selected-digit'); slots[3].classList.add('selected-digit');
-            await sleep(1500); slots[2].classList.remove('selected-digit'); slots[3].classList.remove('selected-digit');
-            animatePrizeCard(cards.segundo, '#AAA'); slots[0].classList.add('selected-digit'); slots[1].classList.add('selected-digit');
-            await sleep(1500);
-        }
+        await sleep(500); // Give a moment for modal to settle
         slots.forEach(slot => { slot.classList.remove('selected-digit'); slot.querySelector('span').textContent = ''; });
         DOM.modalWinningInput.disabled = false;
         DOM.modalWinningInput.focus();
     };
     
     const resetAnticipadoForm = () => {
+        DOM.adminAnticipadoForm.reset();
         DOM.editingAnticipadoId.value = '';
         DOM.formAnticipadoTitle.innerHTML = '<i class="fas fa-plus-circle"></i> Agregar Premio Anticipado';
-        DOM.anticipadoValor.value = '';
-        DOM.anticipadoFecha.value = '';
-        DOM.anticipadoCondicion.value = '';
         DOM.saveAnticipadoButton.textContent = 'Agregar Premio';
         DOM.cancelEditAnticipadoButton.style.display = 'none';
     };
@@ -730,7 +722,7 @@ document.addEventListener('DOMContentLoaded', () => {
         renderAnticipados();
         resetAnticipadoForm();
         
-        DOM.saveAllPrizesButton.style.display = user ? 'inline-block' : 'none';
+        DOM.saveMainPrizesButton.style.display = user ? 'inline-block' : 'none';
         DOM.modalWinningInput.value = '';
         DOM.prizeSimulatorSlots.forEach(slot => { slot.querySelector('span').textContent = ''; slot.classList.remove('liquid-filled', 'selected-digit'); });
         DOM.prizeZonesContainer.classList.remove('active');
@@ -738,26 +730,41 @@ document.addEventListener('DOMContentLoaded', () => {
         runSimulatorIntroAnimation();
     };
     
-    const saveAllPrizes = async () => {
+    // FUNCIÓN CORREGIDA Y SEPARADA: Solo guarda los premios anticipados
+    const saveAnticipatedPrizes = async () => {
         if (!rifaActivaId || !firebase.auth().currentUser) return false;
-        
-        const mainPrizes = {
-            mayor: { descripcion: DOM.mayorDescInput.value.trim(), valor: Number(DOM.mayorValorInput.value) || 0, imgUrl1: DOM.mayorImgUrl1Input.value.trim(), imgUrl2: DOM.mayorImgUrl2Input.value.trim() },
-            segundo: { descripcion: DOM.segundoDescInput.value.trim(), valor: Number(DOM.segundoValorInput.value) || 0, imgUrl1: DOM.segundoImgUrl1Input.value.trim(), imgUrl2: DOM.segundoImgUrl2Input.value.trim() },
-            tercero: { descripcion: DOM.terceroDescInput.value.trim(), valor: Number(DOM.terceroValorInput.value) || 0, imgUrl1: DOM.terceroImgUrl1Input.value.trim(), imgUrl2: DOM.terceroImgUrl2Input.value.trim() }
-        };
-            
         try {
-            await db.collection("rifas").doc(rifaActivaId).update({ 
-                premios: mainPrizes,
+            await db.collection("rifas").doc(rifaActivaId).update({
                 premiosAnticipados: currentPrizeData.premiosAnticipados
             });
-            currentPrizeData.premios = mainPrizes;
             return true;
         } catch (error) {
-            console.error("Error al guardar premios:", error);
-            alert("Ocurrió un error al guardar. Revisa la consola.");
+            console.error("Error al guardar premios anticipados:", error);
+            alert("Ocurrió un error al guardar los premios anticipados.");
             return false;
+        }
+    };
+
+    // FUNCIÓN CORREGIDA Y SEPARADA: Solo guarda los premios principales
+    const saveMainPrizes = async () => {
+        if (!rifaActivaId || !firebase.auth().currentUser) return;
+        DOM.saveMainPrizesButton.disabled = true;
+        
+        const mainPrizes = {
+            mayor: { descripcion: document.getElementById('mayorDescInput').value.trim(), valor: Number(document.getElementById('mayorValorInput').value) || 0, imgUrl1: document.getElementById('mayorImgUrl1Input').value.trim(), imgUrl2: document.getElementById('mayorImgUrl2Input').value.trim() },
+            segundo: { descripcion: document.getElementById('segundoDescInput').value.trim(), valor: Number(document.getElementById('segundoValorInput').value) || 0, imgUrl1: document.getElementById('segundoImgUrl1Input').value.trim(), imgUrl2: document.getElementById('segundoImgUrl2Input').value.trim() },
+            tercero: { descripcion: document.getElementById('terceroDescInput').value.trim(), valor: Number(document.getElementById('terceroValorInput').value) || 0, imgUrl1: document.getElementById('terceroImgUrl1Input').value.trim(), imgUrl2: document.getElementById('terceroImgUrl2Input').value.trim() }
+        };
+        
+        try {
+            await db.collection("rifas").doc(rifaActivaId).update({ premios: mainPrizes });
+            currentPrizeData.premios = mainPrizes;
+            alert("Premios principales guardados con éxito.");
+        } catch (error) {
+            console.error("Error al guardar premios principales:", error);
+            alert("Ocurrió un error al guardar los premios principales.");
+        } finally {
+            DOM.saveMainPrizesButton.disabled = false;
         }
     };
     
@@ -821,7 +828,7 @@ document.addEventListener('DOMContentLoaded', () => {
     DOM.prizeButton.addEventListener('click', openPrizeModal);
     DOM.closePrizeModalButton.addEventListener('click', closePrizeModal);
     DOM.modalBackdrop.addEventListener('click', (e) => { if (e.target === DOM.modalBackdrop) { closePrizeModal(); closeSettingsModal(); closeDataModal(); } });
-    DOM.saveAllPrizesButton.addEventListener('click', async () => { if (await saveAllPrizes()) alert("Premios principales guardados."); });
+    DOM.saveMainPrizesButton.addEventListener('click', saveMainPrizes);
     DOM.rifaSelect.addEventListener('click', () => { DOM.rifaSelectItems.classList.toggle('select-show'); DOM.rifaSelect.classList.toggle('select-arrow-active'); });
     window.addEventListener('click', (event) => { if (DOM.rifaSelect.parentElement && !DOM.rifaSelect.parentElement.contains(event.target)) { DOM.rifaSelectItems.classList.remove('select-show'); DOM.rifaSelect.classList.remove('select-arrow-active'); } });
     DOM.searchButton.addEventListener('click', () => {
@@ -865,17 +872,17 @@ document.addEventListener('DOMContentLoaded', () => {
         if (!valor || !fecha || !condicion) { alert("Por favor, completa todos los campos del premio."); return; }
         
         const editingId = DOM.editingAnticipadoId.value;
-        if (editingId) { // Estamos editando
+        if (editingId) {
             const prizeIndex = currentPrizeData.premiosAnticipados.findIndex(p => p.id === editingId);
             if (prizeIndex > -1) {
                 currentPrizeData.premiosAnticipados[prizeIndex] = { ...currentPrizeData.premiosAnticipados[prizeIndex], valor, fecha, condicion };
             }
-        } else { // Estamos agregando uno nuevo
+        } else {
             const newPrize = { id: Date.now().toString(), valor, fecha, condicion };
             currentPrizeData.premiosAnticipados.push(newPrize);
         }
         
-        if (await saveAllPrizes()) {
+        if (await saveAnticipatedPrizes()) {
             renderAnticipados();
             resetAnticipadoForm();
         }
@@ -884,18 +891,20 @@ document.addEventListener('DOMContentLoaded', () => {
     DOM.cancelEditAnticipadoButton.addEventListener('click', resetAnticipadoForm);
 
     DOM.anticipadosList.addEventListener('click', async (e) => {
-        const target = e.target.closest('button');
-        if (!target) return;
-        const prizeId = target.dataset.id;
-        if (target.classList.contains('edit-anticipado-btn')) {
+        const button = e.target.closest('button');
+        if (!button) return;
+        const prizeId = button.dataset.id;
+        
+        if (button.classList.contains('edit-anticipado-btn')) {
             populateAnticipadoForm(prizeId);
-        }
-        if (target.classList.contains('delete-anticipado-btn')) {
+        } else if (button.classList.contains('delete-anticipado-btn')) {
             if (confirm("¿Estás seguro de eliminar este premio?")) {
                 currentPrizeData.premiosAnticipados = currentPrizeData.premiosAnticipados.filter(p => p.id !== prizeId);
-                if (await saveAllPrizes()) {
+                if (await saveAnticipatedPrizes()) {
                     renderAnticipados();
-                    resetAnticipadoForm(); // Resetea por si se estaba editando el premio que se borró
+                    if (DOM.editingAnticipadoId.value === prizeId) {
+                        resetAnticipadoForm();
+                    }
                 }
             }
         }
