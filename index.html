@@ -107,7 +107,7 @@
         .prize-card-value { font-size: 1.4em; font-weight: bold; }
         .prize-card-admin-view { display: flex; flex-direction: column; gap: 8px; }
         .prize-card-admin-view label { font-size: 0.8em; text-align: left; margin-bottom: -4px; opacity: 0.8; }
-        .prize-card-admin-view input { font-size: 0.9em !important; padding: 8px !important; }
+        .prize-card-admin-view input, .prize-card-admin-view textarea { font-size: 0.9em !important; padding: 8px !important; }
         #gridContainer { display: grid; grid-template-columns: repeat(10, 1fr); gap: 4px; margin-top: 20px; }
         .grid-item { display: flex; justify-content: center; align-items: center; aspect-ratio: 1 / 1; border: 1px solid var(--border-color); border-radius: 8px; font-size: clamp(0.7em, 3vw, 1.5em); font-weight: bold; color: white; cursor: pointer; transition: transform 0.2s, background-color 0.2s, border-color 0.2s; }
         .modal-backdrop { display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background-color: rgba(0,0,0,0.1); opacity: 0; z-index: 999; transition: opacity 0.3s ease-in-out; }
@@ -120,23 +120,11 @@
         .modal-content { background-color: var(--modal-bg); padding: 20px; border: 1px solid var(--border-color); width: 90%; max-width: 500px; border-radius: 8px; box-shadow: 0 4px 8px rgba(0,0,0,0.2); transition: background-color var(--transition-speed) ease; }
         
         #prizeModal .modal-content {
-            width: 100%;
-            height: 100%;
-            max-width: none;
-            border-radius: 0;
-            border: none;
-            background-color: var(--modal-glass-bg);
-            backdrop-filter: blur(10px);
-            -webkit-backdrop-filter: blur(10px);
-            box-shadow: none;
-            display: flex;
-            flex-direction: column;
-            justify-content: flex-start;
-            padding: 20px;
-            box-sizing: border-box;
-            overflow-y: auto;
+            width: 100%; height: 100%; max-width: none; border-radius: 0; border: none;
+            background-color: var(--modal-glass-bg); backdrop-filter: blur(10px); -webkit-backdrop-filter: blur(10px);
+            box-shadow: none; display: flex; flex-direction: column; justify-content: flex-start;
+            padding: 20px; box-sizing: border-box; overflow-y: auto;
         }
-
         #prizeModal h2 { margin-bottom: 15px; }
         #prizeModal hr { margin: 25px 0; border-color: var(--border-color); opacity: 0.5; }
         #prizeModal h4 { margin-top: 0; margin-bottom: 15px; }
@@ -154,15 +142,7 @@
         #saveButton, #saveAllPrizesButton, #saveColorsButton { background-color: var(--color-primary); color: white; }
         #deleteButton { background-color: var(--color-danger); color: white; margin-right: 10px; }
         .raffle-manager { display: flex; flex-wrap: wrap; gap: 10px; align-items: flex-end; }
-        
-        .raffle-selector-container {
-            flex-grow: 1;
-            min-width: 200px;
-            display: flex;
-            flex-direction: column;
-            gap: 10px;
-        }
-
+        .raffle-selector-container { flex-grow: 1; min-width: 200px; display: flex; flex-direction: column; gap: 10px; }
         .selector-wrapper-with-button { display: flex; align-items: center; gap: 10px; }
         .raffle-creator { flex: 1 1 100%; display: none; }
         body.admin-view .raffle-creator { display: flex; }
@@ -201,51 +181,12 @@
             0% { transform: translateX(-100%) skewX(-20deg); }
             100% { transform: translateX(100%) skewX(-20deg); }
         }
-        #prizeButton {
-            display: none;
-            position: relative;
-            width: 100%;
-            padding: 12px 20px;
-            font-size: 1.1em;
-            font-weight: bold;
-            color: white;
-            background: linear-gradient(135deg, #84E059, #6ACF4F);
-            border: none;
-            border-radius: 8px;
-            cursor: pointer;
-            box-shadow: 0 4px 15px rgba(132, 224, 89, 0.2);
-            transition: all 0.3s cubic-bezier(0.25, 0.8, 0.25, 1);
-            overflow: hidden;
-            background-size: 100% 100%;
-        }
-        #prizeButton::after {
-            content: '';
-            position: absolute;
-            top: 0;
-            left: 0;
-            width: 50%;
-            height: 100%;
-            background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.4), transparent);
-            transform: translateX(-100%) skewX(-20deg);
-            animation: prizeButtonShimmer 3s infinite;
-            animation-delay: 1s;
-        }
-        #prizeButton:hover {
-            transform: translateY(-4px);
-            background-size: 120% 120%;
-            box-shadow: 0 8px 25px rgba(132, 224, 89, 0.3);
-            filter: brightness(1.05);
-        }
-        #prizeButton:active {
-            transform: translateY(0);
-        }
-        .prize-icon {
-            display: inline-block;
-            transition: transform 0.3s ease;
-        }
-        #prizeButton:hover .prize-icon {
-            transform: scale(1.2) rotate(8deg);
-        }
+        #prizeButton { display: none; position: relative; width: 100%; padding: 12px 20px; font-size: 1.1em; font-weight: bold; color: white; background: linear-gradient(135deg, #84E059, #6ACF4F); border: none; border-radius: 8px; cursor: pointer; box-shadow: 0 4px 15px rgba(132, 224, 89, 0.2); transition: all 0.3s cubic-bezier(0.25, 0.8, 0.25, 1); overflow: hidden; background-size: 100% 100%; }
+        #prizeButton::after { content: ''; position: absolute; top: 0; left: 0; width: 50%; height: 100%; background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.4), transparent); transform: translateX(-100%) skewX(-20deg); animation: prizeButtonShimmer 3s infinite; animation-delay: 1s; }
+        #prizeButton:hover { transform: translateY(-4px); background-size: 120% 120%; box-shadow: 0 8px 25px rgba(132, 224, 89, 0.3); filter: brightness(1.05); }
+        #prizeButton:active { transform: translateY(0); }
+        .prize-icon { display: inline-block; transition: transform 0.3s ease; }
+        #prizeButton:hover .prize-icon { transform: scale(1.2) rotate(8deg); }
         #prizeButton.visible { display: block; }
         
         #prize-info-section { display: flex; flex-wrap: wrap; gap: 10px; justify-content: center; }
@@ -276,79 +217,54 @@
         #prizeZoneThird { left: calc(25% - 7.5px); width: calc(50% + 7.5px); }
         #prizeZoneMayor { right: -7.5px; width: calc(50% + 7.5px); }
         
-        /* --- ESTILOS PARA PREMIOS ANTICIPADOS --- */
+        /* --- ESTILOS MEJORADOS PARA PREMIOS ANTICIPADOS --- */
         #anticipados-section { margin-top: 25px; }
         #admin-anticipado-form {
-            display: none; /* Oculto por defecto */
-            background-color: var(--background-card);
+            display: none;
+            background: var(--background-card);
             border: 1px solid var(--border-color);
             padding: 20px;
-            border-radius: 8px;
+            border-radius: 12px;
             margin-bottom: 25px;
+            box-shadow: 0 4px 15px var(--shadow-color);
         }
-        body.admin-view #admin-anticipado-form {
-            display: flex; /* Visible para admins */
-            flex-direction: column;
-            gap: 15px;
-        }
-        #admin-anticipado-form h4 {
-            margin: 0 0 5px 0;
-            text-align: left;
-        }
-        #addAnticipadoButton {
-            padding: 10px;
-            background-color: var(--color-pago);
-            color: white;
-            border: none;
-            border-radius: 5px;
-            cursor: pointer;
-            font-weight: bold;
-            font-size: 1em;
-        }
-        #anticipados-container-public { display: none; /* Oculto por defecto, JS lo muestra */ }
-        #anticipados-list { display: flex; flex-direction: column; gap: 10px; }
+        body.admin-view #admin-anticipado-form { display: block; }
+        #admin-anticipado-form h4 { text-align: left; margin: 0 0 15px 0; display: flex; align-items: center; gap: 10px; }
+        #admin-anticipado-form .form-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 15px; margin-bottom: 15px; }
+        #admin-anticipado-form .form-full-width { grid-column: 1 / -1; }
+        #admin-anticipado-form .form-actions { display: flex; gap: 10px; justify-content: flex-end; }
+        #saveAnticipadoButton { flex-grow: 1; background-color: var(--color-pago); color: white; border: none; border-radius: 5px; cursor: pointer; font-weight: bold; padding: 12px; font-size: 1em; }
+        #cancelEditAnticipadoButton { display: none; background-color: var(--text-light); color: white; border: none; border-radius: 5px; padding: 12px 20px; }
+
+        #anticipados-container-public { display: none; }
+        #anticipados-list { display: grid; grid-template-columns: repeat(auto-fill, minmax(280px, 1fr)); gap: 15px; }
         .anticipado-card {
-            background-color: var(--background-light);
-            padding: 15px;
-            border-radius: 8px;
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
+            background: var(--background-light);
+            border-radius: 12px;
             border: 1px solid var(--border-color);
+            border-left: 5px solid var(--color-pago);
+            padding: 15px 20px;
+            display: flex;
+            flex-direction: column;
+            justify-content: space-between;
             animation: fadeIn 0.4s ease-out;
+            transition: transform 0.2s, box-shadow 0.2s;
         }
-        .anticipado-info strong {
-            font-size: 1.2em;
-            color: var(--color-pago);
-        }
-        .anticipado-info span {
-            display: block;
-            font-size: 0.9em;
-            color: var(--text-light);
-            margin-top: 5px;
-        }
-        .delete-anticipado-btn {
-            display: none; /* Oculto para publico */
-            background-color: transparent;
-            border: 1px solid var(--color-danger);
-            color: var(--color-danger);
-            width: 35px;
-            height: 35px;
-            border-radius: 50%;
-            cursor: pointer;
-            transition: all 0.2s;
-        }
-        .delete-anticipado-btn:hover {
-            background-color: var(--color-danger);
-            color: white;
-        }
-        body.admin-view .delete-anticipado-btn {
-            display: flex; /* Visible para admins */
-            align-items: center;
-            justify-content: center;
-        }
+        .anticipado-card:hover { transform: translateY(-3px); box-shadow: 0 6px 20px var(--shadow-color); }
+        .anticipado-card-main { display: flex; justify-content: space-between; align-items: flex-start; gap: 10px; margin-bottom: 15px; }
+        .anticipado-card-info { flex-grow: 1; }
+        .anticipado-card-info .condicion { font-weight: 600; color: var(--text-dark); margin: 0 0 5px 0; font-size: 1.05em; }
+        .anticipado-card-info .fecha { font-size: 0.9em; color: var(--text-light); }
+        .anticipado-card-value { font-size: 1.6em; font-weight: 700; color: var(--color-pago); white-space: nowrap; }
+        .anticipado-card-actions { display: none; align-self: flex-end; gap: 8px; border-top: 1px solid var(--border-color); padding-top: 10px; width: 100%; justify-content: flex-end; }
+        body.admin-view .anticipado-card-actions { display: flex; }
+        .anticipado-card-actions button { background: transparent; border: 1px solid; border-radius: 5px; width: 32px; height: 32px; cursor: pointer; transition: background-color 0.2s, color 0.2s; }
+        .edit-anticipado-btn { border-color: var(--color-primary); color: var(--color-primary); }
+        .edit-anticipado-btn:hover { background-color: var(--color-primary); color: white; }
+        .delete-anticipado-btn { border-color: var(--color-danger); color: var(--color-danger); }
+        .delete-anticipado-btn:hover { background-color: var(--color-danger); color: white; }
         
-        @media (max-width: 600px) { body { padding: 5px; } .raffle-manager { flex-direction: column; align-items: stretch; gap: 20px; } .prize-card { min-width: 100%;} }
+        @media (max-width: 600px) { body { padding: 5px; } .raffle-manager { flex-direction: column; align-items: stretch; gap: 20px; } .prize-card { min-width: 100%;} #admin-anticipado-form .form-grid { grid-template-columns: 1fr; } }
     </style>
 </head>
 <body>
@@ -369,10 +285,7 @@
             <button id="prizeButton" title="Ver/Editar Premios">VER PREMIOS <span class="prize-icon">🏆</span></button>
         </div>
         <div class="raffle-creator">
-            <div>
-                <label for="newRifaName">Nombre de la nueva rifa</label>
-                <input type="text" id="newRifaName" placeholder="Ej: Rifa de Verano">
-            </div>
+            <div><label for="newRifaName">Nombre de la nueva rifa</label><input type="text" id="newRifaName" placeholder="Ej: Rifa de Verano"></div>
             <button id="createRifaButton">Crear Rifa</button>
         </div>
     </div>
@@ -409,78 +322,62 @@
     <div class="modal-content">
         <div class="modal-header"><h2 style="display: flex; align-items: center; gap: 10px;"><i class="fas fa-trophy" style="color: var(--color-separado);"></i> PREMIOS</h2><span class="close-button">&times;</span></div>
         <div class="modal-body">
-            
             <div id="prize-info-section"></div>
-
             <hr>
-
             <div id="anticipados-section">
                 <div id="admin-anticipado-form">
-                    <h4><i class="fas fa-plus-circle"></i> Agregar Premio Anticipado</h4>
-                    <div>
-                        <label for="anticipadoValor">Valor del Premio:</label>
-                        <input type="number" id="anticipadoValor" placeholder="Ej: 50000">
+                    <input type="hidden" id="editingAnticipadoId">
+                    <h4 id="formAnticipadoTitle"><i class="fas fa-plus-circle"></i> Agregar Premio Anticipado</h4>
+                    <div class="form-grid">
+                        <div>
+                            <label for="anticipadoValor">Valor del Premio:</label>
+                            <input type="number" id="anticipadoValor" placeholder="Ej: 50000">
+                        </div>
+                        <div>
+                            <label for="anticipadoFecha">Fecha del Sorteo:</label>
+                            <input type="date" id="anticipadoFecha">
+                        </div>
                     </div>
-                    <div>
-                        <label for="anticipadoFecha">Fecha del Sorteo:</label>
-                        <input type="date" id="anticipadoFecha">
+                    <div class="form-full-width">
+                        <label for="anticipadoCondicion">Condición del Sorteo:</label>
+                        <textarea id="anticipadoCondicion" rows="2" placeholder="Ej: Con las 2 últimas cifras del Sorteo del Cauca"></textarea>
                     </div>
-                    <div>
-                        <label for="anticipadoLoteria">Lotería o Sorteo:</label>
-                        <input type="text" id="anticipadoLoteria" placeholder="Ej: Lotería del Cauca">
+                    <div class="form-actions">
+                        <button id="cancelEditAnticipadoButton" title="Cancelar edición">Cancelar</button>
+                        <button id="saveAnticipadoButton">Agregar Premio</button>
                     </div>
-                    <button id="addAnticipadoButton">Agregar Premio</button>
                 </div>
-
                 <div id="anticipados-container-public">
                     <h4><i class="fas fa-gift"></i> Sorteos Anticipados</h4>
                     <div id="anticipados-list"></div>
                 </div>
             </div>
-
             <hr>
-
             <div id="prize-simulator-section">
                 <h4>Simulador de Sorteo</h4>
                 <div class="digit-slots-container">
                     <div class="digit-circle-simulator"><span></span></div><div class="digit-circle-simulator"><span></span></div><div class="digit-circle-simulator"><span></span></div><div class="digit-circle-simulator"><span></span></div>
                     <input type="tel" id="modalWinningInput" maxlength="4" autocomplete="off" />
                     <div class="prize-zones-container">
-                        <div class="prize-zone" id="prizeZoneSecond" data-prize="segundo"></div>
-                        <div class="prize-zone" id="prizeZoneThird" data-prize="tercero"></div>
-                        <div class="prize-zone" id="prizeZoneMayor" data-prize="mayor"></div>
+                        <div class="prize-zone" id="prizeZoneSecond" data-prize="segundo"></div><div class="prize-zone" id="prizeZoneThird" data-prize="tercero"></div><div class="prize-zone" id="prizeZoneMayor" data-prize="mayor"></div>
                     </div>
                 </div>
                 <div id="modalWinnerResults"></div>
             </div>
         </div>
-        <div class="modal-footer"><button id="saveAllPrizesButton" style="display: none;">Guardar Cambios en Premios</button></div>
+        <div class="modal-footer"><button id="saveAllPrizesButton" style="display: none;">Guardar Cambios en Premios Principales</button></div>
     </div>
 </div>
 
 <div id="settingsModal" class="modal">
     <div class="modal-content">
-        <div class="modal-header">
-            <h2><i class="fas fa-palette"></i> Configurar Colores</h2>
-            <span class="close-button">&times;</span>
-        </div>
+        <div class="modal-header"><h2><i class="fas fa-palette"></i> Configurar Colores</h2><span class="close-button">&times;</span></div>
         <div class="modal-body">
-            <div class="color-setting">
-                <label for="colorDisponible">Color Disponible:</label>
-                <input type="color" id="colorDisponible">
-            </div>
-            <div class="color-setting">
-                <label for="colorSeparado">Color Separado:</label>
-                <input type="color" id="colorSeparado">
-            </div>
-            <div class="color-setting">
-                <label for="colorPago">Color Pagado:</label>
-                <input type="color" id="colorPago">
-            </div>
+            <div class="color-setting"><label for="colorDisponible">Color Disponible:</label><input type="color" id="colorDisponible"></div>
+            <div class="color-setting"><label for="colorSeparado">Color Separado:</label><input type="color" id="colorSeparado"></div>
+            <div class="color-setting"><label for="colorPago">Color Pagado:</label><input type="color" id="colorPago"></div>
         </div>
-        <div class="modal-footer">
-            <button id="saveColorsButton">Guardar Colores</button>
-        </div>
+        <div class="modal-footer"><button id="saveColorsButton">Guardar Colores</button></div>
     </div>
 </div>
 
@@ -531,11 +428,13 @@ document.addEventListener('DOMContentLoaded', () => {
         colorSeparado: document.getElementById('colorSeparado'),
         colorPago: document.getElementById('colorPago'),
         saveColorsButton: document.getElementById('saveColorsButton'),
-        // Nuevos elementos para premios anticipados
+        formAnticipadoTitle: document.getElementById('formAnticipadoTitle'),
+        editingAnticipadoId: document.getElementById('editingAnticipadoId'),
         anticipadoValor: document.getElementById('anticipadoValor'),
         anticipadoFecha: document.getElementById('anticipadoFecha'),
-        anticipadoLoteria: document.getElementById('anticipadoLoteria'),
-        addAnticipadoButton: document.getElementById('addAnticipadoButton'),
+        anticipadoCondicion: document.getElementById('anticipadoCondicion'),
+        saveAnticipadoButton: document.getElementById('saveAnticipadoButton'),
+        cancelEditAnticipadoButton: document.getElementById('cancelEditAnticipadoButton'),
         anticipadosContainerPublic: document.getElementById('anticipados-container-public'),
         anticipadosList: document.getElementById('anticipados-list'),
     };
@@ -547,18 +446,13 @@ document.addEventListener('DOMContentLoaded', () => {
     const generateMediaTag = (url) => {
         if (!url) return '';
         const lowerUrl = url.toLowerCase();
-        if (lowerUrl.includes('.mp4') || lowerUrl.includes('.webm')) {
-            return `<video src="${url}" class="prize-media" autoplay muted loop playsinline></video>`;
-        } else {
-            return `<img src="${url}" alt="Premio" class="prize-media">`;
-        }
+        if (lowerUrl.includes('.mp4') || lowerUrl.includes('.webm')) return `<video src="${url}" class="prize-media" autoplay muted loop playsinline></video>`;
+        else return `<img src="${url}" alt="Premio" class="prize-media">`;
     };
 
     const generarHtmlDePremio = (premio) => {
         if (!premio) return '<div class="prize-details"><p class="prize-description">Premio no definido</p></div>';
-        if (premio.valor && premio.valor > 0) {
-            return `<div class="prize-card-value">${formatCurrency(premio.valor)}</div>`;
-        }
+        if (premio.valor && premio.valor > 0) return `<div class="prize-card-value">${formatCurrency(premio.valor)}</div>`;
         if (premio.descripcion) {
             let html = `<div class="prize-details"><p class="prize-description">${premio.descripcion}</p>`;
             let mediaContainer = '';
@@ -596,20 +490,13 @@ document.addEventListener('DOMContentLoaded', () => {
     const closeSettingsModal = () => DOM.settingsModal.classList.remove('visible');
     const saveColors = async () => {
         if (!rifaActivaId || !firebase.auth().currentUser) return;
-        const nuevosColores = {
-            disponible: DOM.colorDisponible.value,
-            separado: DOM.colorSeparado.value,
-            pago: DOM.colorPago.value,
-        };
+        const nuevosColores = { disponible: DOM.colorDisponible.value, separado: DOM.colorSeparado.value, pago: DOM.colorPago.value, };
         try {
             await db.collection("rifas").doc(rifaActivaId).update({ colores: nuevosColores });
             aplicarColoresPersonalizados(nuevosColores);
             alert("Colores actualizados correctamente.");
             closeSettingsModal();
-        } catch (error) {
-            console.error("Error al guardar los colores:", error);
-            alert("No se pudieron guardar los colores.");
-        }
+        } catch (error) { console.error("Error al guardar los colores:", error); alert("No se pudieron guardar los colores."); }
     };
     const applyTheme = (theme) => {
         const icon = DOM.darkModeToggle.querySelector('i');
@@ -628,11 +515,7 @@ document.addEventListener('DOMContentLoaded', () => {
             const option = document.createElement('div');
             option.textContent = doc.data().nombre; option.dataset.value = doc.id;
             option.addEventListener('click', async function(e) {
-                e.stopPropagation(); if (DOM.rifaSelect.dataset.value === this.dataset.value) {
-                    DOM.rifaSelectItems.classList.remove('select-show');
-                    DOM.rifaSelect.classList.remove('select-arrow-active');
-                    return;
-                };
+                e.stopPropagation(); if (DOM.rifaSelect.dataset.value === this.dataset.value) { DOM.rifaSelectItems.classList.remove('select-show'); DOM.rifaSelect.classList.remove('select-arrow-active'); return; };
                 DOM.rifaSelect.textContent = this.textContent; DOM.rifaSelect.dataset.value = this.dataset.value;
                 DOM.rifaSelectItems.classList.remove('select-show'); DOM.rifaSelect.classList.remove('select-arrow-active');
                 await cambiarRifaActiva();
@@ -650,13 +533,8 @@ document.addEventListener('DOMContentLoaded', () => {
         try {
             const premioDefault = { valor: 0, descripcion: "", imgUrl1: "", imgUrl2: "" };
             await db.collection("rifas").add({
-                nombre: nombre, 
-                fechaCreacion: firebase.firestore.FieldValue.serverTimestamp(),
-                premios: {
-                    mayor: { ...premioDefault, descripcion: "Premio Mayor" },
-                    segundo: { ...premioDefault, descripcion: "Segundo Premio" },
-                    tercero: { ...premioDefault, descripcion: "Tercer Premio" }
-                },
+                nombre: nombre, fechaCreacion: firebase.firestore.FieldValue.serverTimestamp(),
+                premios: { mayor: { ...premioDefault, descripcion: "Premio Mayor" }, segundo: { ...premioDefault, descripcion: "Segundo Premio" }, tercero: { ...premioDefault, descripcion: "Tercer Premio" } },
                 premiosAnticipados: []
             });
             DOM.newRifaName.value = ''; alert(`¡Rifa "${nombre}" creada con éxito!`); await cargarRifas();
@@ -690,15 +568,9 @@ document.addEventListener('DOMContentLoaded', () => {
         }
         try {
             const rifaDoc = await db.collection("rifas").doc(rifaActivaId).get();
-            if(rifaDoc.exists && rifaDoc.data().colores) {
-                aplicarColoresPersonalizados(rifaDoc.data().colores);
-            } else {
-                restaurarColoresDefault();
-            }
-        } catch(error) {
-            console.error("Error al cargar colores de la rifa:", error);
-            restaurarColoresDefault();
-        }
+            if(rifaDoc.exists && rifaDoc.data().colores) { aplicarColoresPersonalizados(rifaDoc.data().colores); } 
+            else { restaurarColoresDefault(); }
+        } catch(error) { console.error("Error al cargar colores de la rifa:", error); restaurarColoresDefault(); }
         DOM.searchResultsContainer.innerHTML = '<div class="no-results-message">Escribe un número de celular y presiona la lupa para buscar.</div>';
         const rifaNumerosRef = db.collection("rifas").doc(rifaActivaId).collection("numeros");
         unsubRifaListener = rifaNumerosRef.onSnapshot(snapshot => {
@@ -751,68 +623,68 @@ document.addEventListener('DOMContentLoaded', () => {
         if (!card) return;
         card.style.setProperty('--glow-color', glowColor);
         card.style.animation = 'card-pulse-glow 1.5s ease-in-out';
-        setTimeout(() => {
-            card.style.animation = '';
-            card.style.removeProperty('--glow-color');
-        }, 1500);
+        setTimeout(() => { card.style.animation = ''; card.style.removeProperty('--glow-color'); }, 1500);
     };
     const runSimulatorIntroAnimation = async () => {
         DOM.modalWinningInput.disabled = true;
         const slots = DOM.prizeSimulatorSlots;
-        const cards = {
-            mayor: DOM.prizeInfoSection.querySelector('.prize-card.mayor'),
-            segundo: DOM.prizeInfoSection.querySelector('.prize-card.segundo'),
-            tercero: DOM.prizeInfoSection.querySelector('.prize-card.tercero'),
-        };
-        for (let i = 0; i < 2; i++) {
+        const cards = { mayor: DOM.prizeInfoSection.querySelector('.prize-card.mayor'), segundo: DOM.prizeInfoSection.querySelector('.prize-card.segundo'), tercero: DOM.prizeInfoSection.querySelector('.prize-card.tercero'), };
+        for (let i = 0; i < 1; i++) { // Reduced loops for faster demo
             slots.forEach(slot => slot.classList.remove('selected-digit'));
-            "1234".split('').forEach((digit, index) => {
-                slots[index].querySelector('span').textContent = digit;
-            });
-            await sleep(500);
-            animatePrizeCard(cards.mayor, 'var(--color-separado)');
-            slots[2].classList.add('selected-digit');
-            slots[3].classList.add('selected-digit');
-            await sleep(1800);
-            slots[2].classList.remove('selected-digit');
-            slots[3].classList.remove('selected-digit');
-            animatePrizeCard(cards.segundo, '#AAA');
-            slots[0].classList.add('selected-digit');
-            slots[1].classList.add('selected-digit');
-            await sleep(1800);
-            slots[0].classList.remove('selected-digit');
-            slots[1].classList.remove('selected-digit');
-            animatePrizeCard(cards.tercero, '#d39c6f');
-            slots[1].classList.add('selected-digit');
-            slots[2].classList.add('selected-digit');
-            await sleep(1800);
+            "1234".split('').forEach((digit, index) => { slots[index].querySelector('span').textContent = digit; });
+            await sleep(400); animatePrizeCard(cards.mayor, 'var(--color-separado)'); slots[2].classList.add('selected-digit'); slots[3].classList.add('selected-digit');
+            await sleep(1500); slots[2].classList.remove('selected-digit'); slots[3].classList.remove('selected-digit');
+            animatePrizeCard(cards.segundo, '#AAA'); slots[0].classList.add('selected-digit'); slots[1].classList.add('selected-digit');
+            await sleep(1500);
         }
-        slots.forEach(slot => {
-            slot.classList.remove('selected-digit');
-            slot.querySelector('span').textContent = '';
-        });
+        slots.forEach(slot => { slot.classList.remove('selected-digit'); slot.querySelector('span').textContent = ''; });
         DOM.modalWinningInput.disabled = false;
         DOM.modalWinningInput.focus();
     };
     
-    // Función para renderizar la lista de premios anticipados
+    const resetAnticipadoForm = () => {
+        DOM.editingAnticipadoId.value = '';
+        DOM.formAnticipadoTitle.innerHTML = '<i class="fas fa-plus-circle"></i> Agregar Premio Anticipado';
+        DOM.anticipadoValor.value = '';
+        DOM.anticipadoFecha.value = '';
+        DOM.anticipadoCondicion.value = '';
+        DOM.saveAnticipadoButton.textContent = 'Agregar Premio';
+        DOM.cancelEditAnticipadoButton.style.display = 'none';
+    };
+
+    const populateAnticipadoForm = (prizeId) => {
+        const prize = currentPrizeData.premiosAnticipados.find(p => p.id === prizeId);
+        if (!prize) return;
+        DOM.editingAnticipadoId.value = prize.id;
+        DOM.formAnticipadoTitle.innerHTML = '<i class="fas fa-edit"></i> Editando Premio Anticipado';
+        DOM.anticipadoValor.value = prize.valor;
+        DOM.anticipadoFecha.value = prize.fecha;
+        DOM.anticipadoCondicion.value = prize.condicion;
+        DOM.saveAnticipadoButton.textContent = 'Guardar Cambios';
+        DOM.cancelEditAnticipadoButton.style.display = 'inline-block';
+        DOM.adminAnticipadoForm.scrollIntoView({ behavior: 'smooth', block: 'center' });
+    };
+
     const renderAnticipados = () => {
         DOM.anticipadosList.innerHTML = '';
         const anticipados = currentPrizeData.premiosAnticipados || [];
-
         if (anticipados.length > 0) {
-            anticipados.forEach((premio, index) => {
-                const card = `
+            anticipados.forEach((premio) => {
+                const cardHTML = `
                     <div class="anticipado-card">
-                        <div class="anticipado-info">
-                            <strong>${formatCurrency(premio.valor)}</strong>
-                            <span>${premio.fecha} - ${premio.loteria}</span>
+                        <div class="anticipado-card-main">
+                            <div class="anticipado-card-info">
+                                <p class="condicion">${premio.condicion}</p>
+                                <p class="fecha">${premio.fecha}</p>
+                            </div>
+                            <div class="anticipado-card-value">${formatCurrency(premio.valor)}</div>
                         </div>
-                        <button class="delete-anticipado-btn" data-index="${index}" title="Eliminar premio">
-                            <i class="fas fa-trash-alt"></i>
-                        </button>
+                        <div class="anticipado-card-actions">
+                            <button class="edit-anticipado-btn" data-id="${premio.id}" title="Editar"><i class="fas fa-edit"></i></button>
+                            <button class="delete-anticipado-btn" data-id="${premio.id}" title="Eliminar"><i class="fas fa-trash-alt"></i></button>
+                        </div>
                     </div>`;
-                DOM.anticipadosList.innerHTML += card;
+                DOM.anticipadosList.insertAdjacentHTML('beforeend', cardHTML);
             });
             DOM.anticipadosContainerPublic.style.display = 'block';
         } else {
@@ -843,80 +715,49 @@ document.addEventListener('DOMContentLoaded', () => {
                 contentHtml = `
                     <div class="prize-card-admin-view">
                         <label for="${tier}DescInput">Descripción:</label>
-                        <input type="text" id="${tier}DescInput" placeholder="Ej: Una Moto 0km" value="${prize.descripcion || ''}">
+                        <input type="text" id="${tier}DescInput" value="${prize.descripcion || ''}">
                         <label for="${tier}ValorInput">Valor (si aplica):</label>
-                        <input type="number" id="${tier}ValorInput" placeholder="0" value="${prize.valor || 0}">
+                        <input type="number" id="${tier}ValorInput" value="${prize.valor || 0}">
                         <label for="${tier}ImgUrl1Input">URL de Imagen/Video 1:</label>
-                        <input type="url" id="${tier}ImgUrl1Input" placeholder="https://ejemplo.com/foto1.jpg" value="${prize.imgUrl1 || ''}">
+                        <input type="url" id="${tier}ImgUrl1Input" value="${prize.imgUrl1 || ''}">
                         <label for="${tier}ImgUrl2Input">URL de Imagen/Video 2:</label>
-                        <input type="url" id="${tier}ImgUrl2Input" placeholder="https://ejemplo.com/foto2.jpg" value="${prize.imgUrl2 || ''}">
+                        <input type="url" id="${tier}ImgUrl2Input" value="${prize.imgUrl2 || ''}">
                     </div>`;
-            } else {
-                contentHtml = generarHtmlDePremio(prize);
-            }
-            DOM.prizeInfoSection.innerHTML += `
-                <div class="prize-card ${tier}">
-                    <div class="prize-card-title">${prizeLabels[tier]}</div>
-                    ${contentHtml}
-                </div>`;
+            } else { contentHtml = generarHtmlDePremio(prize); }
+            DOM.prizeInfoSection.innerHTML += `<div class="prize-card ${tier}"><div class="prize-card-title">${prizeLabels[tier]}</div>${contentHtml}</div>`;
         });
         
         renderAnticipados();
+        resetAnticipadoForm();
         
         DOM.saveAllPrizesButton.style.display = user ? 'inline-block' : 'none';
         DOM.modalWinningInput.value = '';
-        DOM.prizeSimulatorSlots.forEach(slot => { 
-            slot.querySelector('span').textContent = ''; 
-            slot.classList.remove('liquid-filled', 'selected-digit'); 
-        });
+        DOM.prizeSimulatorSlots.forEach(slot => { slot.querySelector('span').textContent = ''; slot.classList.remove('liquid-filled', 'selected-digit'); });
         DOM.prizeZonesContainer.classList.remove('active');
         DOM.modalWinnerResults.innerHTML = '';
         runSimulatorIntroAnimation();
     };
     
     const saveAllPrizes = async () => {
-        if (!rifaActivaId || !firebase.auth().currentUser) return;
-        DOM.saveAllPrizesButton.disabled = true;
-        DOM.saveAllPrizesButton.textContent = 'Guardando...';
-
-        try {
-            const newPrizeData = {
-                mayor: {
-                    descripcion: document.getElementById('mayorDescInput').value.trim(),
-                    valor: Number(document.getElementById('mayorValorInput').value) || 0,
-                    imgUrl1: document.getElementById('mayorImgUrl1Input').value.trim(),
-                    imgUrl2: document.getElementById('mayorImgUrl2Input').value.trim()
-                },
-                segundo: {
-                    descripcion: document.getElementById('segundoDescInput').value.trim(),
-                    valor: Number(document.getElementById('segundoValorInput').value) || 0,
-                    imgUrl1: document.getElementById('segundoImgUrl1Input').value.trim(),
-                    imgUrl2: document.getElementById('segundoImgUrl2Input').value.trim()
-                },
-                tercero: {
-                    descripcion: document.getElementById('terceroDescInput').value.trim(),
-                    valor: Number(document.getElementById('terceroValorInput').value) || 0,
-                    imgUrl1: document.getElementById('terceroImgUrl1Input').value.trim(),
-                    imgUrl2: document.getElementById('terceroImgUrl2Input').value.trim()
-                }
-            };
+        if (!rifaActivaId || !firebase.auth().currentUser) return false;
+        
+        const mainPrizes = {
+            mayor: { descripcion: DOM.mayorDescInput.value.trim(), valor: Number(DOM.mayorValorInput.value) || 0, imgUrl1: DOM.mayorImgUrl1Input.value.trim(), imgUrl2: DOM.mayorImgUrl2Input.value.trim() },
+            segundo: { descripcion: DOM.segundoDescInput.value.trim(), valor: Number(DOM.segundoValorInput.value) || 0, imgUrl1: DOM.segundoImgUrl1Input.value.trim(), imgUrl2: DOM.segundoImgUrl2Input.value.trim() },
+            tercero: { descripcion: DOM.terceroDescInput.value.trim(), valor: Number(DOM.terceroValorInput.value) || 0, imgUrl1: DOM.terceroImgUrl1Input.value.trim(), imgUrl2: DOM.terceroImgUrl2Input.value.trim() }
+        };
             
-            // Incluir los premios anticipados en la actualización
+        try {
             await db.collection("rifas").doc(rifaActivaId).update({ 
-                premios: newPrizeData,
+                premios: mainPrizes,
                 premiosAnticipados: currentPrizeData.premiosAnticipados
             });
-            
-            currentPrizeData.premios = newPrizeData;
-            alert("Premios guardados con éxito.");
+            currentPrizeData.premios = mainPrizes;
             return true;
         } catch (error) {
             console.error("Error al guardar premios:", error);
-            alert("Ocurrió un error al guardar. Revisa la consola para más detalles.");
+            alert("Ocurrió un error al guardar. Revisa la consola.");
             return false;
-        } finally {
-            DOM.saveAllPrizesButton.disabled = false;
-            DOM.saveAllPrizesButton.textContent = 'Guardar Cambios en Premios';
         }
     };
     
@@ -937,7 +778,7 @@ document.addEventListener('DOMContentLoaded', () => {
         const matched = Object.entries(localRaffleData).filter(([_, data]) => data.phone && data.phone.includes(query)).map(([number, data]) => ({ number, ...data }));
         if (matched.length > 0) {
             matched.forEach((m, index) => {
-                DOM.searchResultsContainer.insertAdjacentHTML('beforeend', `<div class="result-card result-card-staggered" style="animation-delay: ${index * 100}ms;"><div class="result-number">${m.number}</div><div class="result-info"><p class="name">${m.name || 'Sin nombre'}</p><p class="phone">${m.phone}</p></div><span class="status-badge status-${m.status}">${m.status}</span></div>`);
+                DOM.searchResultsContainer.insertAdjacentHTML('beforeend', `<div class="result-card" style="animation-delay: ${index * 100}ms;"><div class="result-number">${m.number}</div><div class="result-info"><p class="name">${m.name || 'Sin nombre'}</p><p class="phone">${m.phone}</p></div><span class="status-badge status-${m.status}">${m.status}</span></div>`);
                 const cell = document.getElementById(`grid-item-${m.number}`); if (cell) cell.classList.add('highlighted');
             });
             const firstCell = document.getElementById(`grid-item-${matched[0].number}`); if(firstCell) firstCell.scrollIntoView({ behavior: 'smooth', block: 'center' });
@@ -952,35 +793,21 @@ document.addEventListener('DOMContentLoaded', () => {
         const prizeStyles = { mayor: 'gold', segundo: 'silver', tercero: 'bronze' };
         let winnerHTML;
         if (data && data.status === 'pago') {
-            winnerHTML = `<div class="prize-info">
-                            <div class="winner-name">${data.name || 'N/A'}</div>
-                            <div class="winner-phone">Cel: ${data.phone || 'N/A'}</div>
-                            <hr style="border-color: rgba(255,255,255,0.2); margin: 10px 0;">
-                            ${generarHtmlDePremio(prizeObject)}
-                         </div>`;
+            winnerHTML = `<div class="prize-info"><div class="winner-name">${data.name || 'N/A'}</div><div class="winner-phone">Cel: ${data.phone || 'N/A'}</div><hr style="border-color: rgba(255,255,255,0.2); margin: 10px 0;">${generarHtmlDePremio(prizeObject)}</div>`;
         } else {
             const reason = data ? `no fue pagado (estado: ${data.status})` : 'está disponible';
             winnerHTML = `<div class="prize-info"><div class="no-winner-text">Sin ganador (El número ${raffleNumber} ${reason}).</div></div>`;
         }
-        return `<div class="winner-card ${data && data.status === 'pago' ? prizeStyles[prizeTier] : 'no-winner'}">
-                    <div class="prize-header"><h3>${prizeLabels[prizeTier]}</h3><span class="prize-number-tag">Nº ${raffleNumber}</span></div>
-                    ${winnerHTML}
-                </div>`;
+        return `<div class="winner-card ${data && data.status === 'pago' ? prizeStyles[prizeTier] : 'no-winner'}"><div class="prize-header"><h3>${prizeLabels[prizeTier]}</h3><span class="prize-number-tag">Nº ${raffleNumber}</span></div>${winnerHTML}</div>`;
     };
 
     const checkWinners = async () => {
         const winningNumber = DOM.realWinningInput.value.trim();
         DOM.winnerResults.innerHTML = '';
-        if (!/^\d{4}$/.test(winningNumber)) {
-            DOM.winnerResults.innerHTML = '<div class="no-results-message">Ingresa un número válido de 4 cifras.</div>'; return;
-        }
+        if (!/^\d{4}$/.test(winningNumber)) { DOM.winnerResults.innerHTML = '<div class="no-results-message">Ingresa un número válido de 4 cifras.</div>'; return; }
         const rifaDoc = await db.collection("rifas").doc(rifaActivaId).get();
         const prizesData = rifaDoc.data().premios || { mayor: {}, segundo: {}, tercero: {} };
-        const prizeChecks = [
-            { tier: 'mayor', number: winningNumber.substring(2, 4) },
-            { tier: 'segundo', number: winningNumber.substring(0, 2) },
-            { tier: 'tercero', number: winningNumber.substring(1, 3) }
-        ];
+        const prizeChecks = [ { tier: 'mayor', number: winningNumber.substring(2, 4) }, { tier: 'segundo', number: winningNumber.substring(0, 2) }, { tier: 'tercero', number: winningNumber.substring(1, 3) } ];
         prizeChecks.forEach(p => DOM.winnerResults.insertAdjacentHTML('beforeend', getWinnerInfo(p.number, p.tier, prizesData[p.tier])));
     };
 
@@ -993,46 +820,26 @@ document.addEventListener('DOMContentLoaded', () => {
     DOM.closeDataModalButton.addEventListener('click', closeDataModal); DOM.saveButton.addEventListener('click', saveData); DOM.deleteButton.addEventListener('click', deleteData);
     DOM.prizeButton.addEventListener('click', openPrizeModal);
     DOM.closePrizeModalButton.addEventListener('click', closePrizeModal);
-    DOM.modalBackdrop.addEventListener('click', (e) => {
-        if (e.target === DOM.modalBackdrop) {
-            closePrizeModal();
-            closeSettingsModal();
-            closeDataModal();
-        }
-    });
-    DOM.saveAllPrizesButton.addEventListener('click', saveAllPrizes);
+    DOM.modalBackdrop.addEventListener('click', (e) => { if (e.target === DOM.modalBackdrop) { closePrizeModal(); closeSettingsModal(); closeDataModal(); } });
+    DOM.saveAllPrizesButton.addEventListener('click', async () => { if (await saveAllPrizes()) alert("Premios principales guardados."); });
     DOM.rifaSelect.addEventListener('click', () => { DOM.rifaSelectItems.classList.toggle('select-show'); DOM.rifaSelect.classList.toggle('select-arrow-active'); });
-    window.addEventListener('click', (event) => { 
-        if (DOM.rifaSelect.parentElement && !DOM.rifaSelect.parentElement.contains(event.target)) { DOM.rifaSelectItems.classList.remove('select-show'); DOM.rifaSelect.classList.remove('select-arrow-active'); }
-    });
+    window.addEventListener('click', (event) => { if (DOM.rifaSelect.parentElement && !DOM.rifaSelect.parentElement.contains(event.target)) { DOM.rifaSelectItems.classList.remove('select-show'); DOM.rifaSelect.classList.remove('select-arrow-active'); } });
     DOM.searchButton.addEventListener('click', () => {
         if (!rifaActivaId) { alert("Selecciona una rifa para poder buscar."); return; }
         if (DOM.searchInput.value.trim().length === 10) performSearch();
-        else { DOM.searchResultsContainer.innerHTML = '<div class="no-results-message">Debes ingresar un número de 10 cifras para buscar.</div>'; document.querySelectorAll('.grid-item.highlighted').forEach(item => item.classList.remove('highlighted')); }
+        else { DOM.searchResultsContainer.innerHTML = '<div class="no-results-message">Debes ingresar un número de 10 cifras.</div>'; document.querySelectorAll('.grid-item.highlighted').forEach(item => item.classList.remove('highlighted')); }
     });
-    
     DOM.checkWinnerButton.addEventListener('click', checkWinners);
     DOM.realWinningInput.addEventListener('input', () => {
         const value = DOM.realWinningInput.value;
-        DOM.digitCircles.forEach((circle, index) => {
-            const digit = value[index]; if (digit) { circle.textContent = digit; circle.classList.add('filled'); } else { circle.textContent = ''; circle.classList.remove('filled'); }
-        });
+        DOM.digitCircles.forEach((circle, index) => { const digit = value[index]; if (digit) { circle.textContent = digit; circle.classList.add('filled'); } else { circle.textContent = ''; circle.classList.remove('filled'); } });
         DOM.checkWinnerButton.disabled = value.length !== 4;
     });
-
     DOM.modalWinningInput.addEventListener('input', () => {
         const value = DOM.modalWinningInput.value;
-        DOM.prizeSimulatorSlots.forEach((slot, index) => { 
-            const digitSpan = slot.querySelector('span');
-            const digit = value[index];
-            digitSpan.textContent = digit || '';
-            slot.classList.toggle('liquid-filled', !!digit);
-        });
+        DOM.prizeSimulatorSlots.forEach((slot, index) => { const digitSpan = slot.querySelector('span'); const digit = value[index]; digitSpan.textContent = digit || ''; slot.classList.toggle('liquid-filled', !!digit); });
         DOM.prizeZonesContainer.classList.toggle('active', value.length === 4);
-        if (value.length < 4) {
-            DOM.modalWinnerResults.innerHTML = '';
-            DOM.prizeSimulatorSlots.forEach(slot => slot.classList.remove('selected-digit'));
-        }
+        if (value.length < 4) { DOM.modalWinnerResults.innerHTML = ''; DOM.prizeSimulatorSlots.forEach(slot => slot.classList.remove('selected-digit')); }
     });
     DOM.prizeZones.forEach(zone => {
         const prizeTier = zone.dataset.prize;
@@ -1040,11 +847,9 @@ document.addEventListener('DOMContentLoaded', () => {
         zone.addEventListener('mouseenter', () => card?.classList.add('highlight'));
         zone.addEventListener('mouseleave', () => card?.classList.remove('highlight'));
         zone.addEventListener('click', () => {
-            const fullNumber = DOM.modalWinningInput.value;
-            if (fullNumber.length !== 4) return;
+            const fullNumber = DOM.modalWinningInput.value; if (fullNumber.length !== 4) return;
             DOM.prizeSimulatorSlots.forEach(slot => slot.classList.remove('selected-digit'));
-            let targetIndices = [];
-            let numberToCheck;
+            let targetIndices = [], numberToCheck;
             if (prizeTier === 'mayor') { targetIndices = [2, 3]; numberToCheck = fullNumber.substring(2, 4); } 
             else if (prizeTier === 'segundo') { targetIndices = [0, 1]; numberToCheck = fullNumber.substring(0, 2); } 
             else if (prizeTier === 'tercero') { targetIndices = [1, 2]; numberToCheck = fullNumber.substring(1, 3); }
@@ -1053,38 +858,44 @@ document.addEventListener('DOMContentLoaded', () => {
         });
     });
 
-    // --- Listeners para Premios Anticipados ---
-    DOM.addAnticipadoButton.addEventListener('click', async () => {
+    DOM.saveAnticipadoButton.addEventListener('click', async () => {
         const valor = Number(DOM.anticipadoValor.value);
         const fecha = DOM.anticipadoFecha.value;
-        const loteria = DOM.anticipadoLoteria.value.trim();
-
-        if (!valor || !fecha || !loteria) {
-            alert("Por favor, completa todos los campos del premio anticipado.");
-            return;
-        }
-
-        currentPrizeData.premiosAnticipados.push({ valor, fecha, loteria });
+        const condicion = DOM.anticipadoCondicion.value.trim();
+        if (!valor || !fecha || !condicion) { alert("Por favor, completa todos los campos del premio."); return; }
         
-        const success = await saveAllPrizes();
-        if (success) {
+        const editingId = DOM.editingAnticipadoId.value;
+        if (editingId) { // Estamos editando
+            const prizeIndex = currentPrizeData.premiosAnticipados.findIndex(p => p.id === editingId);
+            if (prizeIndex > -1) {
+                currentPrizeData.premiosAnticipados[prizeIndex] = { ...currentPrizeData.premiosAnticipados[prizeIndex], valor, fecha, condicion };
+            }
+        } else { // Estamos agregando uno nuevo
+            const newPrize = { id: Date.now().toString(), valor, fecha, condicion };
+            currentPrizeData.premiosAnticipados.push(newPrize);
+        }
+        
+        if (await saveAllPrizes()) {
             renderAnticipados();
-            // Limpiar campos del formulario
-            DOM.anticipadoValor.value = '';
-            DOM.anticipadoFecha.value = '';
-            DOM.anticipadoLoteria.value = '';
+            resetAnticipadoForm();
         }
     });
 
+    DOM.cancelEditAnticipadoButton.addEventListener('click', resetAnticipadoForm);
+
     DOM.anticipadosList.addEventListener('click', async (e) => {
-        const deleteButton = e.target.closest('.delete-anticipado-btn');
-        if (deleteButton) {
-            const index = Number(deleteButton.dataset.index);
-            if (confirm("¿Estás seguro de que quieres eliminar este premio anticipado?")) {
-                currentPrizeData.premiosAnticipados.splice(index, 1);
-                const success = await saveAllPrizes();
-                if (success) {
+        const target = e.target.closest('button');
+        if (!target) return;
+        const prizeId = target.dataset.id;
+        if (target.classList.contains('edit-anticipado-btn')) {
+            populateAnticipadoForm(prizeId);
+        }
+        if (target.classList.contains('delete-anticipado-btn')) {
+            if (confirm("¿Estás seguro de eliminar este premio?")) {
+                currentPrizeData.premiosAnticipados = currentPrizeData.premiosAnticipados.filter(p => p.id !== prizeId);
+                if (await saveAllPrizes()) {
                     renderAnticipados();
+                    resetAnticipadoForm(); // Resetea por si se estaba editando el premio que se borró
                 }
             }
         }
