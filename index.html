@@ -217,7 +217,7 @@
         #prizeZoneThird { left: calc(25% - 7.5px); width: calc(50% + 7.5px); }
         #prizeZoneMayor { right: -7.5px; width: calc(50% + 7.5px); }
         
-        /* --- ESTILOS MEJORADOS PARA PREMIOS ANTICIPADOS --- */
+        /* --- ESTILOS REESTRUCTURADOS PARA PREMIOS ANTICIPADOS --- */
         #anticipados-section { margin-top: 25px; }
         #admin-anticipado-form {
             display: none;
@@ -251,11 +251,12 @@
             transition: transform 0.2s, box-shadow 0.2s;
         }
         .anticipado-card:hover { transform: translateY(-3px); box-shadow: 0 6px 20px var(--shadow-color); }
-        .anticipado-card-main { display: flex; justify-content: space-between; align-items: flex-start; gap: 10px; margin-bottom: 15px; }
-        .anticipado-card-info { flex-grow: 1; }
-        .anticipado-card-info .condicion { font-weight: 600; color: var(--text-dark); margin: 0 0 5px 0; font-size: 1.05em; }
-        .anticipado-card-info .fecha { font-size: 0.9em; color: var(--text-light); }
-        .anticipado-card-value { font-size: 1.6em; font-weight: 700; color: var(--color-pago); white-space: nowrap; }
+        .anticipado-card-main { display: flex; flex-direction: column; gap: 10px; margin-bottom: 15px; }
+        .anticipado-card-header { display: flex; justify-content: space-between; align-items: flex-start; gap: 10px; }
+        .anticipado-card-info .loteria { font-size: 1.1em; font-weight: 700; color: var(--text-dark); margin: 0 0 2px 0; }
+        .anticipado-card-info .fecha { font-size: 0.85em; color: var(--text-light); }
+        .anticipado-card-value { font-size: 1.8em; font-weight: 700; color: var(--color-pago); white-space: nowrap; }
+        .anticipado-card-main .condicion { font-size: 0.95em; color: var(--text-dark); margin: 10px 0 0 0; font-style: italic; opacity: 0.9; }
         .anticipado-card-actions { display: none; align-self: flex-end; gap: 8px; border-top: 1px solid var(--border-color); padding-top: 10px; width: 100%; justify-content: flex-end; }
         body.admin-view .anticipado-card-actions { display: flex; }
         .anticipado-card-actions button { background: transparent; border: 1px solid; border-radius: 5px; width: 32px; height: 32px; cursor: pointer; transition: background-color 0.2s, color 0.2s; }
@@ -325,7 +326,7 @@
             <div id="prize-info-section"></div>
             <hr>
             <div id="anticipados-section">
-                <div id="admin-anticipado-form">
+                <form id="admin-anticipado-form">
                     <input type="hidden" id="editingAnticipadoId">
                     <h4 id="formAnticipadoTitle"><i class="fas fa-plus-circle"></i> Agregar Premio Anticipado</h4>
                     <div class="form-grid">
@@ -337,16 +338,20 @@
                             <label for="anticipadoFecha">Fecha del Sorteo:</label>
                             <input type="date" id="anticipadoFecha">
                         </div>
-                    </div>
-                    <div class="form-full-width">
-                        <label for="anticipadoCondicion">Condición del Sorteo:</label>
-                        <textarea id="anticipadoCondicion" rows="2" placeholder="Ej: Con las 2 últimas cifras del Sorteo del Cauca"></textarea>
+                        <div class="form-full-width">
+                             <label for="anticipadoLoteria">Lotería / Sorteo:</label>
+                            <input type="text" id="anticipadoLoteria" placeholder="Ej: Lotería del Cauca">
+                        </div>
+                        <div class="form-full-width">
+                            <label for="anticipadoCondicion">Condición (ej: dos últimas cifras):</label>
+                            <input type="text" id="anticipadoCondicion" placeholder="Ej: Con las dos últimas cifras">
+                        </div>
                     </div>
                     <div class="form-actions">
-                        <button id="cancelEditAnticipadoButton" title="Cancelar edición">Cancelar</button>
-                        <button id="saveAnticipadoButton">Agregar Premio</button>
+                        <button type="button" id="cancelEditAnticipadoButton" title="Cancelar edición">Cancelar</button>
+                        <button type="submit" id="saveAnticipadoButton">Agregar Premio</button>
                     </div>
-                </div>
+                </form>
                 <div id="anticipados-container-public">
                     <h4><i class="fas fa-gift"></i> Sorteos Anticipados</h4>
                     <div id="anticipados-list"></div>
@@ -388,8 +393,8 @@
 <script src="https://www.gstatic.com/firebasejs/8.10.0/firebase-firestore.js"></script>
 
 <script>
-// El script ahora incluye la lógica corregida y funcional para agregar, editar y eliminar premios anticipados.
 document.addEventListener('DOMContentLoaded', () => {
+    // --- INICIALIZACIÓN DE FIREBASE Y VARIABLES GLOBALES ---
     const firebaseConfig = {
         apiKey: "AIzaSyDMBARLzKnhcmSI8euhiA2Wgsf7pJQM1_0",
         authDomain: "control-rifas.firebaseapp.com",
@@ -434,6 +439,7 @@ document.addEventListener('DOMContentLoaded', () => {
         editingAnticipadoId: document.getElementById('editingAnticipadoId'),
         anticipadoValor: document.getElementById('anticipadoValor'),
         anticipadoFecha: document.getElementById('anticipadoFecha'),
+        anticipadoLoteria: document.getElementById('anticipadoLoteria'),
         anticipadoCondicion: document.getElementById('anticipadoCondicion'),
         saveAnticipadoButton: document.getElementById('saveAnticipadoButton'),
         cancelEditAnticipadoButton: document.getElementById('cancelEditAnticipadoButton'),
@@ -443,8 +449,8 @@ document.addEventListener('DOMContentLoaded', () => {
     let rifaActivaId = null, unsubRifaListener = null, currentNumber = null, localRaffleData = {}, currentPrizeData = {};
     const totalNumbers = 100;
     const formatCurrency = (value) => new Intl.NumberFormat('es-CO', { style: 'currency', currency: 'COP', minimumFractionDigits: 0, maximumFractionDigits: 0 }).format(value);
-    const sleep = ms => new Promise(resolve => setTimeout(resolve, ms));
 
+    // --- FUNCIONES UTILITARIAS Y DE APARIENCIA ---
     const generateMediaTag = (url) => {
         if (!url) return '';
         const lowerUrl = url.toLowerCase();
@@ -481,30 +487,13 @@ document.addEventListener('DOMContentLoaded', () => {
         document.documentElement.style.removeProperty('--color-separado');
         document.documentElement.style.removeProperty('--color-pago');
     };
-    const openSettingsModal = () => {
-        if (!rifaActivaId || !firebase.auth().currentUser) return;
-        const rootStyles = getComputedStyle(document.documentElement);
-        DOM.colorDisponible.value = rootStyles.getPropertyValue('--color-disponible').trim();
-        DOM.colorSeparado.value = rootStyles.getPropertyValue('--color-separado').trim();
-        DOM.colorPago.value = rootStyles.getPropertyValue('--color-pago').trim();
-        DOM.settingsModal.classList.add('visible');
-    };
-    const closeSettingsModal = () => DOM.settingsModal.classList.remove('visible');
-    const saveColors = async () => {
-        if (!rifaActivaId || !firebase.auth().currentUser) return;
-        const nuevosColores = { disponible: DOM.colorDisponible.value, separado: DOM.colorSeparado.value, pago: DOM.colorPago.value, };
-        try {
-            await db.collection("rifas").doc(rifaActivaId).update({ colores: nuevosColores });
-            aplicarColoresPersonalizados(nuevosColores);
-            alert("Colores actualizados correctamente.");
-            closeSettingsModal();
-        } catch (error) { console.error("Error al guardar los colores:", error); alert("No se pudieron guardar los colores."); }
-    };
     const applyTheme = (theme) => {
         const icon = DOM.darkModeToggle.querySelector('i');
         if (theme === 'dark') { document.body.classList.add('dark-mode'); icon.classList.remove('fa-moon'); icon.classList.add('fa-sun'); } 
         else { document.body.classList.remove('dark-mode'); icon.classList.remove('fa-sun'); icon.classList.add('fa-moon'); }
     };
+    
+    // --- LÓGICA PRINCIPAL DE LA APLICACIÓN (RIFAS, NÚMEROS, BÚSQUEDA) ---
     firebase.auth().onAuthStateChanged(user => { document.body.classList.toggle('admin-view', !!user); });
     const cargarRifas = async () => {
         const rifasSnapshot = await db.collection("rifas").orderBy("fechaCreacion", "desc").get();
@@ -616,158 +605,6 @@ document.addEventListener('DOMContentLoaded', () => {
         if (!currentNumber || !rifaActivaId) return;
         db.collection("rifas").doc(rifaActivaId).collection("numeros").doc(currentNumber).delete().then(closeDataModal);
     };
-    const closePrizeModal = () => {
-        DOM.mainContainer.classList.remove('page-blur');
-        DOM.modalBackdrop.classList.remove('visible');
-        DOM.prizeModal.classList.remove('visible');
-    }
-    const animatePrizeCard = (card, glowColor) => {
-        if (!card) return;
-        card.style.setProperty('--glow-color', glowColor);
-        card.style.animation = 'card-pulse-glow 1.5s ease-in-out';
-        setTimeout(() => { card.style.animation = ''; card.style.removeProperty('--glow-color'); }, 1500);
-    };
-    const runSimulatorIntroAnimation = async () => {
-        DOM.modalWinningInput.disabled = true;
-        const slots = DOM.prizeSimulatorSlots;
-        await sleep(500); // Give a moment for modal to settle
-        slots.forEach(slot => { slot.classList.remove('selected-digit'); slot.querySelector('span').textContent = ''; });
-        DOM.modalWinningInput.disabled = false;
-        DOM.modalWinningInput.focus();
-    };
-    
-    const resetAnticipadoForm = () => {
-        DOM.adminAnticipadoForm.reset();
-        DOM.editingAnticipadoId.value = '';
-        DOM.formAnticipadoTitle.innerHTML = '<i class="fas fa-plus-circle"></i> Agregar Premio Anticipado';
-        DOM.saveAnticipadoButton.textContent = 'Agregar Premio';
-        DOM.cancelEditAnticipadoButton.style.display = 'none';
-    };
-
-    const populateAnticipadoForm = (prizeId) => {
-        const prize = currentPrizeData.premiosAnticipados.find(p => p.id === prizeId);
-        if (!prize) return;
-        DOM.editingAnticipadoId.value = prize.id;
-        DOM.formAnticipadoTitle.innerHTML = '<i class="fas fa-edit"></i> Editando Premio Anticipado';
-        DOM.anticipadoValor.value = prize.valor;
-        DOM.anticipadoFecha.value = prize.fecha;
-        DOM.anticipadoCondicion.value = prize.condicion;
-        DOM.saveAnticipadoButton.textContent = 'Guardar Cambios';
-        DOM.cancelEditAnticipadoButton.style.display = 'inline-block';
-        DOM.adminAnticipadoForm.scrollIntoView({ behavior: 'smooth', block: 'center' });
-    };
-
-    const renderAnticipados = () => {
-        DOM.anticipadosList.innerHTML = '';
-        const anticipados = currentPrizeData.premiosAnticipados || [];
-        if (anticipados.length > 0) {
-            anticipados.forEach((premio) => {
-                const cardHTML = `
-                    <div class="anticipado-card">
-                        <div class="anticipado-card-main">
-                            <div class="anticipado-card-info">
-                                <p class="condicion">${premio.condicion}</p>
-                                <p class="fecha">${premio.fecha}</p>
-                            </div>
-                            <div class="anticipado-card-value">${formatCurrency(premio.valor)}</div>
-                        </div>
-                        <div class="anticipado-card-actions">
-                            <button class="edit-anticipado-btn" data-id="${premio.id}" title="Editar"><i class="fas fa-edit"></i></button>
-                            <button class="delete-anticipado-btn" data-id="${premio.id}" title="Eliminar"><i class="fas fa-trash-alt"></i></button>
-                        </div>
-                    </div>`;
-                DOM.anticipadosList.insertAdjacentHTML('beforeend', cardHTML);
-            });
-            DOM.anticipadosContainerPublic.style.display = 'block';
-        } else {
-            DOM.anticipadosContainerPublic.style.display = 'none';
-        }
-    };
-    
-    const openPrizeModal = async () => {
-        if (!rifaActivaId) return;
-        DOM.mainContainer.classList.add('page-blur');
-        DOM.modalBackdrop.classList.add('visible');
-        DOM.prizeModal.classList.add('visible');
-        const rifaDoc = await db.collection("rifas").doc(rifaActivaId).get();
-        const rifaData = rifaDoc.data() || {};
-        currentPrizeData = {
-            premios: rifaData.premios || { mayor: {}, segundo: {}, tercero: {} },
-            premiosAnticipados: rifaData.premiosAnticipados || []
-        };
-        const user = firebase.auth().currentUser;
-        DOM.prizeInfoSection.innerHTML = '';
-        const prizeTiers = ['mayor', 'segundo', 'tercero'];
-        const prizeLabels = { mayor: '🥇 Premio Mayor', segundo: '🥈 Segundo Premio', tercero: '🥉 Tercer Premio' };
-
-        prizeTiers.forEach(tier => {
-            const prize = currentPrizeData.premios[tier] || { descripcion: '', valor: 0, imgUrl1: '', imgUrl2: '' };
-            let contentHtml = '';
-            if (user) {
-                contentHtml = `
-                    <div class="prize-card-admin-view">
-                        <label for="${tier}DescInput">Descripción:</label>
-                        <input type="text" id="${tier}DescInput" value="${prize.descripcion || ''}">
-                        <label for="${tier}ValorInput">Valor (si aplica):</label>
-                        <input type="number" id="${tier}ValorInput" value="${prize.valor || 0}">
-                        <label for="${tier}ImgUrl1Input">URL de Imagen/Video 1:</label>
-                        <input type="url" id="${tier}ImgUrl1Input" value="${prize.imgUrl1 || ''}">
-                        <label for="${tier}ImgUrl2Input">URL de Imagen/Video 2:</label>
-                        <input type="url" id="${tier}ImgUrl2Input" value="${prize.imgUrl2 || ''}">
-                    </div>`;
-            } else { contentHtml = generarHtmlDePremio(prize); }
-            DOM.prizeInfoSection.innerHTML += `<div class="prize-card ${tier}"><div class="prize-card-title">${prizeLabels[tier]}</div>${contentHtml}</div>`;
-        });
-        
-        renderAnticipados();
-        resetAnticipadoForm();
-        
-        DOM.saveMainPrizesButton.style.display = user ? 'inline-block' : 'none';
-        DOM.modalWinningInput.value = '';
-        DOM.prizeSimulatorSlots.forEach(slot => { slot.querySelector('span').textContent = ''; slot.classList.remove('liquid-filled', 'selected-digit'); });
-        DOM.prizeZonesContainer.classList.remove('active');
-        DOM.modalWinnerResults.innerHTML = '';
-        runSimulatorIntroAnimation();
-    };
-    
-    // FUNCIÓN CORREGIDA Y SEPARADA: Solo guarda los premios anticipados
-    const saveAnticipatedPrizes = async () => {
-        if (!rifaActivaId || !firebase.auth().currentUser) return false;
-        try {
-            await db.collection("rifas").doc(rifaActivaId).update({
-                premiosAnticipados: currentPrizeData.premiosAnticipados
-            });
-            return true;
-        } catch (error) {
-            console.error("Error al guardar premios anticipados:", error);
-            alert("Ocurrió un error al guardar los premios anticipados.");
-            return false;
-        }
-    };
-
-    // FUNCIÓN CORREGIDA Y SEPARADA: Solo guarda los premios principales
-    const saveMainPrizes = async () => {
-        if (!rifaActivaId || !firebase.auth().currentUser) return;
-        DOM.saveMainPrizesButton.disabled = true;
-        
-        const mainPrizes = {
-            mayor: { descripcion: document.getElementById('mayorDescInput').value.trim(), valor: Number(document.getElementById('mayorValorInput').value) || 0, imgUrl1: document.getElementById('mayorImgUrl1Input').value.trim(), imgUrl2: document.getElementById('mayorImgUrl2Input').value.trim() },
-            segundo: { descripcion: document.getElementById('segundoDescInput').value.trim(), valor: Number(document.getElementById('segundoValorInput').value) || 0, imgUrl1: document.getElementById('segundoImgUrl1Input').value.trim(), imgUrl2: document.getElementById('segundoImgUrl2Input').value.trim() },
-            tercero: { descripcion: document.getElementById('terceroDescInput').value.trim(), valor: Number(document.getElementById('terceroValorInput').value) || 0, imgUrl1: document.getElementById('terceroImgUrl1Input').value.trim(), imgUrl2: document.getElementById('terceroImgUrl2Input').value.trim() }
-        };
-        
-        try {
-            await db.collection("rifas").doc(rifaActivaId).update({ premios: mainPrizes });
-            currentPrizeData.premios = mainPrizes;
-            alert("Premios principales guardados con éxito.");
-        } catch (error) {
-            console.error("Error al guardar premios principales:", error);
-            alert("Ocurrió un error al guardar los premios principales.");
-        } finally {
-            DOM.saveMainPrizesButton.disabled = false;
-        }
-    };
-    
     const updateCellAppearance = (number, status) => {
         const cell = document.querySelector(`.grid-item[data-number='${number}']`);
         if (cell) { cell.className = 'grid-item'; cell.classList.add(`status-${status}`); }
@@ -794,6 +631,156 @@ document.addEventListener('DOMContentLoaded', () => {
         }
     };
     
+    // --- LÓGICA DE PREMIOS Y SORTEO ---
+    const closePrizeModal = () => {
+        DOM.mainContainer.classList.remove('page-blur');
+        DOM.modalBackdrop.classList.remove('visible');
+        DOM.prizeModal.classList.remove('visible');
+    };
+
+    const openPrizeModal = async () => {
+        if (!rifaActivaId) return;
+        DOM.mainContainer.classList.add('page-blur');
+        DOM.modalBackdrop.classList.add('visible');
+        DOM.prizeModal.classList.add('visible');
+        const rifaDoc = await db.collection("rifas").doc(rifaActivaId).get();
+        const rifaData = rifaDoc.data() || {};
+        const user = firebase.auth().currentUser;
+        
+        // Cargar premios principales
+        currentPrizeData.premios = rifaData.premios || { mayor: {}, segundo: {}, tercero: {} };
+        DOM.prizeInfoSection.innerHTML = '';
+        ['mayor', 'segundo', 'tercero'].forEach(tier => {
+            const prize = currentPrizeData.premios[tier] || { descripcion: '', valor: 0, imgUrl1: '', imgUrl2: '' };
+            let contentHtml = user ? `
+                <div class="prize-card-admin-view">
+                    <label for="${tier}DescInput">Descripción:</label><input type="text" id="${tier}DescInput" value="${prize.descripcion || ''}">
+                    <label for="${tier}ValorInput">Valor (si aplica):</label><input type="number" id="${tier}ValorInput" value="${prize.valor || 0}">
+                    <label for="${tier}ImgUrl1Input">URL de Imagen/Video 1:</label><input type="url" id="${tier}ImgUrl1Input" value="${prize.imgUrl1 || ''}">
+                    <label for="${tier}ImgUrl2Input">URL de Imagen/Video 2:</label><input type="url" id="${tier}ImgUrl2Input" value="${prize.imgUrl2 || ''}">
+                </div>` : generarHtmlDePremio(prize);
+            const prizeLabels = { mayor: '🥇 Premio Mayor', segundo: '🥈 Segundo Premio', tercero: '🥉 Tercer Premio' };
+            DOM.prizeInfoSection.innerHTML += `<div class="prize-card ${tier}"><div class="prize-card-title">${prizeLabels[tier]}</div>${contentHtml}</div>`;
+        });
+        
+        // --- LÓGICA REESTRUCTURADA Y CORREGIDA PARA PREMIOS ANTICIPADOS ---
+        let needsSave = false;
+        const rawAnticipados = rifaData.premiosAnticipados || [];
+        // Sistema de auto-corrección: asegura que todos los premios tengan un ID.
+        currentPrizeData.premiosAnticipados = rawAnticipados.map(p => {
+            if (!p.id) {
+                needsSave = true;
+                return { ...p, id: Date.now().toString() + Math.random().toString(36).substring(2) };
+            }
+            return p;
+        });
+
+        // Si se corrigió algún premio, se guarda automáticamente en la base de datos.
+        if (needsSave) {
+            console.log("Detectados premios anticipados sin ID. Actualizando base de datos...");
+            await saveAnticipatedPrizes();
+        }
+        
+        renderAnticipados();
+        resetAnticipadoForm();
+        
+        DOM.saveMainPrizesButton.style.display = user ? 'inline-block' : 'none';
+        
+        // Resetear simulador
+        DOM.modalWinningInput.value = '';
+        DOM.prizeSimulatorSlots.forEach(slot => { slot.querySelector('span').textContent = ''; slot.classList.remove('liquid-filled', 'selected-digit'); });
+        DOM.prizeZonesContainer.classList.remove('active');
+        DOM.modalWinnerResults.innerHTML = '';
+    };
+
+    // --- FUNCIONES PARA PREMIOS ANTICIPADOS (REESTRUCTURADAS) ---
+    const resetAnticipadoForm = () => {
+        DOM.adminAnticipadoForm.reset();
+        DOM.editingAnticipadoId.value = '';
+        DOM.formAnticipadoTitle.innerHTML = '<i class="fas fa-plus-circle"></i> Agregar Premio Anticipado';
+        DOM.saveAnticipadoButton.textContent = 'Agregar Premio';
+        DOM.cancelEditAnticipadoButton.style.display = 'none';
+    };
+
+    const populateAnticipadoForm = (prizeId) => {
+        const prize = currentPrizeData.premiosAnticipados.find(p => p.id === prizeId);
+        if (!prize) return;
+        DOM.editingAnticipadoId.value = prize.id;
+        DOM.formAnticipadoTitle.innerHTML = '<i class="fas fa-edit"></i> Editando Premio Anticipado';
+        DOM.anticipadoValor.value = prize.valor;
+        DOM.anticipadoFecha.value = prize.fecha;
+        DOM.anticipadoLoteria.value = prize.loteria || '';
+        DOM.anticipadoCondicion.value = prize.condicion || '';
+        DOM.saveAnticipadoButton.textContent = 'Guardar Cambios';
+        DOM.cancelEditAnticipadoButton.style.display = 'inline-block';
+        DOM.adminAnticipadoForm.scrollIntoView({ behavior: 'smooth', block: 'center' });
+    };
+
+    const renderAnticipados = () => {
+        DOM.anticipadosList.innerHTML = '';
+        const anticipados = currentPrizeData.premiosAnticipados || [];
+        if (anticipados.length > 0) {
+            anticipados.forEach((premio) => {
+                const cardHTML = `
+                    <div class="anticipado-card">
+                        <div class="anticipado-card-main">
+                            <div class="anticipado-card-header">
+                                <div class="anticipado-card-info">
+                                    <p class="loteria">${premio.loteria}</p>
+                                    <p class="fecha">${premio.fecha}</p>
+                                </div>
+                                <div class="anticipado-card-value">${formatCurrency(premio.valor)}</div>
+                            </div>
+                            <p class="condicion">${premio.condicion}</p>
+                        </div>
+                        <div class="anticipado-card-actions">
+                            <button class="edit-anticipado-btn" data-id="${premio.id}" title="Editar"><i class="fas fa-edit"></i></button>
+                            <button class="delete-anticipado-btn" data-id="${premio.id}" title="Eliminar"><i class="fas fa-trash-alt"></i></button>
+                        </div>
+                    </div>`;
+                DOM.anticipadosList.insertAdjacentHTML('beforeend', cardHTML);
+            });
+            DOM.anticipadosContainerPublic.style.display = 'block';
+        } else {
+            DOM.anticipadosContainerPublic.style.display = 'none';
+        }
+    };
+    
+    const saveAnticipatedPrizes = async () => {
+        if (!rifaActivaId || !firebase.auth().currentUser) return false;
+        try {
+            await db.collection("rifas").doc(rifaActivaId).update({
+                premiosAnticipados: currentPrizeData.premiosAnticipados
+            });
+            return true;
+        } catch (error) {
+            console.error("Error al guardar premios anticipados:", error);
+            alert("Ocurrió un error al guardar los premios anticipados.");
+            return false;
+        }
+    };
+
+    const saveMainPrizes = async () => {
+        if (!rifaActivaId || !firebase.auth().currentUser) return;
+        DOM.saveMainPrizesButton.disabled = true;
+        const mainPrizes = {
+            mayor: { descripcion: document.getElementById('mayorDescInput').value.trim(), valor: Number(document.getElementById('mayorValorInput').value) || 0, imgUrl1: document.getElementById('mayorImgUrl1Input').value.trim(), imgUrl2: document.getElementById('mayorImgUrl2Input').value.trim() },
+            segundo: { descripcion: document.getElementById('segundoDescInput').value.trim(), valor: Number(document.getElementById('segundoValorInput').value) || 0, imgUrl1: document.getElementById('segundoImgUrl1Input').value.trim(), imgUrl2: document.getElementById('segundoImgUrl2Input').value.trim() },
+            tercero: { descripcion: document.getElementById('terceroDescInput').value.trim(), valor: Number(document.getElementById('terceroValorInput').value) || 0, imgUrl1: document.getElementById('terceroImgUrl1Input').value.trim(), imgUrl2: document.getElementById('terceroImgUrl2Input').value.trim() }
+        };
+        try {
+            await db.collection("rifas").doc(rifaActivaId).update({ premios: mainPrizes });
+            currentPrizeData.premios = mainPrizes;
+            alert("Premios principales guardados con éxito.");
+        } catch (error) {
+            console.error("Error al guardar premios principales:", error);
+            alert("Ocurrió un error al guardar los premios principales.");
+        } finally {
+            DOM.saveMainPrizesButton.disabled = false;
+        }
+    };
+    
+    // --- LÓGICA DE VERIFICACIÓN DE GANADORES ---
     const getWinnerInfo = (raffleNumber, prizeTier, prizeObject) => {
         const data = localRaffleData[raffleNumber];
         const prizeLabels = { mayor: '🥇 Premio Mayor', segundo: '🥈 Segundo Premio', tercero: '🥉 Tercer Premio' };
@@ -834,7 +821,7 @@ document.addEventListener('DOMContentLoaded', () => {
     DOM.searchButton.addEventListener('click', () => {
         if (!rifaActivaId) { alert("Selecciona una rifa para poder buscar."); return; }
         if (DOM.searchInput.value.trim().length === 10) performSearch();
-        else { DOM.searchResultsContainer.innerHTML = '<div class="no-results-message">Debes ingresar un número de 10 cifras.</div>'; document.querySelectorAll('.grid-item.highlighted').forEach(item => item.classList.remove('highlighted')); }
+        else { DOM.searchResultsContainer.innerHTML = '<div class="no-results-message">Debes ingresar un número de 10 cifras para buscar.</div>'; document.querySelectorAll('.grid-item.highlighted').forEach(item => item.classList.remove('highlighted')); }
     });
     DOM.checkWinnerButton.addEventListener('click', checkWinners);
     DOM.realWinningInput.addEventListener('input', () => {
@@ -865,20 +852,23 @@ document.addEventListener('DOMContentLoaded', () => {
         });
     });
 
-    DOM.saveAnticipadoButton.addEventListener('click', async () => {
+    // --- EVENT LISTENERS PARA FORMULARIO DE PREMIOS ANTICIPADOS (REESTRUCTURADO) ---
+    DOM.adminAnticipadoForm.addEventListener('submit', async (e) => {
+        e.preventDefault();
         const valor = Number(DOM.anticipadoValor.value);
         const fecha = DOM.anticipadoFecha.value;
+        const loteria = DOM.anticipadoLoteria.value.trim();
         const condicion = DOM.anticipadoCondicion.value.trim();
-        if (!valor || !fecha || !condicion) { alert("Por favor, completa todos los campos del premio."); return; }
+        if (!valor || !fecha || !loteria || !condicion) { alert("Por favor, completa todos los campos del premio."); return; }
         
         const editingId = DOM.editingAnticipadoId.value;
         if (editingId) {
             const prizeIndex = currentPrizeData.premiosAnticipados.findIndex(p => p.id === editingId);
             if (prizeIndex > -1) {
-                currentPrizeData.premiosAnticipados[prizeIndex] = { ...currentPrizeData.premiosAnticipados[prizeIndex], valor, fecha, condicion };
+                currentPrizeData.premiosAnticipados[prizeIndex] = { ...currentPrizeData.premiosAnticipados[prizeIndex], valor, fecha, loteria, condicion };
             }
         } else {
-            const newPrize = { id: Date.now().toString(), valor, fecha, condicion };
+            const newPrize = { id: Date.now().toString() + Math.random().toString(36).substring(2), valor, fecha, loteria, condicion };
             currentPrizeData.premiosAnticipados.push(newPrize);
         }
         
@@ -910,7 +900,7 @@ document.addEventListener('DOMContentLoaded', () => {
         }
     });
 
-    // Inicialización al cargar la página
+    // --- INICIALIZACIÓN DE LA PÁGINA ---
     applyTheme(localStorage.getItem('theme') || 'light');
     initializeGrid();
     cargarRifas();
