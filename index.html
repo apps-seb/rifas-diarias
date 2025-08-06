@@ -26,6 +26,14 @@
             --winner-card-silver-bg: linear-gradient(135deg, #e0e0e0, #bdbdbd);
             --winner-card-silver-color: #333;
             --transition-speed: 0.3s;
+            
+            /* --- Elegant Ticket Palette --- */
+            --ticket-bg: #ffffff;
+            --ticket-text: #1a253c;
+            --ticket-primary: #2c3e50;
+            --ticket-accent: #d4af37;
+            --ticket-light-text: #5a6782;
+            --ticket-border-color: #e1e8f0;
         }
         .dark-mode {
             --border-color: #4d4d4d;
@@ -40,6 +48,14 @@
             --modal-glass-bg: rgba(44, 44, 46, 0.5);
             --winner-card-silver-bg: linear-gradient(135deg, #a8a8a8, #8c8c8c);
             --winner-card-silver-color: #f2f2f7;
+
+            /* --- Elegant Ticket Palette (Dark) --- */
+            --ticket-bg: #1c1c1e;
+            --ticket-text: #e0e6f0;
+            --ticket-primary: #d4af37;
+            --ticket-accent: #f0c43e;
+            --ticket-light-text: #a0a0a5;
+            --ticket-border-color: #4d4d4d;
         }
         body { font-family: system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, 'Open Sans', 'Helvetica Neue', sans-serif; background-color: var(--body-bg); padding: 10px; color: var(--body-color); transition: background-color var(--transition-speed) ease, color var(--transition-speed) ease; }
         .container { max-width: 800px; margin: auto; padding-top: 20px; transition: filter 0.3s ease-in-out; }
@@ -238,192 +254,189 @@
         .anticipado-card .edit-mode-actions .save-edit-anticipado-btn { background-color: var(--color-primary); color: white; }
         .anticipado-card .edit-mode-actions .cancel-edit-anticipado-btn { background-color: var(--background-light); color: var(--text-dark); border: 1px solid var(--border-color); }
         
-        /* --- START: NEW TICKET STYLES --- */
+        /* --- START: ELEGANT TICKET STYLES --- */
         #ticket-template {
             display: none;
             position: absolute;
             left: -9999px;
-            width: 400px;
+            width: 420px; /* A bit wider for the new layout */
         }
-
         #ticket-preview {
             width: 100%;
-            max-width: 400px;
+            max-width: 420px;
             margin: 0 auto 20px auto;
-            font-family: 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
-            background-color: #f4f7fc;
-            color: #333;
-            border-radius: 15px;
-            overflow: hidden;
-            box-shadow: 0 10px 30px rgba(0,0,0,0.1);
-            transition: background-color 0.3s, color 0.3s, box-shadow 0.3s;
+            transition: all 0.3s;
         }
-
+        #ticket-preview .ticket-container {
+            background: var(--ticket-bg);
+            color: var(--ticket-text);
+            font-family: 'Segoe UI', Roboto, sans-serif;
+            border-radius: 16px;
+            box-shadow: 0 8px 30px rgba(0,0,0,0.12);
+            display: flex;
+        }
+        .dark-mode #ticket-preview .ticket-container {
+            box-shadow: 0 8px 30px rgba(0,0,0,0.25);
+        }
+        .ticket-main {
+            padding: 25px;
+            width: 70%;
+            box-sizing: border-box;
+        }
         .ticket-header {
-            background-color: var(--color-primary);
-            color: white;
-            padding: 20px;
-            text-align: center;
+            text-align: left;
+            margin-bottom: 25px;
         }
-
         .ticket-header h3 {
-            font-size: 1.6em;
+            font-size: 1.8em;
             font-weight: 700;
             margin: 0;
-            text-transform: uppercase;
-            letter-spacing: 1px;
-            color: white; /* Explicitly set color for override */
-        }
-        
-        .ticket-header p {
-            margin: 5px 0 0;
-            font-size: 1em;
-            opacity: 0.9;
-        }
-
-        .ticket-main-content {
-            padding: 25px;
-        }
-        
-        .ticket-number-section {
-            text-align: center;
-            margin-bottom: 25px;
-            padding: 20px;
-            background-color: #ffffff;
-            border-radius: 10px;
-            border: 2px dashed var(--color-primary);
-        }
-
-        .ticket-number-section .subtitle {
-            margin: 0 0 10px 0;
-            font-size: 1em;
-            font-weight: 600;
-            color: var(--text-light);
-            text-transform: uppercase;
-            letter-spacing: 0.5px;
-        }
-        
-        .ticket-number {
-            font-family: 'Courier New', Courier, monospace;
-            font-size: 5em;
-            font-weight: 900;
-            color: var(--color-pago);
-            margin: 0;
-            line-height: 1;
-            text-shadow: 2px 2px 5px rgba(0,0,0,0.1);
-        }
-        
-        .ticket-details-section h4 {
-            font-size: 1.1em;
-            border-bottom: 2px solid var(--border-color);
-            padding-bottom: 8px;
-            margin: 25px 0 15px 0;
-            display: flex;
-            align-items: center;
-            gap: 10px;
-            color: var(--color-primary);
+            color: var(--ticket-primary);
             text-align: left;
         }
-
-        .ticket-details-section h4:first-child {
+        .ticket-header p {
+            font-size: 0.9em;
+            color: var(--ticket-light-text);
+            margin: 4px 0 0;
+        }
+        .ticket-section h4 {
+            font-size: 0.8em;
+            font-weight: 600;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            color: var(--ticket-light-text);
+            margin: 20px 0 10px 0;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            text-align: left;
+            border-bottom: 1px solid var(--ticket-border-color);
+            padding-bottom: 8px;
+        }
+        .ticket-section h4:first-of-type {
             margin-top: 0;
         }
-
         .ticket-info p {
             display: flex;
             justify-content: space-between;
-            align-items: center;
-            padding: 8px;
-            margin: 0;
-            border-radius: 4px;
-        }
-        .ticket-info p:nth-child(odd) {
-            background-color: #ffffff;
+            margin: 5px 0;
+            font-size: 0.95em;
         }
         .ticket-info p span:first-child {
-            font-weight: bold;
+            font-weight: 600;
+            color: var(--ticket-text);
         }
         .ticket-info p span:last-child {
+            color: var(--ticket-light-text);
             text-align: right;
         }
-
-        .ticket-status { font-weight: bold; text-transform: uppercase; }
-        .ticket-status.pago { color: var(--color-pago); }
-        .ticket-status.separado { color: var(--color-separado); }
-
         .ticket-prizes ul {
             list-style: none;
             padding: 0;
-            margin: 0;
+            margin: 5px 0 0 0;
         }
         .ticket-prizes ul li {
-            padding: 5px 0;
-            color: var(--text-dark);
-            font-size: 0.95em;
+            font-size: 0.9em;
+            color: var(--ticket-light-text);
+            margin-bottom: 4px;
         }
-        .ticket-prizes ul li::before {
-            content: '🏆';
-            margin-right: 10px;
+        .ticket-prizes ul li strong {
+            color: var(--ticket-text);
         }
-        
-        .ticket-footer {
-            background-color: #e9eff7;
-            padding: 20px;
+        #ticket-anticipados-section {
+            display: none; /* Hidden by default, shown by JS */
+        }
+        .ticket-stub {
+            width: 30%;
+            background-color: var(--ticket-primary);
+            color: white;
+            padding: 25px 20px;
+            box-sizing: border-box;
+            border-top-right-radius: 16px;
+            border-bottom-right-radius: 16px;
             display: flex;
+            flex-direction: column;
             justify-content: space-between;
             align-items: center;
-            border-top: 1px solid #d8e0ea;
+            position: relative;
         }
-        
+        .ticket-stub::before {
+            content: '';
+            position: absolute;
+            left: 0;
+            top: 10px;
+            bottom: 10px;
+            width: 2px;
+            background-image: repeating-linear-gradient(
+                var(--ticket-bg), 
+                var(--ticket-bg) 5px, 
+                transparent 5px, 
+                transparent 10px
+            );
+        }
+        .dark-mode .ticket-stub {
+            background-color: var(--ticket-accent);
+            color: var(--ticket-text);
+        }
+        .ticket-number-container p {
+            font-size: 0.9em;
+            text-align: center;
+            margin: 0 0 10px 0;
+            font-weight: 600;
+            text-transform: uppercase;
+        }
+        .ticket-number {
+            font-family: 'Roboto Mono', 'Courier New', monospace;
+            font-size: 2.8em;
+            font-weight: 700;
+            text-align: center;
+            line-height: 1;
+            margin: 0;
+            padding: 10px;
+            background: rgba(255,255,255,0.1);
+            border-radius: 8px;
+        }
+        .dark-mode .ticket-number {
+             background: rgba(0,0,0,0.1);
+        }
+        .ticket-status {
+            font-weight: bold;
+            text-transform: uppercase;
+            font-size: 0.9em;
+            padding: 4px 8px;
+            border-radius: 4px;
+            margin-top: 5px;
+            display: inline-block;
+        }
+        .ticket-status.pago { background-color: var(--color-pago); color: white; }
+        .ticket-status.separado { background-color: var(--color-separado); color: #333; }
         .qr-section {
             text-align: center;
         }
         #ticket-qr-code {
-            width: 80px;
-            height: 80px;
-            display: block;
-            margin: 0 auto 5px auto;
-            background-color: #fff; /* Placeholder bg */
-            border: 1px solid #ccc;
-            border-radius: 4px;
+            width: 90px;
+            height: 90px;
+            border: 4px solid white;
+            border-radius: 8px;
+            background-color: white;
+        }
+        .dark-mode #ticket-qr-code {
+            border-color: #333;
         }
         .qr-section p {
             font-size: 0.8em;
-            color: var(--text-light);
-            margin: 0;
+            margin: 5px 0 0 0;
+            opacity: 0.8;
         }
-
-        .footer-text {
-            text-align: right;
-            font-size: 0.9em;
-            color: var(--text-light);
+        .ticket-footer {
+            text-align: center;
+            font-size: 0.75em;
+            color: var(--ticket-light-text);
+            margin-top: 20px;
+            border-top: 1px solid var(--ticket-border-color);
+            padding-top: 10px;
         }
-        .footer-text p {
-            margin: 4px 0;
-        }
-
-        .dark-mode #ticket-preview {
-            background-color: #2c2c2e;
-            color: var(--text-dark);
-            box-shadow: 0 10px 30px rgba(0,0,0,0.3);
-        }
-        .dark-mode .ticket-number-section {
-            background-color: #1c1c1e;
-            border-color: var(--color-primary);
-        }
-        .dark-mode .ticket-info p:nth-child(odd) {
-            background-color: var(--background-card);
-        }
-        .dark-mode .ticket-prizes ul li {
-            color: var(--text-dark);
-        }
-        .dark-mode .ticket-footer {
-            background-color: #1c1c1e;
-            border-top-color: var(--border-color);
-        }
-        #ticket-anticipados-section { display: none; } /* Oculto por defecto */
-        /* --- END: NEW TICKET STYLES --- */
-
+        /* --- END: ELEGANT TICKET STYLES --- */
 
         @media (max-width: 650px) {
             #anticipados-list { display: flex; flex-direction: row; overflow-x: auto; scroll-snap-type: x mandatory; padding: 10px 10px 20px 10px; margin: 0 -20px; -webkit-overflow-scrolling: touch; }
@@ -560,47 +573,46 @@
         </div>
     </div>
 </div>
+
 <div id="ticket-template">
-    <div class="ticket-body">
-        <div class="ticket-header">
-            <h3 id="ticket-rifa-name"></h3>
-            <p>Comprobante de Participación</p>
-        </div>
-        <div class="ticket-main-content">
-            <div class="ticket-number-section">
-                <p class="subtitle">Tu Número de la Suerte</p>
-                <div class="ticket-number" id="ticket-number"></div>
+    <div class="ticket-container">
+        <div class="ticket-main">
+            <div class="ticket-header">
+                <h3 id="ticket-rifa-name"></h3>
+                <p>Comprobante de Participación</p>
             </div>
-            <div class="ticket-details-section">
-                <h4><i class="fas fa-user"></i> Datos del Comprador</h4>
-                <div class="ticket-info">
+            <div class="ticket-section">
+                 <h4><i class="fas fa-user-circle"></i> Participante</h4>
+                 <div class="ticket-info">
                     <p><span>Nombre:</span> <span id="ticket-client-name"></span></p>
                     <p><span>Celular:</span> <span id="ticket-client-phone"></span></p>
-                    <p><span>Estado:</span> <span id="ticket-status" class="ticket-status"></span></p>
                 </div>
-
-                <h4><i class="fas fa-medal"></i> Plan de Premios Principal</h4>
+            </div>
+            <div class="ticket-section">
+                <h4><i class="fas fa-trophy"></i> Plan de Premios</h4>
                 <div class="ticket-prizes" id="ticket-prizes"></div>
-                
-                <div id="ticket-anticipados-section">
-                    <h4><i class="fas fa-gift"></i> Sorteos Anticipados</h4>
-                    <div class="ticket-prizes" id="ticket-anticipados-list"></div>
-                </div>
+            </div>
+            <div class="ticket-section" id="ticket-anticipados-section">
+                <h4><i class="fas fa-gift"></i> Sorteos Anticipados</h4>
+                <div class="ticket-prizes" id="ticket-anticipados-list"></div>
+            </div>
+            <div class="ticket-footer">
+                <p>Generado: <span id="ticket-date"></span></p>
             </div>
         </div>
-        <div class="ticket-footer">
-            <div class="qr-section">
-                <img id="ticket-qr-code" src="" alt="QR de Verificación">
-                <p>Escanear para Verificar</p>
+        <div class="ticket-stub">
+            <div class="ticket-number-container">
+                <p>Tu Número</p>
+                <div class="ticket-number" id="ticket-number"></div>
+                <div class="ticket-status" id="ticket-status"></div>
             </div>
-            <div class="footer-text">
-                <p>¡Gracias por tu compra y mucha suerte!</p>
-                <p>Generado: <span id="ticket-date"></span></p>
+            <div class="qr-section">
+                <img id="ticket-qr-code" src="" alt="QR de Verificación" crossorigin="anonymous">
+                <p>Verificar</p>
             </div>
         </div>
     </div>
 </div>
-
 <div class="modal-backdrop" id="modal-backdrop"></div>
 
 <script src="https://www.gstatic.com/firebasejs/8.10.0/firebase-app.js"></script>
@@ -697,24 +709,27 @@ document.addEventListener('DOMContentLoaded', () => {
 
         const raffleData = raffleDoc.data();
         const clientData = localRaffleData[number];
-        if (!clientData) return;
+        if (!clientData) {
+            alert("No se encontraron datos para este número.");
+            return;
+        }
         
-        // Use the new template structure for the preview
-        DOM.ticketPreview.innerHTML = DOM.ticketTemplate.querySelector('.ticket-body').outerHTML;
+        DOM.ticketPreview.innerHTML = DOM.ticketTemplate.innerHTML;
         
-        DOM.ticketPreview.querySelector('#ticket-rifa-name').textContent = raffleData.nombre;
-        DOM.ticketPreview.querySelector('#ticket-client-name').textContent = clientData.name || 'N/A';
-        DOM.ticketPreview.querySelector('#ticket-client-phone').textContent = clientData.phone || 'N/A';
-        DOM.ticketPreview.querySelector('#ticket-number').textContent = number;
+        const preview = DOM.ticketPreview;
+        preview.querySelector('#ticket-rifa-name').textContent = raffleData.nombre;
+        preview.querySelector('#ticket-client-name').textContent = clientData.name || 'N/A';
+        preview.querySelector('#ticket-client-phone').textContent = clientData.phone || 'N/A';
+        preview.querySelector('#ticket-number').textContent = number;
         
-        const statusEl = DOM.ticketPreview.querySelector('#ticket-status');
+        const statusEl = preview.querySelector('#ticket-status');
         statusEl.textContent = clientData.status;
         statusEl.className = `ticket-status ${clientData.status}`;
 
-        DOM.ticketPreview.querySelector('#ticket-prizes').innerHTML = `<ul><li><strong>Premio Mayor:</strong> ${raffleData.premios.mayor.descripcion || 'No definido'}</li><li><strong>Segundo Premio:</strong> ${raffleData.premios.segundo.descripcion || 'No definido'}</li><li><strong>Tercer Premio:</strong> ${raffleData.premios.tercero.descripcion || 'No definido'}</li></ul>`;
+        preview.querySelector('#ticket-prizes').innerHTML = `<ul><li><strong>Mayor:</strong> ${raffleData.premios.mayor.descripcion || 'No definido'}</li><li><strong>Segundo:</strong> ${raffleData.premios.segundo.descripcion || 'No definido'}</li><li><strong>Tercero:</strong> ${raffleData.premios.tercero.descripcion || 'No definido'}</li></ul>`;
         
-        const anticipadosSection = DOM.ticketPreview.querySelector('#ticket-anticipados-section');
-        const anticipadosList = DOM.ticketPreview.querySelector('#ticket-anticipados-list');
+        const anticipadosSection = preview.querySelector('#ticket-anticipados-section');
+        const anticipadosList = preview.querySelector('#ticket-anticipados-list');
         if (raffleData.premiosAnticipados && raffleData.premiosAnticipados.length > 0) {
             anticipadosList.innerHTML = '<ul>' + raffleData.premiosAnticipados.map(p => `<li><strong>${formatCurrency(p.valor)}:</strong> Juega el ${new Date(p.fecha + 'T00:00:00').toLocaleDateString('es-ES', {day: 'numeric', month: 'long'})} con ${p.loteria}</li>`).join('') + '</ul>';
             anticipadosSection.style.display = 'block';
@@ -722,42 +737,55 @@ document.addEventListener('DOMContentLoaded', () => {
             anticipadosSection.style.display = 'none';
         }
 
-        DOM.ticketPreview.querySelector('#ticket-date').textContent = new Date().toLocaleDateString('es-CO', { year: 'numeric', month: 'long', day: 'numeric', hour: '2-digit', minute: '2-digit' });
+        preview.querySelector('#ticket-date').textContent = new Date().toLocaleDateString('es-CO', { day: 'numeric', month: 'short', year: 'numeric', hour: '2-digit', minute: '2-digit' });
 
-        // Generate and display QR Code
-        const qrData = `Rifa: ${raffleData.nombre}\nNúmero: ${number}\nCliente: ${clientData.name || 'N/A'}\nCelular: ${clientData.phone || 'N/A'}`;
-        const encodedQrData = encodeURIComponent(qrData);
-        const qrUrl = `https://api.qrserver.com/v1/create-qr-code/?size=100x100&data=${encodedQrData}`;
-        DOM.ticketPreview.querySelector('#ticket-qr-code').src = qrUrl;
+        // *** MODIFICACIÓN CLAVE PARA QR FUNCIONAL ***
+        // Construir la URL para la página de verificación
+        const verificationUrl = new URL('verificacion.html', window.location.href);
+        verificationUrl.searchParams.set('rifa', raffleData.nombre);
+        verificationUrl.searchParams.set('numero', number);
+        verificationUrl.searchParams.set('nombre', clientData.name || 'N/A');
+        verificationUrl.searchParams.set('estado', clientData.status);
+
+        // Generar el QR que apunta a esa URL
+        const qrApiUrl = `https://api.qrserver.com/v1/create-qr-code/?size=120x120&data=${encodeURIComponent(verificationUrl.href)}&qzone=1`;
+        preview.querySelector('#ticket-qr-code').src = qrApiUrl;
 
         DOM.ticketModal.classList.add('visible');
     };
 
     const downloadTicket = () => {
         const button = DOM.downloadTicketButton;
-        button.textContent = 'Generando...'; button.disabled = true;
+        button.textContent = 'Generando...';
+        button.disabled = true;
         
-        const printableTicket = DOM.ticketTemplate;
-        printableTicket.style.display = 'block';
-        printableTicket.innerHTML = DOM.ticketPreview.innerHTML;
+        const printableElement = DOM.ticketPreview.querySelector('.ticket-container');
+        if (!printableElement) {
+             alert("Error: No se encontró el contenido del recibo para descargar.");
+             button.textContent = 'Descargar Recibo';
+             button.disabled = false;
+             return;
+        }
 
-        html2canvas(printableTicket.querySelector('.ticket-body'), { scale: 2.5, useCORS: true, backgroundColor: '#f4f7fc' }).then(canvas => {
+        html2canvas(printableElement, { 
+            scale: 3, 
+            useCORS: true, // Crucial para imágenes externas como el QR
+            backgroundColor: null 
+        }).then(canvas => {
             const link = document.createElement('a');
-            const clientName = printableTicket.querySelector('#ticket-client-name').textContent.trim().replace(/\s+/g, '_');
-            const ticketNumber = printableTicket.querySelector('#ticket-number').textContent.trim();
+            const clientName = DOM.ticketPreview.querySelector('#ticket-client-name').textContent.trim().replace(/\s+/g, '_');
+            const ticketNumber = DOM.ticketPreview.querySelector('#ticket-number').textContent.trim();
             link.download = `Recibo-Rifa-${clientName}-${ticketNumber}.png`;
             link.href = canvas.toDataURL('image/png');
             link.click();
             
-            printableTicket.style.display = 'none';
-            printableTicket.innerHTML = ''; // Clean up
-            button.textContent = 'Descargar Recibo'; button.disabled = false;
+            button.textContent = 'Descargar Recibo';
+            button.disabled = false;
         }).catch(err => { 
             console.error('Error al generar recibo:', err); 
-            alert('Hubo un error al generar el recibo.'); 
-            printableTicket.style.display = 'none';
-            printableTicket.innerHTML = ''; // Clean up
-            button.textContent = 'Descargar Recibo'; button.disabled = false; 
+            alert('Hubo un error al generar el recibo. Revisa la consola para más detalles.'); 
+            button.textContent = 'Descargar Recibo';
+            button.disabled = false; 
         });
     };
     const closeTicketModal = () => DOM.ticketModal.classList.remove('visible');
