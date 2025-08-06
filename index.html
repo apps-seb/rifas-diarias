@@ -64,12 +64,84 @@
         #searchButton:hover { background-color: #0056b3; }
         #searchResultsContainer { display: flex; flex-direction: column; gap: 12px; min-height: 50px; }
         @keyframes fadeIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
-        .result-card { display: flex; align-items: center; gap: 15px; padding: 15px; background-color: var(--background-light); border-radius: 8px; border: 1px solid var(--border-color); animation: fadeIn 0.4s ease-out forwards; }
-        .result-number { flex-shrink: 0; width: 45px; height: 45px; border-radius: 50%; background-color: var(--color-primary); color: white; display: flex; justify-content: center; align-items: center; font-size: 1.4em; font-weight: bold; }
-        .result-info { flex-grow: 1; min-width: 0; }
-        .result-info .name { font-weight: bold; color: var(--text-dark); margin: 0; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
-        .result-info .phone { color: var(--text-light); font-size: 0.9em; margin: 2px 0 0 0; }
-        .status-badge { padding: 4px 10px; border-radius: 12px; color: white; font-size: 0.8em; font-weight: bold; text-transform: uppercase; }
+        
+        /* --- START: RESPONSIVE SEARCH RESULT STYLES --- */
+        .result-card { 
+            display: flex; 
+            align-items: center; 
+            gap: 15px; 
+            padding: 12px; 
+            background-color: var(--background-light); 
+            border-radius: 8px; 
+            border: 1px solid var(--border-color); 
+            animation: fadeIn 0.4s ease-out forwards;
+            flex-wrap: wrap; /* Allows items to wrap to the next line on small screens */
+        }
+        .result-number { 
+            flex-shrink: 0; 
+            width: 40px; 
+            height: 40px; 
+            border-radius: 50%; 
+            background-color: var(--color-primary); 
+            color: white; 
+            display: flex; 
+            justify-content: center; 
+            align-items: center; 
+            font-size: 1.2em; 
+            font-weight: bold; 
+        }
+        .result-info { 
+            flex-grow: 1; 
+            min-width: 150px; /* Ensures it has space before wrapping */
+        }
+        .result-info .name { 
+            font-weight: bold; 
+            color: var(--text-dark); 
+            margin: 0; 
+            white-space: nowrap; 
+            overflow: hidden; 
+            text-overflow: ellipsis; 
+            font-size: 0.9em;
+        }
+        .result-info .phone { 
+            color: var(--text-light); 
+            font-size: 0.8em; 
+            margin: 2px 0 0 0; 
+        }
+        .status-badge { 
+            padding: 4px 8px; 
+            border-radius: 12px; 
+            color: white; 
+            font-size: 0.7em; 
+            font-weight: bold; 
+            text-transform: uppercase;
+            margin-left: auto; /* Pushes to the right on larger screens */
+        }
+        .generate-ticket-btn {
+            margin-left: 5px; /* Keeps it next to the status badge on large screens */
+        }
+
+        /* On smaller screens, make info and badges take full width */
+        @media (max-width: 480px) {
+            .result-info {
+                flex-basis: 100%; /* Take full width */
+                order: 3; /* Appear last */
+                margin: 5px 0 0 0;
+            }
+            .status-badge {
+                order: 2;
+                margin-left: auto;
+            }
+            .generate-ticket-btn {
+                order: 2;
+                margin-left: 5px;
+            }
+            .result-number {
+                order: 1;
+            }
+        }
+        /* --- END: RESPONSIVE SEARCH RESULT STYLES --- */
+
         .status-badge.status-pago { background-color: var(--color-pago); }
         .status-badge.status-separado { background-color: var(--color-separado); }
         .no-results-message { text-align: center; padding: 20px; color: var(--text-light); animation: fadeIn 0.4s ease-out forwards; }
@@ -317,9 +389,11 @@
         }
         .ticket-info strong {
             color: var(--text-dark);
+            margin-right: 10px;
         }
         .ticket-info span {
             color: var(--text-light);
+            text-align: right;
         }
         .ticket-prizes ul {
             list-style: none;
@@ -394,7 +468,6 @@
             margin-top: 15px;
         }
         /* --- END: PROFESSIONAL TICKET STYLES --- */
-
 
         @media (max-width: 650px) {
             #anticipados-list { display: flex; flex-direction: row; overflow-x: auto; scroll-snap-type: x mandatory; padding: 10px 10px 20px 10px; margin: 0 -20px; -webkit-overflow-scrolling: touch; }
