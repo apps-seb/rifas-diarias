@@ -43,6 +43,11 @@
             0% { transform: translateX(-150%) rotate(25deg); }
             100% { transform: translateX(150%) rotate(25deg); }
         }
+        /* Nueva animación de rotación para boletos separados */
+        @keyframes rotate-loop {
+            from { transform: rotate(0deg) scale(1); opacity: 1; }
+            to { transform: rotate(360deg) scale(1); opacity: 1; }
+        }
 
         /* --- Estructura Principal --- */
         body {
@@ -65,7 +70,7 @@
             left: 0;
             width: 100%;
             height: 100%;
-            background: radial-gradient(circle at top, var(--glow-color, transparent) 0%, transparent 40%);
+            background: radial-gradient(circle at top, var(--glow-color, transparent) 0%, transparent S40%);
             opacity: 0.15;
             z-index: -1;
             transition: background 0.5s ease;
@@ -191,7 +196,8 @@
         .seal.is-pending {
             background-color: var(--color-separado);
             box-shadow: 0 0 0 4px var(--color-separado);
-            animation: fadeIn 0.5s 0.5s forwards;
+            /* Combina la animación de entrada con la de rotación infinita */
+            animation: fadeIn 0.8s 0.5s forwards, rotate-loop 4s linear 1.5s infinite;
         }
         .seal.is-other {
             background-color: var(--color-disponible);
@@ -361,9 +367,9 @@
                     case 'separado':
                         sealIcon.classList.add('fa-clock');
                         sealText.textContent = 'BOLETO AUTÉNTICO';
-                        seal.classList.add('is-pending'); // Activa el estilo amarillo
+                        seal.classList.add('is-pending'); // Activa el estilo amarillo y la rotación
                         break;
-                    default:
+                    default: // 'disponible' o cualquier otro
                         sealIcon.classList.add('fa-shield-halved');
                         sealText.textContent = 'BOLETO AUTÉNTICO';
                         seal.classList.add('is-other'); // Activa el estilo gris
