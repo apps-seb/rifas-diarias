@@ -40,6 +40,10 @@
             80% { transform: scale(1.05); }
             100% { transform: scale(1) rotate(0deg); }
         }
+        @keyframes shine-effect {
+            0% { transform: translateX(-200%) rotate(25deg); }
+            100% { transform: translateX(200%) rotate(25deg); }
+        }
 
         /* --- Estructura Principal --- */
         body {
@@ -55,7 +59,6 @@
             box-sizing: border-box;
             transition: background-color 0.5s ease;
         }
-        /* Fondo dinámico de color según el estado */
         body::before {
             content: '';
             position: fixed;
@@ -89,6 +92,7 @@
         /* --- Contenido de la Tarjeta --- */
         .card-header {
             padding: 20px 25px;
+            border-bottom: 1px solid var(--border-color);
         }
         .card-header h2 {
             margin: 0;
@@ -96,9 +100,14 @@
             color: var(--text-dark);
             font-weight: 600;
         }
+        .card-header p {
+            margin: 4px 0 0;
+            font-size: 0.9em;
+            color: var(--text-light);
+        }
 
         .card-body {
-            padding: 20px 25px 30px;
+            padding: 30px 25px;
         }
         .ticket-number {
             font-family: 'Roboto Mono', monospace;
@@ -106,11 +115,43 @@
             font-weight: 700;
             line-height: 1;
             color: var(--text-dark);
-            margin: 10px 0 25px 0;
+            margin: 0 0 25px 0;
             opacity: 0;
         }
         .ticket-number.animate {
             animation: popInNumber 0.7s cubic-bezier(0.25, 0.46, 0.45, 0.94) 0.5s forwards;
+        }
+        
+        .ticket-status {
+            display: inline-flex;
+            align-items: center;
+            gap: 10px;
+            padding: 12px 24px;
+            border-radius: 50px;
+            font-weight: bold;
+            font-size: 1.1em;
+            margin-bottom: 30px;
+            border: 2px solid;
+        }
+        .ticket-status.status-valid {
+            background-color: var(--color-pago);
+            border-color: var(--color-pago);
+            color: white;
+        }
+        .ticket-status.status-pending {
+            background-color: var(--color-separado);
+            border-color: var(--color-separado);
+            color: #333;
+        }
+        .ticket-status.status-invalid {
+            background-color: var(--color-disponible);
+            border-color: var(--color-disponible);
+            color: white;
+        }
+        .ticket-status.status-error {
+            background-color: var(--color-danger);
+            border-color: var(--color-danger);
+            color: white;
         }
 
         .ticket-details ul {
@@ -125,10 +166,7 @@
             font-size: 1em;
             color: var(--text-light);
             padding: 12px 0;
-            border-bottom: 1px solid var(--border-color);
-        }
-        .ticket-details li:last-child {
-            border-bottom: none;
+            border-top: 1px solid var(--border-color);
         }
         .ticket-details i {
             width: 30px;
@@ -147,53 +185,63 @@
             background-color: var(--background-light);
             border-top: 1px solid var(--border-color);
         }
-        .status-banner {
+        .seal-container {
             display: flex;
             align-items: center;
-            justify-content: space-between;
             gap: 15px;
+            justify-content: center;
+            margin-bottom: 15px;
         }
         .seal {
             width: 60px;
             height: 60px;
-            border: 2px solid var(--color-pago);
+            background-color: var(--color-pago);
             border-radius: 50%;
             display: flex;
             align-items: center;
             justify-content: center;
-            color: var(--color-pago);
+            color: white;
             font-size: 1.8em;
             flex-shrink: 0;
             opacity: 0;
+            position: relative;
+            overflow: hidden;
         }
         .seal.animate {
             animation: stampAnimation 0.8s cubic-bezier(0.68, -0.55, 0.27, 1.55) 0.8s forwards;
         }
-        .status-text h3 {
-            margin: 0;
-            font-size: 1.1em;
-            color: var(--text-dark);
-            text-align: left;
+        .seal::after {
+            content: '';
+            position: absolute;
+            top: -50%;
+            left: -50%;
+            width: 40%;
+            height: 200%;
+            background: linear-gradient(to right, rgba(255, 255, 255, 0) 0%, rgba(255, 255, 255, 0.4) 50%, rgba(255, 255, 255, 0) 100%);
+            transform: translateX(-250%) rotate(25deg);
+        }
+        .seal.animate::after {
+            animation: shine-effect 3s infinite;
+            animation-delay: 1.5s; /* Inicia el brillo después del estampado */
+        }
+        .seal-container span {
             font-weight: 600;
+            color: var(--text-dark);
         }
-        .status-text p {
-            margin: 2px 0 0;
-            font-size: 0.85em;
-            color: var(--text-light);
-            text-align: left;
-        }
+
         .disclaimer {
-            font-size: 0.7em;
+            font-size: 0.75em;
             color: var(--text-light);
-            margin-top: 20px;
+            margin: 0;
             line-height: 1.5;
             text-align: center;
         }
 
         /* Estilos para estado de error */
-        .status-error { color: var(--color-danger); text-align: center; }
-        .status-error i { font-size: 2em; margin-bottom: 15px; }
-        .status-error p { font-weight: 500; }
+        .status-error-display { color: var(--color-danger); text-align: center; }
+        .status-error-display i { font-size: 2em; margin-bottom: 15px; }
+        .status-error-display h3 { margin: 0 0 10px; }
+        .status-error-display p { font-weight: 500; margin: 0; }
     </style>
 </head>
 <body>
@@ -232,7 +280,7 @@
                 document.body.classList.add('status-error');
                 verificationCard.innerHTML = `
                     <div class="card-body">
-                        <div class="status-error">
+                        <div class="status-error-display">
                             <i class="fas fa-exclamation-triangle"></i>
                             <h3>Enlace Inválido</h3>
                             <p>Faltan los datos necesarios para la verificación.</p>
@@ -264,7 +312,7 @@
                         statusInfo = { class: 'pending', icon: 'fa-clock', text: 'SEPARADO' };
                         break;
                     default:
-                        statusInfo = { class: 'invalid', icon: 'fa-question', text: 'DISPONIBLE' };
+                        statusInfo = { class: 'invalid', icon: 'fa-question-circle', text: 'DISPONIBLE' };
                 }
 
                 document.body.classList.add(`status-${statusInfo.class}`);
@@ -283,9 +331,14 @@
                 verificationCard.innerHTML = `
                     <div class="card-header">
                         <h2>${rifaData.nombre}</h2>
+                        <p>Fecha del Sorteo: ${new Date(rifaData.fechaSorteo + 'T00:00:00').toLocaleDateString('es-ES', { day: 'numeric', month: 'long', year: 'numeric' })}</p>
                     </div>
                     <div class="card-body">
                         <div class="ticket-number animate">${numero}</div>
+                        <div class="ticket-status ${statusInfo.class}">
+                            <i class="fas ${statusInfo.icon}"></i>
+                            <span>${statusInfo.text}</span>
+                        </div>
                         <div class="ticket-details">
                             <ul>
                                 <li>
@@ -298,26 +351,18 @@
                                     <span>Teléfono</span>
                                     <strong>${clientData.phone || 'N/A'}</strong>
                                 </li>
-                                <li>
-                                    <i class="fas fa-calendar-alt"></i>
-                                    <span>Fecha del Sorteo</span>
-                                    <strong>${new Date(rifaData.fechaSorteo + 'T00:00:00').toLocaleDateString('es-ES', { day: 'numeric', month: 'long' })}</strong>
-                                </li>
                                 ${abonoHtml}
                             </ul>
                         </div>
                     </div>
                     <div class="card-footer">
-                        <div class="status-banner">
+                        <div class="seal-container">
                             <div class="seal animate">
                                 <i class="fas fa-check"></i>
                             </div>
-                            <div class="status-text">
-                                <h3>Boleto Auténtico</h3>
-                                <p>Estado actual: ${statusInfo.text}</p>
-                            </div>
+                            <span>BOLETO AUTÉNTICO</span>
                         </div>
-                         <p class="disclaimer">
+                        <p class="disclaimer">
                             <strong>Importante:</strong> Esta es una verificación de autenticidad digital. La validez final del boleto está sujeta a los términos y condiciones del organizador de la rifa.
                         </p>
                     </div>
@@ -327,7 +372,7 @@
                  document.body.classList.add('status-error');
                 verificationCard.innerHTML = `
                     <div class="card-body">
-                        <div class="status-error">
+                        <div class="status-error-display">
                             <i class="fas fa-times-circle"></i>
                             <h3>Error de Verificación</h3>
                             <p>${error.message}</p>
