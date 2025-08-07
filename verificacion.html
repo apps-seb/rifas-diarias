@@ -9,7 +9,7 @@
         :root {
             --color-disponible: #751FFF;
             --color-separado: #ffc107;
-            --color-pago: #28a745; /* Un verde más estándar */
+            --color-pago: #28a745;
             --color-primary: #007bff;
             --color-danger: #dc3545;
             --border-color: #dee2e6;
@@ -36,6 +36,16 @@
             transform: scale(1) translateY(0);
             opacity: 1;
           }
+        }
+        @keyframes pulse-glow {
+            0%, 100% {
+                transform: scale(1);
+                box-shadow: 0 0 15px 0px rgba(40, 167, 69, 0.3);
+            }
+            50% {
+                transform: scale(1.05);
+                box-shadow: 0 0 30px 10px rgba(40, 167, 69, 0.5);
+            }
         }
         body {
             font-family: system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
@@ -65,23 +75,41 @@
             to { opacity: 1; }
         }
         .card-header {
-            padding: 20px;
-            background-color: var(--background-light);
-            border-bottom: 1px solid var(--border-color);
+            padding: 25px 20px 20px;
         }
-        .card-header h2 {
+        .seal-container {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 15px;
+            margin-bottom: 20px;
+        }
+        .seal {
+            width: 80px;
+            height: 80px;
+            background-color: var(--color-pago);
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            font-size: 2.5em;
+            animation: pulse-glow 2.5s infinite ease-in-out;
+        }
+        .seal-container h3 {
             margin: 0;
-            font-size: 1.2em;
+            font-size: 1.4em;
             color: var(--text-dark);
             font-weight: 600;
         }
-        .card-header p {
-            margin: 4px 0 0;
-            font-size: 0.9em;
+        .card-header h2 {
+            margin: 0;
+            font-size: 1.1em;
             color: var(--text-light);
+            font-weight: 500;
         }
         .card-body {
-            padding: 30px 20px;
+            padding: 20px;
         }
         .ticket-number {
             font-family: 'Roboto Mono', monospace;
@@ -90,7 +118,7 @@
             line-height: 1;
             color: var(--color-primary);
             margin: 0 0 20px 0;
-            opacity: 0; /* Inicia invisible para la animación */
+            opacity: 0;
         }
         .ticket-number.animate {
             animation: popInNumber 0.7s cubic-bezier(0.25, 0.46, 0.45, 0.94) 0.2s forwards;
@@ -138,14 +166,15 @@
             font-weight: 500;
         }
         .card-footer {
-            padding: 15px;
+            padding: 15px 20px;
             background-color: var(--background-light);
             border-top: 1px solid var(--border-color);
         }
-        .card-footer a {
-            color: var(--color-primary);
-            text-decoration: none;
-            font-weight: 500;
+        .disclaimer {
+            font-size: 0.75em;
+            color: var(--text-light);
+            margin: 0;
+            line-height: 1.5;
         }
     </style>
 </head>
@@ -177,7 +206,6 @@
             const rifaId = params.get('rifa');
             const numero = params.get('numero');
 
-            // Detectar y aplicar modo oscuro del sistema
             if (window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches) {
                 document.body.classList.add('dark-mode');
             }
@@ -187,7 +215,7 @@
                     <div class="card-header"><h2>Verificación de Boleto</h2></div>
                     <div class="card-body">
                         <div class="ticket-status status-error"><i class="fas fa-exclamation-triangle"></i><span>Enlace Inválido</span></div>
-                        <p>Faltan los datos necesarios para la verificación.</p>
+                        <p style="text-align: center;">Faltan los datos necesarios para la verificación.</p>
                     </div>`;
                 return;
             }
@@ -220,11 +248,14 @@
 
                 verificationCard.innerHTML = `
                     <div class="card-header">
+                        <div class="seal-container">
+                            <div class="seal"><i class="fas fa-check"></i></div>
+                            <h3>Boleto Verificado</h3>
+                        </div>
                         <h2>${rifaData.nombre}</h2>
-                        <p>Fecha del Sorteo: ${new Date(rifaData.fechaSorteo + 'T00:00:00').toLocaleDateString('es-ES', { day: 'numeric', month: 'long', year: 'numeric' })}</p>
                     </div>
                     <div class="card-body">
-                        <div class="ticket-number animate" id="ticket-number">${numero}</div>
+                        <div class="ticket-number animate">${numero}</div>
                         <div class="ticket-status ${statusInfo.class}">
                             <i class="fas ${statusInfo.icon}"></i>
                             <span>${statusInfo.text}</span>
@@ -235,7 +266,9 @@
                         </div>
                     </div>
                     <div class="card-footer">
-                        <a href="${window.location.origin + window.location.pathname.replace('verificacion.html', '')}">Volver al inicio</a>
+                        <p class="disclaimer">
+                            <strong>Importante:</strong> Esta es una verificación de autenticidad digital. La validez final del boleto está sujeta a los términos y condiciones del organizador de la rifa.
+                        </p>
                     </div>
                 `;
 
@@ -244,10 +277,7 @@
                     <div class="card-header"><h2>Verificación de Boleto</h2></div>
                     <div class="card-body">
                         <div class="ticket-status status-error"><i class="fas fa-times-circle"></i><span>Error</span></div>
-                        <p>${error.message}</p>
-                    </div>
-                     <div class="card-footer">
-                        <a href="${window.location.origin + window.location.pathname.replace('verificacion.html', '')}">Volver al inicio</a>
+                        <p style="text-align: center;">${error.message}</p>
                     </div>
                 `;
             }
