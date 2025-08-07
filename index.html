@@ -257,14 +257,66 @@
         .prize-icon { display: inline-block; transition: transform 0.3s ease; }
         #prizeButton:hover .prize-icon { transform: scale(1.2) rotate(8deg); }
         #prizeButton.visible { display: block; }
-        #prize-info-section { display: flex; flex-wrap: wrap; gap: 10px; justify-content: center; }
-        .prize-card { transition: all 0.3s ease; text-align: center; border-radius: 12px; padding: 15px; flex: 1 1 250px; max-width: 320px; }
+
+        /* --- ESTILOS DE TARJETAS DE PREMIOS MODIFICADOS --- */
+        #prize-info-section {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 15px;
+            justify-content: center;
+        }
+        .prize-card {
+            background-color: var(--background-card);
+            color: var(--text-dark);
+            border: 1px solid var(--border-color);
+            border-top: 5px solid transparent; /* Borde superior por defecto */
+            transition: all 0.3s ease;
+            text-align: center;
+            border-radius: 12px;
+            padding: 15px;
+            flex: 1 1 250px;
+            max-width: 320px;
+            box-shadow: 0 4px 15px var(--shadow-color);
+        }
+        .prize-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 8px 25px var(--shadow-color);
+        }
         @keyframes card-pulse-glow { 50% { transform: scale(1.07); box-shadow: 0 0 25px 5px var(--glow-color, #fff); } }
-        .prize-card.highlight { transform: translateY(-5px) scale(1.02); box-shadow: 0 8px 25px rgba(0,0,0,0.2); }
-        .prize-card-title { font-size: 0.9em; font-weight: bold; display: flex; align-items: center; justify-content: center; gap: 8px; margin-bottom: 10px; }
-        .prize-card.mayor { background: linear-gradient(135deg, #ffeb3b, #ffc107); color: #333; }
-        .prize-card.segundo { background: linear-gradient(135deg, #f5f5f5, #bdbdbd); color: #333; }
-        .prize-card.tercero { background: linear-gradient(135deg, #ffc8a1, #b87333); color: white; }
+        .prize-card.highlight {
+            transform: translateY(-5px) scale(1.02);
+            box-shadow: 0 8px 25px rgba(0,0,0,0.2);
+        }
+        .prize-card-title {
+            font-size: 1.1em;
+            font-weight: bold;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 8px;
+            margin-bottom: 10px;
+            transition: color 0.3s ease;
+        }
+        .prize-card.mayor {
+            border-top-color: var(--color-separado);
+        }
+        .prize-card.mayor .prize-card-title {
+            color: var(--color-separado);
+        }
+        .prize-card.segundo {
+            border-top-color: var(--color-primary);
+        }
+        .prize-card.segundo .prize-card-title {
+            color: var(--color-primary);
+        }
+        .prize-card.tercero {
+            border-top-color: var(--color-pago);
+        }
+        .prize-card.tercero .prize-card-title {
+            color: var(--color-pago);
+        }
+        /* --- FIN DE ESTILOS MODIFICADOS --- */
+
         #prize-simulator-section { padding: 20px; border: 2px dashed var(--border-color); border-radius: 8px; text-align: center; margin-top: 20px; }
         .digit-slots-container { display: flex; justify-content: center; gap: 15px; margin-bottom: 20px; position: relative; cursor: text; }
         .digit-circle-simulator { position: relative; overflow: hidden; width: clamp(45px, 12vw, 70px); aspect-ratio: 1/1; background-color: var(--background-light); border: 2px solid var(--border-color); border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: clamp(2em, 8vw, 3em); font-weight: bold; color: var(--text-dark); transition: all 0.3s; box-shadow: inset 0 2px 5px rgba(0,0,0,0.1); }
@@ -747,7 +799,6 @@ document.addEventListener('DOMContentLoaded', () => {
     const aplicarColoresPersonalizados = (c) => { if(!c) return; document.documentElement.style.setProperty('--color-disponible', c.disponible); document.documentElement.style.setProperty('--color-separado', c.separado); document.documentElement.style.setProperty('--color-pago', c.pago); };
     const restaurarColoresDefault = () => { document.documentElement.style.removeProperty('--color-disponible'); document.documentElement.style.removeProperty('--color-separado'); document.documentElement.style.removeProperty('--color-pago'); };
     
-    // FUNCIÓN MODIFICADA
     const openSettingsModal = () => {
         if (!rifaActivaId || !firebase.auth().currentUser) return;
         const rootStyles = getComputedStyle(document.documentElement);
@@ -760,7 +811,6 @@ document.addEventListener('DOMContentLoaded', () => {
     
     const closeSettingsModal = () => DOM.settingsModal.classList.remove('visible');
 
-    // FUNCIÓN MODIFICADA (antes saveColors)
     const saveSettings = async () => {
         if (!rifaActivaId || !firebase.auth().currentUser) return;
         const newSettings = {
@@ -793,7 +843,6 @@ document.addEventListener('DOMContentLoaded', () => {
     firebase.auth().onAuthStateChanged(user => { document.body.classList.toggle('admin-view', !!user); });
     const cargarRifas = async () => { const s = await db.collection("rifas").orderBy("fechaCreacion", "desc").get(); DOM.rifaSelectItems.innerHTML = ''; if (s.empty) { DOM.rifaSelect.textContent = '-- No hay rifas --'; DOM.rifaSelect.dataset.value = ""; await cambiarRifaActiva(true); return; } s.forEach(d => { const o = document.createElement('div'); o.textContent = d.data().nombre; o.dataset.value = d.id; o.addEventListener('click', async function(e) { e.stopPropagation(); if (DOM.rifaSelect.dataset.value === this.dataset.value) { DOM.rifaSelectItems.classList.remove('select-show'); DOM.rifaSelect.classList.remove('select-arrow-active'); return; }; DOM.rifaSelect.textContent = this.textContent; DOM.rifaSelect.dataset.value = this.dataset.value; DOM.rifaSelectItems.classList.remove('select-show'); DOM.rifaSelect.classList.remove('select-arrow-active'); await cambiarRifaActiva(); }); DOM.rifaSelectItems.appendChild(o); }); const p = s.docs[0]; DOM.rifaSelect.textContent = p.data().nombre; DOM.rifaSelect.dataset.value = p.id; await cambiarRifaActiva(); };
 
-    // FUNCIÓN MODIFICADA
     const crearNuevaRifa = async () => {
         const nombre = DOM.newRifaName.value.trim();
         const size = parseInt(DOM.newRifaSize.value, 10);
@@ -829,7 +878,6 @@ document.addEventListener('DOMContentLoaded', () => {
 
     const deleteRifaActual = async () => { if (!rifaActivaId) { alert("No hay rifa seleccionada."); return; } const n = DOM.rifaSelect.textContent; if (!confirm(`¿Borrar rifa "${n}"?\n\n¡ACCIÓN IRREVERSIBLE!`)) return; try { const r = db.collection("rifas").doc(rifaActivaId).collection("numeros"), s = await r.get(), b = db.batch(); s.docs.forEach(d => { b.delete(d.ref); }); await b.commit(); await db.collection("rifas").doc(rifaActivaId).delete(); alert(`Rifa "${n}" eliminada.`); await cargarRifas(); } catch (e) { console.error("Error al eliminar:", e); alert("Error al eliminar rifa."); } };
     
-    // FUNCIÓN MODIFICADA
     const cambiarRifaActiva = async (f = false) => {
         if (unsubRifaListener) unsubRifaListener();
         rifaActivaId = f ? null : DOM.rifaSelect.dataset.value;
@@ -966,7 +1014,6 @@ document.addEventListener('DOMContentLoaded', () => {
     const checkWinners = async () => { const w = DOM.realWinningInput.value.trim(); DOM.winnerResults.innerHTML = ''; if (!/^\d{4}$/.test(w)) { DOM.winnerResults.innerHTML = '<div class="no-results-message">Ingresa 4 cifras.</div>'; return; } const d = await db.collection("rifas").doc(rifaActivaId).get(), p = d.data().premios || { mayor: {}, segundo: {}, tercero: {} }, m = w.slice(-numberPadding), s = w.substring(0, 2), t = w.substring(1, 3), c = [{ tier: 'mayor', number: m }, { tier: 'segundo', number: s }, { tier: 'tercero', number: t }]; c.forEach(i => DOM.winnerResults.insertAdjacentHTML('beforeend', getWinnerInfo(i.number, i.tier, p[i.tier]))); };
     const renderAnticipados = () => { DOM.anticipadosList.innerHTML = ''; const l = [...(currentPrizeData.premiosAnticipados || [])]; if (l.length > 0) { l.sort((a, b) => new Date(a.fecha) - new Date(b.fecha)); l.forEach(p => { const o = currentPrizeData.premiosAnticipados.findIndex(i => i === p), v = p.valor || '', f = p.fecha || '', t = p.loteria ? String(p.loteria).replace(/"/g, '&quot;') : ''; const h = `<div class="anticipado-card" data-index="${o}"><div class="view-mode"><div class="anticipado-info"><div class="anticipado-valor-display"><i class="fas fa-coins"></i><span>${formatCurrency(v)}</span></div><div class="anticipado-meta"><div><i class="fas fa-calendar-alt"></i> ${f ? new Date(f + 'T00:00:00').toLocaleDateString('es-ES', { day: 'numeric', month: 'long', year: 'numeric' }) : 'Fecha no definida'}</div><div><i class="fas fa-ticket-alt"></i> ${t || 'Sorteo no definido'}</div></div></div><div class="anticipado-card-actions"><button class="edit-anticipado-btn admin-action-btn" title="Editar"><i class="fas fa-pencil-alt"></i></button><button class="delete-anticipado-btn admin-action-btn" title="Eliminar"><i class="fas fa-trash-alt"></i></button></div></div><div class="edit-mode"><div><label>Valor:</label><input type="number" class="edit-valor" value="${v}"></div><div><label>Fecha:</label><input type="date" class="edit-fecha" value="${f}"></div><div><label>Lotería:</label><input type="text" class="edit-loteria" value="${t}"></div><div class="edit-mode-actions"><button class="cancel-edit-anticipado-btn">Cancelar</button><button class="save-edit-anticipado-btn">Guardar</button></div></div></div>`; DOM.anticipadosList.innerHTML += h; }); DOM.anticipadosContainerPublic.style.display = 'block'; } else { DOM.anticipadosContainerPublic.style.display = 'none'; } };
     
-    // FUNCIÓN MODIFICADA
     const generateTicket = async (number) => {
         if (!rifaActivaId) return;
         const raffleDoc = await db.collection("rifas").doc(rifaActivaId).get();
@@ -1068,7 +1115,7 @@ document.addEventListener('DOMContentLoaded', () => {
     // --- EVENT LISTENERS ---
     DOM.settingsButton.addEventListener('click', openSettingsModal);
     DOM.closeSettingsModalButton.addEventListener('click', closeSettingsModal);
-    DOM.saveSettingsButton.addEventListener('click', saveSettings); // Botón modificado
+    DOM.saveSettingsButton.addEventListener('click', saveSettings);
     DOM.darkModeToggle.addEventListener('click', () => { const n = document.body.classList.contains('dark-mode') ? 'light' : 'dark'; localStorage.setItem('theme', n); applyTheme(n); });
     DOM.createRifaButton.addEventListener('click', crearNuevaRifa); DOM.deleteRifaButton.addEventListener('click', deleteRifaActual);
     DOM.closeDataModalButton.addEventListener('click', closeDataModal); DOM.saveButton.addEventListener('click', saveData); DOM.deleteButton.addEventListener('click', deleteData);
