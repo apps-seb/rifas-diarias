@@ -1,646 +1,679 @@
 <!DOCTYPE html>
 <html lang="es">
 <head>
-    <meta charset="UTF-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-    <title>Control de Rifas Inmersivo</title>
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" />
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
-    <style>
-        :root {
-            --color-disponible: #751FFF;
-            --color-separado: #ffc107;
-            --color-pago: #84E059;
-            --color-primary: #007bff;
-            --color-danger: #dc3545;
-            --border-color: #ddd;
-            --shadow-color: rgba(0, 0, 0, 0.05);
-            --background-light: #f8f9fa;
-            --background-card: #fff;
-            --text-dark: #343a40;
-            --text-light: #6c757d;
-            --body-bg: #f8f9fa;
-            --body-color: #333;
-            --modal-bg: #fefefe;
-            --modal-glass-bg: rgba(255, 255, 255, 0.10);
-            --winner-card-silver-bg: linear-gradient(135deg, #e0e0e0, #bdbdbd);
-            --winner-card-silver-color: #333;
-            --transition-speed: 0.3s;
-        }
-        .dark-mode {
-            --border-color: #4d4d4d;
-            --shadow-color: rgba(0, 0, 0, 0.2);
-            --background-light: #2c2c2e;
-            --background-card: #1c1c1e;
-            --text-dark: #f2f2f7;
-            --text-light: #a0a0a5;
-            --body-bg: #121212;
-            --body-color: #f2f2f7;
-            --modal-bg: #2c2c2e;
-            --modal-glass-bg: rgba(44, 44, 46, 0.5);
-            --winner-card-silver-bg: linear-gradient(135deg, #a8a8a8, #8c8c8c);
-            --winner-card-silver-color: #f2f2f7;
-        }
-        body { font-family: system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, 'Open Sans', 'Helvetica Neue', sans-serif; background-color: var(--body-bg); padding: 10px; color: var(--body-color); transition: background-color var(--transition-speed) ease, color var(--transition-speed) ease; }
-        .container { max-width: 800px; margin: auto; padding-top: 20px; transition: filter 0.3s ease-in-out; }
-        .container.page-blur { filter: blur(5px) brightness(0.7); pointer-events: none; }
-        h2, h3, h4 { text-align: center; color: var(--text-dark); }
-        .summary-panel { display: flex; flex-wrap: nowrap; gap: 10px; margin-bottom: 25px; }
-        .summary-card { display: flex; flex-direction: column; align-items: center; justify-content: center; padding: 12px 5px; background-color: var(--background-card); border-radius: 12px; box-shadow: 0 5px 25px var(--shadow-color); transition: transform 0.2s ease, box-shadow 0.2s ease, background-color var(--transition-speed) ease; border-top: 4px solid; flex: 1 1 0; min-width: 0; text-align: center; }
-        .summary-card:hover { transform: translateY(-5px); box-shadow: 0 10px 30px rgba(0,0,0,0.08); }
-        #card-pago { border-top-color: var(--color-pago); }
-        #card-separado { border-top-color: var(--color-separado); }
-        #card-disponible { border-top-color: var(--color-disponible); }
-        .card-icon { width: 38px; height: 38px; border-radius: 50%; margin-bottom: 8px; display: flex; align-items: center; justify-content: center; flex-shrink: 0; }
-        .card-icon svg { width: 20px; height: 20px; color: white; }
-        #card-pago .card-icon { background-color: var(--color-pago); }
-        #card-separado .card-icon { background-color: var(--color-separado); }
-        #card-disponible .card-icon { background-color: var(--color-disponible); }
-        .info-count { font-size: clamp(1.8em, 4vw, 2.2em); font-weight: 700; color: var(--text-dark); }
-        .info-label { font-size: clamp(0.7em, 2.5vw, 0.8em); margin-top: 4px; color: var(--text-light); text-transform: uppercase; letter-spacing: 0.5px; line-height: 1.1; }
-        .search-section, .raffle-manager, .winner-section { background-color: var(--background-card); padding: 20px; border-radius: 12px; box-shadow: 0 4px 25px var(--shadow-color); margin-bottom: 25px; transition: background-color var(--transition-speed) ease; }
-        .search-box { display: flex; align-items: flex-start; gap: 10px; margin-bottom: 15px; }
-        #searchButton { flex-shrink: 0; width: 48px; height: 48px; padding: 0; border: none; background-color: var(--color-primary); color: white; font-size: 18px; border-radius: 8px; cursor: pointer; transition: background-color 0.2s; display: flex; align-items: center; justify-content: center; }
-        #searchButton:hover { background-color: #0056b3; }
-        #searchResultsContainer { display: flex; flex-direction: column; gap: 12px; min-height: 50px; }
-        @keyframes fadeIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
-        
-        /* --- START: RESPONSIVE SEARCH RESULT STYLES --- */
-        .result-card { 
-            display: flex; 
-            align-items: center; 
-            gap: 15px; 
-            padding: 12px; 
-            background-color: var(--background-light); 
-            border-radius: 8px; 
-            border: 1px solid var(--border-color); 
-            animation: fadeIn 0.4s ease-out forwards;
-            flex-wrap: wrap; /* Allows items to wrap to the next line on small screens */
-        }
-        .result-number { 
-            flex-shrink: 0; 
-            width: 40px; 
-            height: 40px; 
-            border-radius: 50%; 
-            background-color: var(--color-primary); 
-            color: white; 
-            display: flex; 
-            justify-content: center; 
-            align-items: center; 
-            font-size: 1.2em; 
-            font-weight: bold; 
-        }
-        .result-info { 
-            flex-grow: 1; 
-            min-width: 150px; /* Ensures it has space before wrapping */
-        }
-        .result-info .name { 
-            font-weight: bold; 
-            color: var(--text-dark); 
-            margin: 0; 
-            white-space: nowrap; 
-            overflow: hidden; 
-            text-overflow: ellipsis; 
-            font-size: 0.9em;
-        }
-        .result-info .phone { 
-            color: var(--text-light); 
-            font-size: 0.8em; 
-            margin: 2px 0 0 0; 
-        }
-        .status-badge { 
-            padding: 4px 8px; 
-            border-radius: 12px; 
-            color: white; 
-            font-size: 0.7em; 
-            font-weight: bold; 
-            text-transform: uppercase;
-            margin-left: auto; /* Pushes to the right on larger screens */
-        }
-        .generate-ticket-btn {
-            margin-left: 5px; /* Keeps it next to the status badge on large screens */
-        }
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+    <title>Control de Rifas Inmersivo</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" />
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
+    <style>
+        :root {
+            --color-disponible: #751FFF;
+            --color-separado: #ffc107;
+            --color-pago: #84E059;
+            --color-primary: #007bff;
+            --color-danger: #dc3545;
+            --border-color: #ddd;
+            --shadow-color: rgba(0, 0, 0, 0.05);
+            --background-light: #f8f9fa;
+            --background-card: #fff;
+            --text-dark: #343a40;
+            --text-light: #6c757d;
+            --body-bg: #f8f9fa;
+            --body-color: #333;
+            --modal-bg: #fefefe;
+            --modal-glass-bg: rgba(255, 255, 255, 0.10);
+            --winner-card-silver-bg: linear-gradient(135deg, #e0e0e0, #bdbdbd);
+            --winner-card-silver-color: #333;
+            --transition-speed: 0.3s;
+        }
+        .dark-mode {
+            --border-color: #4d4d4d;
+            --shadow-color: rgba(0, 0, 0, 0.2);
+            --background-light: #2c2c2e;
+            --background-card: #1c1c1e;
+            --text-dark: #f2f2f7;
+            --text-light: #a0a0a5;
+            --body-bg: #121212;
+            --body-color: #f2f2f7;
+            --modal-bg: #2c2c2e;
+            --modal-glass-bg: rgba(44, 44, 46, 0.5);
+            --winner-card-silver-bg: linear-gradient(135deg, #a8a8a8, #8c8c8c);
+            --winner-card-silver-color: #f2f2f7;
+        }
+        body { font-family: system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, 'Open Sans', 'Helvetica Neue', sans-serif; background-color: var(--body-bg); padding: 10px; color: var(--body-color); transition: background-color var(--transition-speed) ease, color var(--transition-speed) ease; }
+        .container { max-width: 800px; margin: auto; padding-top: 20px; transition: filter 0.3s ease-in-out; }
+        .container.page-blur { filter: blur(5px) brightness(0.7); pointer-events: none; }
+        h2, h3, h4 { text-align: center; color: var(--text-dark); }
+        .summary-panel { display: flex; flex-wrap: nowrap; gap: 10px; margin-bottom: 25px; }
+        .summary-card { display: flex; flex-direction: column; align-items: center; justify-content: center; padding: 12px 5px; background-color: var(--background-card); border-radius: 12px; box-shadow: 0 5px 25px var(--shadow-color); transition: transform 0.2s ease, box-shadow 0.2s ease, background-color var(--transition-speed) ease; border-top: 4px solid; flex: 1 1 0; min-width: 0; text-align: center; }
+        .summary-card:hover { transform: translateY(-5px); box-shadow: 0 10px 30px rgba(0,0,0,0.08); }
+        #card-pago { border-top-color: var(--color-pago); }
+        #card-separado { border-top-color: var(--color-separado); }
+        #card-disponible { border-top-color: var(--color-disponible); }
+        .card-icon { width: 38px; height: 38px; border-radius: 50%; margin-bottom: 8px; display: flex; align-items: center; justify-content: center; flex-shrink: 0; }
+        .card-icon svg { width: 20px; height: 20px; color: white; }
+        #card-pago .card-icon { background-color: var(--color-pago); }
+        #card-separado .card-icon { background-color: var(--color-separado); }
+        #card-disponible .card-icon { background-color: var(--color-disponible); }
+        .info-count { font-size: clamp(1.8em, 4vw, 2.2em); font-weight: 700; color: var(--text-dark); }
+        .info-label { font-size: clamp(0.7em, 2.5vw, 0.8em); margin-top: 4px; color: var(--text-light); text-transform: uppercase; letter-spacing: 0.5px; line-height: 1.1; }
+        .search-section, .raffle-manager, .winner-section { background-color: var(--background-card); padding: 20px; border-radius: 12px; box-shadow: 0 4px 25px var(--shadow-color); margin-bottom: 25px; transition: background-color var(--transition-speed) ease; }
+        .search-box { display: flex; align-items: flex-start; gap: 10px; margin-bottom: 15px; }
+        #searchButton { flex-shrink: 0; width: 48px; height: 48px; padding: 0; border: none; background-color: var(--color-primary); color: white; font-size: 18px; border-radius: 8px; cursor: pointer; transition: background-color 0.2s; display: flex; align-items: center; justify-content: center; }
+        #searchButton:hover { background-color: #0056b3; }
+        #searchResultsContainer { display: flex; flex-direction: column; gap: 12px; min-height: 50px; }
+        @keyframes fadeIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
+        
+        /* --- START: RESPONSIVE SEARCH RESULT STYLES --- */
+        .result-card { 
+            display: flex; 
+            align-items: center; 
+            gap: 15px; 
+            padding: 12px; 
+            background-color: var(--background-light); 
+            border-radius: 8px; 
+            border: 1px solid var(--border-color); 
+            animation: fadeIn 0.4s ease-out forwards;
+            flex-wrap: wrap; /* Allows items to wrap to the next line on small screens */
+        }
+        .result-number { 
+            flex-shrink: 0; 
+            width: 40px; 
+            height: 40px; 
+            border-radius: 50%; 
+            background-color: var(--color-primary); 
+            color: white; 
+            display: flex; 
+            justify-content: center; 
+            align-items: center; 
+            font-size: 1.2em; 
+            font-weight: bold; 
+        }
+        .result-info { 
+            flex-grow: 1; 
+            min-width: 150px; /* Ensures it has space before wrapping */
+        }
+        .result-info .name { 
+            font-weight: bold; 
+            color: var(--text-dark); 
+            margin: 0; 
+            white-space: nowrap; 
+            overflow: hidden; 
+            text-overflow: ellipsis; 
+            font-size: 0.9em;
+        }
+        .result-info .phone { 
+            color: var(--text-light); 
+            font-size: 0.8em; 
+            margin: 2px 0 0 0; 
+        }
+        .result-info .abono {
+            color: var(--color-pago);
+            font-size: 0.8em;
+            font-weight: bold;
+            margin: 4px 0 0 0;
+        }
+        .status-badge { 
+            padding: 4px 8px; 
+            border-radius: 12px; 
+            color: white; 
+            font-size: 0.7em; 
+            font-weight: bold; 
+            text-transform: uppercase;
+            margin-left: auto; /* Pushes to the right on larger screens */
+        }
+        .generate-ticket-btn {
+            margin-left: 5px; /* Keeps it next to the status badge on large screens */
+        }
 
-        /* On smaller screens, make info and badges take full width */
-        @media (max-width: 480px) {
-            .result-info {
-                flex-basis: 100%; /* Take full width */
-                order: 3; /* Appear last */
-                margin: 5px 0 0 0;
-            }
-            .status-badge {
-                order: 2;
-                margin-left: auto;
-            }
-            .generate-ticket-btn {
-                order: 2;
-                margin-left: 5px;
-            }
-            .result-number {
-                order: 1;
-            }
-        }
-        /* --- END: RESPONSIVE SEARCH RESULT STYLES --- */
+        /* On smaller screens, make info and badges take full width */
+        @media (max-width: 480px) {
+            .result-info {
+                flex-basis: 100%; /* Take full width */
+                order: 3; /* Appear last */
+                margin: 5px 0 0 0;
+            }
+            .status-badge {
+                order: 2;
+                margin-left: auto;
+            }
+            .generate-ticket-btn {
+                order: 2;
+                margin-left: 5px;
+            }
+            .result-number {
+                order: 1;
+            }
+        }
+        /* --- END: RESPONSIVE SEARCH RESULT STYLES --- */
 
-        .status-badge.status-pago { background-color: var(--color-pago); }
-        .status-badge.status-separado { background-color: var(--color-separado); }
-        .no-results-message { text-align: center; padding: 20px; color: var(--text-light); animation: fadeIn 0.4s ease-out forwards; }
-        .no-results-message svg { width: 40px; height: 40px; margin-bottom: 10px; }
-        @keyframes popIn { 0% { transform: scale(0.8); opacity: 0; } 70% { transform: scale(1.15); opacity: 1; } 100% { transform: scale(1); opacity: 1; } }
-        .winner-section h2, #prizeModal h2 { margin-top: 0; margin-bottom: 25px; font-size: clamp(1.8em, 5vw, 2.2em); font-weight: 700; color: var(--text-dark); }
-        .winner-section h2 span { color: var(--color-separado); }
-        .winner-input-display { position: relative; display: flex; justify-content: center; gap: 15px; margin-bottom: 25px; cursor: text; transition: box-shadow 0.3s ease; padding: 10px; border-radius: 12px; }
-        .winner-input-display:focus-within { box-shadow: 0 0 0 4px rgba(255, 193, 7, 0.4); }
-        .digit-circle { width: clamp(40px, 12vw, 65px); height: clamp(40px, 12vw, 65px); border-radius: 50%; border: 2px solid var(--border-color); display: flex; justify-content: center; align-items: center; font-size: clamp(1.6em, 5vw, 2.4em); font-weight: bold; color: var(--text-light); transition: all 0.3s ease; background-color: var(--background-light); box-shadow: inset 0 2px 4px rgba(0,0,0,0.05); }
-        .digit-circle.filled { background: linear-gradient(135deg, var(--color-pago), #008200); border-color: var(--color-pago); color: white; text-shadow: 0 1px 2px rgba(0,0,0,0.2); animation: popIn 0.3s ease-out forwards; }
-        #realWinningInput { position: absolute; top: 0; left: 0; width: 100%; height: 100%; opacity: 0; border: none; background: transparent; outline: none; -webkit-text-security: disc; }
-        #checkWinnerButton { padding: 14px 30px; border: none; border-radius: 8px; cursor: pointer; font-size: 1.2em; background: linear-gradient(135deg, #007bff, #0056b3); color: white; font-weight: bold; transition: all 0.3s ease; box-shadow: 0 4px 15px rgba(0, 123, 255, 0.2); }
-        #checkWinnerButton:hover { transform: translateY(-2px); box-shadow: 0 6px 20px rgba(0, 123, 255, 0.3); filter: brightness(1.1); }
-        #checkWinnerButton:disabled { background: #9e9e9e; cursor: not-allowed; transform: none; box-shadow: none; filter: none; }
-        #winnerResults, #modalWinnerResults { margin-top: 20px; display: flex; flex-direction: column; gap: 15px; min-height: auto; text-align: left; font-size: 1.1em; }
-        .winner-card { border-radius: 12px; padding: 20px; color: white; box-shadow: 0 8px 25px rgba(0, 0, 0, 0.15); transition: transform 0.3s ease, box-shadow 0.3s ease; border: 1px solid rgba(255, 255, 255, 0.2); animation: fadeIn 0.5s ease-out forwards; }
-        .winner-card:hover { transform: translateY(-5px); box-shadow: 0 12px 30px rgba(0, 0, 0, 0.2); }
-        .winner-card.gold { background: linear-gradient(135deg, #ffc107, #ff9800); }
-        .winner-card.silver { background: var(--winner-card-silver-bg); color: var(--winner-card-silver-color); }
-        .winner-card.bronze { background: linear-gradient(135deg, #d39c6f, #b87333); }
-        .winner-card.no-winner { background: linear-gradient(135deg, #6c757d, #495057); }
-        .prize-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 12px; border-bottom: 1px solid rgba(255, 255, 255, 0.3); padding-bottom: 10px; }
-        .winner-card.silver .prize-header { border-bottom-color: rgba(0, 0, 0, 0.1); }
-        .prize-header h3 { margin: 0; font-size: 1.4em; font-weight: 700; text-align: left;}
-        .prize-number-tag { background-color: rgba(0, 0, 0, 0.2); color: white; padding: 5px 12px; border-radius: 15px; font-size: 1.1em; font-weight: bold; }
-        .winner-card.silver .prize-number-tag { background-color: rgba(0, 0, 0, 0.1); color: var(--winner-card-silver-color); }
-        .prize-info .winner-name { font-size: 1.25em; font-weight: bold; margin: 10px 0 5px 0; }
-        .prize-info .winner-phone { font-size: 1em; opacity: 0.9; margin: 0; }
-        .prize-info .no-winner-text { font-size: 1.1em; font-weight: 500; font-style: italic; margin-top: 10px; }
-        .prize-details { margin-top: 10px; text-align: center; }
-        .prize-details .prize-description { font-size: 1.1em; font-weight: 500; margin: 0 0 10px 0; }
-        .prize-media-container { display: flex; gap: 10px; justify-content: center; align-items: center; }
-        .prize-media-container .prize-media { flex: 1; max-width: 50%; height: auto; border-radius: 8px; background-color: rgba(0,0,0,0.1); object-fit: cover; }
-        .prize-card-value { font-size: 1.4em; font-weight: bold; }
-        .prize-card-admin-view { display: flex; flex-direction: column; gap: 8px; }
-        .prize-card-admin-view label { font-size: 0.8em; text-align: left; margin-bottom: -4px; opacity: 0.8; }
-        .prize-card-admin-view input { font-size: 0.9em !important; padding: 8px !important; }
-        #gridContainer { display: grid; grid-template-columns: repeat(10, 1fr); gap: 4px; margin-top: 20px; }
-        .grid-item { display: flex; justify-content: center; align-items: center; aspect-ratio: 1 / 1; border: 1px solid var(--border-color); border-radius: 8px; font-size: clamp(0.7em, 3vw, 1.5em); font-weight: bold; color: white; cursor: pointer; transition: transform 0.2s, background-color 0.2s, border-color 0.2s; }
-        .modal-backdrop { display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background-color: rgba(0,0,0,0.1); opacity: 0; z-index: 999; transition: opacity 0.3s ease-in-out; }
-        .modal-backdrop.visible { display: block; opacity: 0.5; }
-        .modal { display: flex; justify-content: center; align-items: flex-start; position: fixed; z-index: 1000; left: 0; top: 0; width: 100%; height: 100%; overflow: auto; opacity: 0; visibility: hidden; transition: opacity 0.3s ease-in-out, visibility 0.3s; padding-top: 5vh; }
-        #prizeModal { padding: 0; }
-        .modal.visible { opacity: 1; visibility: visible; }
-        @keyframes modal-slide-in { from { transform: translateY(-50px) scale(0.95); opacity: 0; } to { transform: translateY(0) scale(1); opacity: 1; } }
-        .modal.visible .modal-content { animation: modal-slide-in 0.4s cubic-bezier(0.25, 0.46, 0.45, 0.94) forwards; }
-        .modal-content { background-color: var(--modal-bg); padding: 20px; border: 1px solid var(--border-color); width: 90%; max-width: 500px; border-radius: 8px; box-shadow: 0 4px 8px rgba(0,0,0,0.2); transition: background-color var(--transition-speed) ease; }
-        #prizeModal .modal-content { width: 100%; height: 100%; max-width: none; border-radius: 0; border: none; background-color: var(--modal-glass-bg); backdrop-filter: blur(10px); -webkit-backdrop-filter: blur(10px); box-shadow: none; display: flex; flex-direction: column; justify-content: flex-start; padding: 20px; box-sizing: border-box; overflow-y: auto; }
-        #prizeModal h2 { margin-bottom: 15px; }
-        #prizeModal hr { margin: 25px 0; border-color: var(--border-color); opacity: 0.5; }
-        #prizeModal h4 { margin-top: 0; margin-bottom: 15px; }
-        .grid-item:hover { transform: scale(1.05); }
-        .grid-item.status-disponible { background-color: var(--color-disponible); }
-        .grid-item.status-separado { background-color: var(--color-separado); }
-        .grid-item.status-pago { background-color: var(--color-pago); }
-        .modal-header { display: flex; justify-content: space-between; align-items: center; border-bottom: 1px solid var(--border-color); padding-bottom: 10px; margin-bottom: 20px; }
-        .close-button { color: #aaa; font-size: 28px; font-weight: bold; cursor: pointer; }
-        .modal-body label { display: block; margin-top: 15px; margin-bottom: 5px; color: var(--text-dark); }
-        .modal-body input, .modal-body select, .modal-body textarea { width: 100%; padding: 10px; border: 1px solid var(--border-color); border-radius: 4px; box-sizing: border-box; background-color: var(--background-light); color: var(--text-dark); }
-        .modal-footer { text-align: right; margin-top: 20px; }
-        .modal-footer button { padding: 10px 20px; border: none; border-radius: 5px; cursor: pointer; font-size: 16px; transition: background-color 0.2s, transform 0.2s; }
-        .modal-footer button:hover { transform: translateY(-2px); }
-        #saveButton, #saveAllPrizesButton, #saveColorsButton, #downloadTicketButton { background-color: var(--color-primary); color: white; }
-        #deleteButton { background-color: var(--color-danger); color: white; margin-right: 10px; }
-        .raffle-manager { display: flex; flex-wrap: wrap; gap: 10px; align-items: flex-end; }
-        .raffle-selector-container { flex-grow: 1; min-width: 200px; display: flex; flex-direction: column; gap: 10px; }
-        .selector-wrapper-with-button { display: flex; align-items: center; gap: 10px; }
-        .raffle-creator { flex: 1 1 100%; display: none; flex-wrap: wrap; gap: 10px; align-items: flex-end;}
-        .raffle-creator > div { flex: 1 1 200px; }
-        body.admin-view .raffle-creator { display: flex; }
-        .custom-select-wrapper { position: relative; user-select: none; flex-grow: 1; }
-        .select-selected { background-color: var(--background-card); border: 1px solid var(--border-color); border-radius: 8px; padding: 0 40px 0 15px; font-size: 16px; color: var(--text-dark); width: 100%; height: 48px; cursor: pointer; transition: border-color 0.2s, box-shadow 0.2s; display: flex; align-items: center; box-sizing: border-box; }
-        .select-selected.select-arrow-active { border-color: var(--color-primary); box-shadow: 0 0 0 3px rgba(0, 123, 255, 0.25); }
-        .select-selected::after { content: ""; position: absolute; right: 15px; top: 50%; transform: translateY(-50%); width: 0; height: 0; border-left: 6px solid transparent; border-right: 6px solid transparent; border-top: 6px solid var(--text-light); transition: all 0.3s ease; }
-        .select-selected.select-arrow-active::after { transform: translateY(-50%) rotate(180deg); }
-        .select-items { position: absolute; background-color: var(--background-card); top: 100%; left: 0; right: 0; z-index: 99; border: 1px solid var(--border-color); border-radius: 8px; margin-top: 5px; max-height: 200px; overflow-y: auto; box-shadow: 0 8px 16px rgba(0,0,0,0.1); opacity: 0; visibility: hidden; transform: translateY(-10px); transition: all 0.3s ease; }
-        .select-items div { color: var(--text-dark); padding: 12px 16px; cursor: pointer; transition: background-color 0.2s ease, color 0.2s ease; border-bottom: 1px solid var(--border-color); }
-        .select-items div:last-child { border-bottom: none; }
-        .select-items div:hover { background-color: var(--background-light); }
-        .select-hide { opacity: 0; visibility: hidden; transform: translateY(-10px); }
-        .select-show { opacity: 1; visibility: visible; transform: translateY(0); }
-        .search-input-group { position: relative; flex-grow: 1; }
-        .search-input-group .search-icon { position: absolute; left: 15px; top: 50%; transform: translateY(-50%); color: var(--text-light); width: 18px; height: 18px; z-index: 10; }
-        #searchInput { width: 100%; height: 48px; padding: 12px 12px 12px 45px; border: 1px solid var(--border-color); border-radius: 8px; font-size: 16px; transition: border-color 0.2s, box-shadow 0.2s; box-sizing: border-box; background-color: transparent; color: var(--text-dark); }
-        .search-input-group label { position: absolute; pointer-events: none; left: 45px; top: 50%; transform: translateY(-50%); color: var(--text-light); transition: all 0.2s ease-in-out; background-color: var(--background-card); padding: 0 5px; }
-        #searchInput:focus { outline: none; border-color: var(--color-primary); box-shadow: 0 0 0 3px rgba(0, 123, 255, 0.25); }
-        #searchInput:focus + label, #searchInput:not(:placeholder-shown) + label { transform: translateY(-150%) scale(0.8); color: var(--color-primary); }
-        #darkModeToggle { position: fixed; top: 15px; right: 15px; width: 40px; height: 40px; border-radius: 50%; border: 1px solid var(--border-color); background-color: var(--background-card); color: var(--text-light); font-size: 18px; cursor: pointer; display: flex; align-items: center; justify-content: center; z-index: 1001; transition: all var(--transition-speed) ease; }
-        #deleteRifaButton, #settingsButton { display: none; align-items: center; justify-content: center; height: 48px; width: 48px; padding: 0; background-color: transparent; border-radius: 8px; cursor: pointer; transition: all 0.2s ease; flex-shrink: 0; }
-        #prizeButton.visible { display: block; }
-        body.admin-view #deleteRifaButton.visible, body.admin-view #settingsButton.visible { display: flex; }
-        #settingsButton { border: 1px solid var(--color-primary); color: var(--color-primary); }
-        #settingsButton:hover { background-color: var(--color-primary); color: white; }
-        .color-setting { display: flex; align-items: center; justify-content: space-between; gap: 15px; margin-bottom: 20px; }
-        .color-setting label { margin: 0; font-weight: 500; color: var(--text-dark); }
-        .color-setting input[type="color"] { -webkit-appearance: none; -moz-appearance: none; appearance: none; width: 60px; height: 35px; background-color: transparent; border: 1px solid var(--border-color); border-radius: 5px; cursor: pointer; }
-        .color-setting input[type="color"]::-webkit-color-swatch-wrapper { padding: 0; }
-        .color-setting input[type="color"]::-webkit-color-swatch { border: none; border-radius: 4px; }
-        #deleteRifaButton { border: 1px solid var(--color-danger); color: var(--color-danger); }
-        #deleteRifaButton:hover { background-color: var(--color-danger); color: white; }
-        @keyframes prizeButtonShimmer { 0% { transform: translateX(-100%) skewX(-20deg); } 100% { transform: translateX(100%) skewX(-20deg); } }
-        #prizeButton { display: none; position: relative; width: 100%; padding: 12px 20px; font-size: 1.1em; font-weight: bold; color: white; background: linear-gradient(135deg, #84E059, #6ACF4F); border: none; border-radius: 8px; cursor: pointer; box-shadow: 0 4px 15px rgba(132, 224, 89, 0.2); transition: all 0.3s cubic-bezier(0.25, 0.8, 0.25, 1); overflow: hidden; background-size: 100% 100%; }
-        #prizeButton::after { content: ''; position: absolute; top: 0; left: 0; width: 50%; height: 100%; background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.4), transparent); transform: translateX(-100%) skewX(-20deg); animation: prizeButtonShimmer 3s infinite; animation-delay: 1s; }
-        #prizeButton:hover { transform: translateY(-4px); background-size: 120% 120%; box-shadow: 0 8px 25px rgba(132, 224, 89, 0.3); filter: brightness(1.05); }
-        #prizeButton:active { transform: translateY(0); }
-        .prize-icon { display: inline-block; transition: transform 0.3s ease; }
-        #prizeButton:hover .prize-icon { transform: scale(1.2) rotate(8deg); }
-        #prizeButton.visible { display: block; }
-        #prize-info-section { display: flex; flex-wrap: wrap; gap: 10px; justify-content: center; }
-        .prize-card { transition: all 0.3s ease; text-align: center; border-radius: 12px; padding: 15px; flex: 1 1 250px; max-width: 320px; }
-        @keyframes card-pulse-glow { 50% { transform: scale(1.07); box-shadow: 0 0 25px 5px var(--glow-color, #fff); } }
-        .prize-card.highlight { transform: translateY(-5px) scale(1.02); box-shadow: 0 8px 25px rgba(0,0,0,0.2); }
-        .prize-card-title { font-size: 0.9em; font-weight: bold; display: flex; align-items: center; justify-content: center; gap: 8px; margin-bottom: 10px; }
-        .prize-card.mayor { background: linear-gradient(135deg, #ffeb3b, #ffc107); color: #333; }
-        .prize-card.segundo { background: linear-gradient(135deg, #f5f5f5, #bdbdbd); color: #333; }
-        .prize-card.tercero { background: linear-gradient(135deg, #ffc8a1, #b87333); color: white; }
-        #prize-simulator-section { padding: 20px; border: 2px dashed var(--border-color); border-radius: 8px; text-align: center; margin-top: 20px; }
-        .digit-slots-container { display: flex; justify-content: center; gap: 15px; margin-bottom: 20px; position: relative; cursor: text; }
-        .digit-circle-simulator { position: relative; overflow: hidden; width: clamp(45px, 12vw, 70px); aspect-ratio: 1/1; background-color: var(--background-light); border: 2px solid var(--border-color); border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: clamp(2em, 8vw, 3em); font-weight: bold; color: var(--text-dark); transition: all 0.3s; box-shadow: inset 0 2px 5px rgba(0,0,0,0.1); }
-        .digit-circle-simulator::before { content: ''; position: absolute; bottom: 0; left: 0; right: 0; height: 0; background: linear-gradient(to top, var(--color-primary), #4dabf7); transition: height 0.4s ease-in-out; z-index: 0; }
-        .digit-circle-simulator.liquid-filled::before { height: 100%; }
-        .digit-circle-simulator span { position: relative; z-index: 1; color: var(--text-dark); transition: color 0.3s; display: inline-block; }
-        .digit-circle-simulator.liquid-filled span { color: white; }
-        .digit-circle-simulator.selected-digit { background-color: var(--color-pago); border-color: #69c340; }
-        .digit-circle-simulator.selected-digit span { color: white; animation: digit-depth-glow 0.8s ease-in-out; }
-        @keyframes digit-depth-glow { 0% { transform: scale(1); text-shadow: none; } 50% { transform: scale(1.1); text-shadow: 0 0 12px rgba(255, 255, 150, 0.8); } 100% { transform: scale(1); text-shadow: none; } }
-        #modalWinningInput { position: absolute; opacity: 0; width: 100%; height: 100%; top: 0; left: 0; border: none; background: transparent; -webkit-text-security: disc;}
-        .prize-zones-container { position: absolute; top: 0; left: 0; width: 100%; height: 100%; display: flex; justify-content: center; gap: 15px; visibility: hidden; }
-        .prize-zones-container.active { visibility: visible; }
-        .prize-zone { position: absolute; height: 100%; border-radius: 50%; cursor: pointer; transition: all 0.3s ease; }
-        .prize-zone:hover { background: rgba(0, 123, 255, 0.1); }
-        #prizeZoneSecond { left: -7.5px; width: calc(50% + 7.5px); }
-        #prizeZoneThird { left: calc(25% - 7.5px); width: calc(50% + 7.5px); }
-        #prizeZoneMayor { right: -7.5px; width: calc(50% + 7.5px); }
-        #anticipados-section { margin-top: 25px; }
-        #admin-anticipado-form { display: none; background-color: var(--background-card); border: 1px solid var(--border-color); padding: 20px; border-radius: 8px; margin-bottom: 25px; }
-        body.admin-view #admin-anticipado-form { display: flex; flex-direction: column; gap: 15px; }
-        #admin-anticipado-form h4 { margin: 0 0 5px 0; text-align: left; }
-        #addAnticipadoButton { padding: 10px; background-color: var(--color-pago); color: white; border: none; border-radius: 5px; cursor: pointer; font-weight: bold; font-size: 1em; }
-        #anticipados-container-public { display: none; }
-        #anticipados-list { display: grid; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); gap: 15px; }
-        .anticipado-card { background-color: var(--background-card); border: 1px solid var(--border-color); border-radius: 12px; padding: 20px; display: flex; flex-direction: column; justify-content: space-between; box-shadow: 0 4px 15px var(--shadow-color); transition: transform 0.3s ease, box-shadow 0.3s ease; animation: fadeIn 0.4s ease-out; }
-        .anticipado-card:hover { transform: translateY(-4px); box-shadow: 0 8px 25px rgba(0,0,0,0.1); }
-        .dark-mode .anticipado-card:hover { box-shadow: 0 8px 25px rgba(0,0,0,0.25); }
-        .anticipado-card .view-mode { display: flex; flex-direction: column; justify-content: space-between; width: 100%; gap: 15px; flex-grow: 1; }
-        .anticipado-info .anticipado-valor-display { font-size: 1.8em; font-weight: 700; color: var(--color-pago); display: flex; align-items: center; gap: 10px; margin-bottom: 15px; border-bottom: 1px solid var(--border-color); padding-bottom: 12px; }
-        .anticipado-info .anticipado-valor-display .fa-coins { color: var(--color-separado); }
-        .anticipado-info .anticipado-meta { font-size: 0.95em; color: var(--text-light); display: flex; flex-direction: column; gap: 8px; text-align: left; }
-        .anticipado-info .anticipado-meta div { display: flex; align-items: center; gap: 8px; }
-        .anticipado-info .anticipado-meta i { color: var(--color-primary); width: 16px; text-align: center; }
-        .anticipado-card-actions { display: none; gap: 8px; align-self: flex-end; }
-        body.admin-view .anticipado-card-actions { display: flex; }
-        .admin-action-btn, .generate-ticket-btn { background-color: transparent; border: 1px solid; width: 35px; height: 35px; border-radius: 50%; cursor: pointer; transition: all 0.2s; display: flex; align-items: center; justify-content: center; flex-shrink: 0; font-size: 14px; }
-        .admin-action-btn:hover, .generate-ticket-btn:hover { color: white; }
-        .edit-anticipado-btn { border-color: var(--color-primary); color: var(--color-primary); }
-        .edit-anticipado-btn:hover { background-color: var(--color-primary); }
-        .delete-anticipado-btn { border-color: var(--color-danger); color: var(--color-danger); }
-        .delete-anticipado-btn:hover { background-color: var(--color-danger); }
-        .generate-ticket-btn { border-color: var(--color-pago); color: var(--color-pago); margin-left: auto; }
-        .generate-ticket-btn:hover { background-color: var(--color-pago); }
-        .anticipado-card .edit-mode { display: none; width: 100%; flex-direction: column; gap: 10px; }
-        .anticipado-card .edit-mode input { padding: 8px; }
-        .anticipado-card .edit-mode-actions { display: flex; gap: 10px; justify-content: flex-end; margin-top: 5px; }
-        .anticipado-card .edit-mode-actions button { padding: 8px 12px; border-radius: 5px; border: none; cursor: pointer; }
-        .anticipado-card .edit-mode-actions .save-edit-anticipado-btn { background-color: var(--color-primary); color: white; }
-        .anticipado-card .edit-mode-actions .cancel-edit-anticipado-btn { background-color: var(--background-light); color: var(--text-dark); border: 1px solid var(--border-color); }
-        
-        /* --- START: PROFESSIONAL TICKET STYLES --- */
-        #ticket-template {
-            display: none;
-            position: absolute;
-            left: -9999px;
-            width: 400px;
-        }
-        #ticket-preview {
-            width: 100%;
-            max-width: 400px;
-            margin: 0 auto 20px auto;
-            transition: all 0.3s;
-        }
-        #ticket-preview .ticket-container {
-            background: var(--background-card);
-            color: var(--text-dark);
-            font-family: 'Segoe UI', Roboto, sans-serif;
-            border-radius: 12px;
-            box-shadow: 0 5px 20px var(--shadow-color);
-            display: flex;
-            flex-direction: column;
-            overflow: hidden;
-            border: 1px solid var(--border-color);
-        }
-        .dark-mode #ticket-preview .ticket-container {
-            box-shadow: 0 5px 20px rgba(0,0,0,0.2);
-            border-color: var(--border-color);
-        }
-        .ticket-header {
-            background-color: var(--color-primary);
-            color: white;
-            padding: 20px;
-            text-align: center;
-        }
-        .ticket-header h3 {
-            font-size: 1.5em;
-            font-weight: bold;
-            margin: 0 0 5px 0;
-            color: white;
-        }
-        .ticket-header p {
-            font-size: 0.9em;
-            margin: 0;
-            opacity: 0.8;
-        }
-        .ticket-body {
-            padding: 20px;
-        }
-        .ticket-section {
-            margin-bottom: 15px;
-            padding-bottom: 15px;
-            border-bottom: 1px dashed var(--border-color);
-        }
-        .ticket-section:last-child {
-            margin-bottom: 0;
-            padding-bottom: 0;
-            border-bottom: none;
-        }
-        .ticket-section h4 {
-            font-size: 0.9em;
-            font-weight: bold;
-            color: var(--text-dark);
-            margin-top: 0;
-            margin-bottom: 10px;
-            text-transform: uppercase;
-            letter-spacing: 0.5px;
-            text-align: left;
-        }
-        .ticket-info {
-            text-align: left;
-        }
-        .ticket-info p {
-            display: flex;
-            justify-content: space-between;
-            font-size: 0.9em;
-            margin: 5px 0;
-        }
-        .ticket-info strong {
-            color: var(--text-dark);
-            margin-right: 10px;
-        }
-        .ticket-info span {
-            color: var(--text-light);
-            text-align: right;
-        }
-        .ticket-prizes ul {
-            list-style: none;
-            padding: 0;
-            margin: 5px 0 0 0;
-            text-align: left;
-        }
-        .ticket-prizes ul li {
-            font-size: 0.9em;
-            color: var(--text-light);
-            margin-bottom: 3px;
-        }
-        .ticket-prizes ul li strong {
-            color: var(--text-dark);
-        }
-        #ticket-anticipados-section {
-            display: none; /* Hidden by default */
-        }
-        .ticket-number-section {
-            background-color: var(--background-light);
-            border: 1px solid var(--border-color);
-            border-radius: 8px;
-            padding: 15px;
-            margin-bottom: 15px;
-            text-align: center;
-        }
-        .ticket-number-section p {
-            font-size: 0.8em;
-            color: var(--text-light);
-            margin: 0 0 5px 0;
-            text-transform: uppercase;
-        }
-        .ticket-number {
-            font-family: 'Roboto Mono', monospace;
-            font-size: 2.5em;
-            font-weight: bold;
-            color: var(--color-pago);
-            margin: 0;
-        }
-        .ticket-status {
-            font-weight: bold;
-            text-transform: uppercase;
-            font-size: 0.8em;
-            padding: 5px 10px;
-            border-radius: 5px;
-            display: inline-block;
-            margin-top: 5px;
-        }
-        .ticket-status.pago { background-color: var(--color-pago); color: white; }
-        .ticket-status.separado { background-color: var(--color-separado); color: var(--text-dark); }
-        .qr-section {
-            text-align: center;
-            margin-top: 15px;
-        }
-        #ticket-qr-code {
-            width: 80px;
-            height: 80px;
-            background-color: white;
-            border-radius: 4px;
-        }
-        .qr-section p {
-            font-size: 0.7em;
-            color: var(--text-light);
-            margin-top: 5px;
-        }
-        .ticket-footer {
-            padding-top: 15px;
-            text-align: center;
-            font-size: 0.7em;
-            color: var(--text-light);
-            border-top: 1px dashed var(--border-color);
-            margin-top: 15px;
-        }
-        /* --- END: PROFESSIONAL TICKET STYLES --- */
+        .status-badge.status-pago { background-color: var(--color-pago); }
+        .status-badge.status-separado { background-color: var(--color-separado); }
+        .no-results-message { text-align: center; padding: 20px; color: var(--text-light); animation: fadeIn 0.4s ease-out forwards; }
+        .no-results-message svg { width: 40px; height: 40px; margin-bottom: 10px; }
+        @keyframes popIn { 0% { transform: scale(0.8); opacity: 0; } 70% { transform: scale(1.15); opacity: 1; } 100% { transform: scale(1); opacity: 1; } }
+        .winner-section h2, #prizeModal h2 { margin-top: 0; margin-bottom: 25px; font-size: clamp(1.8em, 5vw, 2.2em); font-weight: 700; color: var(--text-dark); }
+        .winner-section h2 span { color: var(--color-separado); }
+        .winner-input-display { position: relative; display: flex; justify-content: center; gap: 15px; margin-bottom: 25px; cursor: text; transition: box-shadow 0.3s ease; padding: 10px; border-radius: 12px; }
+        .winner-input-display:focus-within { box-shadow: 0 0 0 4px rgba(255, 193, 7, 0.4); }
+        .digit-circle { width: clamp(40px, 12vw, 65px); height: clamp(40px, 12vw, 65px); border-radius: 50%; border: 2px solid var(--border-color); display: flex; justify-content: center; align-items: center; font-size: clamp(1.6em, 5vw, 2.4em); font-weight: bold; color: var(--text-light); transition: all 0.3s ease; background-color: var(--background-light); box-shadow: inset 0 2px 4px rgba(0,0,0,0.05); }
+        .digit-circle.filled { background: linear-gradient(135deg, var(--color-pago), #008200); border-color: var(--color-pago); color: white; text-shadow: 0 1px 2px rgba(0,0,0,0.2); animation: popIn 0.3s ease-out forwards; }
+        #realWinningInput { position: absolute; top: 0; left: 0; width: 100%; height: 100%; opacity: 0; border: none; background: transparent; outline: none; -webkit-text-security: disc; }
+        #checkWinnerButton { padding: 14px 30px; border: none; border-radius: 8px; cursor: pointer; font-size: 1.2em; background: linear-gradient(135deg, #007bff, #0056b3); color: white; font-weight: bold; transition: all 0.3s ease; box-shadow: 0 4px 15px rgba(0, 123, 255, 0.2); }
+        #checkWinnerButton:hover { transform: translateY(-2px); box-shadow: 0 6px 20px rgba(0, 123, 255, 0.3); filter: brightness(1.1); }
+        #checkWinnerButton:disabled { background: #9e9e9e; cursor: not-allowed; transform: none; box-shadow: none; filter: none; }
+        #winnerResults, #modalWinnerResults { margin-top: 20px; display: flex; flex-direction: column; gap: 15px; min-height: auto; text-align: left; font-size: 1.1em; }
+        .winner-card { border-radius: 12px; padding: 20px; color: white; box-shadow: 0 8px 25px rgba(0, 0, 0, 0.15); transition: transform 0.3s ease, box-shadow 0.3s ease; border: 1px solid rgba(255, 255, 255, 0.2); animation: fadeIn 0.5s ease-out forwards; }
+        .winner-card:hover { transform: translateY(-5px); box-shadow: 0 12px 30px rgba(0, 0, 0, 0.2); }
+        .winner-card.gold { background: linear-gradient(135deg, #ffc107, #ff9800); }
+        .winner-card.silver { background: var(--winner-card-silver-bg); color: var(--winner-card-silver-color); }
+        .winner-card.bronze { background: linear-gradient(135deg, #d39c6f, #b87333); }
+        .winner-card.no-winner { background: linear-gradient(135deg, #6c757d, #495057); }
+        .prize-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 12px; border-bottom: 1px solid rgba(255, 255, 255, 0.3); padding-bottom: 10px; }
+        .winner-card.silver .prize-header { border-bottom-color: rgba(0, 0, 0, 0.1); }
+        .prize-header h3 { margin: 0; font-size: 1.4em; font-weight: 700; text-align: left;}
+        .prize-number-tag { background-color: rgba(0, 0, 0, 0.2); color: white; padding: 5px 12px; border-radius: 15px; font-size: 1.1em; font-weight: bold; }
+        .winner-card.silver .prize-number-tag { background-color: rgba(0, 0, 0, 0.1); color: var(--winner-card-silver-color); }
+        .prize-info .winner-name { font-size: 1.25em; font-weight: bold; margin: 10px 0 5px 0; }
+        .prize-info .winner-phone { font-size: 1em; opacity: 0.9; margin: 0; }
+        .prize-info .no-winner-text { font-size: 1.1em; font-weight: 500; font-style: italic; margin-top: 10px; }
+        .prize-details { margin-top: 10px; text-align: center; }
+        .prize-details .prize-description { font-size: 1.1em; font-weight: 500; margin: 0 0 10px 0; }
+        .prize-media-container { display: flex; gap: 10px; justify-content: center; align-items: center; }
+        .prize-media-container .prize-media { flex: 1; max-width: 50%; height: auto; border-radius: 8px; background-color: rgba(0,0,0,0.1); object-fit: cover; }
+        .prize-card-value { font-size: 1.4em; font-weight: bold; }
+        .prize-card-admin-view { display: flex; flex-direction: column; gap: 8px; }
+        .prize-card-admin-view label { font-size: 0.8em; text-align: left; margin-bottom: -4px; opacity: 0.8; }
+        .prize-card-admin-view input { font-size: 0.9em !important; padding: 8px !important; }
+        #gridContainer { display: grid; grid-template-columns: repeat(10, 1fr); gap: 4px; margin-top: 20px; }
+        .grid-item { display: flex; justify-content: center; align-items: center; aspect-ratio: 1 / 1; border: 1px solid var(--border-color); border-radius: 8px; font-size: clamp(0.7em, 3vw, 1.5em); font-weight: bold; color: white; cursor: pointer; transition: transform 0.2s, background-color 0.2s, border-color 0.2s; }
+        .modal-backdrop { display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background-color: rgba(0,0,0,0.1); opacity: 0; z-index: 999; transition: opacity 0.3s ease-in-out; }
+        .modal-backdrop.visible { display: block; opacity: 0.5; }
+        .modal { display: flex; justify-content: center; align-items: flex-start; position: fixed; z-index: 1000; left: 0; top: 0; width: 100%; height: 100%; overflow: auto; opacity: 0; visibility: hidden; transition: opacity 0.3s ease-in-out, visibility 0.3s; padding-top: 5vh; }
+        #prizeModal { padding: 0; }
+        .modal.visible { opacity: 1; visibility: visible; }
+        @keyframes modal-slide-in { from { transform: translateY(-50px) scale(0.95); opacity: 0; } to { transform: translateY(0) scale(1); opacity: 1; } }
+        .modal.visible .modal-content { animation: modal-slide-in 0.4s cubic-bezier(0.25, 0.46, 0.45, 0.94) forwards; }
+        .modal-content { background-color: var(--modal-bg); padding: 20px; border: 1px solid var(--border-color); width: 90%; max-width: 500px; border-radius: 8px; box-shadow: 0 4px 8px rgba(0,0,0,0.2); transition: background-color var(--transition-speed) ease; }
+        #prizeModal .modal-content { width: 100%; height: 100%; max-width: none; border-radius: 0; border: none; background-color: var(--modal-glass-bg); backdrop-filter: blur(10px); -webkit-backdrop-filter: blur(10px); box-shadow: none; display: flex; flex-direction: column; justify-content: flex-start; padding: 20px; box-sizing: border-box; overflow-y: auto; }
+        #prizeModal h2 { margin-bottom: 15px; }
+        #prizeModal hr { margin: 25px 0; border-color: var(--border-color); opacity: 0.5; }
+        #prizeModal h4 { margin-top: 0; margin-bottom: 15px; }
+        .grid-item:hover { transform: scale(1.05); }
+        .grid-item.status-disponible { background-color: var(--color-disponible); }
+        .grid-item.status-separado { background-color: var(--color-separado); }
+        .grid-item.status-pago { background-color: var(--color-pago); }
+        .modal-header { display: flex; justify-content: space-between; align-items: center; border-bottom: 1px solid var(--border-color); padding-bottom: 10px; margin-bottom: 20px; }
+        .close-button { color: #aaa; font-size: 28px; font-weight: bold; cursor: pointer; }
+        .modal-body label { display: block; margin-top: 15px; margin-bottom: 5px; color: var(--text-dark); }
+        .modal-body input, .modal-body select, .modal-body textarea { width: 100%; padding: 10px; border: 1px solid var(--border-color); border-radius: 4px; box-sizing: border-box; background-color: var(--background-light); color: var(--text-dark); }
+        .modal-footer { text-align: right; margin-top: 20px; }
+        .modal-footer button { padding: 10px 20px; border: none; border-radius: 5px; cursor: pointer; font-size: 16px; transition: background-color 0.2s, transform 0.2s; }
+        .modal-footer button:hover { transform: translateY(-2px); }
+        #saveButton, #saveAllPrizesButton, #saveColorsButton, #downloadTicketButton { background-color: var(--color-primary); color: white; }
+        #deleteButton { background-color: var(--color-danger); color: white; margin-right: 10px; }
+        .raffle-manager { display: flex; flex-wrap: wrap; gap: 10px; align-items: flex-end; }
+        .raffle-selector-container { flex-grow: 1; min-width: 200px; display: flex; flex-direction: column; gap: 10px; }
+        .selector-wrapper-with-button { display: flex; align-items: center; gap: 10px; }
+        .raffle-creator { flex: 1 1 100%; display: none; flex-wrap: wrap; gap: 10px; align-items: flex-end;}
+        .raffle-creator > div { flex: 1 1 200px; }
+        body.admin-view .raffle-creator { display: flex; }
+        .custom-select-wrapper { position: relative; user-select: none; flex-grow: 1; }
+        .select-selected { background-color: var(--background-card); border: 1px solid var(--border-color); border-radius: 8px; padding: 0 40px 0 15px; font-size: 16px; color: var(--text-dark); width: 100%; height: 48px; cursor: pointer; transition: border-color 0.2s, box-shadow 0.2s; display: flex; align-items: center; box-sizing: border-box; }
+        .select-selected.select-arrow-active { border-color: var(--color-primary); box-shadow: 0 0 0 3px rgba(0, 123, 255, 0.25); }
+        .select-selected::after { content: ""; position: absolute; right: 15px; top: 50%; transform: translateY(-50%); width: 0; height: 0; border-left: 6px solid transparent; border-right: 6px solid transparent; border-top: 6px solid var(--text-light); transition: all 0.3s ease; }
+        .select-selected.select-arrow-active::after { transform: translateY(-50%) rotate(180deg); }
+        .select-items { position: absolute; background-color: var(--background-card); top: 100%; left: 0; right: 0; z-index: 99; border: 1px solid var(--border-color); border-radius: 8px; margin-top: 5px; max-height: 200px; overflow-y: auto; box-shadow: 0 8px 16px rgba(0,0,0,0.1); opacity: 0; visibility: hidden; transform: translateY(-10px); transition: all 0.3s ease; }
+        .select-items div { color: var(--text-dark); padding: 12px 16px; cursor: pointer; transition: background-color 0.2s ease, color 0.2s ease; border-bottom: 1px solid var(--border-color); }
+        .select-items div:last-child { border-bottom: none; }
+        .select-items div:hover { background-color: var(--background-light); }
+        .select-hide { opacity: 0; visibility: hidden; transform: translateY(-10px); }
+        .select-show { opacity: 1; visibility: visible; transform: translateY(0); }
+        .search-input-group { position: relative; flex-grow: 1; }
+        .search-input-group .search-icon { position: absolute; left: 15px; top: 50%; transform: translateY(-50%); color: var(--text-light); width: 18px; height: 18px; z-index: 10; }
+        #searchInput { width: 100%; height: 48px; padding: 12px 12px 12px 45px; border: 1px solid var(--border-color); border-radius: 8px; font-size: 16px; transition: border-color 0.2s, box-shadow 0.2s; box-sizing: border-box; background-color: transparent; color: var(--text-dark); }
+        .search-input-group label { position: absolute; pointer-events: none; left: 45px; top: 50%; transform: translateY(-50%); color: var(--text-light); transition: all 0.2s ease-in-out; background-color: var(--background-card); padding: 0 5px; }
+        #searchInput:focus { outline: none; border-color: var(--color-primary); box-shadow: 0 0 0 3px rgba(0, 123, 255, 0.25); }
+        #searchInput:focus + label, #searchInput:not(:placeholder-shown) + label { transform: translateY(-150%) scale(0.8); color: var(--color-primary); }
+        #darkModeToggle { position: fixed; top: 15px; right: 15px; width: 40px; height: 40px; border-radius: 50%; border: 1px solid var(--border-color); background-color: var(--background-card); color: var(--text-light); font-size: 18px; cursor: pointer; display: flex; align-items: center; justify-content: center; z-index: 1001; transition: all var(--transition-speed) ease; }
+        #deleteRifaButton, #settingsButton { display: none; align-items: center; justify-content: center; height: 48px; width: 48px; padding: 0; background-color: transparent; border-radius: 8px; cursor: pointer; transition: all 0.2s ease; flex-shrink: 0; }
+        #prizeButton.visible { display: block; }
+        body.admin-view #deleteRifaButton.visible, body.admin-view #settingsButton.visible { display: flex; }
+        #settingsButton { border: 1px solid var(--color-primary); color: var(--color-primary); }
+        #settingsButton:hover { background-color: var(--color-primary); color: white; }
+        .color-setting { display: flex; align-items: center; justify-content: space-between; gap: 15px; margin-bottom: 20px; }
+        .color-setting label { margin: 0; font-weight: 500; color: var(--text-dark); }
+        .color-setting input[type="color"] { -webkit-appearance: none; -moz-appearance: none; appearance: none; width: 60px; height: 35px; background-color: transparent; border: 1px solid var(--border-color); border-radius: 5px; cursor: pointer; }
+        .color-setting input[type="color"]::-webkit-color-swatch-wrapper { padding: 0; }
+        .color-setting input[type="color"]::-webkit-color-swatch { border: none; border-radius: 4px; }
+        #deleteRifaButton { border: 1px solid var(--color-danger); color: var(--color-danger); }
+        #deleteRifaButton:hover { background-color: var(--color-danger); color: white; }
+        @keyframes prizeButtonShimmer { 0% { transform: translateX(-100%) skewX(-20deg); } 100% { transform: translateX(100%) skewX(-20deg); } }
+        #prizeButton { display: none; position: relative; width: 100%; padding: 12px 20px; font-size: 1.1em; font-weight: bold; color: white; background: linear-gradient(135deg, #84E059, #6ACF4F); border: none; border-radius: 8px; cursor: pointer; box-shadow: 0 4px 15px rgba(132, 224, 89, 0.2); transition: all 0.3s cubic-bezier(0.25, 0.8, 0.25, 1); overflow: hidden; background-size: 100% 100%; }
+        #prizeButton::after { content: ''; position: absolute; top: 0; left: 0; width: 50%; height: 100%; background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.4), transparent); transform: translateX(-100%) skewX(-20deg); animation: prizeButtonShimmer 3s infinite; animation-delay: 1s; }
+        #prizeButton:hover { transform: translateY(-4px); background-size: 120% 120%; box-shadow: 0 8px 25px rgba(132, 224, 89, 0.3); filter: brightness(1.05); }
+        #prizeButton:active { transform: translateY(0); }
+        .prize-icon { display: inline-block; transition: transform 0.3s ease; }
+        #prizeButton:hover .prize-icon { transform: scale(1.2) rotate(8deg); }
+        #prizeButton.visible { display: block; }
+        #prize-info-section { display: flex; flex-wrap: wrap; gap: 10px; justify-content: center; }
+        .prize-card { transition: all 0.3s ease; text-align: center; border-radius: 12px; padding: 15px; flex: 1 1 250px; max-width: 320px; }
+        @keyframes card-pulse-glow { 50% { transform: scale(1.07); box-shadow: 0 0 25px 5px var(--glow-color, #fff); } }
+        .prize-card.highlight { transform: translateY(-5px) scale(1.02); box-shadow: 0 8px 25px rgba(0,0,0,0.2); }
+        .prize-card-title { font-size: 0.9em; font-weight: bold; display: flex; align-items: center; justify-content: center; gap: 8px; margin-bottom: 10px; }
+        .prize-card.mayor { background: linear-gradient(135deg, #ffeb3b, #ffc107); color: #333; }
+        .prize-card.segundo { background: linear-gradient(135deg, #f5f5f5, #bdbdbd); color: #333; }
+        .prize-card.tercero { background: linear-gradient(135deg, #ffc8a1, #b87333); color: white; }
+        #prize-simulator-section { padding: 20px; border: 2px dashed var(--border-color); border-radius: 8px; text-align: center; margin-top: 20px; }
+        .digit-slots-container { display: flex; justify-content: center; gap: 15px; margin-bottom: 20px; position: relative; cursor: text; }
+        .digit-circle-simulator { position: relative; overflow: hidden; width: clamp(45px, 12vw, 70px); aspect-ratio: 1/1; background-color: var(--background-light); border: 2px solid var(--border-color); border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: clamp(2em, 8vw, 3em); font-weight: bold; color: var(--text-dark); transition: all 0.3s; box-shadow: inset 0 2px 5px rgba(0,0,0,0.1); }
+        .digit-circle-simulator::before { content: ''; position: absolute; bottom: 0; left: 0; right: 0; height: 0; background: linear-gradient(to top, var(--color-primary), #4dabf7); transition: height 0.4s ease-in-out; z-index: 0; }
+        .digit-circle-simulator.liquid-filled::before { height: 100%; }
+        .digit-circle-simulator span { position: relative; z-index: 1; color: var(--text-dark); transition: color 0.3s; display: inline-block; }
+        .digit-circle-simulator.liquid-filled span { color: white; }
+        .digit-circle-simulator.selected-digit { background-color: var(--color-pago); border-color: #69c340; }
+        .digit-circle-simulator.selected-digit span { color: white; animation: digit-depth-glow 0.8s ease-in-out; }
+        @keyframes digit-depth-glow { 0% { transform: scale(1); text-shadow: none; } 50% { transform: scale(1.1); text-shadow: 0 0 12px rgba(255, 255, 150, 0.8); } 100% { transform: scale(1); text-shadow: none; } }
+        #modalWinningInput { position: absolute; opacity: 0; width: 100%; height: 100%; top: 0; left: 0; border: none; background: transparent; -webkit-text-security: disc;}
+        .prize-zones-container { position: absolute; top: 0; left: 0; width: 100%; height: 100%; display: flex; justify-content: center; gap: 15px; visibility: hidden; }
+        .prize-zones-container.active { visibility: visible; }
+        .prize-zone { position: absolute; height: 100%; border-radius: 50%; cursor: pointer; transition: all 0.3s ease; }
+        .prize-zone:hover { background: rgba(0, 123, 255, 0.1); }
+        #prizeZoneSecond { left: -7.5px; width: calc(50% + 7.5px); }
+        #prizeZoneThird { left: calc(25% - 7.5px); width: calc(50% + 7.5px); }
+        #prizeZoneMayor { right: -7.5px; width: calc(50% + 7.5px); }
+        #anticipados-section { margin-top: 25px; }
+        #admin-anticipado-form { display: none; background-color: var(--background-card); border: 1px solid var(--border-color); padding: 20px; border-radius: 8px; margin-bottom: 25px; }
+        body.admin-view #admin-anticipado-form { display: flex; flex-direction: column; gap: 15px; }
+        #admin-anticipado-form h4 { margin: 0 0 5px 0; text-align: left; }
+        #addAnticipadoButton { padding: 10px; background-color: var(--color-pago); color: white; border: none; border-radius: 5px; cursor: pointer; font-weight: bold; font-size: 1em; }
+        #anticipados-container-public { display: none; }
+        #anticipados-list { display: grid; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); gap: 15px; }
+        .anticipado-card { background-color: var(--background-card); border: 1px solid var(--border-color); border-radius: 12px; padding: 20px; display: flex; flex-direction: column; justify-content: space-between; box-shadow: 0 4px 15px var(--shadow-color); transition: transform 0.3s ease, box-shadow 0.3s ease; animation: fadeIn 0.4s ease-out; }
+        .anticipado-card:hover { transform: translateY(-4px); box-shadow: 0 8px 25px rgba(0,0,0,0.1); }
+        .dark-mode .anticipado-card:hover { box-shadow: 0 8px 25px rgba(0,0,0,0.25); }
+        .anticipado-card .view-mode { display: flex; flex-direction: column; justify-content: space-between; width: 100%; gap: 15px; flex-grow: 1; }
+        .anticipado-info .anticipado-valor-display { font-size: 1.8em; font-weight: 700; color: var(--color-pago); display: flex; align-items: center; gap: 10px; margin-bottom: 15px; border-bottom: 1px solid var(--border-color); padding-bottom: 12px; }
+        .anticipado-info .anticipado-valor-display .fa-coins { color: var(--color-separado); }
+        .anticipado-info .anticipado-meta { font-size: 0.95em; color: var(--text-light); display: flex; flex-direction: column; gap: 8px; text-align: left; }
+        .anticipado-info .anticipado-meta div { display: flex; align-items: center; gap: 8px; }
+        .anticipado-info .anticipado-meta i { color: var(--color-primary); width: 16px; text-align: center; }
+        .anticipado-card-actions { display: none; gap: 8px; align-self: flex-end; }
+        body.admin-view .anticipado-card-actions { display: flex; }
+        .admin-action-btn, .generate-ticket-btn { background-color: transparent; border: 1px solid; width: 35px; height: 35px; border-radius: 50%; cursor: pointer; transition: all 0.2s; display: flex; align-items: center; justify-content: center; flex-shrink: 0; font-size: 14px; }
+        .admin-action-btn:hover, .generate-ticket-btn:hover { color: white; }
+        .edit-anticipado-btn { border-color: var(--color-primary); color: var(--color-primary); }
+        .edit-anticipado-btn:hover { background-color: var(--color-primary); }
+        .delete-anticipado-btn { border-color: var(--color-danger); color: var(--color-danger); }
+        .delete-anticipado-btn:hover { background-color: var(--color-danger); }
+        .generate-ticket-btn { border-color: var(--color-pago); color: var(--color-pago); margin-left: auto; }
+        .generate-ticket-btn:hover { background-color: var(--color-pago); }
+        .anticipado-card .edit-mode { display: none; width: 100%; flex-direction: column; gap: 10px; }
+        .anticipado-card .edit-mode input { padding: 8px; }
+        .anticipado-card .edit-mode-actions { display: flex; gap: 10px; justify-content: flex-end; margin-top: 5px; }
+        .anticipado-card .edit-mode-actions button { padding: 8px 12px; border-radius: 5px; border: none; cursor: pointer; }
+        .anticipado-card .edit-mode-actions .save-edit-anticipado-btn { background-color: var(--color-primary); color: white; }
+        .anticipado-card .edit-mode-actions .cancel-edit-anticipado-btn { background-color: var(--background-light); color: var(--text-dark); border: 1px solid var(--border-color); }
+        
+        /* --- START: PROFESSIONAL TICKET STYLES --- */
+        #ticket-template {
+            display: none;
+            position: absolute;
+            left: -9999px;
+            width: 400px;
+        }
+        #ticket-preview {
+            width: 100%;
+            max-width: 400px;
+            margin: 0 auto 20px auto;
+            transition: all 0.3s;
+        }
+        #ticket-preview .ticket-container {
+            background: var(--background-card);
+            color: var(--text-dark);
+            font-family: 'Segoe UI', Roboto, sans-serif;
+            border-radius: 12px;
+            box-shadow: 0 5px 20px var(--shadow-color);
+            display: flex;
+            flex-direction: column;
+            overflow: hidden;
+            border: 1px solid var(--border-color);
+        }
+        .dark-mode #ticket-preview .ticket-container {
+            box-shadow: 0 5px 20px rgba(0,0,0,0.2);
+            border-color: var(--border-color);
+        }
+        .ticket-header {
+            background-color: var(--color-primary);
+            color: white;
+            padding: 20px;
+            text-align: center;
+        }
+        .ticket-header h3 {
+            font-size: 1.5em;
+            font-weight: bold;
+            margin: 0 0 5px 0;
+            color: white;
+        }
+        .ticket-header p {
+            font-size: 0.9em;
+            margin: 0;
+            opacity: 0.8;
+        }
+        .ticket-body {
+            padding: 20px;
+        }
+        .ticket-section {
+            margin-bottom: 15px;
+            padding-bottom: 15px;
+            border-bottom: 1px dashed var(--border-color);
+        }
+        .ticket-section:last-child {
+            margin-bottom: 0;
+            padding-bottom: 0;
+            border-bottom: none;
+        }
+        .ticket-section h4 {
+            font-size: 0.9em;
+            font-weight: bold;
+            color: var(--text-dark);
+            margin-top: 0;
+            margin-bottom: 10px;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            text-align: left;
+        }
+        .ticket-info {
+            text-align: left;
+        }
+        .ticket-info p {
+            display: flex;
+            justify-content: space-between;
+            font-size: 0.9em;
+            margin: 5px 0;
+        }
+        .ticket-info strong {
+            color: var(--text-dark);
+            margin-right: 10px;
+        }
+        .ticket-info span {
+            color: var(--text-light);
+            text-align: right;
+        }
+        .ticket-prizes ul {
+            list-style: none;
+            padding: 0;
+            margin: 5px 0 0 0;
+            text-align: left;
+        }
+        .ticket-prizes ul li {
+            font-size: 0.9em;
+            color: var(--text-light);
+            margin-bottom: 3px;
+        }
+        .ticket-prizes ul li strong {
+            color: var(--text-dark);
+        }
+        #ticket-anticipados-section {
+            display: none; /* Hidden by default */
+        }
+        .ticket-number-section {
+            background-color: var(--background-light);
+            border: 1px solid var(--border-color);
+            border-radius: 8px;
+            padding: 15px;
+            margin-bottom: 15px;
+            text-align: center;
+        }
+        .ticket-number-section p {
+            font-size: 0.8em;
+            color: var(--text-light);
+            margin: 0 0 5px 0;
+            text-transform: uppercase;
+        }
+        .ticket-number {
+            font-family: 'Roboto Mono', monospace;
+            font-size: 2.5em;
+            font-weight: bold;
+            color: var(--color-pago);
+            margin: 0;
+        }
+        .ticket-status {
+            font-weight: bold;
+            text-transform: uppercase;
+            font-size: 0.8em;
+            padding: 5px 10px;
+            border-radius: 5px;
+            display: inline-block;
+            margin-top: 5px;
+        }
+        .ticket-status.pago { background-color: var(--color-pago); color: white; }
+        .ticket-status.separado { background-color: var(--color-separado); color: var(--text-dark); }
+        .qr-section {
+            text-align: center;
+            margin-top: 15px;
+        }
+        #ticket-qr-code {
+            width: 80px;
+            height: 80px;
+            background-color: white;
+            border-radius: 4px;
+        }
+        .qr-section p {
+            font-size: 0.7em;
+            color: var(--text-light);
+            margin-top: 5px;
+        }
+        .ticket-footer {
+            padding-top: 15px;
+            text-align: center;
+            font-size: 0.7em;
+            color: var(--text-light);
+            border-top: 1px dashed var(--border-color);
+            margin-top: 15px;
+        }
+        /* --- END: PROFESSIONAL TICKET STYLES --- */
 
-        @media (max-width: 650px) {
-            #anticipados-list { display: flex; flex-direction: row; overflow-x: auto; scroll-snap-type: x mandatory; padding: 10px 10px 20px 10px; margin: 0 -20px; -webkit-overflow-scrolling: touch; }
-            #anticipados-list::-webkit-scrollbar { display: none; }
-            #anticipados-list { -ms-overflow-style: none; scrollbar-width: none; }
-            .anticipado-card { flex: 0 0 85%; scroll-snap-align: start; scroll-snap-stop: always; }
-        }
-        @media (max-width: 600px) { body { padding: 5px; } .raffle-manager { flex-direction: column; align-items: stretch; gap: 20px; } .prize-card { min-width: 100%;} }
-    </style>
+        @media (max-width: 650px) {
+            #anticipados-list { display: flex; flex-direction: row; overflow-x: auto; scroll-snap-type: x mandatory; padding: 10px 10px 20px 10px; margin: 0 -20px; -webkit-overflow-scrolling: touch; }
+            #anticipados-list::-webkit-scrollbar { display: none; }
+            #anticipados-list { -ms-overflow-style: none; scrollbar-width: none; }
+            .anticipado-card { flex: 0 0 85%; scroll-snap-align: start; scroll-snap-stop: always; }
+        }
+        @media (max-width: 600px) { body { padding: 5px; } .raffle-manager { flex-direction: column; align-items: stretch; gap: 20px; } .prize-card { min-width: 100%;} }
+    </style>
 </head>
 <body>
 
 <div class="container" id="main-container">
-    <button id="darkModeToggle" aria-label="Cambiar tema"><i class="fas fa-moon"></i></button>
-    <div class="raffle-manager">
-        <div class="raffle-selector-container">
-            <label for="rifaSelect">Selecciona una Rifa:</label>
-            <div class="selector-wrapper-with-button">
-                <div class="custom-select-wrapper">
-                    <div id="rifaSelect" class="select-selected">-- Cargando... --</div>
-                    <div id="rifaSelectItems" class="select-items select-hide"></div>
-                </div>
-                <button id="settingsButton" title="Configurar Colores"><i class="fas fa-cog"></i></button>
-                <button id="deleteRifaButton" title="Eliminar rifa seleccionada"><i class="fas fa-trash-alt"></i></button>
-            </div>
-            <button id="prizeButton" title="Ver/Editar Premios">VER PREMIOS <span class="prize-icon">🏆</span></button>
-        </div>
-        <div class="raffle-creator">
-            <div>
-                <label for="newRifaName">Nombre de la nueva rifa</label>
-                <input type="text" id="newRifaName" placeholder="Ej: Rifa de Verano">
-            </div>
-            <div>
-                <label for="newRifaSize">Cantidad de Números</label>
-                <select id="newRifaSize" style="width: 100%; padding: 10px; border: 1px solid var(--border-color); border-radius: 4px; background-color: var(--background-light); color: var(--text-dark); height: 48px;">
-                    <option value="100">100 (00-99)</option>
-                    <option value="1000">1000 (000-999)</option>
-                </select>
-            </div>
-            <button id="createRifaButton" style="height: 48px;">Crear Rifa</button>
-        </div>
-    </div>
-    <div class="summary-panel">
-        <div class="summary-card" id="card-pago"><div class="card-icon"><svg xmlns="http://www.w3.org/2000/svg" fill="currentColor" viewBox="0 0 16 16"><path d="M16 8A8 8 0 1 1 0 8a8 8 0 0 1 16 0zm-3.97-3.03a.75.75 0 0 0-1.08.022L7.477 9.417 5.384 7.323a.75.75 0 0 0-1.06 1.06L6.97 11.03a.75.75 0 0 0 1.079-.02l3.992-4.99a.75.75 0 0 0-.01-1.05z"/></svg></div><span class="info-count" id="summaryPago">0</span><p class="info-label">Pagados</p></div>
-        <div class="summary-card" id="card-separado"><div class="card-icon"><svg xmlns="http://www.w3.org/2000/svg" fill="currentColor" viewBox="0 0 16 16"><path d="M16 8A8 8 0 1 1 0 8a8 8 0 0 1 16 0zM8 3.5a.5.5 0 0 0-1 0V9a.5.5 0 0 0 .252.434l3.5 2a.5.5 0 0 0 .496-.868L8 8.71V3.5z"/></svg></div><span class="info-count" id="summarySeparado">0</span><p class="info-label">Separados</p></div>
-        <div class="summary-card" id="card-disponible"><div class="card-icon"><svg xmlns="http://www.w3.org/2000/svg" fill="currentColor" viewBox="0 0 16 16"> <path d="M0 4.5A1.5 1.5 0 0 1 1.5 3h13A1.5 1.5 0 0 1 16 4.5V6a.5.5 0 0 1-.5.5 1.5 1.5 0 0 0 0 3 .5.5 0 0 1 .5.5v1.5a1.5 1.5 0 0 1-1.5 1.5h-13A1.5 1.5 0 0 1 0 11.5V10a.5.5 0 0 1 .5-.5 1.5 1.5 0 1 0 0-3A.5.5 0 0 1 0 6V4.5Zm4 1a.5.5 0 0 0 .5.5h7a.5.5 0 0 0 0-1h-7a.5.5 0 0 0-.5.5Zm0 5a.5.5 0 0 0 .5.5h7a.5.5 0 0 0 0-1h-7a.5.5 0 0 0-.5.5ZM4 8.5a.5.5 0 0 0 .5.5h7a.5.5 0 0 0 0-1h-7a.5.5 0 0 0-.5.5Z"/></svg></div><span class="info-count" id="summaryDisponible">100</span><p class="info-label">Disponibles</p></div>
-    </div>
-    <div class="search-section">
-        <div class="search-box">
-            <div class="search-input-group"><svg class="search-icon" xmlns="http://www.w3.org/2000/svg" fill="currentColor" viewBox="0 0 16 16"><path d="M11.742 10.344a6.5 6.5 0 1 0-1.397 1.398h-.001c.03.04.062.078.098.115l3.85 3.85a1 1 0 0 0 1.415-1.414l-3.85-3.85a1.007 1.007 0 0 0-.115-.1zM12 6.5a5.5 5.5 0 1 1-11 0 5.5 5.5 0 0 1 11 0z"/></svg><input type="tel" id="searchInput" placeholder=" " maxlength="10"><label for="searchInput">Buscar por celular (10 dígitos)</label></div>
-            <button id="searchButton" aria-label="Buscar"><i class="fas fa-search"></i></button>
-        </div>
-        <div id="searchResultsContainer"><div class="no-results-message">Escribe un número de celular y presiona la lupa para buscar.</div></div>
-    </div>
-    <div id="gridContainer"></div>
-    <div class="winner-section">
-        <h2><span>🏆</span> Sorteo y Ganadores <span>🏆</span></h2>
-        <div class="winner-input-display" id="winnerInputDisplay"><div class="digit-circle"></div><div class="digit-circle"></div><div class="digit-circle"></div><div class="digit-circle"></div><input type="tel" id="realWinningInput" maxlength="4" autocomplete="off" /></div>
-        <button id="checkWinnerButton">Verificar Ganadores</button>
-        <div id="winnerResults">Ingresa el número de 4 cifras de la lotería para conocer a los ganadores.</div>
-    </div>
+    <button id="darkModeToggle" aria-label="Cambiar tema"><i class="fas fa-moon"></i></button>
+    <div class="raffle-manager">
+        <div class="raffle-selector-container">
+            <label for="rifaSelect">Selecciona una Rifa:</label>
+            <div class="selector-wrapper-with-button">
+                <div class="custom-select-wrapper">
+                    <div id="rifaSelect" class="select-selected">-- Cargando... --</div>
+                    <div id="rifaSelectItems" class="select-items select-hide"></div>
+                </div>
+                <button id="settingsButton" title="Configurar Colores"><i class="fas fa-cog"></i></button>
+                <button id="deleteRifaButton" title="Eliminar rifa seleccionada"><i class="fas fa-trash-alt"></i></button>
+            </div>
+            <button id="prizeButton" title="Ver/Editar Premios">VER PREMIOS <span class="prize-icon">🏆</span></button>
+        </div>
+        <div class="raffle-creator">
+            <div>
+                <label for="newRifaName">Nombre de la nueva rifa</label>
+                <input type="text" id="newRifaName" placeholder="Ej: Rifa de Verano">
+            </div>
+            <div>
+                <label for="newRifaSize">Cantidad de Números</label>
+                <select id="newRifaSize" style="width: 100%; padding: 10px; border: 1px solid var(--border-color); border-radius: 4px; background-color: var(--background-light); color: var(--text-dark); height: 48px;">
+                    <option value="100">100 (00-99)</option>
+                    <option value="1000">1000 (000-999)</option>
+                </select>
+            </div>
+            <button id="createRifaButton" style="height: 48px;">Crear Rifa</button>
+        </div>
+    </div>
+    <div class="summary-panel">
+        <div class="summary-card" id="card-pago"><div class="card-icon"><svg xmlns="http://www.w3.org/2000/svg" fill="currentColor" viewBox="0 0 16 16"><path d="M16 8A8 8 0 1 1 0 8a8 8 0 0 1 16 0zm-3.97-3.03a.75.75 0 0 0-1.08.022L7.477 9.417 5.384 7.323a.75.75 0 0 0-1.06 1.06L6.97 11.03a.75.75 0 0 0 1.079-.02l3.992-4.99a.75.75 0 0 0-.01-1.05z"/></svg></div><span class="info-count" id="summaryPago">0</span><p class="info-label">Pagados</p></div>
+        <div class="summary-card" id="card-separado"><div class="card-icon"><svg xmlns="http://www.w3.org/2000/svg" fill="currentColor" viewBox="0 0 16 16"><path d="M16 8A8 8 0 1 1 0 8a8 8 0 0 1 16 0zM8 3.5a.5.5 0 0 0-1 0V9a.5.5 0 0 0 .252.434l3.5 2a.5.5 0 0 0 .496-.868L8 8.71V3.5z"/></svg></div><span class="info-count" id="summarySeparado">0</span><p class="info-label">Separados</p></div>
+        <div class="summary-card" id="card-disponible"><div class="card-icon"><svg xmlns="http://www.w3.org/2000/svg" fill="currentColor" viewBox="0 0 16 16"> <path d="M0 4.5A1.5 1.5 0 0 1 1.5 3h13A1.5 1.5 0 0 1 16 4.5V6a.5.5 0 0 1-.5.5 1.5 1.5 0 0 0 0 3 .5.5 0 0 1 .5.5v1.5a1.5 1.5 0 0 1-1.5 1.5h-13A1.5 1.5 0 0 1 0 11.5V10a.5.5 0 0 1 .5-.5 1.5 1.5 0 1 0 0-3A.5.5 0 0 1 0 6V4.5Zm4 1a.5.5 0 0 0 .5.5h7a.5.5 0 0 0 0-1h-7a.5.5 0 0 0-.5.5Zm0 5a.5.5 0 0 0 .5.5h7a.5.5 0 0 0 0-1h-7a.5.5 0 0 0-.5.5ZM4 8.5a.5.5 0 0 0 .5.5h7a.5.5 0 0 0 0-1h-7a.5.5 0 0 0-.5.5Z"/></svg></div><span class="info-count" id="summaryDisponible">100</span><p class="info-label">Disponibles</p></div>
+    </div>
+    <div class="search-section">
+        <div class="search-box">
+            <div class="search-input-group"><svg class="search-icon" xmlns="http://www.w3.org/2000/svg" fill="currentColor" viewBox="0 0 16 16"><path d="M11.742 10.344a6.5 6.5 0 1 0-1.397 1.398h-.001c.03.04.062.078.098.115l3.85 3.85a1 1 0 0 0 1.415-1.414l-3.85-3.85a1.007 1.007 0 0 0-.115-.1zM12 6.5a5.5 5.5 0 1 1-11 0 5.5 5.5 0 0 1 11 0z"/></svg><input type="tel" id="searchInput" placeholder=" " maxlength="10"><label for="searchInput">Buscar por celular (10 dígitos)</label></div>
+            <button id="searchButton" aria-label="Buscar"><i class="fas fa-search"></i></button>
+        </div>
+        <div id="searchResultsContainer"><div class="no-results-message">Escribe un número de celular y presiona la lupa para buscar.</div></div>
+    </div>
+    <div id="gridContainer"></div>
+    <div class="winner-section">
+        <h2><span>🏆</span> Sorteo y Ganadores <span>🏆</span></h2>
+        <div class="winner-input-display" id="winnerInputDisplay"><div class="digit-circle"></div><div class="digit-circle"></div><div class="digit-circle"></div><div class="digit-circle"></div><input type="tel" id="realWinningInput" maxlength="4" autocomplete="off" /></div>
+        <button id="checkWinnerButton">Verificar Ganadores</button>
+        <div id="winnerResults">Ingresa el número de 4 cifras de la lotería para conocer a los ganadores.</div>
+    </div>
 </div>
 
 <div id="dataModal" class="modal">
-    <div class="modal-content">
-        <div class="modal-header"><h2>Datos del Número <span id="modalNumber"></span></h2><span class="close-button">&times;</span></div>
-        <div class="modal-body"><label for="inputStatus">Estado:</label><select id="inputStatus"><option value="disponible">Disponible</option><option value="separado">Separado</option><option value="pago">Pago</option></select><label for="inputName">Nombre:</label><input type="text" id="inputName" placeholder="Ingresa el nombre completo"><label for="inputPhone">Número de Celular:</label><input type="text" id="inputPhone" placeholder="Ingresa el número de celular"></div>
-        <div class="modal-footer"><button id="deleteButton">Limpiar Datos</button><button id="saveButton">Guardar</button></div>
-    </div>
+    <div class="modal-content">
+        <div class="modal-header"><h2>Datos del Número <span id="modalNumber"></span></h2><span class="close-button">&times;</span></div>
+        <div class="modal-body">
+            <label for="inputStatus">Estado:</label>
+            <select id="inputStatus">
+                <option value="disponible">Disponible</option>
+                <option value="separado">Separado</option>
+                <option value="pago">Pago</option>
+            </select>
+            <label for="inputName">Nombre:</label>
+            <input type="text" id="inputName" placeholder="Ingresa el nombre completo">
+            <label for="inputPhone">Número de Celular:</label>
+            <input type="text" id="inputPhone" placeholder="Ingresa el número de celular">
+                        <div id="abonoContainer" style="display: none;">
+                <label for="inputAbono">Abono (COP):</label>
+                <input type="number" id="inputAbono" placeholder="Ingresa el valor del abono">
+            </div>
+        </div>
+        <div class="modal-footer"><button id="deleteButton">Limpiar Datos</button><button id="saveButton">Guardar</button></div>
+    </div>
 </div>
 
 <div id="prizeModal" class="modal">
-    <div class="modal-content">
-        <div class="modal-header"><h2 style="display: flex; align-items: center; gap: 10px;"><i class="fas fa-trophy" style="color: var(--color-separado);"></i> PREMIOS</h2><span class="close-button">&times;</span></div>
-        <div class="modal-body">
-            
-            <div id="prize-info-section"></div>
-            <hr>
-            <div id="anticipados-section">
-                <div id="admin-anticipado-form">
-                    <h4><i class="fas fa-plus-circle"></i> Agregar Premio Anticipado</h4>
-                    <div><label for="anticipadoValor">Valor del Premio:</label><input type="number" id="anticipadoValor" placeholder="Ej: 50000"></div>
-                    <div><label for="anticipadoFecha">Fecha del Sorteo:</label><input type="date" id="anticipadoFecha"></div>
-                    <div><label for="anticipadoLoteria">Lotería o Sorteo:</label><input type="text" id="anticipadoLoteria" placeholder="Ej: Lotería del Cauca"></div>
-                    <button id="addAnticipadoButton">Agregar Premio</button>
-                </div>
-                <div id="anticipados-container-public">
-                    <h4><i class="fas fa-gift"></i> Sorteos Anticipados</h4>
-                    <div id="anticipados-list"></div>
-                </div>
-            </div>
-            <hr>
-            <div id="prize-simulator-section">
-                <h4>Simulador de Sorteo</h4>
-                <div class="digit-slots-container">
-                    <div class="digit-circle-simulator"><span></span></div><div class="digit-circle-simulator"><span></span></div><div class="digit-circle-simulator"><span></span></div><div class="digit-circle-simulator"><span></span></div>
-                    <input type="tel" id="modalWinningInput" maxlength="4" autocomplete="off" />
-                    <div class="prize-zones-container">
-                        <div class="prize-zone" id="prizeZoneSecond" data-prize="segundo"></div>
-                        <div class="prize-zone" id="prizeZoneThird" data-prize="tercero"></div>
-                        <div class="prize-zone" id="prizeZoneMayor" data-prize="mayor"></div>
-                    </div>
-                </div>
-                <div id="modalWinnerResults"></div>
-            </div>
-        </div>
-        <div class="modal-footer"><button id="saveAllPrizesButton" style="display: none;">Guardar Cambios en Premios</button></div>
-    </div>
+    <div class="modal-content">
+        <div class="modal-header"><h2 style="display: flex; align-items: center; gap: 10px;"><i class="fas fa-trophy" style="color: var(--color-separado);"></i> PREMIOS</h2><span class="close-button">&times;</span></div>
+        <div class="modal-body">
+                        <div id="raffle-details-admin" style="display: none; background-color: var(--background-card); padding: 15px; border-radius: 8px; margin-bottom: 20px;">
+                <h4><i class="fas fa-calendar-check"></i> Fecha del Sorteo Principal</h4>
+                <label for="raffleDrawDateInput">Fecha:</label>
+                <input type="date" id="raffleDrawDateInput" style="width: 100%; padding: 10px;">
+            </div>
+            <div id="raffle-details-public" style="display: none; text-align: center; margin-bottom: 20px; font-size: 1.1em; color: var(--text-dark);">
+                <p style="margin:0;"><strong>Fecha del Sorteo Principal:</strong> <span id="publicDrawDate">No definida</span></p>
+            </div>
+            
+            <div id="prize-info-section"></div>
+            <hr>
+            <div id="anticipados-section">
+                <div id="admin-anticipado-form">
+                    <h4><i class="fas fa-plus-circle"></i> Agregar Premio Anticipado</h4>
+                    <div><label for="anticipadoValor">Valor del Premio:</label><input type="number" id="anticipadoValor" placeholder="Ej: 50000"></div>
+                    <div><label for="anticipadoFecha">Fecha del Sorteo:</label><input type="date" id="anticipadoFecha"></div>
+                    <div><label for="anticipadoLoteria">Lotería o Sorteo:</label><input type="text" id="anticipadoLoteria" placeholder="Ej: Lotería del Cauca"></div>
+                    <button id="addAnticipadoButton">Agregar Premio</button>
+                </div>
+                <div id="anticipados-container-public">
+                    <h4><i class="fas fa-gift"></i> Sorteos Anticipados</h4>
+                    <div id="anticipados-list"></div>
+                </div>
+            </div>
+            <hr>
+            <div id="prize-simulator-section">
+                <h4>Simulador de Sorteo</h4>
+                <div class="digit-slots-container">
+                    <div class="digit-circle-simulator"><span></span></div><div class="digit-circle-simulator"><span></span></div><div class="digit-circle-simulator"><span></span></div><div class="digit-circle-simulator"><span></span></div>
+                    <input type="tel" id="modalWinningInput" maxlength="4" autocomplete="off" />
+                    <div class="prize-zones-container">
+                        <div class="prize-zone" id="prizeZoneSecond" data-prize="segundo"></div>
+                        <div class="prize-zone" id="prizeZoneThird" data-prize="tercero"></div>
+                        <div class="prize-zone" id="prizeZoneMayor" data-prize="mayor"></div>
+                    </div>
+                </div>
+                <div id="modalWinnerResults"></div>
+            </div>
+        </div>
+        <div class="modal-footer"><button id="saveAllPrizesButton" style="display: none;">Guardar Cambios</button></div>
+    </div>
 </div>
 
 <div id="settingsModal" class="modal">
-    <div class="modal-content">
-        <div class="modal-header"><h2><i class="fas fa-palette"></i> Configurar Colores</h2><span class="close-button">&times;</span></div>
-        <div class="modal-body">
-            <div class="color-setting"><label for="colorDisponible">Color Disponible:</label><input type="color" id="colorDisponible"></div>
-            <div class="color-setting"><label for="colorSeparado">Color Separado:</label><input type="color" id="colorSeparado"></div>
-            <div class="color-setting"><label for="colorPago">Color Pagado:</label><input type="color" id="colorPago"></div>
-        </div>
-        <div class="modal-footer"><button id="saveColorsButton">Guardar Colores</button></div>
-    </div>
+    <div class="modal-content">
+        <div class="modal-header"><h2><i class="fas fa-palette"></i> Configurar Colores</h2><span class="close-button">&times;</span></div>
+        <div class="modal-body">
+            <div class="color-setting"><label for="colorDisponible">Color Disponible:</label><input type="color" id="colorDisponible"></div>
+            <div class="color-setting"><label for="colorSeparado">Color Separado:</label><input type="color" id="colorSeparado"></div>
+            <div class="color-setting"><label for="colorPago">Color Pagado:</label><input type="color" id="colorPago"></div>
+        </div>
+        <div class="modal-footer"><button id="saveColorsButton">Guardar Colores</button></div>
+    </div>
 </div>
 
 <div id="ticketModal" class="modal">
-    <div class="modal-content">
-        <div class="modal-header">
-            <h2>Recibo de Compra</h2>
-            <span class="close-button">&times;</span>
-        </div>
-        <div class="modal-body">
-            <div id="ticket-preview"></div>
-        </div>
-        <div class="modal-footer">
-            <button id="downloadTicketButton">Descargar Recibo</button>
-        </div>
-    </div>
+    <div class="modal-content">
+        <div class="modal-header">
+            <h2>Recibo de Compra</h2>
+            <span class="close-button">&times;</span>
+        </div>
+        <div class="modal-body">
+            <div id="ticket-preview"></div>
+        </div>
+        <div class="modal-footer">
+            <button id="downloadTicketButton">Descargar Recibo</button>
+        </div>
+    </div>
 </div>
 
 <div id="ticket-template">
-    <div class="ticket-container">
-        <div class="ticket-header">
-            <h3 id="ticket-rifa-name"></h3>
-            <p>Comprobante de Participación</p>
-        </div>
-        <div class="ticket-body">
-            <div class="ticket-number-section">
-                <p>Tu Número</p>
-                <div class="ticket-number" id="ticket-number"></div>
-                <div class="ticket-status" id="ticket-status"></div>
-            </div>
-            <div class="ticket-section">
-                <h4>Detalles del Participante</h4>
-                <div class="ticket-info">
-                    <p><strong>Nombre:</strong> <span id="ticket-client-name"></span></p>
-                    <p><strong>Celular:</strong> <span id="ticket-client-phone"></span></p>
-                </div>
-            </div>
-            <div class="ticket-section">
-                <h4>Plan de Premios</h4>
-                <div class="ticket-prizes" id="ticket-prizes"></div>
-            </div>
-            <div class="ticket-section" id="ticket-anticipados-section">
-                <h4>Sorteos Anticipados</h4>
-                <div class="ticket-prizes" id="ticket-anticipados-list"></div>
-            </div>
-            <div class="qr-section">
-                <img id="ticket-qr-code" src="" alt="QR de Verificación" crossorigin="anonymous">
-                <p>Escanear para Verificar</p>
-            </div>
-            <div class="ticket-footer">
-                Generado: <span id="ticket-date"></span>
-            </div>
-        </div>
-    </div>
+    <div class="ticket-container">
+        <div class="ticket-header">
+            <h3 id="ticket-rifa-name"></h3>
+            <p>Comprobante de Participación</p>
+        </div>
+        <div class="ticket-body">
+            <div class="ticket-number-section">
+                <p>Tu Número</p>
+                <div class="ticket-number" id="ticket-number"></div>
+                <div class="ticket-status" id="ticket-status"></div>
+            </div>
+            <div class="ticket-section">
+                <h4>Detalles del Participante</h4>
+                <div class="ticket-info">
+                    <p><strong>Nombre:</strong> <span id="ticket-client-name"></span></p>
+                    <p><strong>Celular:</strong> <span id="ticket-client-phone"></span></p>
+                                        <p id="ticket-abono-details" style="display: none;"><strong>Abono Realizado:</strong> <span id="ticket-client-abono"></span></p>
+                </div>
+            </div>
+            <div class="ticket-section">
+                <h4>Plan de Premios</h4>
+                                <div class="ticket-info">
+                   <p><strong>Fecha Sorteo:</strong> <span id="ticket-draw-date">No definida</span></p>
+                </div>
+                <div class="ticket-prizes" id="ticket-prizes"></div>
+            </div>
+            <div class="ticket-section" id="ticket-anticipados-section">
+                <h4>Sorteos Anticipados</h4>
+                <div class="ticket-prizes" id="ticket-anticipados-list"></div>
+            </div>
+            <div class="qr-section">
+                <img id="ticket-qr-code" src="" alt="QR de Verificación" crossorigin="anonymous">
+                <p>Escanear para Verificar</p>
+            </div>
+            <div class="ticket-footer">
+                Generado: <span id="ticket-date"></span>
+            </div>
+        </div>
+    </div>
 </div>
 <div class="modal-backdrop" id="modal-backdrop"></div>
 
@@ -650,198 +683,345 @@
 
 <script>
 document.addEventListener('DOMContentLoaded', () => {
-    const firebaseConfig = {
-        apiKey: "AIzaSyDMBARLzKnhcmSI8euhiA2Wgsf7pJQM1_0",
-        authDomain: "control-rifas.firebaseapp.com",
-        projectId: "control-rifas",
-        storageBucket: "control-rifas.appspot.com",
-        messagingSenderId: "519272574756",
-        appId: "1:519272574756:web:b5d7cf368be58fdf604db1"
-    };
-    const app = firebase.initializeApp(firebaseConfig);
-    const db = firebase.firestore();
-    
-    const DOM = {
-        mainContainer: document.getElementById('main-container'),
-        modalBackdrop: document.getElementById('modal-backdrop'),
-        rifaSelect: document.getElementById('rifaSelect'), rifaSelectItems: document.getElementById('rifaSelectItems'),
-        newRifaName: document.getElementById('newRifaName'), 
-        newRifaSize: document.getElementById('newRifaSize'),
-        createRifaButton: document.getElementById('createRifaButton'),
-        deleteRifaButton: document.getElementById('deleteRifaButton'), prizeButton: document.getElementById('prizeButton'),
-        settingsButton: document.getElementById('settingsButton'),
-        darkModeToggle: document.getElementById('darkModeToggle'), gridContainer: document.getElementById('gridContainer'),
-        winnerInputDisplay: document.getElementById('winnerInputDisplay'), digitCircles: document.querySelectorAll('.winner-input-display .digit-circle'),
-        realWinningInput: document.getElementById('realWinningInput'), checkWinnerButton: document.getElementById('checkWinnerButton'),
-        winnerResults: document.getElementById('winnerResults'), searchInput: document.getElementById('searchInput'),
-        searchButton: document.getElementById('searchButton'), searchResultsContainer: document.getElementById('searchResultsContainer'),
-        dataModal: document.getElementById('dataModal'), modalNumber: document.getElementById('modalNumber'),
-        inputStatus: document.getElementById('inputStatus'), inputName: document.getElementById('inputName'),
-        inputPhone: document.getElementById('inputPhone'), saveButton: document.getElementById('saveButton'),
-        deleteButton: document.getElementById('deleteButton'), closeDataModalButton: document.querySelector('#dataModal .close-button'),
-        prizeModal: document.getElementById('prizeModal'), prizeInfoSection: document.getElementById('prize-info-section'),
-        saveAllPrizesButton: document.getElementById('saveAllPrizesButton'), prizeSimulatorSlots: document.querySelectorAll('.digit-circle-simulator'),
-        modalWinningInput: document.getElementById('modalWinningInput'), prizeZonesContainer: document.querySelector('.prize-zones-container'),
-        prizeZones: document.querySelectorAll('.prize-zone'), modalWinnerResults: document.getElementById('modalWinnerResults'),
-        closePrizeModalButton: document.querySelector('#prizeModal .close-button'),
-        settingsModal: document.getElementById('settingsModal'),
-        closeSettingsModalButton: document.querySelector('#settingsModal .close-button'),
-        summaryPago: document.getElementById('summaryPago'), summarySeparado: document.getElementById('summarySeparado'), summaryDisponible: document.getElementById('summaryDisponible'),
-        colorDisponible: document.getElementById('colorDisponible'), colorSeparado: document.getElementById('colorSeparado'), colorPago: document.getElementById('colorPago'), saveColorsButton: document.getElementById('saveColorsButton'),
-        anticipadoValor: document.getElementById('anticipadoValor'), anticipadoFecha: document.getElementById('anticipadoFecha'), anticipadoLoteria: document.getElementById('anticipadoLoteria'), addAnticipadoButton: document.getElementById('addAnticipadoButton'),
-        anticipadosContainerPublic: document.getElementById('anticipados-container-public'), anticipadosList: document.getElementById('anticipados-list'),
-        ticketModal: document.getElementById('ticketModal'),
-        closeTicketModalButton: document.querySelector('#ticketModal .close-button'),
-        ticketPreview: document.getElementById('ticket-preview'),
-        ticketTemplate: document.getElementById('ticket-template'),
-        downloadTicketButton: document.getElementById('downloadTicketButton'),
-    };
+    const firebaseConfig = {
+        apiKey: "AIzaSyDMBARLzKnhcmSI8euhiA2Wgsf7pJQM1_0",
+        authDomain: "control-rifas.firebaseapp.com",
+        projectId: "control-rifas",
+        storageBucket: "control-rifas.appspot.com",
+        messagingSenderId: "519272574756",
+        appId: "1:519272574756:web:b5d7cf368be58fdf604db1"
+    };
+    const app = firebase.initializeApp(firebaseConfig);
+    const db = firebase.firestore();
+    
+    const DOM = {
+        mainContainer: document.getElementById('main-container'),
+        modalBackdrop: document.getElementById('modal-backdrop'),
+        rifaSelect: document.getElementById('rifaSelect'), rifaSelectItems: document.getElementById('rifaSelectItems'),
+        newRifaName: document.getElementById('newRifaName'), 
+        newRifaSize: document.getElementById('newRifaSize'),
+        createRifaButton: document.getElementById('createRifaButton'),
+        deleteRifaButton: document.getElementById('deleteRifaButton'), prizeButton: document.getElementById('prizeButton'),
+        settingsButton: document.getElementById('settingsButton'),
+        darkModeToggle: document.getElementById('darkModeToggle'), gridContainer: document.getElementById('gridContainer'),
+        winnerInputDisplay: document.getElementById('winnerInputDisplay'), digitCircles: document.querySelectorAll('.winner-input-display .digit-circle'),
+        realWinningInput: document.getElementById('realWinningInput'), checkWinnerButton: document.getElementById('checkWinnerButton'),
+        winnerResults: document.getElementById('winnerResults'), searchInput: document.getElementById('searchInput'),
+        searchButton: document.getElementById('searchButton'), searchResultsContainer: document.getElementById('searchResultsContainer'),
+        dataModal: document.getElementById('dataModal'), modalNumber: document.getElementById('modalNumber'),
+        inputStatus: document.getElementById('inputStatus'), inputName: document.getElementById('inputName'),
+        inputPhone: document.getElementById('inputPhone'), saveButton: document.getElementById('saveButton'),
+        deleteButton: document.getElementById('deleteButton'), closeDataModalButton: document.querySelector('#dataModal .close-button'),
+        prizeModal: document.getElementById('prizeModal'), prizeInfoSection: document.getElementById('prize-info-section'),
+        saveAllPrizesButton: document.getElementById('saveAllPrizesButton'), prizeSimulatorSlots: document.querySelectorAll('.digit-circle-simulator'),
+        modalWinningInput: document.getElementById('modalWinningInput'), prizeZonesContainer: document.querySelector('.prize-zones-container'),
+        prizeZones: document.querySelectorAll('.prize-zone'), modalWinnerResults: document.getElementById('modalWinnerResults'),
+        closePrizeModalButton: document.querySelector('#prizeModal .close-button'),
+        settingsModal: document.getElementById('settingsModal'),
+        closeSettingsModalButton: document.querySelector('#settingsModal .close-button'),
+        summaryPago: document.getElementById('summaryPago'), summarySeparado: document.getElementById('summarySeparado'), summaryDisponible: document.getElementById('summaryDisponible'),
+        colorDisponible: document.getElementById('colorDisponible'), colorSeparado: document.getElementById('colorSeparado'), colorPago: document.getElementById('colorPago'), saveColorsButton: document.getElementById('saveColorsButton'),
+        anticipadoValor: document.getElementById('anticipadoValor'), anticipadoFecha: document.getElementById('anticipadoFecha'), anticipadoLoteria: document.getElementById('anticipadoLoteria'), addAnticipadoButton: document.getElementById('addAnticipadoButton'),
+        anticipadosContainerPublic: document.getElementById('anticipados-container-public'), anticipadosList: document.getElementById('anticipados-list'),
+        ticketModal: document.getElementById('ticketModal'),
+        closeTicketModalButton: document.querySelector('#ticketModal .close-button'),
+        ticketPreview: document.getElementById('ticket-preview'),
+        ticketTemplate: document.getElementById('ticket-template'),
+        downloadTicketButton: document.getElementById('downloadTicketButton'),
+        // ELEMENTOS NUEVOS AÑADIDOS
+        abonoContainer: document.getElementById('abonoContainer'),
+        inputAbono: document.getElementById('inputAbono'),
+        raffleDetailsAdmin: document.getElementById('raffle-details-admin'),
+        raffleDrawDateInput: document.getElementById('raffleDrawDateInput'),
+        raffleDetailsPublic: document.getElementById('raffle-details-public'),
+        publicDrawDate: document.getElementById('publicDrawDate'),
+    };
 
-    let rifaActivaId = null, unsubRifaListener = null, currentNumber = null, localRaffleData = {}, currentPrizeData = {};
-    let totalNumbers = 100, numberPadding = 2;
+    let rifaActivaId = null, unsubRifaListener = null, currentNumber = null, localRaffleData = {}, currentPrizeData = {};
+    let totalNumbers = 100, numberPadding = 2;
 
-    const formatCurrency = (value) => new Intl.NumberFormat('es-CO', { style: 'currency', currency: 'COP', minimumFractionDigits: 0, maximumFractionDigits: 0 }).format(value);
-    const sleep = ms => new Promise(resolve => setTimeout(resolve, ms));
+    const formatCurrency = (value) => new Intl.NumberFormat('es-CO', { style: 'currency', currency: 'COP', minimumFractionDigits: 0, maximumFractionDigits: 0 }).format(value);
+    const sleep = ms => new Promise(resolve => setTimeout(resolve, ms));
 
-    const generateMediaTag = (url) => { if (!url) return ''; const l = url.toLowerCase(); return (l.includes('.mp4') || l.includes('.webm')) ? `<video src="${url}" class="prize-media" autoplay muted loop playsinline></video>` : `<img src="${url}" alt="Premio" class="prize-media">`; };
-    const generarHtmlDePremio = (p) => { if (!p) return '<div class="prize-details"><p class="prize-description">Premio no definido</p></div>'; if (p.valor && p.valor > 0) return `<div class="prize-card-value">${formatCurrency(p.valor)}</div>`; if (p.descripcion) { let h = `<div class="prize-details"><p class="prize-description">${p.descripcion}</p>`, m = ''; if (p.imgUrl1 || p.imgUrl2) { m += '<div class="prize-media-container">'; m += generateMediaTag(p.imgUrl1); m += generateMediaTag(p.imgUrl2); m += '</div>'; } h += m; h += `</div>`; return h; } return '<div class="prize-details"><p class="prize-description">Premio no definido</p></div>'; };
-    const aplicarColoresPersonalizados = (c) => { document.documentElement.style.setProperty('--color-disponible', c.disponible); document.documentElement.style.setProperty('--color-separado', c.separado); document.documentElement.style.setProperty('--color-pago', c.pago); };
-    const restaurarColoresDefault = () => { document.documentElement.style.removeProperty('--color-disponible'); document.documentElement.style.removeProperty('--color-separado'); document.documentElement.style.removeProperty('--color-pago'); };
-    const openSettingsModal = () => { if (!rifaActivaId || !firebase.auth().currentUser) return; const r = getComputedStyle(document.documentElement); DOM.colorDisponible.value = r.getPropertyValue('--color-disponible').trim(); DOM.colorSeparado.value = r.getPropertyValue('--color-separado').trim(); DOM.colorPago.value = r.getPropertyValue('--color-pago').trim(); DOM.settingsModal.classList.add('visible'); };
-    const closeSettingsModal = () => DOM.settingsModal.classList.remove('visible');
-    const saveColors = async () => { if (!rifaActivaId || !firebase.auth().currentUser) return; const n = { disponible: DOM.colorDisponible.value, separado: DOM.colorSeparado.value, pago: DOM.colorPago.value, }; try { await db.collection("rifas").doc(rifaActivaId).update({ colores: n }); aplicarColoresPersonalizados(n); alert("Colores actualizados."); closeSettingsModal(); } catch (e) { console.error("Error al guardar colores:", e); alert("No se pudieron guardar los colores."); } };
-    const applyTheme = (t) => { const i = DOM.darkModeToggle.querySelector('i'); if (t === 'dark') { document.body.classList.add('dark-mode'); i.classList.remove('fa-moon'); i.classList.add('fa-sun'); } else { document.body.classList.remove('dark-mode'); i.classList.remove('fa-sun'); i.classList.add('fa-moon'); } };
-    firebase.auth().onAuthStateChanged(user => { document.body.classList.toggle('admin-view', !!user); });
-    const cargarRifas = async () => { const s = await db.collection("rifas").orderBy("fechaCreacion", "desc").get(); DOM.rifaSelectItems.innerHTML = ''; if (s.empty) { DOM.rifaSelect.textContent = '-- No hay rifas --'; DOM.rifaSelect.dataset.value = ""; await cambiarRifaActiva(true); return; } s.forEach(d => { const o = document.createElement('div'); o.textContent = d.data().nombre; o.dataset.value = d.id; o.addEventListener('click', async function(e) { e.stopPropagation(); if (DOM.rifaSelect.dataset.value === this.dataset.value) { DOM.rifaSelectItems.classList.remove('select-show'); DOM.rifaSelect.classList.remove('select-arrow-active'); return; }; DOM.rifaSelect.textContent = this.textContent; DOM.rifaSelect.dataset.value = this.dataset.value; DOM.rifaSelectItems.classList.remove('select-show'); DOM.rifaSelect.classList.remove('select-arrow-active'); await cambiarRifaActiva(); }); DOM.rifaSelectItems.appendChild(o); }); const p = s.docs[0]; DOM.rifaSelect.textContent = p.data().nombre; DOM.rifaSelect.dataset.value = p.id; await cambiarRifaActiva(); };
-    const crearNuevaRifa = async () => { const n = DOM.newRifaName.value.trim(), s = parseInt(DOM.newRifaSize.value, 10); if (!n) { alert("Dale un nombre a la rifa."); return; } try { const p = { valor: 0, descripcion: "", imgUrl1: "", imgUrl2: "" }; await db.collection("rifas").add({ nombre: n, fechaCreacion: firebase.firestore.FieldValue.serverTimestamp(), totalNumeros: s, premios: { mayor: { ...p, descripcion: "Premio Mayor" }, segundo: { ...p, descripcion: "Segundo Premio" }, tercero: { ...p, descripcion: "Tercer Premio" } }, premiosAnticipados: [] }); DOM.newRifaName.value = ''; alert(`Rifa "${n}" creada.`); await cargarRifas(); } catch (e) { console.error("Error al crear:", e); alert("Error al crear rifa."); } };
-    const deleteRifaActual = async () => { if (!rifaActivaId) { alert("No hay rifa seleccionada."); return; } const n = DOM.rifaSelect.textContent; if (!confirm(`¿Borrar rifa "${n}"?\n\n¡ACCIÓN IRREVERSIBLE!`)) return; try { const r = db.collection("rifas").doc(rifaActivaId).collection("numeros"), s = await r.get(), b = db.batch(); s.docs.forEach(d => { b.delete(d.ref); }); await b.commit(); await db.collection("rifas").doc(rifaActivaId).delete(); alert(`Rifa "${n}" eliminada.`); await cargarRifas(); } catch (e) { console.error("Error al eliminar:", e); alert("Error al eliminar rifa."); } };
-    const cambiarRifaActiva = async (f = false) => { if (unsubRifaListener) unsubRifaListener(); rifaActivaId = f ? null : DOM.rifaSelect.dataset.value; const h = !!rifaActivaId; DOM.prizeButton.classList.toggle('visible', h); DOM.deleteRifaButton.classList.toggle('visible', h); DOM.settingsButton.classList.toggle('visible', h); if (!rifaActivaId) { totalNumbers = 100; numberPadding = 2; restaurarColoresDefault(); localRaffleData = {}; initializeGrid(); updateSummary(); DOM.searchResultsContainer.innerHTML = '<div class="no-results-message">Crea o selecciona una rifa.</div>'; return; } try { const d = await db.collection("rifas").doc(rifaActivaId).get(); if(d.exists) { const a = d.data(); totalNumbers = a.totalNumeros || 100; numberPadding = String(totalNumbers - 1).length; if (a.colores) aplicarColoresPersonalizados(a.colores); else restaurarColoresDefault(); } else restaurarColoresDefault(); } catch(e) { console.error("Error al cargar config:", e); totalNumbers = 100; numberPadding = 2; restaurarColoresDefault(); } initializeGrid(); DOM.searchResultsContainer.innerHTML = '<div class="no-results-message">Busca por celular.</div>'; const r = db.collection("rifas").doc(rifaActivaId).collection("numeros"); unsubRifaListener = r.onSnapshot(s => { localRaffleData = {}; s.forEach(d => { localRaffleData[d.id] = d.data(); }); for (let i = 0; i < totalNumbers; i++) { const n = i.toString().padStart(numberPadding, '0'), t = localRaffleData[n] ? localRaffleData[n].status : 'disponible'; updateCellAppearance(n, t); } updateSummary(); }); };
-    const initializeGrid = () => { DOM.gridContainer.innerHTML = ''; DOM.gridContainer.style.gridTemplateColumns = totalNumbers === 1000 ? 'repeat(auto-fit, minmax(40px, 1fr))' : 'repeat(10, 1fr)'; for (let i = 0; i < totalNumbers; i++) { const n = i.toString().padStart(numberPadding, '0'), c = document.createElement('div'); c.className = 'grid-item status-disponible'; c.textContent = n; c.dataset.number = n; c.id = `grid-item-${n}`; c.addEventListener('click', () => openDataModal(n)); DOM.gridContainer.appendChild(c); } };
-    const openDataModal = (n) => { if (!firebase.auth().currentUser || !rifaActivaId) return; currentNumber = n; DOM.modalNumber.textContent = n; const d = localRaffleData[n]; if (d) { DOM.inputStatus.value = d.status; DOM.inputName.value = d.name || ''; DOM.inputPhone.value = d.phone || ''; } else { DOM.inputStatus.value = 'disponible'; DOM.inputName.value = ''; DOM.inputPhone.value = ''; } DOM.dataModal.classList.add('visible'); };
-    const closeDataModal = () => { DOM.dataModal.classList.remove('visible'); currentNumber = null; };
-    const saveData = () => { if (!currentNumber || !rifaActivaId) return; const s = DOM.inputStatus.value, n = DOM.inputName.value.trim(), p = DOM.inputPhone.value.trim(), d = db.collection("rifas").doc(rifaActivaId).collection("numeros").doc(currentNumber); if (s === 'disponible') d.delete().then(closeDataModal); else d.set({ status:s, name:n, phone:p }).then(closeDataModal); };
-    const deleteData = () => { if (!currentNumber || !rifaActivaId) return; db.collection("rifas").doc(rifaActivaId).collection("numeros").doc(currentNumber).delete().then(closeDataModal); };
-    const closePrizeModal = () => { DOM.mainContainer.classList.remove('page-blur'); DOM.modalBackdrop.classList.remove('visible'); DOM.prizeModal.classList.remove('visible'); }
-    const openPrizeModal = async () => { if (!rifaActivaId) return; DOM.mainContainer.classList.add('page-blur'); DOM.modalBackdrop.classList.add('visible'); DOM.prizeModal.classList.add('visible'); const d = await db.collection("rifas").doc(rifaActivaId).get(), a = d.data() || {}; currentPrizeData = { premios: a.premios || { mayor: {}, segundo: {}, tercero: {} }, premiosAnticipados: a.premiosAnticipados || [] }; const u = firebase.auth().currentUser; DOM.prizeInfoSection.innerHTML = ''; const t = ['mayor', 'segundo', 'tercero'], l = { mayor: '🥇 Premio Mayor', segundo: '🥈 Segundo Premio', tercero: '🥉 Tercer Premio' }; t.forEach(i => { const p = currentPrizeData.premios[i] || { descripcion: '', valor: 0, imgUrl1: '', imgUrl2: '' }; let c = ''; if (u) { c = `<div class="prize-card-admin-view"><label for="${i}DescInput">Descripción:</label><input type="text" id="${i}DescInput" value="${p.descripcion || ''}"><label for="${i}ValorInput">Valor:</label><input type="number" id="${i}ValorInput" value="${p.valor || 0}"><label for="${i}ImgUrl1Input">URL Imagen/Video 1:</label><input type="url" id="${i}ImgUrl1Input" value="${p.imgUrl1 || ''}"><label for="${i}ImgUrl2Input">URL Imagen/Video 2:</label><input type="url" id="${i}ImgUrl2Input" value="${p.imgUrl2 || ''}"></div>`; } else { c = generarHtmlDePremio(p); } DOM.prizeInfoSection.innerHTML += `<div class="prize-card ${i}"><div class="prize-card-title">${l[i]}</div>${c}</div>`; }); renderAnticipados(); DOM.saveAllPrizesButton.style.display = u ? 'inline-block' : 'none'; DOM.modalWinningInput.value = ''; DOM.prizeSimulatorSlots.forEach(s => { s.querySelector('span').textContent = ''; s.classList.remove('liquid-filled', 'selected-digit'); }); DOM.prizeZonesContainer.classList.remove('active'); DOM.modalWinnerResults.innerHTML = ''; };
-    const saveAllPrizes = async () => { if (!rifaActivaId || !firebase.auth().currentUser) return; DOM.saveAllPrizesButton.disabled = true; DOM.saveAllPrizesButton.textContent = 'Guardando...'; try { const n = { mayor: { descripcion: document.getElementById('mayorDescInput').value.trim(), valor: Number(document.getElementById('mayorValorInput').value) || 0, imgUrl1: document.getElementById('mayorImgUrl1Input').value.trim(), imgUrl2: document.getElementById('mayorImgUrl2Input').value.trim() }, segundo: { descripcion: document.getElementById('segundoDescInput').value.trim(), valor: Number(document.getElementById('segundoValorInput').value) || 0, imgUrl1: document.getElementById('segundoImgUrl1Input').value.trim(), imgUrl2: document.getElementById('segundoImgUrl2Input').value.trim() }, tercero: { descripcion: document.getElementById('terceroDescInput').value.trim(), valor: Number(document.getElementById('terceroValorInput').value) || 0, imgUrl1: document.getElementById('terceroImgUrl1Input').value.trim(), imgUrl2: document.getElementById('terceroImgUrl2Input').value.trim() } }; await db.collection("rifas").doc(rifaActivaId).update({ premios: n, premiosAnticipados: currentPrizeData.premiosAnticipados }); currentPrizeData.premios = n; alert("Premios guardados."); return true; } catch (e) { console.error("Error guardando:", e); alert("Error al guardar premios."); return false; } finally { DOM.saveAllPrizesButton.disabled = false; DOM.saveAllPrizesButton.textContent = 'Guardar Cambios en Premios'; } };
-    const updateCellAppearance = (n, s) => { const c = document.querySelector(`.grid-item[data-number='${n}']`); if (c) { c.className = 'grid-item'; c.classList.add(`status-${s}`); } };
-    const updateSummary = () => { let p = 0, s = 0; Object.values(localRaffleData).forEach(d => { if (d.status === 'pago') p++; else if (d.status === 'separado') s++; }); DOM.summaryPago.textContent = p; DOM.summarySeparado.textContent = s; DOM.summaryDisponible.textContent = totalNumbers - (p + s); };
-    const performSearch = () => { const q = DOM.searchInput.value.trim(); DOM.searchResultsContainer.innerHTML = ''; document.querySelectorAll('.grid-item.highlighted').forEach(i => i.classList.remove('highlighted')); const m = Object.entries(localRaffleData).filter(([_, d]) => d.phone && d.phone.includes(q)).map(([n, d]) => ({ number: n, ...d })); if (m.length > 0) { m.forEach((d, i) => { DOM.searchResultsContainer.insertAdjacentHTML('beforeend', `<div class="result-card" style="animation-delay: ${i * 100}ms;"><div class="result-number">${d.number}</div><div class="result-info"><p class="name">${d.name || 'Sin nombre'}</p><p class="phone">${d.phone}</p></div><span class="status-badge status-${d.status}">${d.status}</span><button class="generate-ticket-btn" data-number="${d.number}" title="Generar Recibo"><i class="fas fa-receipt"></i></button></div>`); const c = document.getElementById(`grid-item-${d.number}`); if (c) c.classList.add('highlighted'); }); const f = document.getElementById(`grid-item-${m[0].number}`); if(f) f.scrollIntoView({ behavior: 'smooth', block: 'center' }); } else { DOM.searchResultsContainer.innerHTML = `<div class="no-results-message"><div>No se encontraron coincidencias.</div></div>`; } };
-    const getWinnerInfo = (r, t, p) => { const d = localRaffleData[r], l = { mayor: '🥇 Premio Mayor', segundo: '🥈 Segundo Premio', tercero: '🥉 Tercer Premio' }, s = { mayor: 'gold', segundo: 'silver', tercero: 'bronze' }; let w; if (d && d.status === 'pago') { w = `<div class="prize-info"><div class="winner-name">${d.name||'N/A'}</div><div class="winner-phone">Cel: ${d.phone||'N/A'}</div><hr style="border-color: rgba(255,255,255,0.2); margin: 10px 0;">${generarHtmlDePremio(p)}</div>`; } else { const e = d ? `no fue pagado (estado: ${d.status})` : 'está disponible'; w = `<div class="prize-info"><div class="no-winner-text">Sin ganador (El número ${r} ${e}).</div></div>`; } return `<div class="winner-card ${d && d.status === 'pago' ? s[t] : 'no-winner'}"><div class="prize-header"><h3>${l[t]}</h3><span class="prize-number-tag">Nº ${r}</span></div>${w}</div>`; };
-    const checkWinners = async () => { const w = DOM.realWinningInput.value.trim(); DOM.winnerResults.innerHTML = ''; if (!/^\d{4}$/.test(w)) { DOM.winnerResults.innerHTML = '<div class="no-results-message">Ingresa 4 cifras.</div>'; return; } const d = await db.collection("rifas").doc(rifaActivaId).get(), p = d.data().premios || { mayor: {}, segundo: {}, tercero: {} }, m = w.slice(-numberPadding), s = w.substring(0, 2), t = w.substring(1, 3), c = [{ tier: 'mayor', number: m }, { tier: 'segundo', number: s }, { tier: 'tercero', number: t }]; c.forEach(i => DOM.winnerResults.insertAdjacentHTML('beforeend', getWinnerInfo(i.number, i.tier, p[i.tier]))); };
-    const renderAnticipados = () => { DOM.anticipadosList.innerHTML = ''; const l = [...(currentPrizeData.premiosAnticipados || [])]; if (l.length > 0) { l.sort((a, b) => new Date(a.fecha) - new Date(b.fecha)); l.forEach(p => { const o = currentPrizeData.premiosAnticipados.findIndex(i => i === p), v = p.valor || '', f = p.fecha || '', t = p.loteria ? String(p.loteria).replace(/"/g, '&quot;') : ''; const h = `<div class="anticipado-card" data-index="${o}"><div class="view-mode"><div class="anticipado-info"><div class="anticipado-valor-display"><i class="fas fa-coins"></i><span>${formatCurrency(v)}</span></div><div class="anticipado-meta"><div><i class="fas fa-calendar-alt"></i> ${f ? new Date(f + 'T00:00:00').toLocaleDateString('es-ES', { day: 'numeric', month: 'long', year: 'numeric' }) : 'Fecha no definida'}</div><div><i class="fas fa-ticket-alt"></i> ${t || 'Sorteo no definido'}</div></div></div><div class="anticipado-card-actions"><button class="edit-anticipado-btn admin-action-btn" title="Editar"><i class="fas fa-pencil-alt"></i></button><button class="delete-anticipado-btn admin-action-btn" title="Eliminar"><i class="fas fa-trash-alt"></i></button></div></div><div class="edit-mode"><div><label>Valor:</label><input type="number" class="edit-valor" value="${v}"></div><div><label>Fecha:</label><input type="date" class="edit-fecha" value="${f}"></div><div><label>Lotería:</label><input type="text" class="edit-loteria" value="${t}"></div><div class="edit-mode-actions"><button class="cancel-edit-anticipado-btn">Cancelar</button><button class="save-edit-anticipado-btn">Guardar</button></div></div></div>`; DOM.anticipadosList.innerHTML += h; }); DOM.anticipadosContainerPublic.style.display = 'block'; } else { DOM.anticipadosContainerPublic.style.display = 'none'; } };
-    
-    const generateTicket = async (number) => {
-        if (!rifaActivaId) return;
-        const raffleDoc = await db.collection("rifas").doc(rifaActivaId).get();
-        if (!raffleDoc.exists) return;
+    const generateMediaTag = (url) => { if (!url) return ''; const l = url.toLowerCase(); return (l.includes('.mp4') || l.includes('.webm')) ? `<video src="${url}" class="prize-media" autoplay muted loop playsinline></video>` : `<img src="${url}" alt="Premio" class="prize-media">`; };
+    const generarHtmlDePremio = (p) => { if (!p) return '<div class="prize-details"><p class="prize-description">Premio no definido</p></div>'; if (p.valor && p.valor > 0) return `<div class="prize-card-value">${formatCurrency(p.valor)}</div>`; if (p.descripcion) { let h = `<div class="prize-details"><p class="prize-description">${p.descripcion}</p>`, m = ''; if (p.imgUrl1 || p.imgUrl2) { m += '<div class="prize-media-container">'; m += generateMediaTag(p.imgUrl1); m += generateMediaTag(p.imgUrl2); m += '</div>'; } h += m; h += `</div>`; return h; } return '<div class="prize-details"><p class="prize-description">Premio no definido</p></div>'; };
+    const aplicarColoresPersonalizados = (c) => { document.documentElement.style.setProperty('--color-disponible', c.disponible); document.documentElement.style.setProperty('--color-separado', c.separado); document.documentElement.style.setProperty('--color-pago', c.pago); };
+    const restaurarColoresDefault = () => { document.documentElement.style.removeProperty('--color-disponible'); document.documentElement.style.removeProperty('--color-separado'); document.documentElement.style.removeProperty('--color-pago'); };
+    const openSettingsModal = () => { if (!rifaActivaId || !firebase.auth().currentUser) return; const r = getComputedStyle(document.documentElement); DOM.colorDisponible.value = r.getPropertyValue('--color-disponible').trim(); DOM.colorSeparado.value = r.getPropertyValue('--color-separado').trim(); DOM.colorPago.value = r.getPropertyValue('--color-pago').trim(); DOM.settingsModal.classList.add('visible'); };
+    const closeSettingsModal = () => DOM.settingsModal.classList.remove('visible');
+    const saveColors = async () => { if (!rifaActivaId || !firebase.auth().currentUser) return; const n = { disponible: DOM.colorDisponible.value, separado: DOM.colorSeparado.value, pago: DOM.colorPago.value, }; try { await db.collection("rifas").doc(rifaActivaId).update({ colores: n }); aplicarColoresPersonalizados(n); alert("Colores actualizados."); closeSettingsModal(); } catch (e) { console.error("Error al guardar colores:", e); alert("No se pudieron guardar los colores."); } };
+    const applyTheme = (t) => { const i = DOM.darkModeToggle.querySelector('i'); if (t === 'dark') { document.body.classList.add('dark-mode'); i.classList.remove('fa-moon'); i.classList.add('fa-sun'); } else { document.body.classList.remove('dark-mode'); i.classList.remove('fa-sun'); i.classList.add('fa-moon'); } };
+    firebase.auth().onAuthStateChanged(user => { document.body.classList.toggle('admin-view', !!user); });
+    const cargarRifas = async () => { const s = await db.collection("rifas").orderBy("fechaCreacion", "desc").get(); DOM.rifaSelectItems.innerHTML = ''; if (s.empty) { DOM.rifaSelect.textContent = '-- No hay rifas --'; DOM.rifaSelect.dataset.value = ""; await cambiarRifaActiva(true); return; } s.forEach(d => { const o = document.createElement('div'); o.textContent = d.data().nombre; o.dataset.value = d.id; o.addEventListener('click', async function(e) { e.stopPropagation(); if (DOM.rifaSelect.dataset.value === this.dataset.value) { DOM.rifaSelectItems.classList.remove('select-show'); DOM.rifaSelect.classList.remove('select-arrow-active'); return; }; DOM.rifaSelect.textContent = this.textContent; DOM.rifaSelect.dataset.value = this.dataset.value; DOM.rifaSelectItems.classList.remove('select-show'); DOM.rifaSelect.classList.remove('select-arrow-active'); await cambiarRifaActiva(); }); DOM.rifaSelectItems.appendChild(o); }); const p = s.docs[0]; DOM.rifaSelect.textContent = p.data().nombre; DOM.rifaSelect.dataset.value = p.id; await cambiarRifaActiva(); };
+    const crearNuevaRifa = async () => { const n = DOM.newRifaName.value.trim(), s = parseInt(DOM.newRifaSize.value, 10); if (!n) { alert("Dale un nombre a la rifa."); return; } try { const p = { valor: 0, descripcion: "", imgUrl1: "", imgUrl2: "" }; await db.collection("rifas").add({ nombre: n, fechaCreacion: firebase.firestore.FieldValue.serverTimestamp(), totalNumeros: s, fechaSorteo: "", premios: { mayor: { ...p, descripcion: "Premio Mayor" }, segundo: { ...p, descripcion: "Segundo Premio" }, tercero: { ...p, descripcion: "Tercer Premio" } }, premiosAnticipados: [] }); DOM.newRifaName.value = ''; alert(`Rifa "${n}" creada.`); await cargarRifas(); } catch (e) { console.error("Error al crear:", e); alert("Error al crear rifa."); } };
+    const deleteRifaActual = async () => { if (!rifaActivaId) { alert("No hay rifa seleccionada."); return; } const n = DOM.rifaSelect.textContent; if (!confirm(`¿Borrar rifa "${n}"?\n\n¡ACCIÓN IRREVERSIBLE!`)) return; try { const r = db.collection("rifas").doc(rifaActivaId).collection("numeros"), s = await r.get(), b = db.batch(); s.docs.forEach(d => { b.delete(d.ref); }); await b.commit(); await db.collection("rifas").doc(rifaActivaId).delete(); alert(`Rifa "${n}" eliminada.`); await cargarRifas(); } catch (e) { console.error("Error al eliminar:", e); alert("Error al eliminar rifa."); } };
+    const cambiarRifaActiva = async (f = false) => { if (unsubRifaListener) unsubRifaListener(); rifaActivaId = f ? null : DOM.rifaSelect.dataset.value; const h = !!rifaActivaId; DOM.prizeButton.classList.toggle('visible', h); DOM.deleteRifaButton.classList.toggle('visible', h); DOM.settingsButton.classList.toggle('visible', h); if (!rifaActivaId) { totalNumbers = 100; numberPadding = 2; restaurarColoresDefault(); localRaffleData = {}; initializeGrid(); updateSummary(); DOM.searchResultsContainer.innerHTML = '<div class="no-results-message">Crea o selecciona una rifa.</div>'; return; } try { const d = await db.collection("rifas").doc(rifaActivaId).get(); if(d.exists) { const a = d.data(); totalNumbers = a.totalNumeros || 100; numberPadding = String(totalNumbers - 1).length; if (a.colores) aplicarColoresPersonalizados(a.colores); else restaurarColoresDefault(); } else restaurarColoresDefault(); } catch(e) { console.error("Error al cargar config:", e); totalNumbers = 100; numberPadding = 2; restaurarColoresDefault(); } initializeGrid(); DOM.searchResultsContainer.innerHTML = '<div class="no-results-message">Busca por celular.</div>'; const r = db.collection("rifas").doc(rifaActivaId).collection("numeros"); unsubRifaListener = r.onSnapshot(s => { localRaffleData = {}; s.forEach(d => { localRaffleData[d.id] = d.data(); }); for (let i = 0; i < totalNumbers; i++) { const n = i.toString().padStart(numberPadding, '0'), t = localRaffleData[n] ? localRaffleData[n].status : 'disponible'; updateCellAppearance(n, t); } updateSummary(); }); };
+    const initializeGrid = () => { DOM.gridContainer.innerHTML = ''; DOM.gridContainer.style.gridTemplateColumns = totalNumbers === 1000 ? 'repeat(auto-fit, minmax(40px, 1fr))' : 'repeat(10, 1fr)'; for (let i = 0; i < totalNumbers; i++) { const n = i.toString().padStart(numberPadding, '0'), c = document.createElement('div'); c.className = 'grid-item status-disponible'; c.textContent = n; c.dataset.number = n; c.id = `grid-item-${n}`; c.addEventListener('click', () => openDataModal(n)); DOM.gridContainer.appendChild(c); } };
+    
+    const openDataModal = (n) => {
+        if (!firebase.auth().currentUser || !rifaActivaId) return;
+        currentNumber = n;
+        DOM.modalNumber.textContent = n;
+        const d = localRaffleData[n];
+        if (d) {
+            DOM.inputStatus.value = d.status;
+            DOM.inputName.value = d.name || '';
+            DOM.inputPhone.value = d.phone || '';
+            DOM.inputAbono.value = d.abono || '';
+        } else {
+            DOM.inputStatus.value = 'disponible';
+            DOM.inputName.value = '';
+            DOM.inputPhone.value = '';
+            DOM.inputAbono.value = '';
+        }
+        DOM.abonoContainer.style.display = DOM.inputStatus.value === 'separado' ? 'block' : 'none';
+        DOM.dataModal.classList.add('visible');
+    };
 
-        const raffleData = raffleDoc.data();
-        const clientData = localRaffleData[number];
-        if (!clientData) {
-            alert("No se encontraron datos para este número.");
-            return;
-        }
-        
-        DOM.ticketPreview.innerHTML = DOM.ticketTemplate.innerHTML;
-        
-        const preview = DOM.ticketPreview;
-        preview.querySelector('#ticket-rifa-name').textContent = raffleData.nombre;
-        preview.querySelector('#ticket-client-name').textContent = clientData.name || 'N/A';
-        preview.querySelector('#ticket-client-phone').textContent = clientData.phone || 'N/A';
-        preview.querySelector('#ticket-number').textContent = number;
-        
-        const statusEl = preview.querySelector('#ticket-status');
-        statusEl.textContent = clientData.status;
-        statusEl.className = `ticket-status ${clientData.status}`;
+    const closeDataModal = () => { DOM.dataModal.classList.remove('visible'); currentNumber = null; };
+    
+    const saveData = () => {
+        if (!currentNumber || !rifaActivaId) return;
+        const s = DOM.inputStatus.value, n = DOM.inputName.value.trim(), p = DOM.inputPhone.value.trim();
+        const docRef = db.collection("rifas").doc(rifaActivaId).collection("numeros").doc(currentNumber);
+        
+        if (s === 'disponible') {
+            docRef.delete().then(closeDataModal);
+        } else {
+            const dataToSet = { status: s, name: n, phone: p };
+            if (s === 'separado') {
+                dataToSet.abono = Number(DOM.inputAbono.value) || 0;
+            } else {
+                dataToSet.abono = firebase.firestore.FieldValue.delete();
+            }
+            docRef.set(dataToSet, { merge: true }).then(closeDataModal);
+        }
+    };
 
-        preview.querySelector('#ticket-prizes').innerHTML = `<ul><li><strong>Mayor:</strong> ${raffleData.premios.mayor.descripcion || 'No definido'}</li><li><strong>Segundo:</strong> ${raffleData.premios.segundo.descripcion || 'No definido'}</li><li><strong>Tercero:</strong> ${raffleData.premios.tercero.descripcion || 'No definido'}</li></ul>`;
-        
-        const anticipadosSection = preview.querySelector('#ticket-anticipados-section');
-        const anticipadosList = preview.querySelector('#ticket-anticipados-list');
-        if (raffleData.premiosAnticipados && raffleData.premiosAnticipados.length > 0) {
-            anticipadosList.innerHTML = '<ul>' + raffleData.premiosAnticipados.map(p => `<li><strong>${formatCurrency(p.valor)}:</strong> Juega el ${new Date(p.fecha + 'T00:00:00').toLocaleDateString('es-ES', {day: 'numeric', month: 'long'})} con ${p.loteria}</li>`).join('') + '</ul>';
-            anticipadosSection.style.display = 'block';
-        } else {
-            anticipadosSection.style.display = 'none';
-        }
+    const deleteData = () => { if (!currentNumber || !rifaActivaId) return; db.collection("rifas").doc(rifaActivaId).collection("numeros").doc(currentNumber).delete().then(closeDataModal); };
+    const closePrizeModal = () => { DOM.mainContainer.classList.remove('page-blur'); DOM.modalBackdrop.classList.remove('visible'); DOM.prizeModal.classList.remove('visible'); }
+    
+    const openPrizeModal = async () => {
+        if (!rifaActivaId) return;
+        DOM.mainContainer.classList.add('page-blur');
+        DOM.modalBackdrop.classList.add('visible');
+        DOM.prizeModal.classList.add('visible');
+        const d = await db.collection("rifas").doc(rifaActivaId).get();
+        const a = d.data() || {};
+        currentPrizeData = {
+            fechaSorteo: a.fechaSorteo || "",
+            premios: a.premios || { mayor: {}, segundo: {}, tercero: {} },
+            premiosAnticipados: a.premiosAnticipados || []
+        };
+        const u = firebase.auth().currentUser;
+        
+        if (u) {
+            DOM.raffleDetailsAdmin.style.display = 'block';
+            DOM.raffleDetailsPublic.style.display = 'none';
+            DOM.raffleDrawDateInput.value = currentPrizeData.fechaSorteo;
+        } else {
+            DOM.raffleDetailsAdmin.style.display = 'none';
+            if (currentPrizeData.fechaSorteo) {
+                DOM.publicDrawDate.textContent = new Date(currentPrizeData.fechaSorteo + 'T00:00:00').toLocaleDateString('es-ES', { weekday: 'long', year: 'numeric', month: 'long', day: 'numeric' });
+                DOM.raffleDetailsPublic.style.display = 'block';
+            } else {
+                DOM.raffleDetailsPublic.style.display = 'none';
+            }
+        }
+        
+        DOM.prizeInfoSection.innerHTML = '';
+        const t = ['mayor', 'segundo', 'tercero'], l = { mayor: '🥇 Premio Mayor', segundo: '🥈 Segundo Premio', tercero: '🥉 Tercer Premio' };
+        t.forEach(i => { const p = currentPrizeData.premios[i] || { descripcion: '', valor: 0, imgUrl1: '', imgUrl2: '' }; let c = ''; if (u) { c = `<div class="prize-card-admin-view"><label for="${i}DescInput">Descripción:</label><input type="text" id="${i}DescInput" value="${p.descripcion || ''}"><label for="${i}ValorInput">Valor:</label><input type="number" id="${i}ValorInput" value="${p.valor || 0}"><label for="${i}ImgUrl1Input">URL Imagen/Video 1:</label><input type="url" id="${i}ImgUrl1Input" value="${p.imgUrl1 || ''}"><label for="${i}ImgUrl2Input">URL Imagen/Video 2:</label><input type="url" id="${i}ImgUrl2Input" value="${p.imgUrl2 || ''}"></div>`; } else { c = generarHtmlDePremio(p); } DOM.prizeInfoSection.innerHTML += `<div class="prize-card ${i}"><div class="prize-card-title">${l[i]}</div>${c}</div>`; });
+        renderAnticipados();
+        DOM.saveAllPrizesButton.style.display = u ? 'inline-block' : 'none';
+        DOM.modalWinningInput.value = '';
+        DOM.prizeSimulatorSlots.forEach(s => { s.querySelector('span').textContent = ''; s.classList.remove('liquid-filled', 'selected-digit'); });
+        DOM.prizeZonesContainer.classList.remove('active');
+        DOM.modalWinnerResults.innerHTML = '';
+    };
+    
+    const saveAllPrizes = async () => {
+        if (!rifaActivaId || !firebase.auth().currentUser) return;
+        DOM.saveAllPrizesButton.disabled = true;
+        DOM.saveAllPrizesButton.textContent = 'Guardando...';
+        try {
+            const updateData = {
+                fechaSorteo: DOM.raffleDrawDateInput.value,
+                premios: {
+                    mayor: { descripcion: document.getElementById('mayorDescInput').value.trim(), valor: Number(document.getElementById('mayorValorInput').value) || 0, imgUrl1: document.getElementById('mayorImgUrl1Input').value.trim(), imgUrl2: document.getElementById('mayorImgUrl2Input').value.trim() },
+                    segundo: { descripcion: document.getElementById('segundoDescInput').value.trim(), valor: Number(document.getElementById('segundoValorInput').value) || 0, imgUrl1: document.getElementById('segundoImgUrl1Input').value.trim(), imgUrl2: document.getElementById('segundoImgUrl2Input').value.trim() },
+                    tercero: { descripcion: document.getElementById('terceroDescInput').value.trim(), valor: Number(document.getElementById('terceroValorInput').value) || 0, imgUrl1: document.getElementById('terceroImgUrl1Input').value.trim(), imgUrl2: document.getElementById('terceroImgUrl2Input').value.trim() }
+                },
+                premiosAnticipados: currentPrizeData.premiosAnticipados
+            };
+            await db.collection("rifas").doc(rifaActivaId).update(updateData);
+            alert("Datos de la rifa guardados.");
+            return true;
+        } catch (e) {
+            console.error("Error guardando:", e);
+            alert("Error al guardar los datos.");
+            return false;
+        } finally {
+            DOM.saveAllPrizesButton.disabled = false;
+            DOM.saveAllPrizesButton.textContent = 'Guardar Cambios';
+        }
+    };
 
-        preview.querySelector('#ticket-date').textContent = new Date().toLocaleDateString('es-CO', { day: 'numeric', month: 'short', year: 'numeric', hour: '2-digit', minute: '2-digit' });
+    const updateCellAppearance = (n, s) => { const c = document.querySelector(`.grid-item[data-number='${n}']`); if (c) { c.className = 'grid-item'; c.classList.add(`status-${s}`); } };
+    const updateSummary = () => { let p = 0, s = 0; Object.values(localRaffleData).forEach(d => { if (d.status === 'pago') p++; else if (d.status === 'separado') s++; }); DOM.summaryPago.textContent = p; DOM.summarySeparado.textContent = s; DOM.summaryDisponible.textContent = totalNumbers - (p + s); };
+    
+    const performSearch = () => {
+        const q = DOM.searchInput.value.trim();
+        DOM.searchResultsContainer.innerHTML = '';
+        document.querySelectorAll('.grid-item.highlighted').forEach(i => i.classList.remove('highlighted'));
+        const m = Object.entries(localRaffleData).filter(([_, d]) => d.phone && d.phone.includes(q)).map(([n, d]) => ({ number: n, ...d }));
+        if (m.length > 0) {
+            m.forEach((d, i) => {
+                const abonoInfo = (d.status === 'separado' && d.abono > 0) ? `<p class="abono">Abonado: ${formatCurrency(d.abono)}</p>` : '';
+                DOM.searchResultsContainer.insertAdjacentHTML('beforeend', `<div class="result-card" style="animation-delay: ${i * 100}ms;"><div class="result-number">${d.number}</div><div class="result-info"><p class="name">${d.name || 'Sin nombre'}</p><p class="phone">${d.phone}</p>${abonoInfo}</div><span class="status-badge status-${d.status}">${d.status}</span><button class="generate-ticket-btn" data-number="${d.number}" title="Generar Recibo"><i class="fas fa-receipt"></i></button></div>`);
+                const c = document.getElementById(`grid-item-${d.number}`);
+                if (c) c.classList.add('highlighted');
+            });
+            const f = document.getElementById(`grid-item-${m[0].number}`);
+            if(f) f.scrollIntoView({ behavior: 'smooth', block: 'center' });
+        } else {
+            DOM.searchResultsContainer.innerHTML = `<div class="no-results-message"><div>No se encontraron coincidencias.</div></div>`;
+        }
+    };
 
-        const verificationUrl = new URL('verificacion.html', window.location.href);
-        verificationUrl.searchParams.set('rifa', raffleData.nombre);
-        verificationUrl.searchParams.set('numero', number);
-        verificationUrl.searchParams.set('nombre', clientData.name || 'N/A');
-        verificationUrl.searchParams.set('estado', clientData.status);
+    const getWinnerInfo = (r, t, p) => { const d = localRaffleData[r], l = { mayor: '🥇 Premio Mayor', segundo: '🥈 Segundo Premio', tercero: '🥉 Tercer Premio' }, s = { mayor: 'gold', segundo: 'silver', tercero: 'bronze' }; let w; if (d && d.status === 'pago') { w = `<div class="prize-info"><div class="winner-name">${d.name||'N/A'}</div><div class="winner-phone">Cel: ${d.phone||'N/A'}</div><hr style="border-color: rgba(255,255,255,0.2); margin: 10px 0;">${generarHtmlDePremio(p)}</div>`; } else { const e = d ? `no fue pagado (estado: ${d.status})` : 'está disponible'; w = `<div class="prize-info"><div class="no-winner-text">Sin ganador (El número ${r} ${e}).</div></div>`; } return `<div class="winner-card ${d && d.status === 'pago' ? s[t] : 'no-winner'}"><div class="prize-header"><h3>${l[t]}</h3><span class="prize-number-tag">Nº ${r}</span></div>${w}</div>`; };
+    const checkWinners = async () => { const w = DOM.realWinningInput.value.trim(); DOM.winnerResults.innerHTML = ''; if (!/^\d{4}$/.test(w)) { DOM.winnerResults.innerHTML = '<div class="no-results-message">Ingresa 4 cifras.</div>'; return; } const d = await db.collection("rifas").doc(rifaActivaId).get(), p = d.data().premios || { mayor: {}, segundo: {}, tercero: {} }, m = w.slice(-numberPadding), s = w.substring(0, 2), t = w.substring(1, 3), c = [{ tier: 'mayor', number: m }, { tier: 'segundo', number: s }, { tier: 'tercero', number: t }]; c.forEach(i => DOM.winnerResults.insertAdjacentHTML('beforeend', getWinnerInfo(i.number, i.tier, p[i.tier]))); };
+    const renderAnticipados = () => { DOM.anticipadosList.innerHTML = ''; const l = [...(currentPrizeData.premiosAnticipados || [])]; if (l.length > 0) { l.sort((a, b) => new Date(a.fecha) - new Date(b.fecha)); l.forEach(p => { const o = currentPrizeData.premiosAnticipados.findIndex(i => i === p), v = p.valor || '', f = p.fecha || '', t = p.loteria ? String(p.loteria).replace(/"/g, '&quot;') : ''; const h = `<div class="anticipado-card" data-index="${o}"><div class="view-mode"><div class="anticipado-info"><div class="anticipado-valor-display"><i class="fas fa-coins"></i><span>${formatCurrency(v)}</span></div><div class="anticipado-meta"><div><i class="fas fa-calendar-alt"></i> ${f ? new Date(f + 'T00:00:00').toLocaleDateString('es-ES', { day: 'numeric', month: 'long', year: 'numeric' }) : 'Fecha no definida'}</div><div><i class="fas fa-ticket-alt"></i> ${t || 'Sorteo no definido'}</div></div></div><div class="anticipado-card-actions"><button class="edit-anticipado-btn admin-action-btn" title="Editar"><i class="fas fa-pencil-alt"></i></button><button class="delete-anticipado-btn admin-action-btn" title="Eliminar"><i class="fas fa-trash-alt"></i></button></div></div><div class="edit-mode"><div><label>Valor:</label><input type="number" class="edit-valor" value="${v}"></div><div><label>Fecha:</label><input type="date" class="edit-fecha" value="${f}"></div><div><label>Lotería:</label><input type="text" class="edit-loteria" value="${t}"></div><div class="edit-mode-actions"><button class="cancel-edit-anticipado-btn">Cancelar</button><button class="save-edit-anticipado-btn">Guardar</button></div></div></div>`; DOM.anticipadosList.innerHTML += h; }); DOM.anticipadosContainerPublic.style.display = 'block'; } else { DOM.anticipadosContainerPublic.style.display = 'none'; } };
+    
+    const generateTicket = async (number) => {
+        if (!rifaActivaId) return;
+        const raffleDoc = await db.collection("rifas").doc(rifaActivaId).get();
+        if (!raffleDoc.exists) return;
 
-        const qrApiUrl = `https://api.qrserver.com/v1/create-qr-code/?size=120x120&data=${encodeURIComponent(verificationUrl.href)}&qzone=1`;
-        preview.querySelector('#ticket-qr-code').src = qrApiUrl;
+        const raffleData = raffleDoc.data();
+        const clientData = localRaffleData[number];
+        if (!clientData) {
+            alert("No se encontraron datos para este número.");
+            return;
+        }
+        
+        DOM.ticketPreview.innerHTML = DOM.ticketTemplate.innerHTML;
+        
+        const preview = DOM.ticketPreview;
+        preview.querySelector('#ticket-rifa-name').textContent = raffleData.nombre;
+        preview.querySelector('#ticket-client-name').textContent = clientData.name || 'N/A';
+        preview.querySelector('#ticket-client-phone').textContent = clientData.phone || 'N/A';
+        preview.querySelector('#ticket-number').textContent = number;
+        
+        const statusEl = preview.querySelector('#ticket-status');
+        statusEl.textContent = clientData.status;
+        statusEl.className = `ticket-status ${clientData.status}`;
+        
+        const abonoDetails = preview.querySelector('#ticket-abono-details');
+        if (clientData.status === 'separado' && clientData.abono > 0) {
+            preview.querySelector('#ticket-client-abono').textContent = formatCurrency(clientData.abono);
+            abonoDetails.style.display = 'flex';
+        } else {
+            abonoDetails.style.display = 'none';
+        }
 
-        DOM.ticketModal.classList.add('visible');
-    };
+        if (raffleData.fechaSorteo) {
+            preview.querySelector('#ticket-draw-date').textContent = new Date(raffleData.fechaSorteo + 'T00:00:00').toLocaleDateString('es-ES', { day: 'numeric', month: 'long', year: 'numeric' });
+        } else {
+            preview.querySelector('#ticket-draw-date').textContent = "No definida";
+        }
 
-    const downloadTicket = () => {
-        const button = DOM.downloadTicketButton;
-        button.textContent = 'Generando...';
-        button.disabled = true;
-        
-        const printableElement = DOM.ticketPreview.querySelector('.ticket-container');
-        if (!printableElement) {
-             alert("Error: No se encontró el contenido del recibo para descargar.");
-             button.textContent = 'Descargar Recibo';
-             button.disabled = false;
-             return;
-        }
+        preview.querySelector('#ticket-prizes').innerHTML = `<ul><li><strong>Mayor:</strong> ${raffleData.premios.mayor.descripcion || 'No definido'}</li><li><strong>Segundo:</strong> ${raffleData.premios.segundo.descripcion || 'No definido'}</li><li><strong>Tercero:</strong> ${raffleData.premios.tercero.descripcion || 'No definido'}</li></ul>`;
+        
+        const anticipadosSection = preview.querySelector('#ticket-anticipados-section');
+        const anticipadosList = preview.querySelector('#ticket-anticipados-list');
+        if (raffleData.premiosAnticipados && raffleData.premiosAnticipados.length > 0) {
+            anticipadosList.innerHTML = '<ul>' + raffleData.premiosAnticipados.map(p => `<li><strong>${formatCurrency(p.valor)}:</strong> Juega el ${new Date(p.fecha + 'T00:00:00').toLocaleDateString('es-ES', {day: 'numeric', month: 'long'})} con ${p.loteria}</li>`).join('') + '</ul>';
+            anticipadosSection.style.display = 'block';
+        } else {
+            anticipadosSection.style.display = 'none';
+        }
 
-        html2canvas(printableElement, { 
-            scale: 3, 
-            useCORS: true, 
-            backgroundColor: null 
-        }).then(canvas => {
-            const link = document.createElement('a');
-            const clientName = DOM.ticketPreview.querySelector('#ticket-client-name').textContent.trim().replace(/\s+/g, '_');
-            const ticketNumber = DOM.ticketPreview.querySelector('#ticket-number').textContent.trim();
-            link.download = `Recibo-Rifa-${clientName}-${ticketNumber}.png`;
-            link.href = canvas.toDataURL('image/png');
-            link.click();
-            
-            button.textContent = 'Descargar Recibo';
-            button.disabled = false;
-        }).catch(err => { 
-            console.error('Error al generar recibo:', err); 
-            alert('Hubo un error al generar el recibo. Revisa la consola para más detalles.'); 
-            button.textContent = 'Descargar Recibo';
-            button.disabled = false; 
-        });
-    };
-    const closeTicketModal = () => DOM.ticketModal.classList.remove('visible');
+        preview.querySelector('#ticket-date').textContent = new Date().toLocaleDateString('es-CO', { day: 'numeric', month: 'short', year: 'numeric', hour: '2-digit', minute: '2-digit' });
 
-    // --- EVENT LISTENERS ---
-    DOM.settingsButton.addEventListener('click', openSettingsModal);
-    DOM.closeSettingsModalButton.addEventListener('click', closeSettingsModal);
-    DOM.saveColorsButton.addEventListener('click', saveColors);
-    DOM.darkModeToggle.addEventListener('click', () => { const n = document.body.classList.contains('dark-mode') ? 'light' : 'dark'; localStorage.setItem('theme', n); applyTheme(n); });
-    DOM.createRifaButton.addEventListener('click', crearNuevaRifa); DOM.deleteRifaButton.addEventListener('click', deleteRifaActual);
-    DOM.closeDataModalButton.addEventListener('click', closeDataModal); DOM.saveButton.addEventListener('click', saveData); DOM.deleteButton.addEventListener('click', deleteData);
-    DOM.prizeButton.addEventListener('click', openPrizeModal);
-    DOM.closePrizeModalButton.addEventListener('click', closePrizeModal);
-    DOM.modalBackdrop.addEventListener('click', (e) => { if (e.target === DOM.modalBackdrop) { closePrizeModal(); closeSettingsModal(); closeDataModal(); closeTicketModal(); } });
-    DOM.saveAllPrizesButton.addEventListener('click', saveAllPrizes);
-    DOM.rifaSelect.addEventListener('click', () => { DOM.rifaSelectItems.classList.toggle('select-show'); DOM.rifaSelect.classList.toggle('select-arrow-active'); });
-    window.addEventListener('click', (e) => { if (DOM.rifaSelect.parentElement && !DOM.rifaSelect.parentElement.contains(e.target)) { DOM.rifaSelectItems.classList.remove('select-show'); DOM.rifaSelect.classList.remove('select-arrow-active'); }});
-    DOM.searchButton.addEventListener('click', () => { if (!rifaActivaId) { alert("Selecciona una rifa para buscar."); return; } if (DOM.searchInput.value.trim().length === 10) performSearch(); else { DOM.searchResultsContainer.innerHTML = '<div class="no-results-message">Debes ingresar 10 cifras.</div>'; document.querySelectorAll('.grid-item.highlighted').forEach(i => i.classList.remove('highlighted')); } });
-    DOM.checkWinnerButton.addEventListener('click', checkWinners);
-    DOM.realWinningInput.addEventListener('input', () => { const v = DOM.realWinningInput.value; DOM.digitCircles.forEach((c, i) => { const d = v[i]; if (d) { c.textContent = d; c.classList.add('filled'); } else { c.textContent = ''; c.classList.remove('filled'); } }); DOM.checkWinnerButton.disabled = v.length !== 4; });
-    DOM.searchResultsContainer.addEventListener('click', (e) => { const t = e.target.closest('.generate-ticket-btn'); if (t) generateTicket(t.dataset.number); });
-    DOM.closeTicketModalButton.addEventListener('click', closeTicketModal);
-    DOM.downloadTicketButton.addEventListener('click', downloadTicket);
-    DOM.addAnticipadoButton.addEventListener('click', async () => { const v = Number(DOM.anticipadoValor.value), f = DOM.anticipadoFecha.value, l = DOM.anticipadoLoteria.value.trim(); if (!v || !f || !l) { alert("Completa todos los campos del premio."); return; } currentPrizeData.premiosAnticipados.push({ valor:v, fecha:f, loteria:l }); const s = await saveAllPrizes(); if (s) { renderAnticipados(); DOM.anticipadoValor.value = ''; DOM.anticipadoFecha.value = ''; DOM.anticipadoLoteria.value = ''; } });
-    DOM.anticipadosList.addEventListener('click', async (e) => { const c = e.target.closest('.anticipado-card'); if (!c || !firebase.auth().currentUser) return; const i = Number(c.dataset.index), editBtn = e.target.closest('.edit-anticipado-btn'), cancelBtn = e.target.closest('.cancel-edit-anticipado-btn'), saveBtn = e.target.closest('.save-edit-anticipado-btn'), deleteBtn = e.target.closest('.delete-anticipado-btn'); if (editBtn) { c.querySelector('.view-mode').style.display = 'none'; c.querySelector('.edit-mode').style.display = 'flex'; } else if (cancelBtn) { c.querySelector('.view-mode').style.display = 'flex'; c.querySelector('.edit-mode').style.display = 'none'; } else if (saveBtn) { const v = Number(c.querySelector('.edit-valor').value), f = c.querySelector('.edit-fecha').value, l = c.querySelector('.edit-loteria').value.trim(); if (!v || !f || !l) { alert("Completa todos los campos."); return; } currentPrizeData.premiosAnticipados[i] = { valor: v, fecha: f, loteria: l }; saveBtn.textContent = 'Guardando...'; saveBtn.disabled = true; const s = await saveAllPrizes(); if (s) renderAnticipados(); else { saveBtn.textContent = 'Guardar'; saveBtn.disabled = false; } } else if (deleteBtn) { if (confirm("¿Eliminar este premio anticipado?")) { currentPrizeData.premiosAnticipados.splice(i, 1); const s = await saveAllPrizes(); if (s) renderAnticipados(); } } });
+        const verificationUrl = new URL(window.location.href);
+        verificationUrl.searchParams.set('rifaId', rifaActivaId);
+        verificationUrl.searchParams.set('numero', number);
+        
+        const qrApiUrl = `https://api.qrserver.com/v1/create-qr-code/?size=120x120&data=${encodeURIComponent(verificationUrl.href)}&qzone=1`;
+        preview.querySelector('#ticket-qr-code').src = qrApiUrl;
 
-    // Inicialización
-    applyTheme(localStorage.getItem('theme') || 'light');
-    cargarRifas();
-    DOM.checkWinnerButton.disabled = true;
+        DOM.ticketModal.classList.add('visible');
+    };
+
+    const downloadTicket = () => {
+        const button = DOM.downloadTicketButton;
+        button.textContent = 'Generando...';
+        button.disabled = true;
+        
+        const printableElement = DOM.ticketPreview.querySelector('.ticket-container');
+        if (!printableElement) {
+             alert("Error: No se encontró el contenido del recibo para descargar.");
+             button.textContent = 'Descargar Recibo';
+             button.disabled = false;
+             return;
+        }
+
+        html2canvas(printableElement, { 
+            scale: 3, 
+            useCORS: true, 
+            backgroundColor: null 
+        }).then(canvas => {
+            const link = document.createElement('a');
+            const clientName = DOM.ticketPreview.querySelector('#ticket-client-name').textContent.trim().replace(/\s+/g, '_');
+            const ticketNumber = DOM.ticketPreview.querySelector('#ticket-number').textContent.trim();
+            link.download = `Recibo-Rifa-${clientName}-${ticketNumber}.png`;
+            link.href = canvas.toDataURL('image/png');
+            link.click();
+            
+            button.textContent = 'Descargar Recibo';
+            button.disabled = false;
+        }).catch(err => { 
+            console.error('Error al generar recibo:', err); 
+            alert('Hubo un error al generar el recibo. Revisa la consola para más detalles.'); 
+            button.textContent = 'Descargar Recibo';
+            button.disabled = false; 
+        });
+    };
+    const closeTicketModal = () => DOM.ticketModal.classList.remove('visible');
+
+    // --- EVENT LISTENERS ---
+    DOM.settingsButton.addEventListener('click', openSettingsModal);
+    DOM.closeSettingsModalButton.addEventListener('click', closeSettingsModal);
+    DOM.saveColorsButton.addEventListener('click', saveColors);
+    DOM.darkModeToggle.addEventListener('click', () => { const n = document.body.classList.contains('dark-mode') ? 'light' : 'dark'; localStorage.setItem('theme', n); applyTheme(n); });
+    DOM.createRifaButton.addEventListener('click', crearNuevaRifa); DOM.deleteRifaButton.addEventListener('click', deleteRifaActual);
+    DOM.closeDataModalButton.addEventListener('click', closeDataModal); DOM.saveButton.addEventListener('click', saveData); DOM.deleteButton.addEventListener('click', deleteData);
+    DOM.prizeButton.addEventListener('click', openPrizeModal);
+    DOM.closePrizeModalButton.addEventListener('click', closePrizeModal);
+    DOM.modalBackdrop.addEventListener('click', (e) => { if (e.target === DOM.modalBackdrop) { closePrizeModal(); closeSettingsModal(); closeDataModal(); closeTicketModal(); } });
+    DOM.saveAllPrizesButton.addEventListener('click', saveAllPrizes);
+    DOM.rifaSelect.addEventListener('click', () => { DOM.rifaSelectItems.classList.toggle('select-show'); DOM.rifaSelect.classList.toggle('select-arrow-active'); });
+    window.addEventListener('click', (e) => { if (DOM.rifaSelect.parentElement && !DOM.rifaSelect.parentElement.contains(e.target)) { DOM.rifaSelectItems.classList.remove('select-show'); DOM.rifaSelect.classList.remove('select-arrow-active'); }});
+    DOM.searchButton.addEventListener('click', () => { if (!rifaActivaId) { alert("Selecciona una rifa para buscar."); return; } if (DOM.searchInput.value.trim().length === 10) performSearch(); else { DOM.searchResultsContainer.innerHTML = '<div class="no-results-message">Debes ingresar 10 cifras.</div>'; document.querySelectorAll('.grid-item.highlighted').forEach(i => i.classList.remove('highlighted')); } });
+    DOM.checkWinnerButton.addEventListener('click', checkWinners);
+    DOM.realWinningInput.addEventListener('input', () => { const v = DOM.realWinningInput.value; DOM.digitCircles.forEach((c, i) => { const d = v[i]; if (d) { c.textContent = d; c.classList.add('filled'); } else { c.textContent = ''; c.classList.remove('filled'); } }); DOM.checkWinnerButton.disabled = v.length !== 4; });
+    DOM.searchResultsContainer.addEventListener('click', (e) => { const t = e.target.closest('.generate-ticket-btn'); if (t) generateTicket(t.dataset.number); });
+    DOM.closeTicketModalButton.addEventListener('click', closeTicketModal);
+    DOM.downloadTicketButton.addEventListener('click', downloadTicket);
+    
+    // EVENTO NUEVO para mostrar/ocultar campo de abono
+    DOM.inputStatus.addEventListener('change', () => {
+        DOM.abonoContainer.style.display = DOM.inputStatus.value === 'separado' ? 'block' : 'none';
+    });
+
+    DOM.addAnticipadoButton.addEventListener('click', async () => { const v = Number(DOM.anticipadoValor.value), f = DOM.anticipadoFecha.value, l = DOM.anticipadoLoteria.value.trim(); if (!v || !f || !l) { alert("Completa todos los campos del premio."); return; } currentPrizeData.premiosAnticipados.push({ valor:v, fecha:f, loteria:l }); const s = await saveAllPrizes(); if (s) { renderAnticipados(); DOM.anticipadoValor.value = ''; DOM.anticipadoFecha.value = ''; DOM.anticipadoLoteria.value = ''; } });
+    DOM.anticipadosList.addEventListener('click', async (e) => { const c = e.target.closest('.anticipado-card'); if (!c || !firebase.auth().currentUser) return; const i = Number(c.dataset.index), editBtn = e.target.closest('.edit-anticipado-btn'), cancelBtn = e.target.closest('.cancel-edit-anticipado-btn'), saveBtn = e.target.closest('.save-edit-anticipado-btn'), deleteBtn = e.target.closest('.delete-anticipado-btn'); if (editBtn) { c.querySelector('.view-mode').style.display = 'none'; c.querySelector('.edit-mode').style.display = 'flex'; } else if (cancelBtn) { c.querySelector('.view-mode').style.display = 'flex'; c.querySelector('.edit-mode').style.display = 'none'; } else if (saveBtn) { const v = Number(c.querySelector('.edit-valor').value), f = c.querySelector('.edit-fecha').value, l = c.querySelector('.edit-loteria').value.trim(); if (!v || !f || !l) { alert("Completa todos los campos."); return; } currentPrizeData.premiosAnticipados[i] = { valor: v, fecha: f, loteria: l }; saveBtn.textContent = 'Guardando...'; saveBtn.disabled = true; const s = await saveAllPrizes(); if (s) renderAnticipados(); else { saveBtn.textContent = 'Guardar'; saveBtn.disabled = false; } } else if (deleteBtn) { if (confirm("¿Eliminar este premio anticipado?")) { currentPrizeData.premiosAnticipados.splice(i, 1); const s = await saveAllPrizes(); if (s) renderAnticipados(); } } });
+
+    // Inicialización
+    applyTheme(localStorage.getItem('theme') || 'light');
+    cargarRifas();
+    DOM.checkWinnerButton.disabled = true;
 });
 </script>
 
