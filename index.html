@@ -196,7 +196,26 @@
         @keyframes modal-slide-in { from { transform: translateY(-50px) scale(0.95); opacity: 0; } to { transform: translateY(0) scale(1); opacity: 1; } }
         .modal.visible .modal-content { animation: modal-slide-in 0.4s cubic-bezier(0.25, 0.46, 0.45, 0.94) forwards; }
         .modal-content { background-color: var(--modal-bg); padding: 20px; border: 1px solid var(--border-color); width: 90%; max-width: 500px; border-radius: 8px; box-shadow: 0 4px 8px rgba(0,0,0,0.2); transition: background-color var(--transition-speed) ease; }
-        #prizeModal .modal-content { width: 100%; height: 100%; max-width: none; border-radius: 0; border: none; background-color: var(--modal-glass-bg); backdrop-filter: blur(10px); -webkit-backdrop-filter: blur(10px); box-shadow: none; display: flex; flex-direction: column; justify-content: flex-start; padding: 20px; box-sizing: border-box; overflow-y: auto; }
+        
+        /* --- ESTILO DE MODAL DE PREMIOS MODIFICADO --- */
+        #prizeModal .modal-content {
+            width: 100%;
+            height: 100%;
+            max-width: none;
+            border-radius: 0;
+            border: none;
+            background-color: var(--body-bg); /* Fondo sólido igual al de la página */
+            backdrop-filter: none; /* Efecto de desenfoque eliminado */
+            -webkit-backdrop-filter: none; /* Efecto de desenfoque eliminado para Safari */
+            box-shadow: none;
+            display: flex;
+            flex-direction: column;
+            justify-content: flex-start;
+            padding: 20px;
+            box-sizing: border-box;
+            overflow-y: auto;
+        }
+
         #prizeModal h2 { margin-bottom: 15px; }
         #prizeModal hr { margin: 25px 0; border-color: var(--border-color); opacity: 0.5; }
         #prizeModal h4 { margin-top: 0; margin-bottom: 15px; }
@@ -258,7 +277,6 @@
         #prizeButton:hover .prize-icon { transform: scale(1.2) rotate(8deg); }
         #prizeButton.visible { display: block; }
 
-        /* --- ESTILOS DE TARJETAS DE PREMIOS MODIFICADOS --- */
         #prize-info-section {
             display: flex;
             flex-wrap: wrap;
@@ -269,7 +287,7 @@
             background-color: var(--background-card);
             color: var(--text-dark);
             border: 1px solid var(--border-color);
-            border-top: 5px solid transparent; /* Borde superior por defecto */
+            border-top: 5px solid transparent;
             transition: all 0.3s ease;
             text-align: center;
             border-radius: 12px;
@@ -315,7 +333,6 @@
         .prize-card.tercero .prize-card-title {
             color: var(--color-pago);
         }
-        /* --- FIN DE ESTILOS MODIFICADOS --- */
 
         #prize-simulator-section { padding: 20px; border: 2px dashed var(--border-color); border-radius: 8px; text-align: center; margin-top: 20px; }
         .digit-slots-container { display: flex; justify-content: center; gap: 15px; margin-bottom: 20px; position: relative; cursor: text; }
