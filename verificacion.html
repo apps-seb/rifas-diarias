@@ -34,15 +34,9 @@
           0% { transform: scale(0.8); opacity: 0; }
           100% { transform: scale(1); opacity: 1; }
         }
-        @keyframes stampAnimation {
-            0% { transform: scale(2.5) rotate(-25deg); opacity: 0; }
-            60% { transform: scale(0.9) rotate(3deg); opacity: 1; }
-            80% { transform: scale(1.05); }
-            100% { transform: scale(1) rotate(0deg); }
-        }
         @keyframes shine-effect {
-            0% { transform: translateX(-200%) rotate(25deg); }
-            100% { transform: translateX(200%) rotate(25deg); }
+            0% { transform: translateX(-250%) rotate(25deg); }
+            100% { transform: translateX(250%) rotate(25deg); }
         }
 
         /* --- Estructura Principal --- */
@@ -114,7 +108,7 @@
             font-size: clamp(4em, 20vw, 7em);
             font-weight: 700;
             line-height: 1;
-            color: var(--text-dark);
+            color: var(--color-primary); /* Color del número cambiado a azul */
             margin: 0 0 25px 0;
             opacity: 0;
         }
@@ -132,21 +126,25 @@
             font-size: 1.1em;
             margin-bottom: 30px;
             border: 2px solid;
+            transition: box-shadow 0.3s ease;
         }
         .ticket-status.status-valid {
             background-color: var(--color-pago);
             border-color: var(--color-pago);
             color: white;
+            box-shadow: 0 4px 20px rgba(40, 167, 69, 0.4);
         }
         .ticket-status.status-pending {
             background-color: var(--color-separado);
             border-color: var(--color-separado);
             color: #333;
+            box-shadow: 0 4px 20px rgba(255, 193, 7, 0.4);
         }
         .ticket-status.status-invalid {
             background-color: var(--color-disponible);
             border-color: var(--color-disponible);
             color: white;
+            box-shadow: 0 4px 20px rgba(108, 117, 125, 0.4);
         }
         .ticket-status.status-error {
             background-color: var(--color-danger);
@@ -203,12 +201,8 @@
             color: white;
             font-size: 1.8em;
             flex-shrink: 0;
-            opacity: 0;
             position: relative;
             overflow: hidden;
-        }
-        .seal.animate {
-            animation: stampAnimation 0.8s cubic-bezier(0.68, -0.55, 0.27, 1.55) 0.8s forwards;
         }
         .seal::after {
             content: '';
@@ -218,14 +212,11 @@
             width: 40%;
             height: 200%;
             background: linear-gradient(to right, rgba(255, 255, 255, 0) 0%, rgba(255, 255, 255, 0.4) 50%, rgba(255, 255, 255, 0) 100%);
-            transform: translateX(-250%) rotate(25deg);
-        }
-        .seal.animate::after {
-            animation: shine-effect 3s infinite;
-            animation-delay: 1.5s; /* Inicia el brillo después del estampado */
+            animation: shine-effect 3s infinite linear;
         }
         .seal-container span {
-            font-weight: 600;
+            font-weight: 700; /* Letra más gruesa */
+            font-size: 1.1em; /* Letra más grande */
             color: var(--text-dark);
         }
 
@@ -357,8 +348,8 @@
                     </div>
                     <div class="card-footer">
                         <div class="seal-container">
-                            <div class="seal animate">
-                                <i class="fas fa-check"></i>
+                            <div class="seal">
+                                <i class="fas fa-shield-halved"></i>
                             </div>
                             <span>BOLETO AUTÉNTICO</span>
                         </div>
