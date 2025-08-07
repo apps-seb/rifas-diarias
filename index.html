@@ -108,12 +108,12 @@
             font-size: 0.8em; 
             margin: 2px 0 0 0; 
         }
-        .result-info .abono {
-            color: var(--color-pago);
-            font-size: 0.8em;
-            font-weight: bold;
-            margin: 4px 0 0 0;
-        }
+        .result-info .abono {
+            color: var(--color-pago);
+            font-size: 0.8em;
+            font-weight: bold;
+            margin: 4px 0 0 0;
+        }
         .status-badge { 
             padding: 4px 8px; 
             border-radius: 12px; 
@@ -541,21 +541,21 @@
     <div class="modal-content">
         <div class="modal-header"><h2>Datos del Número <span id="modalNumber"></span></h2><span class="close-button">&times;</span></div>
         <div class="modal-body">
-            <label for="inputStatus">Estado:</label>
-            <select id="inputStatus">
-                <option value="disponible">Disponible</option>
-                <option value="separado">Separado</option>
-                <option value="pago">Pago</option>
-            </select>
-            <label for="inputName">Nombre:</label>
-            <input type="text" id="inputName" placeholder="Ingresa el nombre completo">
-            <label for="inputPhone">Número de Celular:</label>
-            <input type="text" id="inputPhone" placeholder="Ingresa el número de celular">
-                        <div id="abonoContainer" style="display: none;">
-                <label for="inputAbono">Abono (COP):</label>
-                <input type="number" id="inputAbono" placeholder="Ingresa el valor del abono">
-            </div>
-        </div>
+            <label for="inputStatus">Estado:</label>
+            <select id="inputStatus">
+                <option value="disponible">Disponible</option>
+                <option value="separado">Separado</option>
+                <option value="pago">Pago</option>
+            </select>
+            <label for="inputName">Nombre:</label>
+            <input type="text" id="inputName" placeholder="Ingresa el nombre completo">
+            <label for="inputPhone">Número de Celular:</label>
+            <input type="text" id="inputPhone" placeholder="Ingresa el número de celular">
+            <div id="abonoContainer" style="display: none;">
+                <label for="inputAbono">Abono (COP):</label>
+                <input type="number" id="inputAbono" placeholder="Ingresa el valor del abono">
+            </div>
+        </div>
         <div class="modal-footer"><button id="deleteButton">Limpiar Datos</button><button id="saveButton">Guardar</button></div>
     </div>
 </div>
@@ -737,7 +737,7 @@ document.addEventListener('DOMContentLoaded', () => {
         publicDrawDate: document.getElementById('publicDrawDate'),
     };
 
-    let rifaActivaId = null, unsubRifaListener = null, currentNumber = null, localRaffleData = {}, currentPrizeData = {};
+    let rifaActivaId = null, unsubRifaListener = null, currentNumber = null, localRaffleData = {}, currentRaffleDetails = {};
     let totalNumbers = 100, numberPadding = 2;
 
     const formatCurrency = (value) => new Intl.NumberFormat('es-CO', { style: 'currency', currency: 'COP', minimumFractionDigits: 0, maximumFractionDigits: 0 }).format(value);
@@ -755,7 +755,7 @@ document.addEventListener('DOMContentLoaded', () => {
     const cargarRifas = async () => { const s = await db.collection("rifas").orderBy("fechaCreacion", "desc").get(); DOM.rifaSelectItems.innerHTML = ''; if (s.empty) { DOM.rifaSelect.textContent = '-- No hay rifas --'; DOM.rifaSelect.dataset.value = ""; await cambiarRifaActiva(true); return; } s.forEach(d => { const o = document.createElement('div'); o.textContent = d.data().nombre; o.dataset.value = d.id; o.addEventListener('click', async function(e) { e.stopPropagation(); if (DOM.rifaSelect.dataset.value === this.dataset.value) { DOM.rifaSelectItems.classList.remove('select-show'); DOM.rifaSelect.classList.remove('select-arrow-active'); return; }; DOM.rifaSelect.textContent = this.textContent; DOM.rifaSelect.dataset.value = this.dataset.value; DOM.rifaSelectItems.classList.remove('select-show'); DOM.rifaSelect.classList.remove('select-arrow-active'); await cambiarRifaActiva(); }); DOM.rifaSelectItems.appendChild(o); }); const p = s.docs[0]; DOM.rifaSelect.textContent = p.data().nombre; DOM.rifaSelect.dataset.value = p.id; await cambiarRifaActiva(); };
     const crearNuevaRifa = async () => { const n = DOM.newRifaName.value.trim(), s = parseInt(DOM.newRifaSize.value, 10); if (!n) { alert("Dale un nombre a la rifa."); return; } try { const p = { valor: 0, descripcion: "", imgUrl1: "", imgUrl2: "" }; await db.collection("rifas").add({ nombre: n, fechaCreacion: firebase.firestore.FieldValue.serverTimestamp(), totalNumeros: s, fechaSorteo: "", premios: { mayor: { ...p, descripcion: "Premio Mayor" }, segundo: { ...p, descripcion: "Segundo Premio" }, tercero: { ...p, descripcion: "Tercer Premio" } }, premiosAnticipados: [] }); DOM.newRifaName.value = ''; alert(`Rifa "${n}" creada.`); await cargarRifas(); } catch (e) { console.error("Error al crear:", e); alert("Error al crear rifa."); } };
     const deleteRifaActual = async () => { if (!rifaActivaId) { alert("No hay rifa seleccionada."); return; } const n = DOM.rifaSelect.textContent; if (!confirm(`¿Borrar rifa "${n}"?\n\n¡ACCIÓN IRREVERSIBLE!`)) return; try { const r = db.collection("rifas").doc(rifaActivaId).collection("numeros"), s = await r.get(), b = db.batch(); s.docs.forEach(d => { b.delete(d.ref); }); await b.commit(); await db.collection("rifas").doc(rifaActivaId).delete(); alert(`Rifa "${n}" eliminada.`); await cargarRifas(); } catch (e) { console.error("Error al eliminar:", e); alert("Error al eliminar rifa."); } };
-    const cambiarRifaActiva = async (f = false) => { if (unsubRifaListener) unsubRifaListener(); rifaActivaId = f ? null : DOM.rifaSelect.dataset.value; const h = !!rifaActivaId; DOM.prizeButton.classList.toggle('visible', h); DOM.deleteRifaButton.classList.toggle('visible', h); DOM.settingsButton.classList.toggle('visible', h); if (!rifaActivaId) { totalNumbers = 100; numberPadding = 2; restaurarColoresDefault(); localRaffleData = {}; initializeGrid(); updateSummary(); DOM.searchResultsContainer.innerHTML = '<div class="no-results-message">Crea o selecciona una rifa.</div>'; return; } try { const d = await db.collection("rifas").doc(rifaActivaId).get(); if(d.exists) { const a = d.data(); totalNumbers = a.totalNumeros || 100; numberPadding = String(totalNumbers - 1).length; if (a.colores) aplicarColoresPersonalizados(a.colores); else restaurarColoresDefault(); } else restaurarColoresDefault(); } catch(e) { console.error("Error al cargar config:", e); totalNumbers = 100; numberPadding = 2; restaurarColoresDefault(); } initializeGrid(); DOM.searchResultsContainer.innerHTML = '<div class="no-results-message">Busca por celular.</div>'; const r = db.collection("rifas").doc(rifaActivaId).collection("numeros"); unsubRifaListener = r.onSnapshot(s => { localRaffleData = {}; s.forEach(d => { localRaffleData[d.id] = d.data(); }); for (let i = 0; i < totalNumbers; i++) { const n = i.toString().padStart(numberPadding, '0'), t = localRaffleData[n] ? localRaffleData[n].status : 'disponible'; updateCellAppearance(n, t); } updateSummary(); }); };
+    const cambiarRifaActiva = async (f = false) => { if (unsubRifaListener) unsubRifaListener(); rifaActivaId = f ? null : DOM.rifaSelect.dataset.value; const h = !!rifaActivaId; DOM.prizeButton.classList.toggle('visible', h); DOM.deleteRifaButton.classList.toggle('visible', h); DOM.settingsButton.classList.toggle('visible', h); if (!rifaActivaId) { totalNumbers = 100; numberPadding = 2; restaurarColoresDefault(); localRaffleData = {}; currentRaffleDetails = {}; initializeGrid(); updateSummary(); DOM.searchResultsContainer.innerHTML = '<div class="no-results-message">Crea o selecciona una rifa.</div>'; return; } try { const d = await db.collection("rifas").doc(rifaActivaId).get(); if(d.exists) { currentRaffleDetails = d.data(); totalNumbers = currentRaffleDetails.totalNumeros || 100; numberPadding = String(totalNumbers - 1).length; if (currentRaffleDetails.colores) aplicarColoresPersonalizados(currentRaffleDetails.colores); else restaurarColoresDefault(); } else { restaurarColoresDefault(); currentRaffleDetails = {}; } } catch(e) { console.error("Error al cargar config:", e); totalNumbers = 100; numberPadding = 2; restaurarColoresDefault(); currentRaffleDetails = {}; } initializeGrid(); DOM.searchResultsContainer.innerHTML = '<div class="no-results-message">Busca por celular.</div>'; const r = db.collection("rifas").doc(rifaActivaId).collection("numeros"); unsubRifaListener = r.onSnapshot(s => { localRaffleData = {}; s.forEach(d => { localRaffleData[d.id] = d.data(); }); for (let i = 0; i < totalNumbers; i++) { const n = i.toString().padStart(numberPadding, '0'), t = localRaffleData[n] ? localRaffleData[n].status : 'disponible'; updateCellAppearance(n, t); } updateSummary(); }); };
     const initializeGrid = () => { DOM.gridContainer.innerHTML = ''; DOM.gridContainer.style.gridTemplateColumns = totalNumbers === 1000 ? 'repeat(auto-fit, minmax(40px, 1fr))' : 'repeat(10, 1fr)'; for (let i = 0; i < totalNumbers; i++) { const n = i.toString().padStart(numberPadding, '0'), c = document.createElement('div'); c.className = 'grid-item status-disponible'; c.textContent = n; c.dataset.number = n; c.id = `grid-item-${n}`; c.addEventListener('click', () => openDataModal(n)); DOM.gridContainer.appendChild(c); } };
     
     const openDataModal = (n) => {
@@ -783,18 +783,16 @@ document.addEventListener('DOMContentLoaded', () => {
     const saveData = () => {
         if (!currentNumber || !rifaActivaId) return;
         const s = DOM.inputStatus.value, n = DOM.inputName.value.trim(), p = DOM.inputPhone.value.trim();
-        const docRef = db.collection("rifas").doc(rifaActivaId).collection("numeros").doc(currentNumber);
+        const d = db.collection("rifas").doc(rifaActivaId).collection("numeros").doc(currentNumber);
         
         if (s === 'disponible') {
-            docRef.delete().then(closeDataModal);
+            d.delete().then(closeDataModal);
         } else {
-            const dataToSet = { status: s, name: n, phone: p };
-            if (s === 'separado') {
+            let dataToSet = { status:s, name:n, phone:p };
+            if(s === 'separado'){
                 dataToSet.abono = Number(DOM.inputAbono.value) || 0;
-            } else {
-                dataToSet.abono = firebase.firestore.FieldValue.delete();
             }
-            docRef.set(dataToSet, { merge: true }).then(closeDataModal);
+            d.set(dataToSet).then(closeDataModal);
         }
     };
 
@@ -808,31 +806,29 @@ document.addEventListener('DOMContentLoaded', () => {
         DOM.prizeModal.classList.add('visible');
         const d = await db.collection("rifas").doc(rifaActivaId).get();
         const a = d.data() || {};
-        currentPrizeData = {
-            fechaSorteo: a.fechaSorteo || "",
-            premios: a.premios || { mayor: {}, segundo: {}, tercero: {} },
-            premiosAnticipados: a.premiosAnticipados || []
-        };
+        currentRaffleDetails = a; // Actualizar los detalles locales
         const u = firebase.auth().currentUser;
         
         if (u) {
             DOM.raffleDetailsAdmin.style.display = 'block';
             DOM.raffleDetailsPublic.style.display = 'none';
-            DOM.raffleDrawDateInput.value = currentPrizeData.fechaSorteo;
+            DOM.raffleDrawDateInput.value = a.fechaSorteo || "";
         } else {
             DOM.raffleDetailsAdmin.style.display = 'none';
-            if (currentPrizeData.fechaSorteo) {
-                DOM.publicDrawDate.textContent = new Date(currentPrizeData.fechaSorteo + 'T00:00:00').toLocaleDateString('es-ES', { weekday: 'long', year: 'numeric', month: 'long', day: 'numeric' });
+            if (a.fechaSorteo) {
+                DOM.publicDrawDate.textContent = new Date(a.fechaSorteo + 'T00:00:00').toLocaleDateString('es-ES', { weekday: 'long', year: 'numeric', month: 'long', day: 'numeric' });
                 DOM.raffleDetailsPublic.style.display = 'block';
             } else {
                 DOM.raffleDetailsPublic.style.display = 'none';
+                DOM.publicDrawDate.textContent = "No definida";
             }
         }
         
         DOM.prizeInfoSection.innerHTML = '';
         const t = ['mayor', 'segundo', 'tercero'], l = { mayor: '🥇 Premio Mayor', segundo: '🥈 Segundo Premio', tercero: '🥉 Tercer Premio' };
-        t.forEach(i => { const p = currentPrizeData.premios[i] || { descripcion: '', valor: 0, imgUrl1: '', imgUrl2: '' }; let c = ''; if (u) { c = `<div class="prize-card-admin-view"><label for="${i}DescInput">Descripción:</label><input type="text" id="${i}DescInput" value="${p.descripcion || ''}"><label for="${i}ValorInput">Valor:</label><input type="number" id="${i}ValorInput" value="${p.valor || 0}"><label for="${i}ImgUrl1Input">URL Imagen/Video 1:</label><input type="url" id="${i}ImgUrl1Input" value="${p.imgUrl1 || ''}"><label for="${i}ImgUrl2Input">URL Imagen/Video 2:</label><input type="url" id="${i}ImgUrl2Input" value="${p.imgUrl2 || ''}"></div>`; } else { c = generarHtmlDePremio(p); } DOM.prizeInfoSection.innerHTML += `<div class="prize-card ${i}"><div class="prize-card-title">${l[i]}</div>${c}</div>`; });
-        renderAnticipados();
+        const premios = a.premios || { mayor: {}, segundo: {}, tercero: {} };
+        t.forEach(i => { const p = premios[i] || { descripcion: '', valor: 0, imgUrl1: '', imgUrl2: '' }; let c = ''; if (u) { c = `<div class="prize-card-admin-view"><label for="${i}DescInput">Descripción:</label><input type="text" id="${i}DescInput" value="${p.descripcion || ''}"><label for="${i}ValorInput">Valor:</label><input type="number" id="${i}ValorInput" value="${p.valor || 0}"><label for="${i}ImgUrl1Input">URL Imagen/Video 1:</label><input type="url" id="${i}ImgUrl1Input" value="${p.imgUrl1 || ''}"><label for="${i}ImgUrl2Input">URL Imagen/Video 2:</label><input type="url" id="${i}ImgUrl2Input" value="${p.imgUrl2 || ''}"></div>`; } else { c = generarHtmlDePremio(p); } DOM.prizeInfoSection.innerHTML += `<div class="prize-card ${i}"><div class="prize-card-title">${l[i]}</div>${c}</div>`; });
+        renderAnticipados(a.premiosAnticipados || []);
         DOM.saveAllPrizesButton.style.display = u ? 'inline-block' : 'none';
         DOM.modalWinningInput.value = '';
         DOM.prizeSimulatorSlots.forEach(s => { s.querySelector('span').textContent = ''; s.classList.remove('liquid-filled', 'selected-digit'); });
@@ -852,9 +848,10 @@ document.addEventListener('DOMContentLoaded', () => {
                     segundo: { descripcion: document.getElementById('segundoDescInput').value.trim(), valor: Number(document.getElementById('segundoValorInput').value) || 0, imgUrl1: document.getElementById('segundoImgUrl1Input').value.trim(), imgUrl2: document.getElementById('segundoImgUrl2Input').value.trim() },
                     tercero: { descripcion: document.getElementById('terceroDescInput').value.trim(), valor: Number(document.getElementById('terceroValorInput').value) || 0, imgUrl1: document.getElementById('terceroImgUrl1Input').value.trim(), imgUrl2: document.getElementById('terceroImgUrl2Input').value.trim() }
                 },
-                premiosAnticipados: currentPrizeData.premiosAnticipados
+                premiosAnticipados: currentRaffleDetails.premiosAnticipados || []
             };
             await db.collection("rifas").doc(rifaActivaId).update(updateData);
+            currentRaffleDetails = {...currentRaffleDetails, ...updateData};
             alert("Datos de la rifa guardados.");
             return true;
         } catch (e) {
@@ -878,7 +875,7 @@ document.addEventListener('DOMContentLoaded', () => {
         if (m.length > 0) {
             m.forEach((d, i) => {
                 const abonoInfo = (d.status === 'separado' && d.abono > 0) ? `<p class="abono">Abonado: ${formatCurrency(d.abono)}</p>` : '';
-                DOM.searchResultsContainer.insertAdjacentHTML('beforeend', `<div class="result-card" style="animation-delay: ${i * 100}ms;"><div class="result-number">${d.number}</div><div class="result-info"><p class="name">${d.name || 'Sin nombre'}</p><p class="phone">${d.phone}</p>${abonoInfo}</div><span class="status-badge status-${d.status}">${d.status}</span><button class="generate-ticket-btn" data-number="${d.number}" title="Generar Recibo"><i class="fas fa-receipt"></i></button></div>`);
+                DOM.searchResultsContainer.insertAdjacentHTML('beforeend', `<div class="result-card" style="animation-delay: ${i * 100}ms;"><div class="result-number">${d.number}</div><div class="result-info"><p class="name">${d.name || 'Sin nombre'}</p><p class="phone">${d.phone || 'N/A'}</p>${abonoInfo}</div><span class="status-badge status-${d.status}">${d.status}</span><button class="generate-ticket-btn" data-number="${d.number}" title="Generar Recibo"><i class="fas fa-receipt"></i></button></div>`);
                 const c = document.getElementById(`grid-item-${d.number}`);
                 if (c) c.classList.add('highlighted');
             });
@@ -891,14 +888,12 @@ document.addEventListener('DOMContentLoaded', () => {
 
     const getWinnerInfo = (r, t, p) => { const d = localRaffleData[r], l = { mayor: '🥇 Premio Mayor', segundo: '🥈 Segundo Premio', tercero: '🥉 Tercer Premio' }, s = { mayor: 'gold', segundo: 'silver', tercero: 'bronze' }; let w; if (d && d.status === 'pago') { w = `<div class="prize-info"><div class="winner-name">${d.name||'N/A'}</div><div class="winner-phone">Cel: ${d.phone||'N/A'}</div><hr style="border-color: rgba(255,255,255,0.2); margin: 10px 0;">${generarHtmlDePremio(p)}</div>`; } else { const e = d ? `no fue pagado (estado: ${d.status})` : 'está disponible'; w = `<div class="prize-info"><div class="no-winner-text">Sin ganador (El número ${r} ${e}).</div></div>`; } return `<div class="winner-card ${d && d.status === 'pago' ? s[t] : 'no-winner'}"><div class="prize-header"><h3>${l[t]}</h3><span class="prize-number-tag">Nº ${r}</span></div>${w}</div>`; };
     const checkWinners = async () => { const w = DOM.realWinningInput.value.trim(); DOM.winnerResults.innerHTML = ''; if (!/^\d{4}$/.test(w)) { DOM.winnerResults.innerHTML = '<div class="no-results-message">Ingresa 4 cifras.</div>'; return; } const d = await db.collection("rifas").doc(rifaActivaId).get(), p = d.data().premios || { mayor: {}, segundo: {}, tercero: {} }, m = w.slice(-numberPadding), s = w.substring(0, 2), t = w.substring(1, 3), c = [{ tier: 'mayor', number: m }, { tier: 'segundo', number: s }, { tier: 'tercero', number: t }]; c.forEach(i => DOM.winnerResults.insertAdjacentHTML('beforeend', getWinnerInfo(i.number, i.tier, p[i.tier]))); };
-    const renderAnticipados = () => { DOM.anticipadosList.innerHTML = ''; const l = [...(currentPrizeData.premiosAnticipados || [])]; if (l.length > 0) { l.sort((a, b) => new Date(a.fecha) - new Date(b.fecha)); l.forEach(p => { const o = currentPrizeData.premiosAnticipados.findIndex(i => i === p), v = p.valor || '', f = p.fecha || '', t = p.loteria ? String(p.loteria).replace(/"/g, '&quot;') : ''; const h = `<div class="anticipado-card" data-index="${o}"><div class="view-mode"><div class="anticipado-info"><div class="anticipado-valor-display"><i class="fas fa-coins"></i><span>${formatCurrency(v)}</span></div><div class="anticipado-meta"><div><i class="fas fa-calendar-alt"></i> ${f ? new Date(f + 'T00:00:00').toLocaleDateString('es-ES', { day: 'numeric', month: 'long', year: 'numeric' }) : 'Fecha no definida'}</div><div><i class="fas fa-ticket-alt"></i> ${t || 'Sorteo no definido'}</div></div></div><div class="anticipado-card-actions"><button class="edit-anticipado-btn admin-action-btn" title="Editar"><i class="fas fa-pencil-alt"></i></button><button class="delete-anticipado-btn admin-action-btn" title="Eliminar"><i class="fas fa-trash-alt"></i></button></div></div><div class="edit-mode"><div><label>Valor:</label><input type="number" class="edit-valor" value="${v}"></div><div><label>Fecha:</label><input type="date" class="edit-fecha" value="${f}"></div><div><label>Lotería:</label><input type="text" class="edit-loteria" value="${t}"></div><div class="edit-mode-actions"><button class="cancel-edit-anticipado-btn">Cancelar</button><button class="save-edit-anticipado-btn">Guardar</button></div></div></div>`; DOM.anticipadosList.innerHTML += h; }); DOM.anticipadosContainerPublic.style.display = 'block'; } else { DOM.anticipadosContainerPublic.style.display = 'none'; } };
+    const renderAnticipados = (premiosAnticipados) => { DOM.anticipadosList.innerHTML = ''; const l = [...(premiosAnticipados || [])]; if (l.length > 0) { l.sort((a, b) => new Date(a.fecha) - new Date(b.fecha)); l.forEach((p, index) => { const v = p.valor || '', f = p.fecha || '', t = p.loteria ? String(p.loteria).replace(/"/g, '&quot;') : ''; const h = `<div class="anticipado-card" data-index="${index}"><div class="view-mode"><div class="anticipado-info"><div class="anticipado-valor-display"><i class="fas fa-coins"></i><span>${formatCurrency(v)}</span></div><div class="anticipado-meta"><div><i class="fas fa-calendar-alt"></i> ${f ? new Date(f + 'T00:00:00').toLocaleDateString('es-ES', { day: 'numeric', month: 'long', year: 'numeric' }) : 'Fecha no definida'}</div><div><i class="fas fa-ticket-alt"></i> ${t || 'Sorteo no definido'}</div></div></div><div class="anticipado-card-actions"><button class="edit-anticipado-btn admin-action-btn" title="Editar"><i class="fas fa-pencil-alt"></i></button><button class="delete-anticipado-btn admin-action-btn" title="Eliminar"><i class="fas fa-trash-alt"></i></button></div></div><div class="edit-mode"><div><label>Valor:</label><input type="number" class="edit-valor" value="${v}"></div><div><label>Fecha:</label><input type="date" class="edit-fecha" value="${f}"></div><div><label>Lotería:</label><input type="text" class="edit-loteria" value="${t}"></div><div class="edit-mode-actions"><button class="cancel-edit-anticipado-btn">Cancelar</button><button class="save-edit-anticipado-btn">Guardar</button></div></div></div>`; DOM.anticipadosList.innerHTML += h; }); DOM.anticipadosContainerPublic.style.display = 'block'; } else { DOM.anticipadosContainerPublic.style.display = 'none'; } };
     
     const generateTicket = async (number) => {
         if (!rifaActivaId) return;
-        const raffleDoc = await db.collection("rifas").doc(rifaActivaId).get();
-        if (!raffleDoc.exists) return;
 
-        const raffleData = raffleDoc.data();
+        const raffleData = currentRaffleDetails;
         const clientData = localRaffleData[number];
         if (!clientData) {
             alert("No se encontraron datos para este número.");
@@ -916,14 +911,14 @@ document.addEventListener('DOMContentLoaded', () => {
         const statusEl = preview.querySelector('#ticket-status');
         statusEl.textContent = clientData.status;
         statusEl.className = `ticket-status ${clientData.status}`;
-        
-        const abonoDetails = preview.querySelector('#ticket-abono-details');
-        if (clientData.status === 'separado' && clientData.abono > 0) {
-            preview.querySelector('#ticket-client-abono').textContent = formatCurrency(clientData.abono);
-            abonoDetails.style.display = 'flex';
-        } else {
-            abonoDetails.style.display = 'none';
-        }
+
+        const abonoDetails = preview.querySelector('#ticket-abono-details');
+        if (clientData.status === 'separado' && clientData.abono > 0) {
+            preview.querySelector('#ticket-client-abono').textContent = formatCurrency(clientData.abono);
+            abonoDetails.style.display = 'flex';
+        } else {
+            abonoDetails.style.display = 'none';
+        }
 
         if (raffleData.fechaSorteo) {
             preview.querySelector('#ticket-draw-date').textContent = new Date(raffleData.fechaSorteo + 'T00:00:00').toLocaleDateString('es-ES', { day: 'numeric', month: 'long', year: 'numeric' });
@@ -931,7 +926,8 @@ document.addEventListener('DOMContentLoaded', () => {
             preview.querySelector('#ticket-draw-date').textContent = "No definida";
         }
 
-        preview.querySelector('#ticket-prizes').innerHTML = `<ul><li><strong>Mayor:</strong> ${raffleData.premios.mayor.descripcion || 'No definido'}</li><li><strong>Segundo:</strong> ${raffleData.premios.segundo.descripcion || 'No definido'}</li><li><strong>Tercero:</strong> ${raffleData.premios.tercero.descripcion || 'No definido'}</li></ul>`;
+        const premios = raffleData.premios || {};
+        preview.querySelector('#ticket-prizes').innerHTML = `<ul><li><strong>Mayor:</strong> ${premios.mayor?.descripcion || 'No definido'}</li><li><strong>Segundo:</strong> ${premios.segundo?.descripcion || 'No definido'}</li><li><strong>Tercero:</strong> ${premios.tercero?.descripcion || 'No definido'}</li></ul>`;
         
         const anticipadosSection = preview.querySelector('#ticket-anticipados-section');
         const anticipadosList = preview.querySelector('#ticket-anticipados-list');
@@ -1013,10 +1009,13 @@ document.addEventListener('DOMContentLoaded', () => {
     // EVENTO NUEVO para mostrar/ocultar campo de abono
     DOM.inputStatus.addEventListener('change', () => {
         DOM.abonoContainer.style.display = DOM.inputStatus.value === 'separado' ? 'block' : 'none';
+        if (DOM.inputStatus.value !== 'separado') {
+            DOM.inputAbono.value = '';
+        }
     });
 
-    DOM.addAnticipadoButton.addEventListener('click', async () => { const v = Number(DOM.anticipadoValor.value), f = DOM.anticipadoFecha.value, l = DOM.anticipadoLoteria.value.trim(); if (!v || !f || !l) { alert("Completa todos los campos del premio."); return; } currentPrizeData.premiosAnticipados.push({ valor:v, fecha:f, loteria:l }); const s = await saveAllPrizes(); if (s) { renderAnticipados(); DOM.anticipadoValor.value = ''; DOM.anticipadoFecha.value = ''; DOM.anticipadoLoteria.value = ''; } });
-    DOM.anticipadosList.addEventListener('click', async (e) => { const c = e.target.closest('.anticipado-card'); if (!c || !firebase.auth().currentUser) return; const i = Number(c.dataset.index), editBtn = e.target.closest('.edit-anticipado-btn'), cancelBtn = e.target.closest('.cancel-edit-anticipado-btn'), saveBtn = e.target.closest('.save-edit-anticipado-btn'), deleteBtn = e.target.closest('.delete-anticipado-btn'); if (editBtn) { c.querySelector('.view-mode').style.display = 'none'; c.querySelector('.edit-mode').style.display = 'flex'; } else if (cancelBtn) { c.querySelector('.view-mode').style.display = 'flex'; c.querySelector('.edit-mode').style.display = 'none'; } else if (saveBtn) { const v = Number(c.querySelector('.edit-valor').value), f = c.querySelector('.edit-fecha').value, l = c.querySelector('.edit-loteria').value.trim(); if (!v || !f || !l) { alert("Completa todos los campos."); return; } currentPrizeData.premiosAnticipados[i] = { valor: v, fecha: f, loteria: l }; saveBtn.textContent = 'Guardando...'; saveBtn.disabled = true; const s = await saveAllPrizes(); if (s) renderAnticipados(); else { saveBtn.textContent = 'Guardar'; saveBtn.disabled = false; } } else if (deleteBtn) { if (confirm("¿Eliminar este premio anticipado?")) { currentPrizeData.premiosAnticipados.splice(i, 1); const s = await saveAllPrizes(); if (s) renderAnticipados(); } } });
+    DOM.addAnticipadoButton.addEventListener('click', async () => { const v = Number(DOM.anticipadoValor.value), f = DOM.anticipadoFecha.value, l = DOM.anticipadoLoteria.value.trim(); if (!v || !f || !l) { alert("Completa todos los campos del premio."); return; } currentRaffleDetails.premiosAnticipados.push({ valor:v, fecha:f, loteria:l }); const s = await saveAllPrizes(); if (s) { renderAnticipados(currentRaffleDetails.premiosAnticipados); DOM.anticipadoValor.value = ''; DOM.anticipadoFecha.value = ''; DOM.anticipadoLoteria.value = ''; } });
+    DOM.anticipadosList.addEventListener('click', async (e) => { const c = e.target.closest('.anticipado-card'); if (!c || !firebase.auth().currentUser) return; const i = Number(c.dataset.index), editBtn = e.target.closest('.edit-anticipado-btn'), cancelBtn = e.target.closest('.cancel-edit-anticipado-btn'), saveBtn = e.target.closest('.save-edit-anticipado-btn'), deleteBtn = e.target.closest('.delete-anticipado-btn'); if (editBtn) { c.querySelector('.view-mode').style.display = 'none'; c.querySelector('.edit-mode').style.display = 'flex'; } else if (cancelBtn) { c.querySelector('.view-mode').style.display = 'flex'; c.querySelector('.edit-mode').style.display = 'none'; } else if (saveBtn) { const v = Number(c.querySelector('.edit-valor').value), f = c.querySelector('.edit-fecha').value, l = c.querySelector('.edit-loteria').value.trim(); if (!v || !f || !l) { alert("Completa todos los campos."); return; } currentRaffleDetails.premiosAnticipados[i] = { valor: v, fecha: f, loteria: l }; saveBtn.textContent = 'Guardando...'; saveBtn.disabled = true; const s = await saveAllPrizes(); if (s) renderAnticipados(currentRaffleDetails.premiosAnticipados); else { saveBtn.textContent = 'Guardar'; saveBtn.disabled = false; } } else if (deleteBtn) { if (confirm("¿Eliminar este premio anticipado?")) { currentRaffleDetails.premiosAnticipados.splice(i, 1); const s = await saveAllPrizes(); if (s) renderAnticipados(currentRaffleDetails.premiosAnticipados); } } });
 
     // Inicialización
     applyTheme(localStorage.getItem('theme') || 'light');
