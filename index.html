@@ -64,8 +64,6 @@
         #searchButton:hover { background-color: #0056b3; }
         #searchResultsContainer { display: flex; flex-direction: column; gap: 12px; min-height: 50px; }
         @keyframes fadeIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
-        
-        /* --- START: RESPONSIVE SEARCH RESULT STYLES --- */
         .result-card { 
             display: flex; 
             align-items: center; 
@@ -75,7 +73,7 @@
             border-radius: 8px; 
             border: 1px solid var(--border-color); 
             animation: fadeIn 0.4s ease-out forwards;
-            flex-wrap: wrap; /* Allows items to wrap to the next line on small screens */
+            flex-wrap: wrap;
         }
         .result-number { 
             flex-shrink: 0; 
@@ -92,7 +90,7 @@
         }
         .result-info { 
             flex-grow: 1; 
-            min-width: 150px; /* Ensures it has space before wrapping */
+            min-width: 150px;
         }
         .result-info .name { 
             font-weight: bold; 
@@ -121,17 +119,15 @@
             font-size: 0.7em; 
             font-weight: bold; 
             text-transform: uppercase;
-            margin-left: auto; /* Pushes to the right on larger screens */
+            margin-left: auto;
         }
         .generate-ticket-btn {
-            margin-left: 5px; /* Keeps it next to the status badge on large screens */
+            margin-left: 5px;
         }
-
-        /* On smaller screens, make info and badges take full width */
         @media (max-width: 480px) {
             .result-info {
-                flex-basis: 100%; /* Take full width */
-                order: 3; /* Appear last */
+                flex-basis: 100%;
+                order: 3;
                 margin: 5px 0 0 0;
             }
             .status-badge {
@@ -146,8 +142,6 @@
                 order: 1;
             }
         }
-        /* --- END: RESPONSIVE SEARCH RESULT STYLES --- */
-
         .status-badge.status-pago { background-color: var(--color-pago); }
         .status-badge.status-separado { background-color: var(--color-separado); }
         .no-results-message { text-align: center; padding: 20px; color: var(--text-light); animation: fadeIn 0.4s ease-out forwards; }
@@ -196,7 +190,6 @@
         @keyframes modal-slide-in { from { transform: translateY(-50px) scale(0.95); opacity: 0; } to { transform: translateY(0) scale(1); opacity: 1; } }
         .modal.visible .modal-content { animation: modal-slide-in 0.4s cubic-bezier(0.25, 0.46, 0.45, 0.94) forwards; }
         .modal-content { background-color: var(--modal-bg); padding: 20px; border: 1px solid var(--border-color); width: 90%; max-width: 500px; border-radius: 8px; box-shadow: 0 4px 8px rgba(0,0,0,0.2); transition: background-color var(--transition-speed) ease; }
-        
         #prizeModal .modal-content {
             width: 100%;
             height: 100%;
@@ -274,7 +267,6 @@
         .prize-icon { display: inline-block; transition: transform 0.3s ease; }
         #prizeButton:hover .prize-icon { transform: scale(1.2) rotate(8deg); }
         #prizeButton.visible { display: block; }
-
         #prize-info-section {
             display: flex;
             flex-wrap: wrap;
@@ -331,7 +323,6 @@
         .prize-card.tercero .prize-card-title {
             color: var(--color-pago);
         }
-
         #prize-simulator-section { padding: 20px; border: 2px dashed var(--border-color); border-radius: 8px; text-align: center; margin-top: 20px; }
         .digit-slots-container { display: flex; justify-content: center; gap: 15px; margin-bottom: 20px; position: relative; cursor: text; }
         .digit-circle-simulator { position: relative; overflow: hidden; width: clamp(45px, 12vw, 70px); aspect-ratio: 1/1; background-color: var(--background-light); border: 2px solid var(--border-color); border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: clamp(2em, 8vw, 3em); font-weight: bold; color: var(--text-dark); transition: all 0.3s; box-shadow: inset 0 2px 5px rgba(0,0,0,0.1); }
@@ -543,6 +534,35 @@
             margin-top: 10px; /* Margen reducido */
         }
         /* --- FIN DE ESTILOS DE RECIBO MODIFICADOS --- */
+        
+        /* --- ESTILOS PARA LA TARJETA DE VERIFICACIÓN QR --- */
+        #verification-card h2 {
+            margin-top: 0;
+            margin-bottom: 20px;
+            font-size: 1.5em;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 10px;
+        }
+        .verification-result { text-align: center; }
+        .verification-result h1 { font-size: 4em; margin: 10px 0; color: var(--color-primary); }
+        .verification-result h3 { font-size: 1.2em; margin-bottom: 15px; color: var(--text-light); }
+        .verification-result .status {
+            font-size: 1.2em;
+            font-weight: bold;
+            padding: 10px 20px;
+            border-radius: 8px;
+            display: inline-block;
+            margin-top: 15px;
+            color: white;
+        }
+        .verification-result .status-pago { background-color: var(--color-pago); }
+        .verification-result .status-separado { background-color: var(--color-separado); color: var(--text-dark); }
+        .verification-result .status-disponible { background-color: var(--color-disponible); }
+        .verification-result .error { color: var(--color-danger); font-weight: bold; }
+        .verification-result p { font-size: 1.1em; margin: 8px 0; }
+        .verification-result strong { color: var(--text-dark); }
 
         @media (max-width: 650px) {
             #anticipados-list { display: flex; flex-direction: row; overflow-x: auto; scroll-snap-type: x mandatory; padding: 10px 10px 20px 10px; margin: 0 -20px; -webkit-overflow-scrolling: touch; }
@@ -554,6 +574,11 @@
     </style>
 </head>
 <body>
+
+<div class="container" id="verification-container" style="display: none; padding-top: 40px;">
+    <div id="verification-card" class="search-section">
+        </div>
+</div>
 
 <div class="container" id="main-container">
     <button id="darkModeToggle" aria-label="Cambiar tema"><i class="fas fa-moon"></i></button>
@@ -752,7 +777,7 @@
 <script src="https://www.gstatic.com/firebasejs/8.10.0/firebase-firestore.js"></script>
 
 <script>
-document.addEventListener('DOMContentLoaded', () => {
+document.addEventListener('DOMContentLoaded', async () => { // Hacer el evento async
     const firebaseConfig = {
         apiKey: "AIzaSyDMBARLzKnhcmSI8euhiA2Wgsf7pJQM1_0",
         authDomain: "control-rifas.firebaseapp.com",
@@ -766,6 +791,8 @@ document.addEventListener('DOMContentLoaded', () => {
     
     const DOM = {
         mainContainer: document.getElementById('main-container'),
+        verificationContainer: document.getElementById('verification-container'),
+        verificationCard: document.getElementById('verification-card'),
         modalBackdrop: document.getElementById('modal-backdrop'),
         rifaSelect: document.getElementById('rifaSelect'), rifaSelectItems: document.getElementById('rifaSelectItems'),
         newRifaName: document.getElementById('newRifaName'), 
@@ -809,7 +836,61 @@ document.addEventListener('DOMContentLoaded', () => {
     let totalNumbers = 100, numberPadding = 2;
 
     const formatCurrency = (value) => new Intl.NumberFormat('es-CO', { style: 'currency', currency: 'COP', minimumFractionDigits: 0, maximumFractionDigits: 0 }).format(value);
-    const sleep = ms => new Promise(resolve => setTimeout(resolve, ms));
+    
+    // --- LÓGICA DE VERIFICACIÓN QR ---
+    const handleVerification = async () => {
+        const params = new URLSearchParams(window.location.search);
+        const rifaId = params.get('rifa');
+        const numero = params.get('numero');
+
+        if (!rifaId || !numero) {
+            return false;
+        }
+
+        DOM.mainContainer.style.display = 'none';
+        DOM.verificationContainer.style.display = 'block';
+        DOM.verificationCard.innerHTML = `<h2><i class="fas fa-spinner fa-spin"></i> Verificando Boleto...</h2>`;
+
+        try {
+            const rifaDoc = await db.collection('rifas').doc(rifaId).get();
+            if (!rifaDoc.exists) {
+                throw new Error('La rifa no fue encontrada o ha sido eliminada.');
+            }
+            const rifaData = rifaDoc.data();
+            
+            const numeroDoc = await db.collection('rifas').doc(rifaId).collection('numeros').doc(numero).get();
+            
+            let clientData = { status: 'disponible', name: 'N/A', phone: 'N/A' };
+            if (numeroDoc.exists) {
+                clientData = numeroDoc.data();
+            }
+
+            let statusClass = `status-${clientData.status}`;
+            let statusText = clientData.status.charAt(0).toUpperCase() + clientData.status.slice(1);
+
+            DOM.verificationCard.innerHTML = `
+                <h2><i class="fas fa-check-circle" style="color: var(--color-pago);"></i> Boleto Válido</h2>
+                <div class="verification-result">
+                    <h3>${rifaData.nombre}</h3>
+                    <h1>Nº ${numero}</h1>
+                    <hr>
+                    <p><strong>Propietario:</strong> ${clientData.name}</p>
+                    <p><strong>Teléfono:</strong> ${clientData.phone || 'N/A'}</p>
+                    <div class="status ${statusClass}">${statusText}</div>
+                </div>
+            `;
+
+        } catch (error) {
+            DOM.verificationCard.innerHTML = `
+                <h2><i class="fas fa-times-circle" style="color: var(--color-danger);"></i> Error de Verificación</h2>
+                <div class="verification-result">
+                    <p class="error">${error.message}</p>
+                </div>
+            `;
+        }
+
+        return true;
+    };
 
     const generateMediaTag = (url) => { if (!url) return ''; const l = url.toLowerCase(); return (l.includes('.mp4') || l.includes('.webm')) ? `<video src="${url}" class="prize-media" autoplay muted loop playsinline></video>` : `<img src="${url}" alt="Premio" class="prize-media">`; };
     const generarHtmlDePremio = (p) => { if (!p) return '<div class="prize-details"><p class="prize-description">Premio no definido</p></div>'; if (p.valor && p.valor > 0) return `<div class="prize-card-value">${formatCurrency(p.valor)}</div>`; if (p.descripcion) { let h = `<div class="prize-details"><p class="prize-description">${p.descripcion}</p>`, m = ''; if (p.imgUrl1 || p.imgUrl2) { m += '<div class="prize-media-container">'; m += generateMediaTag(p.imgUrl1); m += generateMediaTag(p.imgUrl2); m += '</div>'; } h += m; h += `</div>`; return h; } return '<div class="prize-details"><p class="prize-description">Premio no definido</p></div>'; };
@@ -847,7 +928,7 @@ document.addEventListener('DOMContentLoaded', () => {
         try {
             await db.collection("rifas").doc(rifaActivaId).update(newSettings);
             aplicarColoresPersonalizados(newSettings.colores);
-            activeRaffleData = {...activeRaffleData, ...newSettings}; // Actualizar datos locales
+            activeRaffleData = {...activeRaffleData, ...newSettings};
             alert("Configuración actualizada.");
             closeSettingsModal();
         } catch (e) {
@@ -1129,40 +1210,42 @@ document.addEventListener('DOMContentLoaded', () => {
     };
     const closeTicketModal = () => DOM.ticketModal.classList.remove('visible');
 
-    // --- EVENT LISTENERS ---
-    DOM.settingsButton.addEventListener('click', openSettingsModal);
-    DOM.closeSettingsModalButton.addEventListener('click', closeSettingsModal);
-    DOM.saveSettingsButton.addEventListener('click', saveSettings);
-    DOM.darkModeToggle.addEventListener('click', () => { const n = document.body.classList.contains('dark-mode') ? 'light' : 'dark'; localStorage.setItem('theme', n); applyTheme(n); });
-    DOM.createRifaButton.addEventListener('click', crearNuevaRifa); DOM.deleteRifaButton.addEventListener('click', deleteRifaActual);
-    DOM.closeDataModalButton.addEventListener('click', closeDataModal); DOM.saveButton.addEventListener('click', saveData); DOM.deleteButton.addEventListener('click', deleteData);
-    
-    DOM.inputStatus.addEventListener('change', () => {
-        DOM.abonoContainer.style.display = DOM.inputStatus.value === 'separado' ? 'block' : 'none';
-        if (DOM.inputStatus.value !== 'separado') {
-            DOM.inputAbono.value = '';
-        }
-    });
+    // --- LÓGICA DE INICIO ---
+    const isVerificationMode = await handleVerification();
 
-    DOM.prizeButton.addEventListener('click', openPrizeModal);
-    DOM.closePrizeModalButton.addEventListener('click', closePrizeModal);
-    DOM.modalBackdrop.addEventListener('click', (e) => { if (e.target === DOM.modalBackdrop) { closePrizeModal(); closeSettingsModal(); closeDataModal(); closeTicketModal(); } });
-    DOM.saveAllPrizesButton.addEventListener('click', saveAllPrizes);
-    DOM.rifaSelect.addEventListener('click', () => { DOM.rifaSelectItems.classList.toggle('select-show'); DOM.rifaSelect.classList.toggle('select-arrow-active'); });
-    window.addEventListener('click', (e) => { if (DOM.rifaSelect.parentElement && !DOM.rifaSelect.parentElement.contains(e.target)) { DOM.rifaSelectItems.classList.remove('select-show'); DOM.rifaSelect.classList.remove('select-arrow-active'); }});
-    DOM.searchButton.addEventListener('click', () => { if (!rifaActivaId) { alert("Selecciona una rifa para buscar."); return; } if (DOM.searchInput.value.trim().length === 10) performSearch(); else { DOM.searchResultsContainer.innerHTML = '<div class="no-results-message">Debes ingresar 10 cifras.</div>'; document.querySelectorAll('.grid-item.highlighted').forEach(i => i.classList.remove('highlighted')); } });
-    DOM.checkWinnerButton.addEventListener('click', checkWinners);
-    DOM.realWinningInput.addEventListener('input', () => { const v = DOM.realWinningInput.value; DOM.digitCircles.forEach((c, i) => { const d = v[i]; if (d) { c.textContent = d; c.classList.add('filled'); } else { c.textContent = ''; c.classList.remove('filled'); } }); DOM.checkWinnerButton.disabled = v.length !== 4; });
-    DOM.searchResultsContainer.addEventListener('click', (e) => { const t = e.target.closest('.generate-ticket-btn'); if (t) generateTicket(t.dataset.number); });
-    DOM.closeTicketModalButton.addEventListener('click', closeTicketModal);
-    DOM.downloadTicketButton.addEventListener('click', downloadTicket);
-    DOM.addAnticipadoButton.addEventListener('click', async () => { const v = Number(DOM.anticipadoValor.value), f = DOM.anticipadoFecha.value, l = DOM.anticipadoLoteria.value.trim(); if (!v || !f || !l) { alert("Completa todos los campos del premio."); return; } currentPrizeData.premiosAnticipados.push({ valor:v, fecha:f, loteria:l }); const s = await saveAllPrizes(); if (s) { renderAnticipados(); DOM.anticipadoValor.value = ''; DOM.anticipadoFecha.value = ''; DOM.anticipadoLoteria.value = ''; } });
-    DOM.anticipadosList.addEventListener('click', async (e) => { const c = e.target.closest('.anticipado-card'); if (!c || !firebase.auth().currentUser) return; const i = Number(c.dataset.index), editBtn = e.target.closest('.edit-anticipado-btn'), cancelBtn = e.target.closest('.cancel-edit-anticipado-btn'), saveBtn = e.target.closest('.save-edit-anticipado-btn'), deleteBtn = e.target.closest('.delete-anticipado-btn'); if (editBtn) { c.querySelector('.view-mode').style.display = 'none'; c.querySelector('.edit-mode').style.display = 'flex'; } else if (cancelBtn) { c.querySelector('.view-mode').style.display = 'flex'; c.querySelector('.edit-mode').style.display = 'none'; } else if (saveBtn) { const v = Number(c.querySelector('.edit-valor').value), f = c.querySelector('.edit-fecha').value, l = c.querySelector('.edit-loteria').value.trim(); if (!v || !f || !l) { alert("Completa todos los campos."); return; } currentPrizeData.premiosAnticipados[i] = { valor: v, fecha: f, loteria: l }; saveBtn.textContent = 'Guardando...'; saveBtn.disabled = true; const s = await saveAllPrizes(); if (s) renderAnticipados(); else { saveBtn.textContent = 'Guardar'; saveBtn.disabled = false; } } else if (deleteBtn) { if (confirm("¿Eliminar este premio anticipado?")) { currentPrizeData.premiosAnticipados.splice(i, 1); const s = await saveAllPrizes(); if (s) renderAnticipados(); } } });
-
-    // Inicialización
-    applyTheme(localStorage.getItem('theme') || 'light');
-    cargarRifas();
-    DOM.checkWinnerButton.disabled = true;
+    if (!isVerificationMode) {
+        applyTheme(localStorage.getItem('theme') || 'light');
+        cargarRifas();
+        DOM.checkWinnerButton.disabled = true;
+        
+        // --- EVENT LISTENERS ---
+        DOM.settingsButton.addEventListener('click', openSettingsModal);
+        DOM.closeSettingsModalButton.addEventListener('click', closeSettingsModal);
+        DOM.saveSettingsButton.addEventListener('click', saveSettings);
+        DOM.darkModeToggle.addEventListener('click', () => { const n = document.body.classList.contains('dark-mode') ? 'light' : 'dark'; localStorage.setItem('theme', n); applyTheme(n); });
+        DOM.createRifaButton.addEventListener('click', crearNuevaRifa); DOM.deleteRifaButton.addEventListener('click', deleteRifaActual);
+        DOM.closeDataModalButton.addEventListener('click', closeDataModal); DOM.saveButton.addEventListener('click', saveData); DOM.deleteButton.addEventListener('click', deleteData);
+        DOM.inputStatus.addEventListener('change', () => {
+            DOM.abonoContainer.style.display = DOM.inputStatus.value === 'separado' ? 'block' : 'none';
+            if (DOM.inputStatus.value !== 'separado') {
+                DOM.inputAbono.value = '';
+            }
+        });
+        DOM.prizeButton.addEventListener('click', openPrizeModal);
+        DOM.closePrizeModalButton.addEventListener('click', closePrizeModal);
+        DOM.modalBackdrop.addEventListener('click', (e) => { if (e.target === DOM.modalBackdrop) { closePrizeModal(); closeSettingsModal(); closeDataModal(); closeTicketModal(); } });
+        DOM.saveAllPrizesButton.addEventListener('click', saveAllPrizes);
+        DOM.rifaSelect.addEventListener('click', () => { DOM.rifaSelectItems.classList.toggle('select-show'); DOM.rifaSelect.classList.toggle('select-arrow-active'); });
+        window.addEventListener('click', (e) => { if (DOM.rifaSelect.parentElement && !DOM.rifaSelect.parentElement.contains(e.target)) { DOM.rifaSelectItems.classList.remove('select-show'); DOM.rifaSelect.classList.remove('select-arrow-active'); }});
+        DOM.searchButton.addEventListener('click', () => { if (!rifaActivaId) { alert("Selecciona una rifa para buscar."); return; } if (DOM.searchInput.value.trim().length === 10) performSearch(); else { DOM.searchResultsContainer.innerHTML = '<div class="no-results-message">Debes ingresar 10 cifras.</div>'; document.querySelectorAll('.grid-item.highlighted').forEach(i => i.classList.remove('highlighted')); } });
+        DOM.checkWinnerButton.addEventListener('click', checkWinners);
+        DOM.realWinningInput.addEventListener('input', () => { const v = DOM.realWinningInput.value; DOM.digitCircles.forEach((c, i) => { const d = v[i]; if (d) { c.textContent = d; c.classList.add('filled'); } else { c.textContent = ''; c.classList.remove('filled'); } }); DOM.checkWinnerButton.disabled = v.length !== 4; });
+        DOM.searchResultsContainer.addEventListener('click', (e) => { const t = e.target.closest('.generate-ticket-btn'); if (t) generateTicket(t.dataset.number); });
+        DOM.closeTicketModalButton.addEventListener('click', closeTicketModal);
+        DOM.downloadTicketButton.addEventListener('click', downloadTicket);
+        DOM.addAnticipadoButton.addEventListener('click', async () => { const v = Number(DOM.anticipadoValor.value), f = DOM.anticipadoFecha.value, l = DOM.anticipadoLoteria.value.trim(); if (!v || !f || !l) { alert("Completa todos los campos del premio."); return; } currentPrizeData.premiosAnticipados.push({ valor:v, fecha:f, loteria:l }); const s = await saveAllPrizes(); if (s) { renderAnticipados(); DOM.anticipadoValor.value = ''; DOM.anticipadoFecha.value = ''; DOM.anticipadoLoteria.value = ''; } });
+        DOM.anticipadosList.addEventListener('click', async (e) => { const c = e.target.closest('.anticipado-card'); if (!c || !firebase.auth().currentUser) return; const i = Number(c.dataset.index), editBtn = e.target.closest('.edit-anticipado-btn'), cancelBtn = e.target.closest('.cancel-edit-anticipado-btn'), saveBtn = e.target.closest('.save-edit-anticipado-btn'), deleteBtn = e.target.closest('.delete-anticipado-btn'); if (editBtn) { c.querySelector('.view-mode').style.display = 'none'; c.querySelector('.edit-mode').style.display = 'flex'; } else if (cancelBtn) { c.querySelector('.view-mode').style.display = 'flex'; c.querySelector('.edit-mode').style.display = 'none'; } else if (saveBtn) { const v = Number(c.querySelector('.edit-valor').value), f = c.querySelector('.edit-fecha').value, l = c.querySelector('.edit-loteria').value.trim(); if (!v || !f || !l) { alert("Completa todos los campos."); return; } currentPrizeData.premiosAnticipados[i] = { valor: v, fecha: f, loteria: l }; saveBtn.textContent = 'Guardando...'; saveBtn.disabled = true; const s = await saveAllPrizes(); if (s) renderAnticipados(); else { saveBtn.textContent = 'Guardar'; saveBtn.disabled = false; } } else if (deleteBtn) { if (confirm("¿Eliminar este premio anticipado?")) { currentPrizeData.premiosAnticipados.splice(i, 1); const s = await saveAllPrizes(); if (s) renderAnticipados(); } } });
+    }
 });
 </script>
 
