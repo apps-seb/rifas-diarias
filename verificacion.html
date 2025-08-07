@@ -9,13 +9,13 @@
         :root {
             --color-disponible: #751FFF;
             --color-separado: #ffc107;
-            --color-pago: #84E059;
+            --color-pago: #28a745; /* Un verde más estándar */
             --color-primary: #007bff;
             --color-danger: #dc3545;
-            --border-color: #ddd;
+            --border-color: #dee2e6;
             --shadow-color: rgba(0, 0, 0, 0.05);
-            --background-card: #fff;
-            --text-dark: #343a40;
+            --background-card: #ffffff;
+            --text-dark: #212529;
             --text-light: #6c757d;
             --body-bg: #f8f9fa;
         }
@@ -23,9 +23,19 @@
             --border-color: #4d4d4d;
             --shadow-color: rgba(0, 0, 0, 0.2);
             --background-card: #1c1c1e;
-            --text-dark: #f2f2f7;
+            --text-dark: #f8f9fa;
             --text-light: #a0a0a5;
             --body-bg: #121212;
+        }
+        @keyframes popInNumber {
+          0% {
+            transform: scale(0.8) translateY(20px);
+            opacity: 0;
+          }
+          100% {
+            transform: scale(1) translateY(0);
+            opacity: 1;
+          }
         }
         body {
             font-family: system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
@@ -39,59 +49,110 @@
             padding: 20px;
             box-sizing: border-box;
         }
-        .container {
+        .verification-card {
             width: 100%;
-            max-width: 500px;
-        }
-        #verification-card {
+            max-width: 480px;
             background-color: var(--background-card);
-            padding: 25px;
-            border-radius: 12px;
-            box-shadow: 0 4px 25px var(--shadow-color);
+            border-radius: 16px;
+            box-shadow: 0 8px 30px var(--shadow-color);
+            border: 1px solid var(--border-color);
+            overflow: hidden;
             text-align: center;
+            opacity: 0;
+            animation: fadeInCard 0.5s ease forwards;
         }
-        h2 {
-            margin-top: 0;
-            margin-bottom: 20px;
-            font-size: 1.5em;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            gap: 10px;
+        @keyframes fadeInCard {
+            to { opacity: 1; }
         }
-        h1 {
-            font-size: 4em;
-            margin: 10px 0;
-            color: var(--color-primary);
-            font-family: 'Roboto Mono', monospace;
+        .card-header {
+            padding: 20px;
+            background-color: var(--background-light);
+            border-bottom: 1px solid var(--border-color);
         }
-        h3 {
+        .card-header h2 {
+            margin: 0;
             font-size: 1.2em;
-            margin-bottom: 15px;
+            color: var(--text-dark);
+            font-weight: 600;
+        }
+        .card-header p {
+            margin: 4px 0 0;
+            font-size: 0.9em;
             color: var(--text-light);
-            font-weight: 500;
         }
-        .status {
-            font-size: 1.2em;
-            font-weight: bold;
+        .card-body {
+            padding: 30px 20px;
+        }
+        .ticket-number {
+            font-family: 'Roboto Mono', monospace;
+            font-size: 6em;
+            font-weight: 700;
+            line-height: 1;
+            color: var(--color-primary);
+            margin: 0 0 20px 0;
+            opacity: 0; /* Inicia invisible para la animación */
+        }
+        .ticket-number.animate {
+            animation: popInNumber 0.7s cubic-bezier(0.25, 0.46, 0.45, 0.94) 0.2s forwards;
+        }
+        .ticket-status {
+            display: inline-flex;
+            align-items: center;
+            gap: 10px;
             padding: 10px 20px;
-            border-radius: 8px;
-            display: inline-block;
-            margin-top: 15px;
+            border-radius: 50px;
+            font-weight: bold;
+            font-size: 1em;
+            margin-bottom: 25px;
+        }
+        .ticket-status.status-valid {
+            background-color: var(--color-pago);
             color: white;
         }
-        .status-pago { background-color: var(--color-pago); }
-        .status-separado { background-color: var(--color-separado); color: var(--text-dark); }
-        .status-disponible { background-color: var(--color-disponible); }
-        .error { color: var(--color-danger); font-weight: bold; }
-        p { font-size: 1.1em; margin: 8px 0; }
-        strong { color: var(--text-dark); }
+        .ticket-status.status-pending {
+            background-color: var(--color-separado);
+            color: #333;
+        }
+        .ticket-status.status-invalid {
+            background-color: var(--text-light);
+            color: var(--background-card);
+        }
+        .ticket-status.status-error {
+            background-color: var(--color-danger);
+            color: white;
+        }
+        .ticket-details {
+            text-align: left;
+            border-top: 1px solid var(--border-color);
+            padding-top: 20px;
+        }
+        .ticket-details p {
+            margin: 10px 0;
+            font-size: 1em;
+            color: var(--text-light);
+            display: flex;
+            justify-content: space-between;
+        }
+        .ticket-details strong {
+            color: var(--text-dark);
+            font-weight: 500;
+        }
+        .card-footer {
+            padding: 15px;
+            background-color: var(--background-light);
+            border-top: 1px solid var(--border-color);
+        }
+        .card-footer a {
+            color: var(--color-primary);
+            text-decoration: none;
+            font-weight: 500;
+        }
     </style>
 </head>
 <body>
 
-    <div class="container">
-        <div id="verification-card">
+    <div id="verification-card" class="verification-card">
+        <div class="card-body">
             <h2><i class="fas fa-spinner fa-spin"></i> Verificando Boleto...</h2>
         </div>
     </div>
@@ -116,15 +177,18 @@
             const rifaId = params.get('rifa');
             const numero = params.get('numero');
 
-            // Detectar y aplicar modo oscuro si es necesario
+            // Detectar y aplicar modo oscuro del sistema
             if (window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches) {
                 document.body.classList.add('dark-mode');
             }
 
             if (!rifaId || !numero) {
                 verificationCard.innerHTML = `
-                    <h2><i class="fas fa-exclamation-triangle" style="color: var(--color-danger);"></i> Enlace no válido</h2>
-                    <p class="error">Faltan los datos necesarios para la verificación.</p>`;
+                    <div class="card-header"><h2>Verificación de Boleto</h2></div>
+                    <div class="card-body">
+                        <div class="ticket-status status-error"><i class="fas fa-exclamation-triangle"></i><span>Enlace Inválido</span></div>
+                        <p>Faltan los datos necesarios para la verificación.</p>
+                    </div>`;
                 return;
             }
 
@@ -142,23 +206,49 @@
                     clientData = numeroDoc.data();
                 }
 
-                let statusClass = `status-${clientData.status}`;
-                let statusText = clientData.status.charAt(0).toUpperCase() + clientData.status.slice(1);
+                let statusInfo = {};
+                switch(clientData.status) {
+                    case 'pago':
+                        statusInfo = { class: 'status-valid', icon: 'fa-check-circle', text: 'PAGADO' };
+                        break;
+                    case 'separado':
+                        statusInfo = { class: 'status-pending', icon: 'fa-clock', text: 'SEPARADO' };
+                        break;
+                    default:
+                        statusInfo = { class: 'status-invalid', icon: 'fa-question-circle', text: 'DISPONIBLE' };
+                }
 
                 verificationCard.innerHTML = `
-                    <h2><i class="fas fa-check-circle" style="color: var(--color-pago);"></i> Boleto Válido</h2>
-                    <h3>${rifaData.nombre}</h3>
-                    <h1>Nº ${numero}</h1>
-                    <hr style="border-color: var(--border-color); opacity: 0.2; margin: 20px 0;">
-                    <p><strong>Propietario:</strong> ${clientData.name}</p>
-                    <p><strong>Teléfono:</strong> ${clientData.phone || 'N/A'}</p>
-                    <div class="status ${statusClass}">${statusText}</div>
+                    <div class="card-header">
+                        <h2>${rifaData.nombre}</h2>
+                        <p>Fecha del Sorteo: ${new Date(rifaData.fechaSorteo + 'T00:00:00').toLocaleDateString('es-ES', { day: 'numeric', month: 'long', year: 'numeric' })}</p>
+                    </div>
+                    <div class="card-body">
+                        <div class="ticket-number animate" id="ticket-number">${numero}</div>
+                        <div class="ticket-status ${statusInfo.class}">
+                            <i class="fas ${statusInfo.icon}"></i>
+                            <span>${statusInfo.text}</span>
+                        </div>
+                        <div class="ticket-details">
+                            <p><span>Propietario:</span> <strong>${clientData.name}</strong></p>
+                            <p><span>Teléfono:</span> <strong>${clientData.phone || 'N/A'}</strong></p>
+                        </div>
+                    </div>
+                    <div class="card-footer">
+                        <a href="${window.location.origin + window.location.pathname.replace('verificacion.html', '')}">Volver al inicio</a>
+                    </div>
                 `;
 
             } catch (error) {
                 verificationCard.innerHTML = `
-                    <h2><i class="fas fa-times-circle" style="color: var(--color-danger);"></i> Error de Verificación</h2>
-                    <p class="error">${error.message}</p>
+                    <div class="card-header"><h2>Verificación de Boleto</h2></div>
+                    <div class="card-body">
+                        <div class="ticket-status status-error"><i class="fas fa-times-circle"></i><span>Error</span></div>
+                        <p>${error.message}</p>
+                    </div>
+                     <div class="card-footer">
+                        <a href="${window.location.origin + window.location.pathname.replace('verificacion.html', '')}">Volver al inicio</a>
+                    </div>
                 `;
             }
         });
