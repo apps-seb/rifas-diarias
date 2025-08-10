@@ -143,12 +143,10 @@
             const rifaId = params.get('rifa');
             const numero = params.get('numero');
 
-            // Detectar modo oscuro del sistema
             if (window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches) {
                 document.body.classList.add('dark-mode');
             }
 
-            // Función para mostrar errores de forma consistente
             const showError = (title, message) => {
                 document.body.classList.add('status-error');
                 verificationCard.innerHTML = `
@@ -180,7 +178,6 @@
                     clientData = numeroDoc.data();
                 }
 
-                // Definir información del estado
                 let statusInfo = {};
                 switch(clientData.status) {
                     case 'pago':
