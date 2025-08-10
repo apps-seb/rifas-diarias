@@ -7,10 +7,10 @@
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" />
     <style>
         :root {
-            --color-pago: #28a745;
+            --color-disponible: #751FFF;
             --color-separado: #ffc107;
-            --color-disponible: #6c757d;
-            --color-primary: #007bff;
+            --color-pago: #84E059;
+            --color-primary: #751FFF;
             --color-danger: #dc3545;
             --border-color: #dee2e6;
             --shadow-color: rgba(0, 0, 0, 0.1);
@@ -27,8 +27,6 @@
             --text-light: #a0a0a5;
             --body-bg: #121212;
         }
-
-        /* --- Animaciones --- */
         @keyframes fadeIn { from { opacity: 0; transform: translateY(20px); } to { opacity: 1; transform: translateY(0); } }
         @keyframes popInNumber {
             0% { transform: scale(0.8); opacity: 0; }
@@ -44,11 +42,9 @@
             100% { transform: translateX(150%) rotate(25deg); }
         }
         @keyframes rotate-loop {
-            from { transform: rotate(0deg) scale(1); opacity: 1; }
-            to { transform: rotate(360deg) scale(1); opacity: 1; }
+            from { transform: rotate(0deg); }
+            to { transform: rotate(360deg); }
         }
-
-        /* --- Estructura Principal --- */
         body {
             font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
             background-color: var(--body-bg);
@@ -74,9 +70,9 @@
             z-index: -1;
             transition: background 0.5s ease;
         }
-        body.status-valid { --glow-color: var(--color-pago); }
-        body.status-pending { --glow-color: var(--color-separado); }
-        body.status-invalid { --glow-color: var(--color-disponible); }
+        body.status-pago { --glow-color: var(--color-pago); }
+        body.status-separado { --glow-color: var(--color-separado); }
+        body.status-disponible { --glow-color: var(--color-disponible); }
         body.status-error { --glow-color: var(--color-danger); }
 
         .verification-card {
@@ -91,51 +87,27 @@
             opacity: 0;
             animation: fadeIn 0.8s 0.2s ease forwards;
         }
-        
-        /* --- Contenido de la Tarjeta --- */
         .card-header { padding: 20px 25px; border-bottom: 1px solid var(--border-color); }
         .card-header h2 { margin: 0; font-size: 1.5em; color: var(--text-dark); font-weight: 600; }
         .card-header p { margin: 4px 0 0; font-size: 0.9em; color: var(--text-light); }
         .card-body { padding: 30px 25px; }
         .ticket-number { font-family: 'Roboto Mono', monospace; font-size: clamp(4em, 20vw, 7em); font-weight: 700; line-height: 1; color: var(--color-primary); margin: 0 0 25px 0; opacity: 0; }
         .ticket-number.animate { animation: popInNumber 0.7s cubic-bezier(0.25, 0.46, 0.45, 0.94) 0.5s forwards; }
-        .ticket-status { display: inline-flex; align-items: center; gap: 10px; padding: 12px 24px; border-radius: 50px; font-weight: bold; font-size: 1.1em; margin-bottom: 30px; border: 2px solid; transition: box-shadow 0.3s ease; }
-        .ticket-status.status-valid { background-color: var(--color-pago); border-color: var(--color-pago); color: white; box-shadow: 0 4px 20px rgba(40, 167, 69, 0.4); }
-        .ticket-status.status-pending { background-color: var(--color-separado); border-color: var(--color-separado); color: #333; box-shadow: 0 4px 20px rgba(255, 193, 7, 0.4); }
-        .ticket-status.status-invalid { background-color: var(--color-disponible); border-color: var(--color-disponible); color: white; box-shadow: 0 4px 20px rgba(108, 117, 125, 0.4); }
-        .ticket-status.status-error { background-color: var(--color-danger); border-color: var(--color-danger); color: white; }
         .ticket-details ul { list-style: none; padding: 0; margin: 0; text-align: left; }
         .ticket-details li { display: flex; align-items: center; font-size: 1em; color: var(--text-light); padding: 12px 0; border-top: 1px solid var(--border-color); }
         .ticket-details i { width: 30px; margin-right: 15px; color: var(--color-primary); text-align: center; }
         .ticket-details strong { margin-left: auto; color: var(--text-dark); font-weight: 500; }
-
-        /* --- Footer y Sello Mejorado --- */
         .card-footer { padding: 20px 25px; border-top: 1px solid var(--border-color); }
         .seal-container { display: flex; align-items: center; gap: 15px; justify-content: center; margin-bottom: 15px; }
         .seal { width: 70px; height: 70px; border-radius: 50%; display: flex; align-items: center; justify-content: center; color: white; font-size: 2.2em; flex-shrink: 0; position: relative; overflow: hidden; border: 4px solid white; transform: scale(0); opacity: 0; }
-        .seal.is-valid { background-color: var(--color-pago); box-shadow: 0 0 0 4px var(--color-pago); animation: stamp-animation 0.8s cubic-bezier(0.34, 1.56, 0.64, 1) 0.5s forwards; }
-        .seal.is-pending { background-color: var(--color-separado); box-shadow: 0 0 0 4px var(--color-separado); animation: fadeIn 0.8s 0.5s forwards, rotate-loop 4s linear 1.5s infinite; }
-        .seal.is-other { background-color: var(--color-disponible); box-shadow: 0 0 0 4px var(--color-disponible); animation: fadeIn 0.5s 0.5s forwards; }
-        .seal.is-valid::after { content: ''; position: absolute; top: -50%; left: -50%; width: 40%; height: 200%; background: linear-gradient(to right, rgba(255, 255, 255, 0) 0%, rgba(255, 255, 255, 0.4) 50%, rgba(255, 255, 255, 0) 100%); animation: shine-loop 3.5s infinite linear; animation-delay: 1.5s; }
-        
-        .seal-container span {
-            font-weight: 700;
-            font-size: 1.2em; /* Ligeramente más grande para mayor impacto */
-            text-transform: uppercase;
-            letter-spacing: 0.5px;
-            color: var(--text-dark); /* Color por defecto */
-            transition: color 0.4s ease;
-        }
-
-        /* === NUEVA LÓGICA DE COLOR PARA EL TEXTO === */
-        .seal.is-valid + span {
-            color: var(--color-pago); /* Texto verde para el estado pagado */
-        }
-        .seal.is-pending + span,
-        .seal.is-other + span {
-            color: var(--color-primary); /* Texto azul para los otros estados auténticos */
-        }
-
+        .seal.status-pago { background-color: var(--color-pago); box-shadow: 0 0 0 4px var(--color-pago); animation: stamp-animation 0.8s cubic-bezier(0.34, 1.56, 0.64, 1) 0.5s forwards; }
+        .seal.status-separado { background-color: var(--color-separado); box-shadow: 0 0 0 4px var(--color-separado); animation: fadeIn 0.8s 0.5s forwards, rotate-loop 4s linear 1.5s infinite; }
+        .seal.status-disponible { background-color: var(--color-disponible); box-shadow: 0 0 0 4px var(--color-disponible); animation: fadeIn 0.5s 0.5s forwards; }
+        .seal.status-pago::after { content: ''; position: absolute; top: -50%; left: -50%; width: 40%; height: 200%; background: linear-gradient(to right, rgba(255, 255, 255, 0) 0%, rgba(255, 255, 255, 0.4) 50%, rgba(255, 255, 255, 0) 100%); animation: shine-loop 3.5s infinite linear; animation-delay: 1.5s; }
+        .seal-container span { font-weight: 700; font-size: 1.2em; text-transform: uppercase; letter-spacing: 0.5px; color: var(--text-dark); transition: color 0.4s ease; }
+        .seal.status-pago + span { color: var(--color-pago); }
+        .seal.status-separado + span { color: var(--color-separado); }
+        .seal.status-disponible + span { color: var(--color-disponible); }
         .disclaimer { font-size: 0.75em; color: var(--text-light); margin: 0; line-height: 1.5; text-align: center; }
         .status-error-display { color: var(--color-danger); text-align: center; }
         .status-error-display i { font-size: 2em; margin-bottom: 15px; }
@@ -171,20 +143,26 @@
             const rifaId = params.get('rifa');
             const numero = params.get('numero');
 
+            // Detectar modo oscuro del sistema
             if (window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches) {
                 document.body.classList.add('dark-mode');
             }
 
-            if (!rifaId || !numero) {
+            // Función para mostrar errores
+            const showError = (title, message) => {
                 document.body.classList.add('status-error');
                 verificationCard.innerHTML = `
                     <div class="card-body">
                         <div class="status-error-display">
                             <i class="fas fa-exclamation-triangle"></i>
-                            <h3>Enlace Inválido</h3>
-                            <p>Faltan los datos necesarios para la verificación.</p>
+                            <h3>${title}</h3>
+                            <p>${message}</p>
                         </div>
                     </div>`;
+            };
+
+            if (!rifaId || !numero) {
+                showError('Enlace Inválido', 'Faltan los datos necesarios para la verificación.');
                 return;
             }
 
@@ -202,19 +180,20 @@
                     clientData = numeroDoc.data();
                 }
 
+                // Definir información del estado
                 let statusInfo = {};
                 switch(clientData.status) {
                     case 'pago':
-                        statusInfo = { class: 'valid', icon: 'fa-check', text: 'PAGADO' };
+                        statusInfo = { class: 'pago', icon: 'fa-check', text: 'VERIFICADO', sealText: 'Boleto Válido' };
                         break;
                     case 'separado':
-                        statusInfo = { class: 'pending', icon: 'fa-clock', text: 'SEPARADO' };
+                        statusInfo = { class: 'separado', icon: 'fa-clock', text: 'SEPARADO', sealText: 'Boleto Auténtico' };
                         break;
                     default:
-                        statusInfo = { class: 'invalid', icon: 'fa-question-circle', text: 'DISPONIBLE' };
+                        statusInfo = { class: 'disponible', icon: 'fa-ticket-alt', text: 'DISPONIBLE', sealText: 'Boleto Auténtico' };
                 }
 
-                document.body.classList.add(`status-${statusInfo.class}`);
+                document.body.classList.add(`status-${clientData.status}`);
                 
                 let abonoHtml = '';
                 if (clientData.status === 'separado' && clientData.abono > 0) {
@@ -230,14 +209,10 @@
                 verificationCard.innerHTML = `
                     <div class="card-header">
                         <h2>${rifaData.nombre}</h2>
-                        <p>Fecha del Sorteo: ${new Date(rifaData.fechaSorteo + 'T00:00:00').toLocaleDateString('es-ES', { day: 'numeric', month: 'long', year: 'numeric' })}</p>
+                        <p>Sorteo: ${new Date(rifaData.fechaSorteo + 'T00:00:00').toLocaleDateString('es-ES', { day: 'numeric', month: 'long', year: 'numeric' })}</p>
                     </div>
                     <div class="card-body">
                         <div class="ticket-number animate">${numero}</div>
-                        <div class="ticket-status status-${statusInfo.class}">
-                            <i class="fas ${statusInfo.icon}"></i>
-                            <span>${statusInfo.text}</span>
-                        </div>
                         <div class="ticket-details">
                             <ul>
                                 <li>
@@ -256,55 +231,21 @@
                     </div>
                     <div class="card-footer">
                         <div class="seal-container">
-                            <div id="auth-seal" class="seal">
-                                <i id="auth-seal-icon" class="fas"></i>
+                            <div id="auth-seal" class="seal status-${statusInfo.class}">
+                                <i id="auth-seal-icon" class="fas ${statusInfo.icon}"></i>
                             </div>
-                            <span id="auth-seal-text"></span>
+                            <span id="auth-seal-text">${statusInfo.sealText}</span>
                         </div>
                         <p class="disclaimer">
-                            <strong>Importante:</strong> Esta es una verificación de autenticidad digital. La validez final del boleto está sujeta a los términos y condiciones del organizador.
+                            <strong>Importante:</strong> La validez final del boleto está sujeta a los términos del organizador.
                         </p>
                     </div>
                 `;
 
-                // --- LÓGICA PARA CONTROLAR EL SELLO DINÁMICO ---
-                const seal = document.getElementById('auth-seal');
-                const sealIcon = document.getElementById('auth-seal-icon');
-                const sealText = document.getElementById('auth-seal-text');
-
-                switch(clientData.status) {
-                    case 'pago':
-                        sealIcon.classList.add('fa-check');
-                        sealText.textContent = 'Ticket Verificado'; // Texto mejorado
-                        seal.classList.add('is-valid');
-                        break;
-                    case 'separado':
-                        sealIcon.classList.add('fa-clock');
-                        sealText.textContent = 'BOLETO AUTÉNTICO';
-                        seal.classList.add('is-pending');
-                        break;
-                    default:
-                        sealIcon.classList.add('fa-shield-halved');
-                        sealText.textContent = 'BOLETO AUTÉNTICO';
-                        seal.classList.add('is-other');
-                        break;
-                }
-
             } catch (error) {
-                 document.body.classList.add('status-error');
-                verificationCard.innerHTML = `
-                    <div class="card-body">
-                        <div class="status-error-display">
-                            <i class="fas fa-times-circle"></i>
-                            <h3>Error de Verificación</h3>
-                            <p>${error.message}</p>
-                        </div>
-                    </div>
-                `;
+                showError('Error de Verificación', error.message);
             }
         });
     </script>
 </body>
 </html>
-
-
