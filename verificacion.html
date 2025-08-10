@@ -148,7 +148,7 @@
                 document.body.classList.add('dark-mode');
             }
 
-            // Función para mostrar errores
+            // Función para mostrar errores de forma consistente
             const showError = (title, message) => {
                 document.body.classList.add('status-error');
                 verificationCard.innerHTML = `
@@ -184,7 +184,7 @@
                 let statusInfo = {};
                 switch(clientData.status) {
                     case 'pago':
-                        statusInfo = { class: 'pago', icon: 'fa-check', text: 'VERIFICADO', sealText: 'Boleto Válido' };
+                        statusInfo = { class: 'pago', icon: 'fa-check', text: 'VÁLIDO Y PAGADO', sealText: 'Boleto Verificado' };
                         break;
                     case 'separado':
                         statusInfo = { class: 'separado', icon: 'fa-clock', text: 'SEPARADO', sealText: 'Boleto Auténtico' };
@@ -231,13 +231,13 @@
                     </div>
                     <div class="card-footer">
                         <div class="seal-container">
-                            <div id="auth-seal" class="seal status-${statusInfo.class}">
-                                <i id="auth-seal-icon" class="fas ${statusInfo.icon}"></i>
+                            <div class="seal status-${statusInfo.class}">
+                                <i class="fas ${statusInfo.icon}"></i>
                             </div>
-                            <span id="auth-seal-text">${statusInfo.sealText}</span>
+                            <span>${statusInfo.sealText}</span>
                         </div>
                         <p class="disclaimer">
-                            <strong>Importante:</strong> La validez final del boleto está sujeta a los términos del organizador.
+                            <strong>Estado del Boleto:</strong> ${statusInfo.text}. La validez final está sujeta a los términos del organizador.
                         </p>
                     </div>
                 `;
