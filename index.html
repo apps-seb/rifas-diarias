@@ -58,7 +58,7 @@
         #card-disponible .card-icon { background-color: var(--color-disponible); }
         .info-count { font-size: clamp(1.8em, 4vw, 2.2em); font-weight: 700; color: var(--text-dark); }
         .info-label { font-size: clamp(0.7em, 2.5vw, 0.8em); margin-top: 4px; color: var(--text-light); text-transform: uppercase; letter-spacing: 0.5px; line-height: 1.1; }
-        .search-section, .raffle-manager, .winner-section, #participant-list-section { background-color: var(--background-card); padding: 20px; border-radius: 12px; box-shadow: 0 4px 25px var(--shadow-color); margin-bottom: 25px; transition: background-color var(--transition-speed) ease; }
+        .search-section, .raffle-manager, .winner-section, #participant-list-section, #vendedor-summary-panel { background-color: var(--background-card); padding: 20px; border-radius: 12px; box-shadow: 0 4px 25px var(--shadow-color); margin-bottom: 25px; transition: background-color var(--transition-speed) ease; }
         .search-box { display: flex; align-items: flex-start; gap: 10px; margin-bottom: 15px; }
         #searchButton { flex-shrink: 0; width: 48px; height: 48px; padding: 0; border: none; background-color: var(--color-primary); color: white; font-size: 18px; border-radius: 8px; cursor: pointer; transition: background-color 0.2s; display: flex; align-items: center; justify-content: center; }
         #searchButton:hover { background-color: #5a0dbd; }
@@ -254,15 +254,25 @@
         .anticipado-card .edit-mode-actions .save-edit-anticipado-btn { background-color: var(--color-primary); color: white; }
         .anticipado-card .edit-mode-actions .cancel-edit-anticipado-btn { background-color: var(--background-light); color: var(--text-dark); border: 1px solid var(--border-color); }
         
-        #vendedor-summary-panel { display: none; }
-        body.admin-view #vendedor-summary-panel { display: block; background-color: var(--background-card); padding: 20px; border-radius: 12px; box-shadow: 0 4px 25px var(--shadow-color); margin-bottom: 25px; }
-        #vendedor-summary-list .vendedor-item { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; padding: 12px; border-bottom: 1px solid var(--border-color); }
-        #vendedor-summary-list .vendedor-item:last-child { border-bottom: none; }
-        #vendedor-summary-list .vendedor-name { font-weight: bold; font-size: 1.1em; align-self: center; }
-        #vendedor-summary-list .vendedor-stats { text-align: right; font-size: 0.9em; line-height: 1.6; }
-        #vendedor-summary-list .stat-value { font-weight: bold; }
-        #vendedor-summary-list .recaudado { color: var(--color-pago); }
-        #vendedor-summary-list .pendiente { color: var(--color-danger); }
+        #vendedor-summary-panel { display: none; padding: 20px; }
+        body.admin-view #vendedor-summary-panel { display: block; }
+        #vendedor-summary-list { display: grid; grid-template-columns: 1fr; gap: 15px;}
+        .vendedor-summary-card { border: 1px solid var(--border-color); border-radius: 8px; transition: all 0.3s ease; }
+        .vendedor-summary-card:hover { box-shadow: 0 4px 15px var(--shadow-color); }
+        .vendedor-summary-card .vsc-header { padding: 12px 15px; font-weight: bold; border-bottom: 1px solid var(--border-color); font-size: 1.1em; }
+        .vendedor-summary-card .vsc-body { padding: 15px; }
+        .vendedor-summary-card .vsc-section h5 { margin: 0 0 10px 0; text-align: left; font-size: 0.9em; display: flex; align-items: center; gap: 8px;}
+        .vendedor-summary-card .vsc-section h5 .count { background-color: var(--background-light); color: var(--text-dark); padding: 2px 8px; border-radius: 10px; font-size: 0.9em;}
+        .vsc-numeros-container { display: flex; flex-wrap: wrap; gap: 6px; margin-bottom: 15px; }
+        .numero-tag { padding: 4px 8px; border-radius: 4px; font-weight: bold; font-size: 0.9em; }
+        .numero-tag.status-pago { background-color: var(--color-pago); color: white; }
+        .numero-tag.status-separado { background-color: var(--color-separado); color: var(--text-dark); }
+        .vendedor-summary-card .vsc-footer { padding: 12px 15px; border-top: 1px solid var(--border-color); background-color: var(--background-light); text-align: right; font-size: 0.9em; }
+        .vsc-footer-stat { margin-left: 15px; }
+        .vsc-footer-stat .stat-value { font-weight: bold; }
+        .vsc-footer-stat .recaudado { color: var(--color-pago); }
+        .vsc-footer-stat .pendiente { color: var(--color-danger); }
+        
         .vendedor-form { display: flex; gap: 10px; margin-bottom: 20px; }
         .vendedor-list-item { display: flex; justify-content: space-between; align-items: center; padding: 8px; border-radius: 4px; background-color: var(--background-light); margin-bottom: 8px; }
         .vendedor-list-item .actions button { background: none; border: none; cursor: pointer; font-size: 16px; margin-left: 10px; }
@@ -303,53 +313,23 @@
         .qr-section p { font-size: 0.65em; color: var(--text-light); margin-top: 4px; }
         .ticket-footer { padding-top: 10px; text-align: center; font-size: 0.7em; color: var(--text-light); border-top: 1px dashed var(--border-color); margin-top: 10px; }
         
-        /* INICIO: ESTILOS PARA LISTA DE PARTICIPANTES */
-        #participant-list-section {
-            display: none; /* Se muestra con JS cuando hay una rifa activa */
-        }
-        #participant-list-section h3 {
-            text-align: left;
-            margin-top: 0;
-            display: flex;
-            align-items: center;
-            gap: 10px;
-        }
-        #participant-list-container {
-            max-height: 400px; /* Altura máxima antes de habilitar scroll */
-            overflow-y: auto;
-            margin-top: 15px;
-            border: 1px solid var(--border-color);
-            border-radius: 8px;
-        }
-        #participant-table {
-            width: 100%;
-            border-collapse: collapse;
-            text-align: left;
-        }
-        #participant-table th, #participant-table td {
-            padding: 12px 15px;
-            border-bottom: 1px solid var(--border-color);
-            white-space: nowrap;
-        }
-        #participant-table tbody tr:last-child td {
-            border-bottom: none;
-        }
-        #participant-table thead th {
-            background-color: var(--background-light);
-            font-weight: 600;
-            position: sticky; /* Encabezado fijo */
-            top: 0;
-            z-index: 1;
-        }
-        #participant-table tbody tr:hover {
-            background-color: rgba(117, 31, 255, 0.08); /* Color primario con opacidad baja */
-        }
-        .participant-number {
-            font-weight: bold;
-            color: var(--color-primary);
-            text-align: center;
-        }
-        /* FIN: ESTILOS PARA LISTA DE PARTICIPANTES */
+        #participant-list-section { padding: 0; }
+        .collapsible-header { background: none; border: none; width: 100%; display: flex; justify-content: space-between; align-items: center; cursor: pointer; padding: 15px 20px; border-radius: 12px; }
+        .collapsible-header h3 { margin: 0; text-align: left; display: flex; align-items: center; gap: 10px; font-size: 1.2em;}
+        .collapsible-header .toggle-icon { transition: transform 0.3s ease; color: var(--text-light); }
+        .collapsible-header.active .toggle-icon { transform: rotate(180deg); }
+        .collapsible-content { max-height: 0; overflow: hidden; transition: max-height 0.4s ease-out; background-color: transparent; }
+        #participant-list-container { max-height: 400px; overflow-y: auto; margin: 0 20px 20px 20px; border: 1px solid var(--border-color); border-radius: 8px; }
+        #participant-table { width: 100%; border-collapse: collapse; text-align: left; }
+        #participant-table th, #participant-table td { padding: 12px 15px; border-bottom: 1px solid var(--border-color); white-space: nowrap; }
+        #participant-table tbody tr:last-child td { border-bottom: none; }
+        #participant-table thead th { background-color: var(--background-light); font-weight: 600; position: sticky; top: 0; z-index: 1; }
+        #participant-table tbody tr:hover { background-color: rgba(117, 31, 255, 0.08); }
+        .participant-number-cell { display: flex; align-items: center; gap: 8px; }
+        .status-dot { flex-shrink: 0; width: 10px; height: 10px; border-radius: 50%; }
+        .status-dot.status-pago { background-color: var(--color-pago); }
+        .status-dot.status-separado { background-color: var(--color-separado); }
+        .participant-number { font-weight: bold; color: var(--text-dark); }
 
         @media (max-width: 650px) {
             #anticipados-list { display: flex; flex-direction: row; overflow-x: auto; scroll-snap-type: x mandatory; padding: 10px 10px 20px 10px; margin: 0 -20px; -webkit-overflow-scrolling: touch; }
@@ -418,10 +398,14 @@
     <div id="gridContainer"></div>
     
     <div id="participant-list-section">
-        <h3><i class="fas fa-clipboard-list"></i> Listado de Participantes</h3>
-        <div id="participant-list-container">
+        <button id="toggle-participants-btn" class="collapsible-header">
+            <h3><i class="fas fa-clipboard-list"></i> Listado de Participantes</h3>
+            <i class="fas fa-chevron-down toggle-icon"></i>
+        </button>
+        <div id="participant-list-container" class="collapsible-content">
             </div>
     </div>
+
     <div class="winner-section">
         <h2><span>🏆</span> Sorteo y Ganadores <span>🏆</span></h2>
         <div class="winner-input-display" id="winnerInputDisplay"><div class="digit-circle"></div><div class="digit-circle"></div><div class="digit-circle"></div><div class="digit-circle"></div><input type="tel" id="realWinningInput" maxlength="4" autocomplete="off" /></div>
@@ -434,7 +418,6 @@
     <div class="modal-content">
         <div class="modal-header"><h2>Datos del Número <span id="modalNumber"></span></h2><span class="close-button">&times;</span></div>
         <div class="modal-body">
-
             <div id="vendedor-auth-container">
                 <label for="inputVendedorCode">Código de Vendedor (4 cifras)</label>
                 <div style="display: flex; gap: 10px;">
@@ -442,9 +425,7 @@
                     <button id="verifyVendedorButton" style="padding: 0 15px; background-color: var(--color-primary); color: white; border: none; border-radius: 4px; cursor: pointer;">Verificar</button>
                 </div>
             </div>
-
             <div id="vendedor-info-display" style="display: none;"></div>
-            
             <div id="data-fields-container" class="disabled">
                 <label for="inputStatus">Estado:</label>
                 <select id="inputStatus">
@@ -456,13 +437,11 @@
                 <input type="text" id="inputName" placeholder="Ingresa el nombre completo">
                 <label for="inputPhone">Número de Celular:</label>
                 <input type="text" id="inputPhone" placeholder="Ingresa el número de celular">
-                
                 <div id="abonoContainer" style="display: none;">
                     <label for="inputAbono">Abono Realizado (COP):</label>
                     <input type="number" id="inputAbono" placeholder="Ej: 1000">
                 </div>
             </div>
-            
         </div>
         <div class="modal-footer"><button id="deleteButton">Limpiar Datos</button><button id="saveButton">Guardar</button></div>
     </div>
@@ -472,7 +451,6 @@
     <div class="modal-content">
         <div class="modal-header"><h2 style="display: flex; align-items: center; gap: 10px;"><i class="fas fa-trophy" style="color: var(--color-separado);"></i> PREMIOS</h2><span class="close-button">&times;</span></div>
         <div class="modal-body">
-            
             <div id="prize-info-section"></div>
             <hr>
             <div id="anticipados-section">
@@ -515,12 +493,10 @@
                 <label for="editRifaDate">Fecha del Sorteo Principal:</label>
                 <input type="date" id="editRifaDate" style="padding: 8px; border-radius: 4px; border: 1px solid var(--border-color);">
             </div>
-            
             <div class="color-setting">
                 <label for="editRifaPrice">Precio por Boleto (COP):</label>
                 <input type="number" id="editRifaPrice" placeholder="Ej: 5000" style="padding: 8px; border-radius: 4px; border: 1px solid var(--border-color);">
             </div>
-
             <hr style="border-color: var(--border-color); opacity: 0.2; margin: 15px 0;">
             <h4 style="text-align:left; margin-top:0; margin-bottom: 20px;">Colores de Estado</h4>
             <div class="color-setting"><label for="colorDisponible">Color Disponible:</label><input type="color" id="colorDisponible"></div>
@@ -696,6 +672,7 @@
             newVendedorName: document.getElementById('newVendedorName'),
             newVendedorCode: document.getElementById('newVendedorCode'),
             vendedoresList: document.getElementById('vendedoresList'),
+            vendedorSummaryPanel: document.getElementById('vendedor-summary-panel'),
             vendedorSummaryList: document.getElementById('vendedor-summary-list'),
             editVendedorId: document.getElementById('editVendedorId'),
             passwordModal: document.getElementById('passwordModal'),
@@ -703,9 +680,9 @@
             passwordInput: document.getElementById('passwordInput'),
             passwordSubmitButton: document.getElementById('passwordSubmitButton'),
             passwordError: document.getElementById('passwordError'),
-            // Elementos de la nueva sección de participantes
             participantListSection: document.getElementById('participant-list-section'),
             participantListContainer: document.getElementById('participant-list-container'),
+            toggleParticipantsBtn: document.getElementById('toggle-participants-btn'),
         };
 
         let rifaActivaId = null, unsubRifaListener = null, currentNumber = null, localRaffleData = {}, activeRaffleData = {}, currentPrizeData = {};
@@ -811,7 +788,7 @@
             DOM.deleteRifaButton.classList.toggle('visible', h);
             DOM.settingsButton.classList.toggle('visible', h);
             DOM.vendedoresButton.classList.toggle('visible', h);
-            DOM.participantListSection.style.display = h ? 'block' : 'none'; // Muestra u oculta la sección de participantes
+            DOM.participantListSection.style.display = h ? 'block' : 'none';
 
             if (!rifaActivaId) {
                 totalNumbers = 100;
@@ -822,7 +799,7 @@
                 initializeGrid();
                 updateSummary();
                 DOM.vendedorSummaryList.innerHTML = '';
-                DOM.participantListContainer.innerHTML = ''; // Limpia la lista de participantes
+                DOM.participantListContainer.innerHTML = '';
                 DOM.searchResultsContainer.innerHTML = '<div class="no-results-message">Crea o selecciona una rifa.</div>';
                 return;
             }
@@ -858,7 +835,7 @@
                 }
                 updateSummary();
                 updateVendedorSummary();
-                renderParticipantList(); // Actualiza la lista de participantes
+                renderParticipantList();
             });
         };
 
@@ -1227,50 +1204,79 @@
                 renderVendedores();
             }
         };
-
+        
         const updateVendedorSummary = () => {
-            if (!firebase.auth().currentUser || !activeRaffleData.precioPorBoleto) {
-                DOM.vendedorSummaryList.innerHTML = `<div class="no-results-message">Establece un precio por boleto en la configuración para ver el resumen.</div>`;
+            const summaryContainer = DOM.vendedorSummaryList;
+            summaryContainer.innerHTML = '';
+            if (!firebase.auth().currentUser) return;
+            
+            if (!activeRaffleData.precioPorBoleto || activeRaffleData.precioPorBoleto === 0) {
+                summaryContainer.innerHTML = `<div class="no-results-message">Establece un precio por boleto en la configuración para ver el resumen detallado.</div>`;
                 return;
             }
+
             const precio = activeRaffleData.precioPorBoleto;
             const summary = {};
+
             allSellers.forEach(v => {
-                summary[v.id] = { name: v.nombre, pagos: 0, separados: 0, abonos: 0 };
+                summary[v.id] = { name: v.nombre, pagos: [], separados: [], abonos: 0 };
             });
 
-            Object.values(localRaffleData).forEach(numero => {
-                if (numero.vendedorId && summary[numero.vendedorId]) {
-                    if(numero.status === 'pago') summary[numero.vendedorId].pagos++;
-                    if(numero.status === 'separado') {
-                        summary[numero.vendedorId].separados++;
-                        summary[numero.vendedorId].abonos += (Number(numero.abono) || 0);
+            Object.entries(localRaffleData).forEach(([numero, data]) => {
+                if (data.vendedorId && summary[data.vendedorId]) {
+                    if (data.status === 'pago') {
+                        summary[data.vendedorId].pagos.push(numero);
+                    } else if (data.status === 'separado') {
+                        summary[data.vendedorId].separados.push(numero);
+                        summary[data.vendedorId].abonos += (Number(data.abono) || 0);
                     }
                 }
             });
 
-            DOM.vendedorSummaryList.innerHTML = '';
             if (Object.keys(summary).length === 0) {
-                DOM.vendedorSummaryList.innerHTML = `<div class="no-results-message">No hay vendedores para mostrar.</div>`;
+                summaryContainer.innerHTML = `<div class="no-results-message">No hay vendedores para mostrar.</div>`;
                 return;
             }
 
             for (const id in summary) {
                 const data = summary[id];
-                const recaudado = (data.pagos * precio) + data.abonos;
-                const pendiente = (data.separados * precio) - data.abonos;
-                const item = document.createElement('div');
-                item.className = 'vendedor-item';
-                item.innerHTML = `
-                    <div class="vendedor-name">${data.name}</div>
-                    <div class="vendedor-stats">
-                        <div><span class="stat-value">${data.pagos}</span> Pagados | <span class="stat-value">${data.separados}</span> Separados</div>
-                        <div>Recaudado: <span class="stat-value recaudado">${formatCurrency(recaudado)}</span></div>
-                        <div>Pendiente: <span class="stat-value pendiente">${formatCurrency(pendiente)}</span></div>
-                    </div>`;
-                DOM.vendedorSummaryList.appendChild(item);
+                if (data.pagos.length === 0 && data.separados.length === 0) continue;
+
+                const recaudado = (data.pagos.length * precio) + data.abonos;
+                const pendiente = (data.separados.length * precio) - data.abonos;
+                
+                const card = document.createElement('div');
+                card.className = 'vendedor-summary-card';
+                
+                const pagosHTML = data.pagos.length > 0
+                    ? data.pagos.map(n => `<span class="numero-tag status-pago">${n}</span>`).join('')
+                    : '<small>Ninguno</small>';
+                
+                const separadosHTML = data.separados.length > 0
+                    ? data.separados.map(n => `<span class="numero-tag status-separado">${n}</span>`).join('')
+                    : '<small>Ninguno</small>';
+
+                card.innerHTML = `
+                    <div class="vsc-header">${data.name}</div>
+                    <div class="vsc-body">
+                        <div class="vsc-section">
+                            <h5><i class="fas fa-check-circle" style="color:var(--color-pago)"></i> Pagados <span class="count">${data.pagos.length}</span></h5>
+                            <div class="vsc-numeros-container">${pagosHTML}</div>
+                        </div>
+                        <div class="vsc-section">
+                            <h5><i class="fas fa-clock" style="color:var(--color-separado)"></i> Separados <span class="count">${data.separados.length}</span></h5>
+                            <div class="vsc-numeros-container">${separadosHTML}</div>
+                        </div>
+                    </div>
+                    <div class="vsc-footer">
+                        <span class="vsc-footer-stat">Recaudado: <span class="stat-value recaudado">${formatCurrency(recaudado)}</span></span>
+                        <span class="vsc-footer-stat">Pendiente: <span class="stat-value pendiente">${formatCurrency(pendiente)}</span></span>
+                    </div>
+                `;
+                summaryContainer.appendChild(card);
             }
         };
+
 
         const verifyVendedorCode = async () => {
             const code = DOM.inputVendedorCode.value;
@@ -1288,11 +1294,8 @@
             }
         };
         
-        // --- INICIO: FUNCIONES PARA LISTA DE PARTICIPANTES ---
         const maskPhoneNumber = (phone) => {
-            if (!phone || typeof phone !== 'string' || phone.length <= 4) {
-                return 'N/A';
-            }
+            if (!phone || typeof phone !== 'string' || phone.length <= 4) return 'N/A';
             const hiddenPart = '*'.repeat(phone.length - 4);
             const visiblePart = phone.slice(-4);
             return `${hiddenPart}${visiblePart}`;
@@ -1300,56 +1303,48 @@
 
         const renderParticipantList = () => {
             const container = DOM.participantListContainer;
-            container.innerHTML = '';
-
+            
             const participants = Object.entries(localRaffleData)
                 .filter(([_, data]) => (data.status === 'pago' || data.status === 'separado') && data.name)
                 .map(([number, data]) => ({
                     number: number,
                     name: data.name,
-                    phone: data.phone
+                    phone: data.phone,
+                    status: data.status
                 }))
-                .sort((a, b) => a.number.localeCompare(b.number)); // Ordenar por número
+                .sort((a, b) => a.number.localeCompare(b.number));
             
             if (participants.length === 0) {
-                container.innerHTML = '<p class="no-results-message">Aún no hay participantes en esta rifa.</p>';
+                container.innerHTML = '<p class="no-results-message" style="padding: 20px;">Aún no hay participantes en esta rifa.</p>';
                 return;
             }
 
-            let tableHTML = `
-                <table id="participant-table">
-                    <thead>
-                        <tr>
-                            <th>N°</th>
-                            <th>Nombre</th>
-                            <th>Teléfono</th>
-                        </tr>
-                    </thead>
-                    <tbody>
-            `;
+            let tableHTML = `<table id="participant-table">
+                    <thead><tr><th>N°</th><th>Nombre</th><th>Teléfono</th></tr></thead>
+                    <tbody>`;
 
             participants.forEach(p => {
-                tableHTML += `
-                    <tr>
-                        <td class="participant-number">${p.number}</td>
+                tableHTML += `<tr>
+                        <td>
+                            <div class="participant-number-cell">
+                                <span class="status-dot status-${p.status}"></span>
+                                <span class="participant-number">${p.number}</span>
+                            </div>
+                        </td>
                         <td>${p.name}</td>
                         <td>${maskPhoneNumber(p.phone)}</td>
-                    </tr>
-                `;
+                    </tr>`;
             });
 
             tableHTML += '</tbody></table>';
             container.innerHTML = tableHTML;
         };
-        // --- FIN: FUNCIONES PARA LISTA DE PARTICIPANTES ---
 
-        // --- INICIALIZACIÓN DE LA APLICACIÓN ---
         applyTheme(localStorage.getItem('theme') || 'light');
         cargarRifas();
         fetchSellers();
         DOM.checkWinnerButton.disabled = true;
         
-        // --- EVENT LISTENERS ---
         DOM.settingsButton.addEventListener('click', openSettingsModal);
         DOM.closeSettingsModalButton.addEventListener('click', closeSettingsModal);
         DOM.saveSettingsButton.addEventListener('click', saveSettings);
@@ -1362,9 +1357,7 @@
         DOM.vendedoresList.addEventListener('click', (e) => {
             const deleteBtn = e.target.closest('.delete-vendedor-btn');
             const editBtn = e.target.closest('.edit-vendedor-btn');
-            if (deleteBtn) {
-                deleteVendedor(deleteBtn.dataset.id);
-            }
+            if (deleteBtn) deleteVendedor(deleteBtn.dataset.id);
             if (editBtn) {
                 DOM.editVendedorId.value = editBtn.dataset.id;
                 DOM.newVendedorName.value = editBtn.dataset.nombre;
@@ -1381,9 +1374,7 @@
         DOM.passwordSubmitButton.addEventListener('click', verifyPassword);
         DOM.passwordInput.addEventListener('keyup', (e) => {
             DOM.passwordError.style.display = 'none';
-            if (e.key === 'Enter') {
-                verifyPassword();
-            }
+            if (e.key === 'Enter') verifyPassword();
         });
 
         DOM.darkModeToggle.addEventListener('click', () => { const n = document.body.classList.contains('dark-mode') ? 'light' : 'dark'; localStorage.setItem('theme', n); applyTheme(n); });
@@ -1447,10 +1438,8 @@
                 const f = c.querySelector('.edit-fecha').value;
                 const l = c.querySelector('.edit-loteria').value.trim();
                 const g = c.querySelector('.edit-ganador').value.trim();
-
                 if (!v || !f || !l) { alert("Completa todos los campos del premio (valor, fecha, lotería)."); return; }
                 if (g && !/^\d{2}$/.test(g)) { alert("El número ganador debe estar vacío o ser de exactamente 2 cifras."); return; }
-
                 currentPrizeData.premiosAnticipados[i] = { valor: v, fecha: f, loteria: l, numeroGanador: g };
                 saveBtn.textContent = 'Guardando...';
                 saveBtn.disabled = true;
@@ -1467,6 +1456,16 @@
                     const s = await saveAllPrizes();
                     if (s) renderAnticipados();
                 }
+            }
+        });
+
+        DOM.toggleParticipantsBtn.addEventListener('click', function() {
+            this.classList.toggle('active');
+            const content = DOM.participantListContainer;
+            if (content.style.maxHeight) {
+                content.style.maxHeight = null;
+            } else {
+                content.style.maxHeight = content.scrollHeight + "px";
             }
         });
     });
