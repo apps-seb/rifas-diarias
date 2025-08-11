@@ -1,34 +1,52 @@
 <!DOCTYPE html>
 <html lang="es">
 <head>
-    <meta charset="UTF-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Verificación de Boleto</title>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" />
     <style>
         :root {
-            --color-valid: #28a745;
-            --color-pending: #ffc107;
-            --color-invalid: #dc3545;
+            --color-disponible: #751FFF;
+            --color-separado: #ffc107;
+            --color-pago: #84E059;
+            --color-primary: #751FFF;
+            --color-danger: #dc3545;
             --border-color: #dee2e6;
+            --shadow-color: rgba(0, 0, 0, 0.1);
             --background-card: #ffffff;
             --text-dark: #212529;
             --text-light: #6c757d;
-            --body-bg: #f8f9fa;
+            --body-bg: #f4f7f6;
         }
-
-        @media (prefers-color-scheme: dark) {
-            :root {
-                --border-color: #4d4d4d;
-                --background-card: #1c1c1e;
-                --text-dark: #f2f2f7;
-                --text-light: #a0a0a5;
-                --body-bg: #121212;
-            }
+        .dark-mode {
+            --border-color: #444;
+            --shadow-color: rgba(0, 0, 0, 0.25);
+            --background-card: #1e1e1e;
+            --text-dark: #f8f9fa;
+            --text-light: #a0a0a5;
+            --body-bg: #121212;
         }
-
+        @keyframes fadeIn { from { opacity: 0; transform: translateY(20px); } to { opacity: 1; transform: translateY(0); } }
+        @keyframes popInNumber {
+            0% { transform: scale(0.8); opacity: 0; }
+            100% { transform: scale(1); opacity: 1; }
+        }
+        @keyframes stamp-animation {
+            0% { transform: scale(0.3) rotate(-30deg); opacity: 0; }
+            60% { transform: scale(1.1) rotate(5deg); opacity: 1; }
+            100% { transform: scale(1) rotate(0deg); opacity: 1; }
+        }
+        @keyframes shine-loop {
+            0% { transform: translateX(-150%) rotate(25deg); }
+            100% { transform: translateX(150%) rotate(25deg); }
+        }
+        @keyframes rotate-loop {
+            from { transform: rotate(0deg); }
+            to { transform: rotate(360deg); }
+        }
         body {
-            font-family: system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
             background-color: var(--body-bg);
             color: var(--text-dark);
             display: flex;
@@ -38,115 +56,77 @@
             margin: 0;
             padding: 20px;
             box-sizing: border-box;
+            transition: background-color 0.5s ease;
         }
-
-        @keyframes fadeIn {
-            from { opacity: 0; transform: scale(0.95) translateY(10px); }
-            to { opacity: 1; transform: scale(1) translateY(0); }
+        body::before {
+            content: '';
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: radial-gradient(circle at top, var(--glow-color, transparent) 0%, transparent 40%);
+            opacity: 0.15;
+            z-index: -1;
+            transition: background 0.5s ease;
         }
+        body.status-pago { --glow-color: var(--color-pago); }
+        body.status-separado { --glow-color: var(--color-separado); }
+        body.status-disponible { --glow-color: var(--color-disponible); }
+        body.status-error { --glow-color: var(--color-danger); }
 
         .verification-card {
-            background-color: var(--background-card);
-            border-radius: 16px;
-            box-shadow: 0 8px 30px rgba(0, 0, 0, 0.1);
             width: 100%;
             max-width: 450px;
-            padding: 30px;
+            background-color: var(--background-card);
+            border-radius: 20px;
+            box-shadow: 0 10px 40px var(--shadow-color);
+            border: 1px solid var(--border-color);
+            overflow: hidden;
             text-align: center;
-            border-top: 5px solid;
-            animation: fadeIn 0.6s ease-out forwards;
+            opacity: 0;
+            animation: fadeIn 0.8s 0.2s ease forwards;
         }
-
-        .verification-card h2 {
-            margin: 0 0 10px 0;
-            font-size: 1.5em;
-        }
-
-        .verification-card h3 {
-            margin: 0 0 25px 0;
-            font-size: 1em;
-            font-weight: 500;
-            color: var(--text-light);
-        }
-
-        .ticket-number-display {
-            font-family: 'Roboto Mono', monospace;
-            font-size: 5em;
-            font-weight: 700;
-            line-height: 1;
-            margin: 20px 0;
-            color: var(--text-dark);
-            letter-spacing: 2px;
-        }
-
-        .participant-details {
-            margin: 25px 0;
-            padding: 15px;
-            background-color: rgba(128, 128, 128, 0.05);
-            border-radius: 8px;
-            text-align: left;
-        }
-
-        .participant-details p {
-            margin: 8px 0;
-            display: flex;
-            justify-content: space-between;
-            font-size: 0.95em;
-        }
-
-        .participant-details strong {
-            color: var(--text-light);
-        }
-        
-        .participant-details span {
-            font-weight: 500;
-        }
-
-        .verification-seal {
-            margin-top: 30px;
-            padding: 15px;
-            border-radius: 8px;
-            color: white;
-            font-weight: bold;
-            font-size: 1.2em;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            gap: 10px;
-        }
-
-        .verification-seal i {
-            font-size: 1.5em;
-        }
-        
-        /* --- Estados de Verificación --- */
-        .verification-card.valid { border-color: var(--color-valid); }
-        .verification-seal.valid { background-color: var(--color-valid); }
-
-        .verification-card.pending { border-color: var(--color-pending); }
-        .verification-seal.pending { background-color: var(--color-pending); color: #111; }
-
-        .verification-card.invalid { border-color: var(--color-invalid); }
-        .verification-seal.invalid { background-color: var(--color-invalid); }
-
-        .loading-state h2 i {
-            margin-right: 10px;
-        }
-
+        .card-header { padding: 20px 25px; border-bottom: 1px solid var(--border-color); }
+        .card-header h2 { margin: 0; font-size: 1.5em; color: var(--text-dark); font-weight: 600; }
+        .card-header p { margin: 4px 0 0; font-size: 0.9em; color: var(--text-light); }
+        .card-body { padding: 30px 25px; }
+        .ticket-number { font-family: 'Roboto Mono', monospace; font-size: clamp(4em, 20vw, 7em); font-weight: 700; line-height: 1; color: var(--color-primary); margin: 0 0 25px 0; opacity: 0; }
+        .ticket-number.animate { animation: popInNumber 0.7s cubic-bezier(0.25, 0.46, 0.45, 0.94) 0.5s forwards; }
+        .ticket-details ul { list-style: none; padding: 0; margin: 0; text-align: left; }
+        .ticket-details li { display: flex; align-items: center; font-size: 1em; color: var(--text-light); padding: 12px 0; border-top: 1px solid var(--border-color); }
+        .ticket-details i { width: 30px; margin-right: 15px; color: var(--color-primary); text-align: center; }
+        .ticket-details strong { margin-left: auto; color: var(--text-dark); font-weight: 500; }
+        .card-footer { padding: 20px 25px; border-top: 1px solid var(--border-color); }
+        .seal-container { display: flex; align-items: center; gap: 15px; justify-content: center; margin-bottom: 15px; }
+        .seal { width: 70px; height: 70px; border-radius: 50%; display: flex; align-items: center; justify-content: center; color: white; font-size: 2.2em; flex-shrink: 0; position: relative; overflow: hidden; border: 4px solid white; transform: scale(0); opacity: 0; }
+        .seal.status-pago { background-color: var(--color-pago); box-shadow: 0 0 0 4px var(--color-pago); animation: stamp-animation 0.8s cubic-bezier(0.34, 1.56, 0.64, 1) 0.5s forwards; }
+        .seal.status-separado { background-color: var(--color-separado); box-shadow: 0 0 0 4px var(--color-separado); animation: fadeIn 0.8s 0.5s forwards, rotate-loop 4s linear 1.5s infinite; }
+        .seal.status-disponible { background-color: var(--color-disponible); box-shadow: 0 0 0 4px var(--color-disponible); animation: fadeIn 0.5s 0.5s forwards; }
+        .seal.status-pago::after { content: ''; position: absolute; top: -50%; left: -50%; width: 40%; height: 200%; background: linear-gradient(to right, rgba(255, 255, 255, 0) 0%, rgba(255, 255, 255, 0.4) 50%, rgba(255, 255, 255, 0) 100%); animation: shine-loop 3.5s infinite linear; animation-delay: 1.5s; }
+        .seal-container span { font-weight: 700; font-size: 1.2em; text-transform: uppercase; letter-spacing: 0.5px; color: var(--text-dark); transition: color 0.4s ease; }
+        .seal.status-pago + span { color: var(--color-pago); }
+        .seal.status-separado + span { color: var(--color-separado); }
+        .seal.status-disponible + span { color: var(--color-disponible); }
+        .disclaimer { font-size: 0.75em; color: var(--text-light); margin: 0; line-height: 1.5; text-align: center; }
+        .status-error-display { color: var(--color-danger); text-align: center; }
+        .status-error-display i { font-size: 2em; margin-bottom: 15px; }
+        .status-error-display h3 { margin: 0 0 10px; }
+        .status-error-display p { font-weight: 500; margin: 0; }
     </style>
 </head>
 <body>
 
-    <div id="verification-card" class="verification-card loading-state">
-        <h2><i class="fas fa-spinner fa-spin"></i>Verificando Boleto...</h2>
+    <div id="verification-card" class="verification-card">
+        <div class="card-body">
+            <h2 style="text-align:center;"><i class="fas fa-spinner fa-spin"></i> Verificando Boleto...</h2>
+        </div>
     </div>
 
     <script src="https://www.gstatic.com/firebasejs/8.10.0/firebase-app.js"></script>
     <script src="https://www.gstatic.com/firebasejs/8.10.0/firebase-firestore.js"></script>
-
     <script>
-        document.addEventListener('DOMContentLoaded', () => {
-            // --- Configuración de Firebase (debe ser la misma que tu app principal) ---
+        document.addEventListener('DOMContentLoaded', async () => {
             const firebaseConfig = {
                 apiKey: "AIzaSyDMBARLzKnhcmSI8euhiA2Wgsf7pJQM1_0",
                 authDomain: "control-rifas.firebaseapp.com",
@@ -155,122 +135,115 @@
                 messagingSenderId: "519272574756",
                 appId: "1:519272574756:web:b5d7cf368be58fdf604db1"
             };
+            firebase.initializeApp(firebaseConfig);
+            const db = firebase.firestore();
 
-            // --- Inicializar Firebase ---
+            const verificationCard = document.getElementById('verification-card');
+            const params = new URLSearchParams(window.location.search);
+            const rifaId = params.get('rifa');
+            const numero = params.get('numero');
+
+            // Detectar modo oscuro del sistema
+            if (window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches) {
+                document.body.classList.add('dark-mode');
+            }
+
+            // Función para mostrar errores
+            const showError = (title, message) => {
+                document.body.classList.add('status-error');
+                verificationCard.innerHTML = `
+                    <div class="card-body">
+                        <div class="status-error-display">
+                            <i class="fas fa-exclamation-triangle"></i>
+                            <h3>${title}</h3>
+                            <p>${message}</p>
+                        </div>
+                    </div>`;
+            };
+
+            if (!rifaId || !numero) {
+                showError('Enlace Inválido', 'Faltan los datos necesarios para la verificación.');
+                return;
+            }
+
             try {
-                const app = firebase.initializeApp(firebaseConfig);
-                const db = firebase.firestore();
-                verifyTicket(db);
-            } catch (error) {
-                console.error("Error inicializando Firebase:", error);
-                renderError("No se pudo conectar al servicio de verificación.");
-            }
-
-            async function verifyTicket(db) {
-                const urlParams = new URLSearchParams(window.location.search);
-                const rifaId = urlParams.get('rifa');
-                const numero = urlParams.get('numero');
-
-                if (!rifaId || !numero) {
-                    renderError("Información incompleta. No se puede verificar el boleto.");
-                    return;
+                const rifaDoc = await db.collection('rifas').doc(rifaId).get();
+                if (!rifaDoc.exists) {
+                    throw new Error('La rifa no fue encontrada o ha sido eliminada.');
                 }
-
-                try {
-                    const raffleDocRef = db.collection("rifas").doc(rifaId);
-                    const ticketDocRef = raffleDocRef.collection("numeros").doc(numero);
-
-                    const [raffleDoc, ticketDoc] = await Promise.all([
-                        raffleDocRef.get(),
-                        ticketDocRef.get()
-                    ]);
-
-                    if (!raffleDoc.exists || !ticketDoc.exists) {
-                        renderInvalid(numero, "El boleto no fue encontrado o no está registrado.");
-                        return;
-                    }
-
-                    const raffleData = raffleDoc.data();
-                    const ticketData = ticketDoc.data();
-                    
-                    renderCard(raffleData, ticketData, numero);
-
-                } catch (error) {
-                    console.error("Error al consultar la base de datos:", error);
-                    renderError("Ocurrió un error al verificar. Intenta de nuevo.");
-                }
-            }
-
-            function renderCard(raffleData, ticketData, numero) {
-                const card = document.getElementById('verification-card');
-                card.classList.remove('loading-state');
+                const rifaData = rifaDoc.data();
                 
-                let statusClass, sealIcon, sealText;
+                const numeroDoc = await db.collection('rifas').doc(rifaId).collection('numeros').doc(numero).get();
+                
+                let clientData = { status: 'disponible', name: 'No Asignado', phone: 'N/A' };
+                if (numeroDoc.exists) {
+                    clientData = numeroDoc.data();
+                }
 
-                switch (ticketData.status) {
+                // Definir información del estado
+                let statusInfo = {};
+                switch(clientData.status) {
                     case 'pago':
-                        statusClass = 'valid';
-                        sealIcon = 'fa-solid fa-check-circle';
-                        sealText = 'BOLETO VÁLIDO Y PAGADO';
+                        statusInfo = { class: 'pago', icon: 'fa-check', text: 'VERIFICADO', sealText: 'Boleto Válido' };
                         break;
                     case 'separado':
-                        statusClass = 'pending';
-                        sealIcon = 'fa-solid fa-clock';
-                        sealText = 'PENDIENTE DE PAGO';
+                        statusInfo = { class: 'separado', icon: 'fa-clock', text: 'SEPARADO', sealText: 'Boleto Auténtico' };
                         break;
                     default:
-                        statusClass = 'invalid';
-                        sealIcon = 'fa-solid fa-times-circle';
-                        sealText = 'BOLETO NO VÁLIDO';
+                        statusInfo = { class: 'disponible', icon: 'fa-ticket-alt', text: 'DISPONIBLE', sealText: 'Boleto Auténtico' };
                 }
 
-                card.classList.add(statusClass);
+                document.body.classList.add(`status-${clientData.status}`);
+                
+                let abonoHtml = '';
+                if (clientData.status === 'separado' && clientData.abono > 0) {
+                    const formattedAbono = new Intl.NumberFormat('es-CO', { style: 'currency', currency: 'COP', minimumFractionDigits: 0 }).format(clientData.abono);
+                    abonoHtml = `
+                        <li>
+                            <i class="fas fa-hand-holding-dollar"></i>
+                            <span>Abono Realizado</span>
+                            <strong>${formattedAbono}</strong>
+                        </li>`;
+                }
 
-                card.innerHTML = `
-                    <h2>${raffleData.nombre || 'Nombre de la Rifa'}</h2>
-                    <h3>Comprobante de Participación</h3>
-                    
-                    <div class="ticket-number-display">${numero}</div>
-                    
-                    <div class="participant-details">
-                        <p><strong>Nombre:</strong> <span>${ticketData.name || 'No registrado'}</span></p>
-                        <p><strong>Celular:</strong> <span>${ticketData.phone || 'No registrado'}</span></p>
+                verificationCard.innerHTML = `
+                    <div class="card-header">
+                        <h2>${rifaData.nombre}</h2>
+                        <p>Sorteo: ${new Date(rifaData.fechaSorteo + 'T00:00:00').toLocaleDateString('es-ES', { day: 'numeric', month: 'long', year: 'numeric' })}</p>
                     </div>
-
-                    <div class="verification-seal ${statusClass}">
-                        <i class="${sealIcon}"></i>
-                        <span>${sealText}</span>
+                    <div class="card-body">
+                        <div class="ticket-number animate">${numero}</div>
+                        <div class="ticket-details">
+                            <ul>
+                                <li>
+                                    <i class="fas fa-user"></i>
+                                    <span>Propietario</span>
+                                    <strong>${clientData.name}</strong>
+                                </li>
+                                <li>
+                                    <i class="fas fa-phone"></i>
+                                    <span>Teléfono</span>
+                                    <strong>${clientData.phone || 'N/A'}</strong>
+                                </li>
+                                ${abonoHtml}
+                            </ul>
+                        </div>
+                    </div>
+                    <div class="card-footer">
+                        <div class="seal-container">
+                            <div id="auth-seal" class="seal status-${statusInfo.class}">
+                                <i id="auth-seal-icon" class="fas ${statusInfo.icon}"></i>
+                            </div>
+                            <span id="auth-seal-text">${statusInfo.sealText}</span>
+                        </div>
+                        <p class="disclaimer">
+                            <strong>Importante:</strong> La validez final del boleto está sujeta a los términos del organizador.
+                        </p>
                     </div>
                 `;
-            }
-            
-            function renderInvalid(numero, message) {
-                const card = document.getElementById('verification-card');
-                card.classList.remove('loading-state');
-                card.classList.add('invalid');
-                card.innerHTML = `
-                    <h2>Verificación de Boleto</h2>
-                    <div class="ticket-number-display">${numero || '???'}</div>
-                    <div class="verification-seal invalid">
-                        <i class="fa-solid fa-times-circle"></i>
-                        <span>BOLETO NO VÁLIDO</span>
-                    </div>
-                    <p style="margin-top: 20px;">${message}</p>
-                `;
-            }
 
-            function renderError(message) {
-                 const card = document.getElementById('verification-card');
-                card.classList.remove('loading-state');
-                card.classList.add('invalid');
-                card.innerHTML = `
-                    <h2>Error de Verificación</h2>
-                    <div class="verification-seal invalid">
-                        <i class="fa-solid fa-exclamation-triangle"></i>
-                        <span>ERROR</span>
-                    </div>
-                    <p style="margin-top: 20px;">${message}</p>
-                `;
+            } catch (error) {
+                showError('Error de Verificación', error.message);
             }
         });
     </script>
