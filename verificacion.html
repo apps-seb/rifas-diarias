@@ -1,0 +1,278 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Verificación de Boleto</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" />
+    <style>
+        :root {
+            --color-valid: #28a745;
+            --color-pending: #ffc107;
+            --color-invalid: #dc3545;
+            --border-color: #dee2e6;
+            --background-card: #ffffff;
+            --text-dark: #212529;
+            --text-light: #6c757d;
+            --body-bg: #f8f9fa;
+        }
+
+        @media (prefers-color-scheme: dark) {
+            :root {
+                --border-color: #4d4d4d;
+                --background-card: #1c1c1e;
+                --text-dark: #f2f2f7;
+                --text-light: #a0a0a5;
+                --body-bg: #121212;
+            }
+        }
+
+        body {
+            font-family: system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+            background-color: var(--body-bg);
+            color: var(--text-dark);
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh;
+            margin: 0;
+            padding: 20px;
+            box-sizing: border-box;
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; transform: scale(0.95) translateY(10px); }
+            to { opacity: 1; transform: scale(1) translateY(0); }
+        }
+
+        .verification-card {
+            background-color: var(--background-card);
+            border-radius: 16px;
+            box-shadow: 0 8px 30px rgba(0, 0, 0, 0.1);
+            width: 100%;
+            max-width: 450px;
+            padding: 30px;
+            text-align: center;
+            border-top: 5px solid;
+            animation: fadeIn 0.6s ease-out forwards;
+        }
+
+        .verification-card h2 {
+            margin: 0 0 10px 0;
+            font-size: 1.5em;
+        }
+
+        .verification-card h3 {
+            margin: 0 0 25px 0;
+            font-size: 1em;
+            font-weight: 500;
+            color: var(--text-light);
+        }
+
+        .ticket-number-display {
+            font-family: 'Roboto Mono', monospace;
+            font-size: 5em;
+            font-weight: 700;
+            line-height: 1;
+            margin: 20px 0;
+            color: var(--text-dark);
+            letter-spacing: 2px;
+        }
+
+        .participant-details {
+            margin: 25px 0;
+            padding: 15px;
+            background-color: rgba(128, 128, 128, 0.05);
+            border-radius: 8px;
+            text-align: left;
+        }
+
+        .participant-details p {
+            margin: 8px 0;
+            display: flex;
+            justify-content: space-between;
+            font-size: 0.95em;
+        }
+
+        .participant-details strong {
+            color: var(--text-light);
+        }
+        
+        .participant-details span {
+            font-weight: 500;
+        }
+
+        .verification-seal {
+            margin-top: 30px;
+            padding: 15px;
+            border-radius: 8px;
+            color: white;
+            font-weight: bold;
+            font-size: 1.2em;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 10px;
+        }
+
+        .verification-seal i {
+            font-size: 1.5em;
+        }
+        
+        /* --- Estados de Verificación --- */
+        .verification-card.valid { border-color: var(--color-valid); }
+        .verification-seal.valid { background-color: var(--color-valid); }
+
+        .verification-card.pending { border-color: var(--color-pending); }
+        .verification-seal.pending { background-color: var(--color-pending); color: #111; }
+
+        .verification-card.invalid { border-color: var(--color-invalid); }
+        .verification-seal.invalid { background-color: var(--color-invalid); }
+
+        .loading-state h2 i {
+            margin-right: 10px;
+        }
+
+    </style>
+</head>
+<body>
+
+    <div id="verification-card" class="verification-card loading-state">
+        <h2><i class="fas fa-spinner fa-spin"></i>Verificando Boleto...</h2>
+    </div>
+
+    <script src="https://www.gstatic.com/firebasejs/8.10.0/firebase-app.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/8.10.0/firebase-firestore.js"></script>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', () => {
+            // --- Configuración de Firebase (debe ser la misma que tu app principal) ---
+            const firebaseConfig = {
+                apiKey: "AIzaSyDMBARLzKnhcmSI8euhiA2Wgsf7pJQM1_0",
+                authDomain: "control-rifas.firebaseapp.com",
+                projectId: "control-rifas",
+                storageBucket: "control-rifas.appspot.com",
+                messagingSenderId: "519272574756",
+                appId: "1:519272574756:web:b5d7cf368be58fdf604db1"
+            };
+
+            // --- Inicializar Firebase ---
+            try {
+                const app = firebase.initializeApp(firebaseConfig);
+                const db = firebase.firestore();
+                verifyTicket(db);
+            } catch (error) {
+                console.error("Error inicializando Firebase:", error);
+                renderError("No se pudo conectar al servicio de verificación.");
+            }
+
+            async function verifyTicket(db) {
+                const urlParams = new URLSearchParams(window.location.search);
+                const rifaId = urlParams.get('rifa');
+                const numero = urlParams.get('numero');
+
+                if (!rifaId || !numero) {
+                    renderError("Información incompleta. No se puede verificar el boleto.");
+                    return;
+                }
+
+                try {
+                    const raffleDocRef = db.collection("rifas").doc(rifaId);
+                    const ticketDocRef = raffleDocRef.collection("numeros").doc(numero);
+
+                    const [raffleDoc, ticketDoc] = await Promise.all([
+                        raffleDocRef.get(),
+                        ticketDocRef.get()
+                    ]);
+
+                    if (!raffleDoc.exists || !ticketDoc.exists) {
+                        renderInvalid(numero, "El boleto no fue encontrado o no está registrado.");
+                        return;
+                    }
+
+                    const raffleData = raffleDoc.data();
+                    const ticketData = ticketDoc.data();
+                    
+                    renderCard(raffleData, ticketData, numero);
+
+                } catch (error) {
+                    console.error("Error al consultar la base de datos:", error);
+                    renderError("Ocurrió un error al verificar. Intenta de nuevo.");
+                }
+            }
+
+            function renderCard(raffleData, ticketData, numero) {
+                const card = document.getElementById('verification-card');
+                card.classList.remove('loading-state');
+                
+                let statusClass, sealIcon, sealText;
+
+                switch (ticketData.status) {
+                    case 'pago':
+                        statusClass = 'valid';
+                        sealIcon = 'fa-solid fa-check-circle';
+                        sealText = 'BOLETO VÁLIDO Y PAGADO';
+                        break;
+                    case 'separado':
+                        statusClass = 'pending';
+                        sealIcon = 'fa-solid fa-clock';
+                        sealText = 'PENDIENTE DE PAGO';
+                        break;
+                    default:
+                        statusClass = 'invalid';
+                        sealIcon = 'fa-solid fa-times-circle';
+                        sealText = 'BOLETO NO VÁLIDO';
+                }
+
+                card.classList.add(statusClass);
+
+                card.innerHTML = `
+                    <h2>${raffleData.nombre || 'Nombre de la Rifa'}</h2>
+                    <h3>Comprobante de Participación</h3>
+                    
+                    <div class="ticket-number-display">${numero}</div>
+                    
+                    <div class="participant-details">
+                        <p><strong>Nombre:</strong> <span>${ticketData.name || 'No registrado'}</span></p>
+                        <p><strong>Celular:</strong> <span>${ticketData.phone || 'No registrado'}</span></p>
+                    </div>
+
+                    <div class="verification-seal ${statusClass}">
+                        <i class="${sealIcon}"></i>
+                        <span>${sealText}</span>
+                    </div>
+                `;
+            }
+            
+            function renderInvalid(numero, message) {
+                const card = document.getElementById('verification-card');
+                card.classList.remove('loading-state');
+                card.classList.add('invalid');
+                card.innerHTML = `
+                    <h2>Verificación de Boleto</h2>
+                    <div class="ticket-number-display">${numero || '???'}</div>
+                    <div class="verification-seal invalid">
+                        <i class="fa-solid fa-times-circle"></i>
+                        <span>BOLETO NO VÁLIDO</span>
+                    </div>
+                    <p style="margin-top: 20px;">${message}</p>
+                `;
+            }
+
+            function renderError(message) {
+                 const card = document.getElementById('verification-card');
+                card.classList.remove('loading-state');
+                card.classList.add('invalid');
+                card.innerHTML = `
+                    <h2>Error de Verificación</h2>
+                    <div class="verification-seal invalid">
+                        <i class="fa-solid fa-exclamation-triangle"></i>
+                        <span>ERROR</span>
+                    </div>
+                    <p style="margin-top: 20px;">${message}</p>
+                `;
+            }
+        });
+    </script>
+</body>
+</html>
