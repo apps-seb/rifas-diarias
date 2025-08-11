@@ -141,7 +141,7 @@
         .modal-footer { text-align: right; margin-top: 20px; }
         .modal-footer button { padding: 10px 20px; border: none; border-radius: 5px; cursor: pointer; font-size: 16px; transition: background-color 0.2s, transform 0.2s; }
         .modal-footer button:hover { transform: translateY(-2px); }
-        #saveButton, #saveAllPrizesButton, #saveSettingsButton, #downloadTicketButton { background-color: var(--color-primary); color: white; }
+        #saveButton, #saveAllPrizesButton, #saveSettingsButton, #downloadTicketButton, #passwordSubmitButton { background-color: var(--color-primary); color: white; }
         #deleteButton { background-color: var(--color-danger); color: white; margin-right: 10px; }
         .raffle-manager { display: flex; flex-wrap: wrap; gap: 10px; align-items: flex-end; }
         .raffle-selector-container { flex-grow: 1; min-width: 200px; display: flex; flex-direction: column; gap: 10px; }
@@ -513,6 +513,23 @@
     </div>
 </div>
 
+<div id="passwordModal" class="modal">
+    <div class="modal-content">
+        <div class="modal-header">
+            <h2><i class="fas fa-lock"></i> Se requiere Contraseña</h2>
+            <span class="close-button">&times;</span>
+        </div>
+        <div class="modal-body">
+            <p>Por favor, ingresa la contraseña de administrador para continuar.</p>
+            <label for="passwordInput">Contraseña:</label>
+            <input type="password" id="passwordInput" placeholder="•••••••••">
+            <p id="passwordError" style="color: var(--color-danger); display: none; margin-top: 10px; text-align: left;">Contraseña incorrecta.</p>
+        </div>
+        <div class="modal-footer">
+            <button id="passwordSubmitButton">Confirmar</button>
+        </div>
+    </div>
+</div>
 <div id="ticket-template">
     <div class="ticket-container">
         <div class="ticket-header">
@@ -570,7 +587,7 @@
         const app = firebase.initializeApp(firebaseConfig);
         const db = firebase.firestore();
         
-        const MASTER_PASSWORD = '1234';
+        const ADMIN_PASSWORD = 'Exito#777'; // Contraseña actualizada
 
         const DOM = {
             mainContainer: document.getElementById('main-container'),
@@ -626,12 +643,19 @@
             vendedoresList: document.getElementById('vendedoresList'),
             vendedorSummaryList: document.getElementById('vendedor-summary-list'),
             editVendedorId: document.getElementById('editVendedorId'),
+            // Nuevos elementos para el modal de contraseña
+            passwordModal: document.getElementById('passwordModal'),
+            closePasswordModalButton: document.querySelector('#passwordModal .close-button'),
+            passwordInput: document.getElementById('passwordInput'),
+            passwordSubmitButton: document.getElementById('passwordSubmitButton'),
+            passwordError: document.getElementById('passwordError'),
         };
 
         let rifaActivaId = null, unsubRifaListener = null, currentNumber = null, localRaffleData = {}, activeRaffleData = {}, currentPrizeData = {};
         let totalNumbers = 100, numberPadding = 2;
         let allSellers = [];
         let currentVendedor = null;
+        let onPasswordSuccessCallback = null; // Almacena la función a ejecutar tras la contraseña correcta
 
         const formatCurrency = (value) => new Intl.NumberFormat('es-CO', { style: 'currency', currency: 'COP', minimumFractionDigits: 0, maximumFractionDigits: 0 }).format(value);
         
@@ -816,7 +840,6 @@
             DOM.inputStatus.dispatchEvent(new Event('change'));
             DOM.dataModal.classList.add('visible');
         };
-
 
         const closeDataModal = () => { DOM.dataModal.classList.remove('visible'); currentNumber = null; };
         
@@ -1052,6 +1075,32 @@
         };
         const closeTicketModal = () => DOM.ticketModal.classList.remove('visible');
 
+        // --- FUNCIONES DE CONTRASEÑA ---
+        const openPasswordModal = (callback) => {
+            onPasswordSuccessCallback = callback;
+            DOM.passwordInput.value = '';
+            DOM.passwordError.style.display = 'none';
+            DOM.passwordModal.classList.add('visible');
+            DOM.passwordInput.focus();
+        };
+
+        const closePasswordModal = () => {
+            DOM.passwordModal.classList.remove('visible');
+            onPasswordSuccessCallback = null;
+        };
+
+        const verifyPassword = () => {
+            if (DOM.passwordInput.value === ADMIN_PASSWORD) {
+                if (typeof onPasswordSuccessCallback === 'function') {
+                    onPasswordSuccessCallback();
+                }
+                closePasswordModal();
+            } else {
+                DOM.passwordError.style.display = 'block';
+                DOM.passwordInput.focus();
+            }
+        };
+
         // --- FUNCIONES DE VENDEDORES ---
         const fetchSellers = async () => {
             const snapshot = await db.collection('vendedores').orderBy('nombre').get();
@@ -1193,13 +1242,9 @@
         DOM.closeSettingsModalButton.addEventListener('click', closeSettingsModal);
         DOM.saveSettingsButton.addEventListener('click', saveSettings);
         
+        // MODIFICADO: Abre el modal de contraseña para vendedores
         DOM.vendedoresButton.addEventListener('click', () => {
-            const pass = prompt("Ingresa la contraseña de administrador:");
-            if(pass === MASTER_PASSWORD) {
-                openVendedoresModal();
-            } else if (pass !== null) {
-                alert("Contraseña incorrecta.");
-            }
+            openPasswordModal(openVendedoresModal);
         });
         DOM.closeVendedoresModalButton.addEventListener('click', closeVendedoresModal);
         DOM.addVendedorButton.addEventListener('click', addVendedor);
@@ -1217,12 +1262,27 @@
             }
         });
 
+        // MODIFICADO: Abre el modal de contraseña para limpiar datos
+        DOM.deleteButton.addEventListener('click', () => {
+            openPasswordModal(deleteData);
+        });
+
+        // Listeners para el nuevo modal de contraseña
+        DOM.closePasswordModalButton.addEventListener('click', closePasswordModal);
+        DOM.passwordSubmitButton.addEventListener('click', verifyPassword);
+        DOM.passwordInput.addEventListener('keyup', (e) => {
+            DOM.passwordError.style.display = 'none'; // Oculta el error al escribir
+            if (e.key === 'Enter') {
+                verifyPassword();
+            }
+        });
+
         DOM.darkModeToggle.addEventListener('click', () => { const n = document.body.classList.contains('dark-mode') ? 'light' : 'dark'; localStorage.setItem('theme', n); applyTheme(n); });
         DOM.createRifaButton.addEventListener('click', crearNuevaRifa);
         DOM.deleteRifaButton.addEventListener('click', deleteRifaActual);
         DOM.closeDataModalButton.addEventListener('click', closeDataModal);
         DOM.saveButton.addEventListener('click', saveData);
-        DOM.deleteButton.addEventListener('click', deleteData);
+        
         DOM.inputStatus.addEventListener('change', (e) => {
             const showAdvanced = e.target.value === 'separado' || e.target.value === 'pago';
             DOM.abonoContainer.style.display = e.target.value === 'separado' ? 'block' : 'none';
@@ -1233,7 +1293,10 @@
 
         DOM.prizeButton.addEventListener('click', openPrizeModal);
         DOM.closePrizeModalButton.addEventListener('click', closePrizeModal);
-        DOM.modalBackdrop.addEventListener('click', (e) => { if (e.target === DOM.modalBackdrop) { closePrizeModal(); closeSettingsModal(); closeDataModal(); closeTicketModal(); closeVendedoresModal(); } });
+        
+        // MODIFICADO: El backdrop ahora cierra también el modal de contraseña
+        DOM.modalBackdrop.addEventListener('click', (e) => { if (e.target === DOM.modalBackdrop) { closePrizeModal(); closeSettingsModal(); closeDataModal(); closeTicketModal(); closeVendedoresModal(); closePasswordModal(); } });
+
         DOM.saveAllPrizesButton.addEventListener('click', saveAllPrizes);
         DOM.rifaSelect.addEventListener('click', () => { DOM.rifaSelectItems.classList.toggle('select-show'); DOM.rifaSelect.classList.toggle('select-arrow-active'); });
         window.addEventListener('click', (e) => { if (DOM.rifaSelect.parentElement && !DOM.rifaSelect.parentElement.contains(e.target)) { DOM.rifaSelectItems.classList.remove('select-show'); DOM.rifaSelect.classList.remove('select-arrow-active'); }});
@@ -1262,9 +1325,9 @@
             if (!c || !firebase.auth().currentUser) return;
             const i = Number(c.dataset.index);
             const editBtn = e.target.closest('.edit-anticipado-btn'), 
-                  cancelBtn = e.target.closest('.cancel-edit-anticipado-btn'), 
-                  saveBtn = e.target.closest('.save-edit-anticipado-btn'), 
-                  deleteBtn = e.target.closest('.delete-anticipado-btn');
+                    cancelBtn = e.target.closest('.cancel-edit-anticipado-btn'), 
+                    saveBtn = e.target.closest('.save-edit-anticipado-btn'), 
+                    deleteBtn = e.target.closest('.delete-anticipado-btn');
             
             if (editBtn) {
                 c.querySelector('.view-mode').style.display = 'none';
