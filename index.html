@@ -260,7 +260,7 @@
             border-radius: 12px;
             box-shadow: 0 4px 25px var(--shadow-color);
             margin-bottom: 25px;
-            padding: 0; /* Let the header/content handle padding */
+            padding: 0;
         }
         body.admin-view #vendedor-summary-section { display: block; }
         #vendedor-summary-content { padding: 0 20px 20px 20px; }
@@ -321,37 +321,45 @@
         .qr-section p { font-size: 0.65em; color: var(--text-light); margin-top: 4px; }
         .ticket-footer { padding-top: 10px; text-align: center; font-size: 0.7em; color: var(--text-light); border-top: 1px dashed var(--border-color); margin-top: 10px; }
         
-        #participant-list-section { padding: 0; } /* Wrapper card has padding */
-        .collapsible-header { background: none; border: none; width: 100%; display: flex; justify-content: space-between; align-items: center; cursor: pointer; padding: 15px 20px; border-radius: 12px; }
+        #participant-list-section { padding: 0; margin-top: 25px; }
+        .collapsible-header { background: none; border: none; width: 100%; display: flex; justify-content: space-between; align-items: center; cursor: pointer; padding: 20px; border-radius: 12px; }
         .collapsible-header h3 { margin: 0; text-align: left; display: flex; align-items: center; gap: 10px; font-size: 1.2em;}
         .collapsible-header .toggle-icon { transition: transform 0.3s ease; color: var(--text-light); }
         .collapsible-header.active .toggle-icon { transform: rotate(180deg); }
-        .collapsible-content { max-height: 0; overflow: hidden; transition: max-height 0.4s ease-out; background-color: transparent; }
+        .collapsible-content { max-height: 0; overflow: hidden; transition: max-height 0.4s ease-out; }
         
-        /* New behavior for opened collapsible content */
-        .collapsible-header.active + #participant-list-container {
-            max-height: 400px;
-            overflow-y: auto;
-            border-top: 1px solid var(--border-color); /* Add separator */
-            padding-top: 10px;
-            margin-top: -10px;
-        }
-         .collapsible-header.active + #vendedor-summary-content {
-            max-height: 500px; /* Can be different if needed */
+        .collapsible-header.active + .collapsible-content {
+            max-height: 400px; /* Adjust height as needed */
             overflow-y: auto;
         }
 
         #participant-list-container { padding: 0 20px 20px; }
-        #participant-table { width: 100%; border-collapse: collapse; text-align: left; }
-        #participant-table th, #participant-table td { padding: 12px 15px; border-bottom: 1px solid var(--border-color); white-space: nowrap; }
+        .table-scroll-wrapper { overflow-x: auto; width: 100%; }
+        #participant-table { width: 100%; border-collapse: collapse; text-align: left; font-size: 0.85em; }
+        #participant-table th, #participant-table td { padding: 10px 12px; border-bottom: 1px solid var(--border-color); white-space: nowrap; }
         #participant-table tbody tr:last-child td { border-bottom: none; }
         #participant-table thead th { background-color: var(--background-light); font-weight: 600; position: sticky; top: 0; z-index: 1; }
         #participant-table tbody tr:hover { background-color: rgba(117, 31, 255, 0.08); }
-        .participant-number-cell { display: flex; align-items: center; gap: 8px; }
-        .status-dot { flex-shrink: 0; width: 10px; height: 10px; border-radius: 50%; }
-        .status-dot.status-pago { background-color: var(--color-pago); }
-        .status-dot.status-separado { background-color: var(--color-separado); }
-        .participant-number { font-weight: bold; color: var(--text-dark); }
+
+        .numero-tag-participante {
+            display: inline-block;
+            padding: 5px 10px;
+            border-radius: 6px;
+            font-weight: bold;
+            color: white;
+            font-size: 0.9em;
+            text-align: center;
+            min-width: 45px;
+            box-sizing: border-box;
+        }
+        .numero-tag-participante.status-pago {
+            background-color: var(--color-pago);
+            color: white;
+        }
+        .numero-tag-participante.status-separado {
+            background-color: var(--color-separado);
+            color: var(--text-dark);
+        }
 
         @media (max-width: 650px) {
             #anticipados-list { display: flex; flex-direction: row; overflow-x: auto; scroll-snap-type: x mandatory; padding: 10px 10px 20px 10px; margin: 0 -20px; -webkit-overflow-scrolling: touch; }
@@ -1347,24 +1355,21 @@
                 return;
             }
 
-            let tableHTML = `<table id="participant-table">
+            let tableHTML = `<div class="table-scroll-wrapper"><table id="participant-table">
                     <thead><tr><th>N°</th><th>Nombre</th><th>Teléfono</th></tr></thead>
                     <tbody>`;
 
             participants.forEach(p => {
                 tableHTML += `<tr>
                         <td>
-                            <div class="participant-number-cell">
-                                <span class="status-dot status-${p.status}"></span>
-                                <span class="participant-number">${p.number}</span>
-                            </div>
+                           <span class="numero-tag-participante status-${p.status}">${p.number}</span>
                         </td>
                         <td>${p.name}</td>
                         <td>${maskPhoneNumber(p.phone)}</td>
                     </tr>`;
             });
 
-            tableHTML += '</tbody></table>';
+            tableHTML += '</tbody></table></div>';
             container.innerHTML = tableHTML;
         };
 
@@ -1489,22 +1494,10 @@
 
         DOM.toggleParticipantsBtn.addEventListener('click', function() {
             this.classList.toggle('active');
-            const content = DOM.participantListContainer;
-            if (content.style.maxHeight) {
-                content.style.maxHeight = null;
-            } else {
-                content.style.maxHeight = "400px";
-            }
         });
 
         DOM.toggleVendedorSummaryBtn.addEventListener('click', function() {
             this.classList.toggle('active');
-            const content = DOM.vendedorSummaryContent;
-            if (content.style.maxHeight) {
-                content.style.maxHeight = null;
-            } else {
-                content.style.maxHeight = content.scrollHeight + "px";
-            }
         });
     });
 </script>
