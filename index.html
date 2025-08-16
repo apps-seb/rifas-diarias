@@ -257,14 +257,13 @@
         .anticipado-card .edit-mode-actions .cancel-edit-anticipado-btn { background-color: var(--background-light); color: var(--text-dark); border: 1px solid var(--border-color); }
         
         #vendedor-summary-section {
-            display: none; /* Changed: It will be toggled via JS click */
+            display: none;
             background-color: var(--background-card);
             border-radius: 12px;
             box-shadow: 0 4px 25px var(--shadow-color);
             margin-bottom: 25px;
-            padding: 20px; /* Changed: Padding applied to the main container */
+            padding: 20px;
         }
-        /* Removed rule: body.admin-view #vendedor-summary-section { display: block; } */
         #vendedor-summary-list { display: grid; grid-template-columns: 1fr; gap: 15px;}
         .vendedor-summary-card { border: 1px solid var(--border-color); border-radius: 8px; transition: all 0.3s ease; }
         .vendedor-summary-card:hover { box-shadow: 0 4px 15px var(--shadow-color); }
@@ -334,12 +333,12 @@
         }
         
         .collapsible-header.active + .collapsible-content {
-            max-height: 400px; /* Adjust height as needed */
+            max-height: 400px;
             overflow-y: auto;
-            padding: 0 20px 20px; /* Changed: Add padding only when active */
+            padding: 0 20px 20px;
         }
 
-        #participant-list-container { padding: 0; } /* Changed: Removed default padding */
+        #participant-list-container { padding: 0; }
         .table-scroll-wrapper { overflow-x: auto; width: 100%; }
         #participant-table { width: 100%; border-collapse: collapse; text-align: left; font-size: 0.85em; }
         #participant-table th, #participant-table td { padding: 10px 12px; border-bottom: 1px solid var(--border-color); white-space: nowrap; }
@@ -482,7 +481,7 @@
         </div>
         <div class="modal-footer">
             <div id="admin-ticket-actions" style="display: none; flex-grow: 1; text-align: left;">
-                <button id="modalGenerateAndShareBtn" class="action-btn-pago"><i class="fas fa-share-alt"></i> Compartir Recibo</button>
+                <button id="modalGenerateTicketBtn" class="action-btn-pago"><i class="fas fa-receipt"></i> Generar Recibo</button>
             </div>
             <button id="deleteButton">Limpiar Datos</button>
             <button id="saveButton">Guardar</button>
@@ -730,7 +729,8 @@
             participantListContainer: document.getElementById('participant-list-container'),
             toggleParticipantsBtn: document.getElementById('toggle-participants-btn'),
             adminTicketActions: document.getElementById('admin-ticket-actions'),
-            modalGenerateAndShareBtn: document.getElementById('modalGenerateAndShareBtn'),
+            // CAMBIO: Se renombra el ID para mayor claridad
+            modalGenerateTicketBtn: document.getElementById('modalGenerateTicketBtn'),
         };
 
         let rifaActivaId = null, unsubRifaListener = null, currentNumber = null, localRaffleData = {}, activeRaffleData = {}, currentPrizeData = {};
@@ -1183,54 +1183,6 @@
             }
         };
 
-        const generateAndShareFromDataModal = async () => {
-            if (!currentNumber) return;
-            const button = DOM.modalGenerateAndShareBtn;
-            button.disabled = true;
-            button.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Generando...';
-            
-            const success = await populateTicketPreview(currentNumber);
-            if (!success) {
-                alert("No se pudieron generar los datos del recibo para compartir.");
-                button.disabled = false;
-                button.innerHTML = '<i class="fas fa-share-alt"></i> Compartir Recibo';
-                return;
-            }
-
-            const printableElement = DOM.ticketPreview.querySelector('.ticket-container');
-            try {
-                const canvas = await html2canvas(printableElement, {
-                    scale: 3, useCORS: true,
-                    backgroundColor: document.body.classList.contains('dark-mode') ? getComputedStyle(document.documentElement).getPropertyValue('--background-card') : '#FFFFFF'
-                });
-                canvas.toBlob(async (blob) => {
-                    const clientName = DOM.ticketPreview.querySelector('#ticket-client-name').textContent.trim().replace(/\s+/g, '_');
-                    const ticketNumber = DOM.ticketPreview.querySelector('#ticket-number').textContent.trim();
-                    const fileName = `Recibo-Rifa-${clientName}-${ticketNumber}.png`;
-                    const file = new File([blob], fileName, { type: 'image/png' });
-                    const raffleName = activeRaffleData.nombre || 'nuestra rifa';
-                    const shareData = {
-                        files: [file],
-                        title: `Recibo Rifa ${raffleName}`,
-                        text: `¡Gracias por participar en ${raffleName}! Aquí está tu recibo para el número ${ticketNumber}.`,
-                    };
-                    if (navigator.share && navigator.canShare(shareData)) {
-                        await navigator.share(shareData);
-                        closeDataModal();
-                    } else {
-                        alert("Tu navegador no soporta la función de compartir. Se abrirá el recibo para que lo descargues manualmente.");
-                        generateTicket(currentNumber); // Fallback: open the ticket modal
-                    }
-                }, 'image/png');
-            } catch(err) {
-                console.error('Error sharing ticket:', err);
-                alert('Hubo un error al generar el recibo para compartir.');
-            } finally {
-                button.disabled = false;
-                button.innerHTML = '<i class="fas fa-share-alt"></i> Compartir Recibo';
-            }
-        };
-
         const downloadTicket = () => {
             const button = DOM.downloadTicketButton;
             button.textContent = 'Generando...';
@@ -1556,7 +1508,14 @@
         DOM.realWinningInput.addEventListener('input', () => { const v = DOM.realWinningInput.value; DOM.digitCircles.forEach((c, i) => { const d = v[i]; if (d) { c.textContent = d; c.classList.add('filled'); } else { c.textContent = ''; c.classList.remove('filled'); } }); DOM.checkWinnerButton.disabled = v.length !== 4; });
         DOM.searchResultsContainer.addEventListener('click', (e) => { const t = e.target.closest('.generate-ticket-btn'); if (t) generateTicket(t.dataset.number); });
         
-        DOM.modalGenerateAndShareBtn.addEventListener('click', generateAndShareFromDataModal);
+        // CAMBIO: El listener del botón del modal ahora llama a generateTicket
+        DOM.modalGenerateTicketBtn.addEventListener('click', () => {
+            if (currentNumber) {
+                generateTicket(currentNumber);
+                closeDataModal(); // Se cierra el modal de datos para un flujo más limpio
+            }
+        });
+        
         DOM.closeTicketModalButton.addEventListener('click', closeTicketModal);
         DOM.downloadTicketButton.addEventListener('click', downloadTicket);
         DOM.shareTicketButton.addEventListener('click', () => {
