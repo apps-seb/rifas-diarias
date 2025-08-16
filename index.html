@@ -366,35 +366,6 @@
             color: var(--text-dark);
         }
 
-        /* ---- ESTILOS PARA LA NUEVA NOTIFICACIÓN (TOAST) ---- */
-        #toast-notification {
-            position: fixed;
-            bottom: 20px;
-            left: 50%;
-            transform: translateX(-50%);
-            background-color: #333;
-            color: white;
-            padding: 12px 25px;
-            border-radius: 25px;
-            z-index: 2000;
-            font-size: 0.9em;
-            box-shadow: 0 4px 15px rgba(0,0,0,0.2);
-            visibility: hidden;
-            opacity: 0;
-            transition: opacity 0.4s, bottom 0.4s, visibility 0.4s;
-        }
-        #toast-notification.show {
-            visibility: visible;
-            opacity: 1;
-            bottom: 30px;
-        }
-        .dark-mode #toast-notification {
-            background-color: var(--background-light);
-            color: var(--text-dark);
-        }
-        /* ---- FIN DE ESTILOS DE NOTIFICACIÓN ---- */
-
-
         @media (max-width: 650px) {
             #anticipados-list { display: flex; flex-direction: row; overflow-x: auto; scroll-snap-type: x mandatory; padding: 10px 10px 20px 10px; margin: 0 -20px; -webkit-overflow-scrolling: touch; }
             #anticipados-list::-webkit-scrollbar { display: none; }
@@ -770,14 +741,13 @@
         let onPasswordSuccessCallback = null;
         let toastTimeout;
 
-        // ---- NUEVA FUNCIÓN PARA MOSTRAR NOTIFICACIONES ----
         const showToast = (message) => {
             if(toastTimeout) clearTimeout(toastTimeout);
             DOM.toastNotification.textContent = message;
             DOM.toastNotification.classList.add('show');
             toastTimeout = setTimeout(() => {
                 DOM.toastNotification.classList.remove('show');
-            }, 3500); // La notificación dura 3.5 segundos
+            }, 3500);
         };
 
         const formatCurrency = (value) => new Intl.NumberFormat('es-CO', { style: 'currency', currency: 'COP', minimumFractionDigits: 0, maximumFractionDigits: 0 }).format(value);
@@ -1160,7 +1130,9 @@
 
             preview.querySelector('#ticket-date').textContent = new Date().toLocaleDateString('es-CO', { day: 'numeric', month: 'short', year: 'numeric', hour: '2-digit', minute: '2-digit' });
 
-            const verificationUrl = new URL(window.location.href);
+            // --- CORRECCIÓN DEL CÓDIGO QR ---
+            // Se construye la URL correctamente apuntando a verificacion.html
+            const verificationUrl = new URL('verificacion.html', window.location.href);
             verificationUrl.searchParams.set('rifa', rifaActivaId);
             verificationUrl.searchParams.set('numero', number);
             
@@ -1179,7 +1151,6 @@
             }
         };
 
-        // --- FUNCIÓN DE COMPARTIR MEJORADA CON FALLBACK ---
         const shareTicket = async (number) => {
             const button = DOM.shareTicketButton;
             button.disabled = true;
@@ -1187,7 +1158,7 @@
 
             const printableElement = DOM.ticketPreview.querySelector('.ticket-container');
             if (!printableElement) {
-                alert("Error: No se encontró el contenido del recibo.");
+                showToast("Error: No se encontró el contenido del recibo.");
                 button.disabled = false;
                 button.innerHTML = '<i class="fas fa-share-alt"></i> Compartir';
                 return;
@@ -1212,20 +1183,24 @@
                     text: `¡Gracias por participar en ${raffleName}! Aquí está tu recibo para el número ${ticketNumber}.`,
                 };
 
+                // --- LÓGICA MEJORADA: INTENTA COMPARTIR, SI NO, DESCARGA ---
                 if (navigator.share && navigator.canShare(shareData)) {
+                    // Flujo para móviles (iOS/Android)
                     await navigator.share(shareData);
                 } else {
-                    // Fallback: Si no se puede compartir, se descarga y notifica.
-                    downloadTicket();
-                    closeTicketModal();
-                    showToast("Recibo descargado. ¡Ya puedes compartirlo!");
+                    // Flujo para escritorio (o móviles no compatibles)
+                    downloadTicket(); // Inicia la descarga
+                    closeTicketModal(); // Cierra el pop-up del recibo
+                    showToast("Recibo descargado. ¡Ya puedes compartirlo!"); // Muestra notificación
                 }
             } catch (err) {
-                console.error('Error sharing ticket:', err);
-                // Fallback en caso de cualquier error
-                downloadTicket();
-                closeTicketModal();
-                showToast("No se pudo compartir, se inició la descarga.");
+                // Si el usuario cancela el compartir o hay un error, no hacer nada drástico.
+                if (err.name !== 'AbortError') {
+                    console.error('Error al compartir:', err);
+                    showToast("No se pudo compartir, se inició la descarga.");
+                    downloadTicket();
+                    closeTicketModal();
+                }
             } finally {
                 button.disabled = false;
                 button.innerHTML = '<i class="fas fa-share-alt"></i> Compartir';
@@ -1239,7 +1214,7 @@
             
             const printableElement = DOM.ticketPreview.querySelector('.ticket-container');
             if (!printableElement) {
-                alert("Error: No se encontró el contenido del recibo para descargar.");
+                showToast("Error al generar imagen para descargar.");
                 button.textContent = 'Descargar Recibo';
                 button.disabled = false;
                 return;
@@ -1261,7 +1236,7 @@
                 button.disabled = false;
             }).catch(err => { 
                 console.error('Error al generar recibo:', err); 
-                alert('Hubo un error al generar el recibo. Revisa la consola para más detalles.'); 
+                showToast('Error al generar el recibo para descargar.'); 
                 button.textContent = 'Descargar Recibo';
                 button.disabled = false; 
             });
