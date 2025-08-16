@@ -366,6 +366,32 @@
             color: var(--text-dark);
         }
 
+        #toast-notification {
+            position: fixed;
+            bottom: 20px;
+            left: 50%;
+            transform: translateX(-50%);
+            background-color: #333;
+            color: white;
+            padding: 12px 25px;
+            border-radius: 25px;
+            z-index: 2000;
+            font-size: 0.9em;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.2);
+            visibility: hidden;
+            opacity: 0;
+            transition: opacity 0.4s, bottom 0.4s, visibility 0.4s;
+        }
+        #toast-notification.show {
+            visibility: visible;
+            opacity: 1;
+            bottom: 30px;
+        }
+        .dark-mode #toast-notification {
+            background-color: var(--background-light);
+            color: var(--text-dark);
+        }
+
         @media (max-width: 650px) {
             #anticipados-list { display: flex; flex-direction: row; overflow-x: auto; scroll-snap-type: x mandatory; padding: 10px 10px 20px 10px; margin: 0 -20px; -webkit-overflow-scrolling: touch; }
             #anticipados-list::-webkit-scrollbar { display: none; }
@@ -947,6 +973,7 @@
 
         const closeDataModal = () => { DOM.dataModal.classList.remove('visible'); currentNumber = null; };
         
+        // --- FUNCIÓN saveData MODIFICADA ---
         const saveData = () => {
             if (!currentNumber || !rifaActivaId) return;
             
@@ -955,13 +982,29 @@
                 return;
             }
 
+            DOM.saveButton.disabled = true;
+            DOM.saveButton.textContent = 'Guardando...';
+
             const s = DOM.inputStatus.value;
             const n = DOM.inputName.value.trim();
             const p = DOM.inputPhone.value.trim();
             const d = db.collection("rifas").doc(rifaActivaId).collection("numeros").doc(currentNumber);
             
+            const resetSaveButton = () => {
+                DOM.saveButton.disabled = false;
+                DOM.saveButton.textContent = 'Guardar';
+            };
+            
             if (s === 'disponible') {
-                d.delete().then(closeDataModal);
+                d.delete().then(() => {
+                    showToast("Datos limpiados con éxito.");
+                    DOM.adminTicketActions.style.display = 'none'; // Oculta el botón de recibo
+                    resetSaveButton();
+                }).catch(err => {
+                    console.error("Error al limpiar datos:", err);
+                    showToast("Error al limpiar datos.");
+                    resetSaveButton();
+                });
             } else {
                 const dataToSave = {
                     status: s,
@@ -974,7 +1017,15 @@
                 if (s === 'separado' && abonoValue > 0) {
                     dataToSave.abono = abonoValue;
                 }
-                d.set(dataToSave, { merge: true }).then(closeDataModal);
+                d.set(dataToSave, { merge: true }).then(() => {
+                    showToast("Datos guardados con éxito.");
+                    DOM.adminTicketActions.style.display = 'block'; // Muestra el botón de recibo
+                    resetSaveButton();
+                }).catch(err => {
+                    console.error("Error al guardar datos:", err);
+                    showToast("Error al guardar datos.");
+                    resetSaveButton();
+                });
             }
         };
 
@@ -1130,8 +1181,6 @@
 
             preview.querySelector('#ticket-date').textContent = new Date().toLocaleDateString('es-CO', { day: 'numeric', month: 'short', year: 'numeric', hour: '2-digit', minute: '2-digit' });
 
-            // --- CORRECCIÓN DEL CÓDIGO QR ---
-            // Se construye la URL correctamente apuntando a verificacion.html
             const verificationUrl = new URL('verificacion.html', window.location.href);
             verificationUrl.searchParams.set('rifa', rifaActivaId);
             verificationUrl.searchParams.set('numero', number);
@@ -1183,18 +1232,14 @@
                     text: `¡Gracias por participar en ${raffleName}! Aquí está tu recibo para el número ${ticketNumber}.`,
                 };
 
-                // --- LÓGICA MEJORADA: INTENTA COMPARTIR, SI NO, DESCARGA ---
                 if (navigator.share && navigator.canShare(shareData)) {
-                    // Flujo para móviles (iOS/Android)
                     await navigator.share(shareData);
                 } else {
-                    // Flujo para escritorio (o móviles no compatibles)
-                    downloadTicket(); // Inicia la descarga
-                    closeTicketModal(); // Cierra el pop-up del recibo
-                    showToast("Recibo descargado. ¡Ya puedes compartirlo!"); // Muestra notificación
+                    downloadTicket();
+                    closeTicketModal();
+                    showToast("Recibo descargado. ¡Ya puedes compartirlo!");
                 }
             } catch (err) {
-                // Si el usuario cancela el compartir o hay un error, no hacer nada drástico.
                 if (err.name !== 'AbortError') {
                     console.error('Error al compartir:', err);
                     showToast("No se pudo compartir, se inició la descarga.");
