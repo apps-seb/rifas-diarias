@@ -272,9 +272,51 @@
         .vendedor-summary-card .vsc-section h5 { margin: 0 0 10px 0; text-align: left; font-size: 0.9em; display: flex; align-items: center; gap: 8px;}
         .vendedor-summary-card .vsc-section h5 .count { background-color: var(--background-light); color: var(--text-dark); padding: 2px 8px; border-radius: 10px; font-size: 0.9em;}
         .vsc-numeros-container { display: flex; flex-wrap: wrap; gap: 6px; margin-bottom: 15px; }
-        .numero-tag { padding: 4px 8px; border-radius: 4px; font-weight: bold; font-size: 0.9em; }
+        .numero-tag {
+            padding: 4px 8px;
+            border-radius: 4px;
+            font-weight: bold;
+            font-size: 0.9em;
+            position: relative; /* Para posicionar el tooltip */
+            cursor: pointer;
+            transition: transform 0.2s ease;
+        }
+        .numero-tag:hover {
+            transform: translateY(-2px);
+        }
         .numero-tag.status-pago { background-color: var(--color-pago); color: white; }
         .numero-tag.status-separado { background-color: var(--color-separado); color: var(--text-dark); }
+        .participant-tooltip {
+            position: absolute;
+            bottom: 100%;
+            left: 50%;
+            transform: translateX(-50%) translateY(-8px);
+            background-color: var(--background-card);
+            color: var(--text-dark);
+            padding: 8px 12px;
+            border-radius: 6px;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.15);
+            border: 1px solid var(--border-color);
+            z-index: 1010;
+            white-space: nowrap;
+            font-size: 0.85em;
+            animation: fadeInTooltip 0.2s ease-out;
+            pointer-events: none;
+        }
+        .participant-tooltip::after {
+            content: '';
+            position: absolute;
+            top: 100%;
+            left: 50%;
+            transform: translateX(-50%);
+            border-width: 5px;
+            border-style: solid;
+            border-color: var(--background-card) transparent transparent transparent;
+        }
+        @keyframes fadeInTooltip {
+            from { opacity: 0; transform: translateX(-50%) translateY(0); }
+            to { opacity: 1; transform: translateX(-50%) translateY(-8px); }
+        }
         .vendedor-summary-card .vsc-footer { padding: 12px 15px; border-top: 1px solid var(--border-color); background-color: var(--background-light); text-align: right; font-size: 0.9em; }
         .vsc-footer-stat { margin-left: 15px; }
         .vsc-footer-stat .stat-value { font-weight: bold; }
@@ -973,7 +1015,6 @@
 
         const closeDataModal = () => { DOM.dataModal.classList.remove('visible'); currentNumber = null; };
         
-        // --- FUNCIÓN saveData MODIFICADA ---
         const saveData = () => {
             if (!currentNumber || !rifaActivaId) return;
             
@@ -1655,6 +1696,49 @@
                 section.style.display = 'none';
             } else {
                 section.style.display = 'block';
+            }
+        });
+
+        // --- CÓDIGO AÑADIDO PARA EL TOOLTIP ---
+        document.body.addEventListener('click', function(e) {
+            const tooltip = document.querySelector('.participant-tooltip');
+            const clickedTag = e.target.closest('.numero-tag');
+
+            // Solo actuar si el clic es dentro del resumen de vendedores
+            if (clickedTag && clickedTag.closest('#vendedor-summary-list')) {
+                // Si hay un tooltip y es del tag que acabamos de clickear, lo quitamos (toggle)
+                if (tooltip && tooltip.parentElement === clickedTag) {
+                    tooltip.remove();
+                    return;
+                }
+
+                // Si hay cualquier otro tooltip abierto, lo quitamos
+                if (tooltip) {
+                    tooltip.remove();
+                }
+                
+                // Creamos y mostramos el nuevo tooltip
+                const number = clickedTag.textContent.trim();
+                const participantData = localRaffleData[number];
+
+                if (participantData && participantData.name) {
+                    const newTooltip = document.createElement('div');
+                    newTooltip.className = 'participant-tooltip';
+                    
+                    let content = `<strong>${participantData.name}</strong>`;
+                    if (participantData.phone) {
+                         content += `<br><small style="opacity: 0.7;">${participantData.phone}</small>`;
+                    }
+                    newTooltip.innerHTML = content;
+                    
+                    clickedTag.appendChild(newTooltip);
+                }
+                return; // Detenemos la ejecución para no caer en la siguiente condición
+            }
+
+            // Si se hizo clic en cualquier otro lugar de la página, y hay un tooltip, lo quitamos
+            if (tooltip) {
+                tooltip.remove();
             }
         });
     });
