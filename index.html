@@ -366,6 +366,35 @@
             color: var(--text-dark);
         }
 
+        /* ---- ESTILOS PARA LA NUEVA NOTIFICACIÓN (TOAST) ---- */
+        #toast-notification {
+            position: fixed;
+            bottom: 20px;
+            left: 50%;
+            transform: translateX(-50%);
+            background-color: #333;
+            color: white;
+            padding: 12px 25px;
+            border-radius: 25px;
+            z-index: 2000;
+            font-size: 0.9em;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.2);
+            visibility: hidden;
+            opacity: 0;
+            transition: opacity 0.4s, bottom 0.4s, visibility 0.4s;
+        }
+        #toast-notification.show {
+            visibility: visible;
+            opacity: 1;
+            bottom: 30px;
+        }
+        .dark-mode #toast-notification {
+            background-color: var(--background-light);
+            color: var(--text-dark);
+        }
+        /* ---- FIN DE ESTILOS DE NOTIFICACIÓN ---- */
+
+
         @media (max-width: 650px) {
             #anticipados-list { display: flex; flex-direction: row; overflow-x: auto; scroll-snap-type: x mandatory; padding: 10px 10px 20px 10px; margin: 0 -20px; -webkit-overflow-scrolling: touch; }
             #anticipados-list::-webkit-scrollbar { display: none; }
@@ -376,6 +405,7 @@
     </style>
 </head>
 <body>
+<div id="toast-notification"></div>
 
 <div class="container" id="main-container">
     <button id="darkModeToggle" aria-label="Cambiar tema"><i class="fas fa-moon"></i></button>
@@ -729,8 +759,8 @@
             participantListContainer: document.getElementById('participant-list-container'),
             toggleParticipantsBtn: document.getElementById('toggle-participants-btn'),
             adminTicketActions: document.getElementById('admin-ticket-actions'),
-            // CAMBIO: Se renombra el ID para mayor claridad
             modalGenerateTicketBtn: document.getElementById('modalGenerateTicketBtn'),
+            toastNotification: document.getElementById('toast-notification'),
         };
 
         let rifaActivaId = null, unsubRifaListener = null, currentNumber = null, localRaffleData = {}, activeRaffleData = {}, currentPrizeData = {};
@@ -738,6 +768,17 @@
         let allSellers = [];
         let currentVendedor = null;
         let onPasswordSuccessCallback = null;
+        let toastTimeout;
+
+        // ---- NUEVA FUNCIÓN PARA MOSTRAR NOTIFICACIONES ----
+        const showToast = (message) => {
+            if(toastTimeout) clearTimeout(toastTimeout);
+            DOM.toastNotification.textContent = message;
+            DOM.toastNotification.classList.add('show');
+            toastTimeout = setTimeout(() => {
+                DOM.toastNotification.classList.remove('show');
+            }, 3500); // La notificación dura 3.5 segundos
+        };
 
         const formatCurrency = (value) => new Intl.NumberFormat('es-CO', { style: 'currency', currency: 'COP', minimumFractionDigits: 0, maximumFractionDigits: 0 }).format(value);
         
@@ -780,7 +821,7 @@
                 await db.collection("rifas").doc(rifaActivaId).update(newSettings);
                 aplicarColoresPersonalizados(newSettings.colores);
                 activeRaffleData = {...activeRaffleData, ...newSettings};
-                alert("Configuración actualizada.");
+                showToast("Configuración actualizada.");
                 closeSettingsModal();
             } catch (e) {
                 console.error("Error al guardar configuración:", e);
@@ -818,7 +859,7 @@
                 });
                 DOM.newRifaName.value = '';
                 DOM.newRifaDate.value = '';
-                alert(`Rifa "${nombre}" creada.`);
+                showToast(`Rifa "${nombre}" creada.`);
                 await cargarRifas();
             } catch (e) {
                 console.error("Error al crear:", e);
@@ -826,7 +867,7 @@
             }
         };
 
-        const deleteRifaActual = async () => { if (!rifaActivaId) { alert("No hay rifa seleccionada."); return; } const n = DOM.rifaSelect.textContent; if (!confirm(`¿Borrar rifa "${n}"?\n\n¡ACCIÓN IRREVERSIBLE!`)) return; try { const r = db.collection("rifas").doc(rifaActivaId).collection("numeros"), s = await r.get(), b = db.batch(); s.docs.forEach(d => { b.delete(d.ref); }); await b.commit(); await db.collection("rifas").doc(rifaActivaId).delete(); alert(`Rifa "${n}" eliminada.`); await cargarRifas(); } catch (e) { console.error("Error al eliminar:", e); alert("Error al eliminar rifa."); } };
+        const deleteRifaActual = async () => { if (!rifaActivaId) { alert("No hay rifa seleccionada."); return; } const n = DOM.rifaSelect.textContent; if (!confirm(`¿Borrar rifa "${n}"?\n\n¡ACCIÓN IRREVERSIBLE!`)) return; try { const r = db.collection("rifas").doc(rifaActivaId).collection("numeros"), s = await r.get(), b = db.batch(); s.docs.forEach(d => { b.delete(d.ref); }); await b.commit(); await db.collection("rifas").doc(rifaActivaId).delete(); showToast(`Rifa "${n}" eliminada.`); await cargarRifas(); } catch (e) { console.error("Error al eliminar:", e); alert("Error al eliminar rifa."); } };
         
         const cambiarRifaActiva = async (f = false) => {
             if (unsubRifaListener) unsubRifaListener();
@@ -970,7 +1011,7 @@
         const deleteData = () => { if (!currentNumber || !rifaActivaId) return; db.collection("rifas").doc(rifaActivaId).collection("numeros").doc(currentNumber).delete().then(closeDataModal); };
         const closePrizeModal = () => { DOM.mainContainer.classList.remove('page-blur'); DOM.modalBackdrop.classList.remove('visible'); DOM.prizeModal.classList.remove('visible'); }
         const openPrizeModal = async () => { if (!rifaActivaId) return; DOM.mainContainer.classList.add('page-blur'); DOM.modalBackdrop.classList.add('visible'); DOM.prizeModal.classList.add('visible'); const d = await db.collection("rifas").doc(rifaActivaId).get(), a = d.data() || {}; currentPrizeData = { premios: a.premios || { mayor: {}, segundo: {}, tercero: {} }, premiosAnticipados: a.premiosAnticipados || [] }; const u = firebase.auth().currentUser; DOM.prizeInfoSection.innerHTML = ''; const t = ['mayor', 'segundo', 'tercero'], l = { mayor: '🥇 Premio Mayor', segundo: '🥈 Segundo Premio', tercero: '🥉 Tercer Premio' }; t.forEach(i => { const p = currentPrizeData.premios[i] || { descripcion: '', valor: 0, imgUrl1: '', imgUrl2: '' }; let c = ''; if (u) { c = `<div class="prize-card-admin-view"><label for="${i}DescInput">Descripción:</label><input type="text" id="${i}DescInput" value="${p.descripcion || ''}"><label for="${i}ValorInput">Valor:</label><input type="number" id="${i}ValorInput" value="${p.valor || 0}"><label for="${i}ImgUrl1Input">URL Imagen/Video 1:</label><input type="url" id="${i}ImgUrl1Input" value="${p.imgUrl1 || ''}"><label for="${i}ImgUrl2Input">URL Imagen/Video 2:</label><input type="url" id="${i}ImgUrl2Input" value="${p.imgUrl2 || ''}"></div>`; } else { c = generarHtmlDePremio(p); } DOM.prizeInfoSection.innerHTML += `<div class="prize-card ${i}"><div class="prize-card-title">${l[i]}</div>${c}</div>`; }); renderAnticipados(); DOM.saveAllPrizesButton.style.display = u ? 'inline-block' : 'none'; DOM.modalWinningInput.value = ''; DOM.prizeSimulatorSlots.forEach(s => { s.querySelector('span').textContent = ''; s.classList.remove('liquid-filled', 'selected-digit'); }); DOM.prizeZonesContainer.classList.remove('active'); DOM.modalWinnerResults.innerHTML = ''; };
-        const saveAllPrizes = async () => { if (!rifaActivaId || !firebase.auth().currentUser) return; DOM.saveAllPrizesButton.disabled = true; DOM.saveAllPrizesButton.textContent = 'Guardando...'; try { const n = { mayor: { descripcion: document.getElementById('mayorDescInput').value.trim(), valor: Number(document.getElementById('mayorValorInput').value) || 0, imgUrl1: document.getElementById('mayorImgUrl1Input').value.trim(), imgUrl2: document.getElementById('mayorImgUrl2Input').value.trim() }, segundo: { descripcion: document.getElementById('segundoDescInput').value.trim(), valor: Number(document.getElementById('segundoValorInput').value) || 0, imgUrl1: document.getElementById('segundoImgUrl1Input').value.trim(), imgUrl2: document.getElementById('segundoImgUrl2Input').value.trim() }, tercero: { descripcion: document.getElementById('terceroDescInput').value.trim(), valor: Number(document.getElementById('terceroValorInput').value) || 0, imgUrl1: document.getElementById('terceroImgUrl1Input').value.trim(), imgUrl2: document.getElementById('terceroImgUrl2Input').value.trim() } }; await db.collection("rifas").doc(rifaActivaId).update({ premios: n, premiosAnticipados: currentPrizeData.premiosAnticipados }); currentPrizeData.premios = n; alert("Premios guardados."); return true; } catch (e) { console.error("Error guardando:", e); alert("Error al guardar premios."); return false; } finally { DOM.saveAllPrizesButton.disabled = false; DOM.saveAllPrizesButton.textContent = 'Guardar Cambios en Premios'; } };
+        const saveAllPrizes = async () => { if (!rifaActivaId || !firebase.auth().currentUser) return; DOM.saveAllPrizesButton.disabled = true; DOM.saveAllPrizesButton.textContent = 'Guardando...'; try { const n = { mayor: { descripcion: document.getElementById('mayorDescInput').value.trim(), valor: Number(document.getElementById('mayorValorInput').value) || 0, imgUrl1: document.getElementById('mayorImgUrl1Input').value.trim(), imgUrl2: document.getElementById('mayorImgUrl2Input').value.trim() }, segundo: { descripcion: document.getElementById('segundoDescInput').value.trim(), valor: Number(document.getElementById('segundoValorInput').value) || 0, imgUrl1: document.getElementById('segundoImgUrl1Input').value.trim(), imgUrl2: document.getElementById('segundoImgUrl2Input').value.trim() }, tercero: { descripcion: document.getElementById('terceroDescInput').value.trim(), valor: Number(document.getElementById('terceroValorInput').value) || 0, imgUrl1: document.getElementById('terceroImgUrl1Input').value.trim(), imgUrl2: document.getElementById('terceroImgUrl2Input').value.trim() } }; await db.collection("rifas").doc(rifaActivaId).update({ premios: n, premiosAnticipados: currentPrizeData.premiosAnticipados }); currentPrizeData.premios = n; showToast("Premios guardados."); return true; } catch (e) { console.error("Error guardando:", e); alert("Error al guardar premios."); return false; } finally { DOM.saveAllPrizesButton.disabled = false; DOM.saveAllPrizesButton.textContent = 'Guardar Cambios en Premios'; } };
         const updateCellAppearance = (n, s) => { const c = document.querySelector(`.grid-item[data-number='${n}']`); if (c) { c.className = 'grid-item'; c.classList.add(`status-${s}`); } };
         const updateSummary = () => { let p = 0, s = 0; Object.values(localRaffleData).forEach(d => { if (d.status === 'pago') p++; else if (d.status === 'separado') s++; }); DOM.summaryPago.textContent = p; DOM.summarySeparado.textContent = s; DOM.summaryDisponible.textContent = totalNumbers - (p + s); };
         const performSearch = () => {
@@ -1137,11 +1178,12 @@
                 alert("No se encontraron datos para generar este recibo.");
             }
         };
-        
+
+        // --- FUNCIÓN DE COMPARTIR MEJORADA CON FALLBACK ---
         const shareTicket = async (number) => {
             const button = DOM.shareTicketButton;
             button.disabled = true;
-            button.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Compartiendo...';
+            button.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Preparando...';
 
             const printableElement = DOM.ticketPreview.querySelector('.ticket-container');
             if (!printableElement) {
@@ -1157,26 +1199,33 @@
                     useCORS: true,
                     backgroundColor: document.body.classList.contains('dark-mode') ? getComputedStyle(document.documentElement).getPropertyValue('--background-card') : '#FFFFFF'
                 });
-                canvas.toBlob(async (blob) => {
-                    const clientName = DOM.ticketPreview.querySelector('#ticket-client-name').textContent.trim().replace(/\s+/g, '_');
-                    const ticketNumber = DOM.ticketPreview.querySelector('#ticket-number').textContent.trim();
-                    const fileName = `Recibo-Rifa-${clientName}-${ticketNumber}.png`;
-                    const file = new File([blob], fileName, { type: 'image/png' });
-                    const raffleName = activeRaffleData.nombre || 'nuestra rifa';
-                    const shareData = {
-                        files: [file],
-                        title: `Recibo Rifa ${raffleName}`,
-                        text: `¡Gracias por participar en ${raffleName}! Aquí está tu recibo para el número ${ticketNumber}.`,
-                    };
-                    if (navigator.share && navigator.canShare(shareData)) {
-                        await navigator.share(shareData);
-                    } else {
-                        alert("Tu navegador no soporta compartir archivos. Puedes descargar el recibo y compartirlo manualmente.");
-                    }
-                }, 'image/png');
+                const blob = await new Promise(resolve => canvas.toBlob(resolve, 'image/png'));
+                
+                const clientName = DOM.ticketPreview.querySelector('#ticket-client-name').textContent.trim().replace(/\s+/g, '_');
+                const ticketNumber = DOM.ticketPreview.querySelector('#ticket-number').textContent.trim();
+                const fileName = `Recibo-Rifa-${clientName}-${ticketNumber}.png`;
+                const file = new File([blob], fileName, { type: 'image/png' });
+                const raffleName = activeRaffleData.nombre || 'nuestra rifa';
+                const shareData = {
+                    files: [file],
+                    title: `Recibo Rifa ${raffleName}`,
+                    text: `¡Gracias por participar en ${raffleName}! Aquí está tu recibo para el número ${ticketNumber}.`,
+                };
+
+                if (navigator.share && navigator.canShare(shareData)) {
+                    await navigator.share(shareData);
+                } else {
+                    // Fallback: Si no se puede compartir, se descarga y notifica.
+                    downloadTicket();
+                    closeTicketModal();
+                    showToast("Recibo descargado. ¡Ya puedes compartirlo!");
+                }
             } catch (err) {
                 console.error('Error sharing ticket:', err);
-                alert('Hubo un error al generar el recibo para compartir.');
+                // Fallback en caso de cualquier error
+                downloadTicket();
+                closeTicketModal();
+                showToast("No se pudo compartir, se inició la descarga.");
             } finally {
                 button.disabled = false;
                 button.innerHTML = '<i class="fas fa-share-alt"></i> Compartir';
@@ -1508,11 +1557,10 @@
         DOM.realWinningInput.addEventListener('input', () => { const v = DOM.realWinningInput.value; DOM.digitCircles.forEach((c, i) => { const d = v[i]; if (d) { c.textContent = d; c.classList.add('filled'); } else { c.textContent = ''; c.classList.remove('filled'); } }); DOM.checkWinnerButton.disabled = v.length !== 4; });
         DOM.searchResultsContainer.addEventListener('click', (e) => { const t = e.target.closest('.generate-ticket-btn'); if (t) generateTicket(t.dataset.number); });
         
-        // CAMBIO: El listener del botón del modal ahora llama a generateTicket
         DOM.modalGenerateTicketBtn.addEventListener('click', () => {
             if (currentNumber) {
                 generateTicket(currentNumber);
-                closeDataModal(); // Se cierra el modal de datos para un flujo más limpio
+                closeDataModal();
             }
         });
         
