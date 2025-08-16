@@ -138,11 +138,13 @@
         .close-button { color: #aaa; font-size: 28px; font-weight: bold; cursor: pointer; }
         .modal-body label { display: block; margin-top: 15px; margin-bottom: 5px; color: var(--text-dark); }
         .modal-body input, .modal-body select, .modal-body textarea { width: 100%; padding: 10px; border: 1px solid var(--border-color); border-radius: 4px; box-sizing: border-box; background-color: var(--background-light); color: var(--text-dark); }
-        .modal-footer { text-align: right; margin-top: 20px; }
+        .modal-footer { display: flex; justify-content: flex-end; align-items: center; gap: 10px; margin-top: 20px; }
         .modal-footer button { padding: 10px 20px; border: none; border-radius: 5px; cursor: pointer; font-size: 16px; transition: background-color 0.2s, transform 0.2s; }
         .modal-footer button:hover { transform: translateY(-2px); }
         #saveButton, #saveAllPrizesButton, #saveSettingsButton, #downloadTicketButton, #passwordSubmitButton { background-color: var(--color-primary); color: white; }
-        #deleteButton { background-color: var(--color-danger); color: white; margin-right: 10px; }
+        #deleteButton { background-color: var(--color-danger); color: white; }
+        .action-btn-pago { padding: 10px 15px; background-color: var(--color-pago); color: white !important; border: none; border-radius: 5px; cursor: pointer; font-weight: bold; font-size: 16px; display: inline-flex; align-items: center; gap: 8px; transition: background-color 0.2s, transform 0.2s; }
+        .action-btn-pago:hover { transform: translateY(-2px); filter: brightness(1.1); }
         .raffle-manager { display: flex; flex-wrap: wrap; gap: 10px; align-items: flex-end; }
         .raffle-selector-container { flex-grow: 1; min-width: 200px; display: flex; flex-direction: column; gap: 10px; }
         .selector-wrapper-with-button { display: flex; align-items: center; gap: 10px; }
@@ -478,7 +480,13 @@
                 </div>
             </div>
         </div>
-        <div class="modal-footer"><button id="deleteButton">Limpiar Datos</button><button id="saveButton">Guardar</button></div>
+        <div class="modal-footer">
+            <div id="admin-ticket-actions" style="display: none; flex-grow: 1; text-align: left;">
+                <button id="modalGenerateAndShareBtn" class="action-btn-pago"><i class="fas fa-share-alt"></i> Compartir Recibo</button>
+            </div>
+            <button id="deleteButton">Limpiar Datos</button>
+            <button id="saveButton">Guardar</button>
+        </div>
     </div>
 </div>
 
@@ -573,6 +581,7 @@
             <div id="ticket-preview"></div>
         </div>
         <div class="modal-footer">
+            <button id="shareTicketButton" class="action-btn-pago" style="margin-right: 10px;"><i class="fas fa-share-alt"></i> Compartir</button>
             <button id="downloadTicketButton">Descargar Recibo</button>
         </div>
     </div>
@@ -696,6 +705,7 @@
             ticketPreview: document.getElementById('ticket-preview'),
             ticketTemplate: document.getElementById('ticket-template'),
             downloadTicketButton: document.getElementById('downloadTicketButton'),
+            shareTicketButton: document.getElementById('shareTicketButton'),
             vendedorAuthContainer: document.getElementById('vendedor-auth-container'),
             inputVendedorCode: document.getElementById('inputVendedorCode'),
             verifyVendedorButton: document.getElementById('verifyVendedorButton'),
@@ -719,6 +729,8 @@
             participantListSection: document.getElementById('participant-list-section'),
             participantListContainer: document.getElementById('participant-list-container'),
             toggleParticipantsBtn: document.getElementById('toggle-participants-btn'),
+            adminTicketActions: document.getElementById('admin-ticket-actions'),
+            modalGenerateAndShareBtn: document.getElementById('modalGenerateAndShareBtn'),
         };
 
         let rifaActivaId = null, unsubRifaListener = null, currentNumber = null, localRaffleData = {}, activeRaffleData = {}, currentPrizeData = {};
@@ -911,6 +923,13 @@
                 DOM.inputPhone.value = '';
                 DOM.inputAbono.value = '';
             }
+
+            if (firebase.auth().currentUser && d && d.status !== 'disponible') {
+                DOM.adminTicketActions.style.display = 'block';
+            } else {
+                DOM.adminTicketActions.style.display = 'none';
+            }
+
             DOM.inputStatus.dispatchEvent(new Event('change'));
             DOM.dataModal.classList.add('visible');
         };
@@ -1046,17 +1065,15 @@
             }
         };
         
-        const generateTicket = async (number) => {
-            if (!rifaActivaId) return;
+        const populateTicketPreview = async (number) => {
+            if (!rifaActivaId) return false;
+            
             const raffleDoc = await db.collection("rifas").doc(rifaActivaId).get();
-            if (!raffleDoc.exists) return;
+            if (!raffleDoc.exists) return false;
 
             const raffleData = raffleDoc.data();
             const clientData = localRaffleData[number];
-            if (!clientData) {
-                alert("No se encontraron datos para este número.");
-                return;
-            }
+            if (!clientData) return false;
             
             DOM.ticketPreview.innerHTML = DOM.ticketTemplate.innerHTML;
             
@@ -1102,14 +1119,116 @@
 
             preview.querySelector('#ticket-date').textContent = new Date().toLocaleDateString('es-CO', { day: 'numeric', month: 'short', year: 'numeric', hour: '2-digit', minute: '2-digit' });
 
-            const verificationUrl = new URL('verificacion.html', window.location.href);
+            const verificationUrl = new URL(window.location.href);
             verificationUrl.searchParams.set('rifa', rifaActivaId);
             verificationUrl.searchParams.set('numero', number);
             
             const qrApiUrl = `https://api.qrserver.com/v1/create-qr-code/?size=120x120&data=${encodeURIComponent(verificationUrl.href)}&qzone=1`;
             preview.querySelector('#ticket-qr-code').src = qrApiUrl;
 
-            DOM.ticketModal.classList.add('visible');
+            return true;
+        };
+        
+        const generateTicket = async (number) => {
+            const success = await populateTicketPreview(number);
+            if(success) {
+                DOM.ticketModal.classList.add('visible');
+            } else {
+                alert("No se encontraron datos para generar este recibo.");
+            }
+        };
+        
+        const shareTicket = async (number) => {
+            const button = DOM.shareTicketButton;
+            button.disabled = true;
+            button.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Compartiendo...';
+
+            const printableElement = DOM.ticketPreview.querySelector('.ticket-container');
+            if (!printableElement) {
+                alert("Error: No se encontró el contenido del recibo.");
+                button.disabled = false;
+                button.innerHTML = '<i class="fas fa-share-alt"></i> Compartir';
+                return;
+            }
+
+            try {
+                const canvas = await html2canvas(printableElement, { 
+                    scale: 3, 
+                    useCORS: true,
+                    backgroundColor: document.body.classList.contains('dark-mode') ? getComputedStyle(document.documentElement).getPropertyValue('--background-card') : '#FFFFFF'
+                });
+                canvas.toBlob(async (blob) => {
+                    const clientName = DOM.ticketPreview.querySelector('#ticket-client-name').textContent.trim().replace(/\s+/g, '_');
+                    const ticketNumber = DOM.ticketPreview.querySelector('#ticket-number').textContent.trim();
+                    const fileName = `Recibo-Rifa-${clientName}-${ticketNumber}.png`;
+                    const file = new File([blob], fileName, { type: 'image/png' });
+                    const raffleName = activeRaffleData.nombre || 'nuestra rifa';
+                    const shareData = {
+                        files: [file],
+                        title: `Recibo Rifa ${raffleName}`,
+                        text: `¡Gracias por participar en ${raffleName}! Aquí está tu recibo para el número ${ticketNumber}.`,
+                    };
+                    if (navigator.share && navigator.canShare(shareData)) {
+                        await navigator.share(shareData);
+                    } else {
+                        alert("Tu navegador no soporta compartir archivos. Puedes descargar el recibo y compartirlo manualmente.");
+                    }
+                }, 'image/png');
+            } catch (err) {
+                console.error('Error sharing ticket:', err);
+                alert('Hubo un error al generar el recibo para compartir.');
+            } finally {
+                button.disabled = false;
+                button.innerHTML = '<i class="fas fa-share-alt"></i> Compartir';
+            }
+        };
+
+        const generateAndShareFromDataModal = async () => {
+            if (!currentNumber) return;
+            const button = DOM.modalGenerateAndShareBtn;
+            button.disabled = true;
+            button.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Generando...';
+            
+            const success = await populateTicketPreview(currentNumber);
+            if (!success) {
+                alert("No se pudieron generar los datos del recibo para compartir.");
+                button.disabled = false;
+                button.innerHTML = '<i class="fas fa-share-alt"></i> Compartir Recibo';
+                return;
+            }
+
+            const printableElement = DOM.ticketPreview.querySelector('.ticket-container');
+            try {
+                const canvas = await html2canvas(printableElement, {
+                    scale: 3, useCORS: true,
+                    backgroundColor: document.body.classList.contains('dark-mode') ? getComputedStyle(document.documentElement).getPropertyValue('--background-card') : '#FFFFFF'
+                });
+                canvas.toBlob(async (blob) => {
+                    const clientName = DOM.ticketPreview.querySelector('#ticket-client-name').textContent.trim().replace(/\s+/g, '_');
+                    const ticketNumber = DOM.ticketPreview.querySelector('#ticket-number').textContent.trim();
+                    const fileName = `Recibo-Rifa-${clientName}-${ticketNumber}.png`;
+                    const file = new File([blob], fileName, { type: 'image/png' });
+                    const raffleName = activeRaffleData.nombre || 'nuestra rifa';
+                    const shareData = {
+                        files: [file],
+                        title: `Recibo Rifa ${raffleName}`,
+                        text: `¡Gracias por participar en ${raffleName}! Aquí está tu recibo para el número ${ticketNumber}.`,
+                    };
+                    if (navigator.share && navigator.canShare(shareData)) {
+                        await navigator.share(shareData);
+                        closeDataModal();
+                    } else {
+                        alert("Tu navegador no soporta la función de compartir. Se abrirá el recibo para que lo descargues manualmente.");
+                        generateTicket(currentNumber); // Fallback: open the ticket modal
+                    }
+                }, 'image/png');
+            } catch(err) {
+                console.error('Error sharing ticket:', err);
+                alert('Hubo un error al generar el recibo para compartir.');
+            } finally {
+                button.disabled = false;
+                button.innerHTML = '<i class="fas fa-share-alt"></i> Compartir Recibo';
+            }
         };
 
         const downloadTicket = () => {
@@ -1128,7 +1247,7 @@
             html2canvas(printableElement, { 
                 scale: 3, 
                 useCORS: true, 
-                backgroundColor: null 
+                backgroundColor: document.body.classList.contains('dark-mode') ? getComputedStyle(document.documentElement).getPropertyValue('--background-card') : '#FFFFFF'
             }).then(canvas => {
                 const link = document.createElement('a');
                 const clientName = DOM.ticketPreview.querySelector('#ticket-client-name').textContent.trim().replace(/\s+/g, '_');
@@ -1357,17 +1476,17 @@
             }
 
             let tableHTML = `<div class="table-scroll-wrapper"><table id="participant-table">
-                        <thead><tr><th>N°</th><th>Nombre</th><th>Teléfono</th></tr></thead>
-                        <tbody>`;
+                                <thead><tr><th>N°</th><th>Nombre</th><th>Teléfono</th></tr></thead>
+                                <tbody>`;
 
             participants.forEach(p => {
                 tableHTML += `<tr>
-                            <td>
-                               <span class="numero-tag-participante status-${p.status}">${p.number}</span>
-                            </td>
-                            <td>${p.name}</td>
-                            <td>${maskPhoneNumber(p.phone)}</td>
-                        </tr>`;
+                                <td>
+                                   <span class="numero-tag-participante status-${p.status}">${p.number}</span>
+                                </td>
+                                <td>${p.name}</td>
+                                <td>${maskPhoneNumber(p.phone)}</td>
+                            </tr>`;
             });
 
             tableHTML += '</tbody></table></div>';
@@ -1436,8 +1555,14 @@
         DOM.checkWinnerButton.addEventListener('click', checkWinners);
         DOM.realWinningInput.addEventListener('input', () => { const v = DOM.realWinningInput.value; DOM.digitCircles.forEach((c, i) => { const d = v[i]; if (d) { c.textContent = d; c.classList.add('filled'); } else { c.textContent = ''; c.classList.remove('filled'); } }); DOM.checkWinnerButton.disabled = v.length !== 4; });
         DOM.searchResultsContainer.addEventListener('click', (e) => { const t = e.target.closest('.generate-ticket-btn'); if (t) generateTicket(t.dataset.number); });
+        
+        DOM.modalGenerateAndShareBtn.addEventListener('click', generateAndShareFromDataModal);
         DOM.closeTicketModalButton.addEventListener('click', closeTicketModal);
         DOM.downloadTicketButton.addEventListener('click', downloadTicket);
+        DOM.shareTicketButton.addEventListener('click', () => {
+            const number = DOM.ticketPreview.querySelector('#ticket-number')?.textContent;
+            if(number) shareTicket(number);
+        });
         
         DOM.addAnticipadoButton.addEventListener('click', async () => { 
             const v = Number(DOM.anticipadoValor.value), f = DOM.anticipadoFecha.value, l = DOM.anticipadoLoteria.value.trim(); 
