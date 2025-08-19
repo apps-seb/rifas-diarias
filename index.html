@@ -26,6 +26,7 @@
             --winner-card-silver-bg: linear-gradient(135deg, #e0e0e0, #bdbdbd);
             --winner-card-silver-color: #333;
             --transition-speed: 0.3s;
+            --skeleton-bg: #e2e8f0;
         }
         .dark-mode {
             --border-color: #4d4d4d;
@@ -40,6 +41,7 @@
             --modal-glass-bg: rgba(44, 44, 46, 0.5);
             --winner-card-silver-bg: linear-gradient(135deg, #a8a8a8, #8c8c8c);
             --winner-card-silver-color: #f2f2f7;
+            --skeleton-bg: #3a3a3c;
         }
         body { font-family: system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, 'Open Sans', 'Helvetica Neue', sans-serif; background-color: var(--body-bg); padding: 10px; color: var(--body-color); transition: background-color var(--transition-speed) ease, color var(--transition-speed) ease; }
         .container { max-width: 800px; margin: auto; padding-top: 20px; transition: filter 0.3s ease-in-out; }
@@ -459,6 +461,46 @@
             border-color: var(--color-primary);
             color: var(--color-primary);
         }
+        
+        /* --- INICIO DE CAMBIOS: SKELETON LOADER --- */
+        @keyframes shimmer {
+            100% { transform: translateX(100%); }
+        }
+        .skeleton {
+            background-color: var(--skeleton-bg);
+            position: relative;
+            overflow: hidden;
+        }
+        .skeleton::after {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            transform: translateX(-100%);
+            background-image: linear-gradient(90deg, rgba(255,255,255,0) 0, rgba(255,255,255,0.2) 20%, rgba(255,255,255,0.5) 60%, rgba(255,255,255,0));
+            animation: shimmer 1.5s infinite;
+        }
+        .dark-mode .skeleton::after {
+             background-image: linear-gradient(90deg, rgba(0,0,0,0) 0, rgba(0,0,0,0.2) 20%, rgba(0,0,0,0.5) 60%, rgba(0,0,0,0));
+        }
+        #rifaSelectSkeleton {
+            height: 48px;
+            width: 100%;
+            border-radius: 8px;
+        }
+        #participantListSkeleton .skeleton-row {
+            display: flex;
+            gap: 10px;
+            padding: 10px 12px;
+            border-bottom: 1px solid var(--border-color);
+        }
+        #participantListSkeleton .skeleton-row span {
+            height: 20px;
+            border-radius: 4px;
+        }
+        /* --- FIN DE CAMBIOS --- */
 
         @media (max-width: 768px) {
             .raffle-creator {
@@ -471,7 +513,6 @@
                 align-items: stretch;
             }
         }
-        /* --- FIN DE CAMBIOS --- */
 
         @media (max-width: 650px) {
             #anticipados-list { display: flex; flex-direction: row; overflow-x: auto; scroll-snap-type: x mandatory; padding: 10px 10px 20px 10px; margin: 0 -20px; -webkit-overflow-scrolling: touch; }
@@ -494,7 +535,14 @@
             <label for="rifaSelect">Selecciona una Rifa:</label>
             <div class="selector-wrapper-with-button">
                 <div class="custom-select-wrapper">
-                    <div id="rifaSelect" class="select-selected">-- Cargando... --</div>
+                    <!-- ================================================================= -->
+                    <!-- =========== INICIO DE CAMBIOS: SKELETON PARA SELECTOR =========== -->
+                    <!-- ================================================================= -->
+                    <div id="rifaSelectSkeleton" class="skeleton"></div>
+                    <!-- ================================================================= -->
+                    <!-- ======================= FIN DE CAMBIOS ========================== -->
+                    <!-- ================================================================= -->
+                    <div id="rifaSelect" class="select-selected" style="display: none;">-- Cargando... --</div>
                     <div id="rifaSelectItems" class="select-items select-hide"></div>
                 </div>
                 <button id="vendedoresButton" title="Gestionar Vendedores"><i class="fas fa-users"></i></button>
@@ -505,9 +553,6 @@
             <button id="prizeButton" title="Ver/Editar Premios">VER PREMIOS <span class="prize-icon">🏆</span></button>
         </div>
         <div class="raffle-creator">
-            <!-- ================================================================= -->
-            <!-- =========== INICIO DE CAMBIOS: GRUPO DE INPUTS PARA IA =========== -->
-            <!-- ================================================================= -->
             <div class="raffle-creator-input-group">
                 <div>
                     <label for="newRifaName">Nombre de la nueva rifa</label>
@@ -521,9 +566,6 @@
                     <input type="date" id="newRifaDate">
                 </div>
             </div>
-            <!-- ================================================================= -->
-            <!-- ======================= FIN DE CAMBIOS ========================== -->
-            <!-- ================================================================= -->
             <div>
                 <label for="newRifaSize">Cantidad de Números</label>
                 <select id="newRifaSize" style="width: 100%; padding: 10px; border: 1px solid var(--border-color); border-radius: 4px; background-color: var(--background-light); color: var(--text-dark); height: 48px;">
@@ -560,7 +602,18 @@
             <i class="fas fa-chevron-down toggle-icon"></i>
         </button>
         <div id="participant-list-container" class="collapsible-content">
-                 </div>
+            <!-- ================================================================= -->
+            <!-- ======== INICIO DE CAMBIOS: SKELETON PARA PARTICIPANTES ========= -->
+            <!-- ================================================================= -->
+            <div id="participantListSkeleton">
+                <div class="skeleton-row"><span class="skeleton" style="width: 15%;"></span><span class="skeleton" style="width: 50%;"></span><span class="skeleton" style="width: 35%;"></span></div>
+                <div class="skeleton-row"><span class="skeleton" style="width: 15%;"></span><span class="skeleton" style="width: 40%;"></span><span class="skeleton" style="width: 45%;"></span></div>
+                <div class="skeleton-row"><span class="skeleton" style="width: 15%;"></span><span class="skeleton" style="width: 55%;"></span><span class="skeleton" style="width: 30%;"></span></div>
+            </div>
+            <!-- ================================================================= -->
+            <!-- ======================= FIN DE CAMBIOS ========================== -->
+            <!-- ================================================================= -->
+        </div>
     </div>
 
     <div class="winner-section">
@@ -824,6 +877,7 @@
             mainContainer: document.getElementById('main-container'),
             modalBackdrop: document.getElementById('modal-backdrop'),
             rifaSelect: document.getElementById('rifaSelect'), rifaSelectItems: document.getElementById('rifaSelectItems'),
+            rifaSelectSkeleton: document.getElementById('rifaSelectSkeleton'),
             newRifaName: document.getElementById('newRifaName'), 
             newRifaSize: document.getElementById('newRifaSize'),
             newRifaDate: document.getElementById('newRifaDate'),
@@ -879,6 +933,7 @@
             editVendedorId: document.getElementById('editVendedorId'),
             participantListSection: document.getElementById('participant-list-section'),
             participantListContainer: document.getElementById('participant-list-container'),
+            participantListSkeleton: document.getElementById('participantListSkeleton'),
             toggleParticipantsBtn: document.getElementById('toggle-participants-btn'),
             adminTicketActions: document.getElementById('admin-ticket-actions'),
             modalGenerateTicketBtn: document.getElementById('modalGenerateTicketBtn'),
@@ -1063,6 +1118,9 @@
         const applyTheme = (t) => { const i = DOM.darkModeToggle.querySelector('i'); if (t === 'dark') { document.body.classList.add('dark-mode'); i.classList.remove('fa-moon'); i.classList.add('fa-sun'); } else { document.body.classList.remove('dark-mode'); i.classList.remove('fa-sun'); i.classList.add('fa-moon'); } };
         
         const cargarRifas = async () => { 
+            DOM.rifaSelect.style.display = 'none';
+            DOM.rifaSelectSkeleton.style.display = 'block';
+
             const rifasCollection = collection(db, "rifas");
             const q = query(rifasCollection, orderBy("fechaCreacion", "desc"));
             const snapshot = await getDocs(q);
@@ -1072,31 +1130,33 @@
                 DOM.rifaSelect.textContent = '-- No hay rifas --'; 
                 DOM.rifaSelect.dataset.value = ""; 
                 await cambiarRifaActiva(true); 
-                return; 
-            } 
-            snapshot.forEach(doc => { 
-                const o = document.createElement('div'); 
-                o.textContent = doc.data().nombre; 
-                o.dataset.value = doc.id; 
-                o.addEventListener('click', async function(e) { 
-                    e.stopPropagation(); 
-                    if (DOM.rifaSelect.dataset.value === this.dataset.value) { 
+            } else {
+                snapshot.forEach(doc => { 
+                    const o = document.createElement('div'); 
+                    o.textContent = doc.data().nombre; 
+                    o.dataset.value = doc.id; 
+                    o.addEventListener('click', async function(e) { 
+                        e.stopPropagation(); 
+                        if (DOM.rifaSelect.dataset.value === this.dataset.value) { 
+                            DOM.rifaSelectItems.classList.remove('select-show'); 
+                            DOM.rifaSelect.classList.remove('select-arrow-active'); 
+                            return; 
+                        }; 
+                        DOM.rifaSelect.textContent = this.textContent; 
+                        DOM.rifaSelect.dataset.value = this.dataset.value; 
                         DOM.rifaSelectItems.classList.remove('select-show'); 
                         DOM.rifaSelect.classList.remove('select-arrow-active'); 
-                        return; 
-                    }; 
-                    DOM.rifaSelect.textContent = this.textContent; 
-                    DOM.rifaSelect.dataset.value = this.dataset.value; 
-                    DOM.rifaSelectItems.classList.remove('select-show'); 
-                    DOM.rifaSelect.classList.remove('select-arrow-active'); 
-                    await cambiarRifaActiva(); 
+                        await cambiarRifaActiva(); 
+                    }); 
+                    DOM.rifaSelectItems.appendChild(o); 
                 }); 
-                DOM.rifaSelectItems.appendChild(o); 
-            }); 
-            const primeraRifa = snapshot.docs[0]; 
-            DOM.rifaSelect.textContent = primeraRifa.data().nombre; 
-            DOM.rifaSelect.dataset.value = primeraRifa.id; 
-            await cambiarRifaActiva(); 
+                const primeraRifa = snapshot.docs[0]; 
+                DOM.rifaSelect.textContent = primeraRifa.data().nombre; 
+                DOM.rifaSelect.dataset.value = primeraRifa.id; 
+                await cambiarRifaActiva(); 
+            }
+            DOM.rifaSelectSkeleton.style.display = 'none';
+            DOM.rifaSelect.style.display = 'flex';
         };
 
         const crearNuevaRifa = async () => {
@@ -1166,6 +1226,8 @@
             DOM.vendedoresButton.classList.toggle('visible', h);
             DOM.resumenVendedoresButton.classList.toggle('visible', h);
             DOM.participantListSection.style.display = h ? 'block' : 'none';
+            DOM.participantListContainer.innerHTML = '';
+            DOM.participantListSkeleton.style.display = 'block';
 
             if (!rifaActivaId) {
                 totalNumbers = 100;
@@ -1176,11 +1238,12 @@
                 initializeGrid();
                 updateSummary();
                 DOM.vendedorSummaryList.innerHTML = '';
-                DOM.participantListContainer.innerHTML = '';
+                DOM.participantListSkeleton.style.display = 'none';
                 DOM.searchResultsContainer.innerHTML = '<div class="no-results-message">Crea o selecciona una rifa.</div>';
                 return;
             }
             try {
+                await fetchSellers(); // Asegurarse de tener los vendedores antes de escuchar los números
                 const rifaRef = doc(db, "rifas", rifaActivaId);
                 const docSnap = await getDoc(rifaRef);
                 if (docSnap.exists()) {
@@ -1848,6 +1911,7 @@
         };
 
         const renderParticipantList = () => {
+            DOM.participantListSkeleton.style.display = 'none';
             const container = DOM.participantListContainer;
             
             const participants = Object.entries(localRaffleData)
@@ -1883,9 +1947,6 @@
             container.innerHTML = tableHTML;
         };
 
-        // =================================================================
-        // =========== INICIO DE CAMBIOS: LÓGICA DE GEMINI API =============
-        // =================================================================
         const suggestRaffleName = async () => {
             const button = DOM.suggestNameButton;
             button.disabled = true;
@@ -1896,7 +1957,7 @@
                 
                 let chatHistory = [{ role: "user", parts: [{ text: prompt }] }];
                 const payload = { contents: chatHistory };
-                const apiKey = ""; // Será proveído por el entorno de Canvas
+                const apiKey = "AIzaSyDwLO6eJqWHENOkxUlaNwgGpXEXEhs19go";
                 const apiUrl = `https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-flash-preview-05-20:generateContent?key=${apiKey}`;
 
                 const response = await fetch(apiUrl, {
@@ -1936,15 +1997,10 @@
                 button.innerHTML = '<i class="fas fa-wand-magic-sparkles"></i>';
             }
         };
-        // =================================================================
-        // ======================= FIN DE CAMBIOS ==========================
-        // =================================================================
 
         // Inicialización y Listeners
         applyTheme(localStorage.getItem('theme') || 'light');
         cargarRifas();
-        fetchSellers();
-        DOM.checkWinnerButton.disabled = true;
         
         DOM.authButton.addEventListener('click', () => { auth.currentUser ? handleLogout() : openLoginModal(); });
         DOM.loginButton.addEventListener('click', handleLogin);
