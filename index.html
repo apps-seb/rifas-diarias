@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-    <title>Control de Rifas Inmersivo con IA</title>
+    <title>Control de Rifas</title>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" />
     <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
     <style>
@@ -44,7 +44,6 @@
             --skeleton-bg: #3a3a3c;
         }
         body { font-family: system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, 'Open Sans', 'Helvetica Neue', sans-serif; background-color: var(--body-bg); padding: 10px; color: var(--body-color); transition: background-color var(--transition-speed) ease, color var(--transition-speed) ease; }
-        /* Regla para bloquear el scroll cuando el modal está abierto */
         body.body-no-scroll { overflow: hidden; }
         .container { max-width: 800px; margin: auto; padding-top: 20px; transition: filter 0.3s ease-in-out; }
         .container.page-blur { filter: blur(5px) brightness(0.7); pointer-events: none; }
@@ -124,8 +123,8 @@
         .grid-item { display: flex; justify-content: center; align-items: center; aspect-ratio: 1 / 1; border: 1px solid var(--border-color); border-radius: 8px; font-size: clamp(0.7em, 3vw, 1.5em); font-weight: bold; color: white; cursor: pointer; transition: transform 0.2s, background-color 0.2s, border-color 0.2s; }
         .modal-backdrop { display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background-color: rgba(0,0,0,0.1); opacity: 0; z-index: 999; transition: opacity 0.3s ease-in-out; }
         .modal-backdrop.visible { display: block; opacity: 0.5; }
-        .modal { display: flex; justify-content: center; align-items: center; /* Centrado vertical */ position: fixed; z-index: 1000; left: 0; top: 0; width: 100%; height: 100%; overflow: auto; opacity: 0; visibility: hidden; transition: opacity 0.3s ease-in-out, visibility 0.3s; padding: 20px; /* Padding general para móvil */ }
-        #prizeModal { padding: 0; }
+        .modal { display: flex; justify-content: center; align-items: center; position: fixed; z-index: 1000; left: 0; top: 0; width: 100%; height: 100%; overflow: auto; opacity: 0; visibility: hidden; transition: opacity 0.3s ease-in-out, visibility 0.3s; padding: 20px; }
+        #prizeModal { padding: 0; align-items: flex-start; }
         .modal.visible { opacity: 1; visibility: visible; }
         @keyframes modal-slide-in { from { transform: translateY(-50px) scale(0.95); opacity: 0; } to { transform: translateY(0) scale(1); opacity: 1; } }
         .modal.visible .modal-content { animation: modal-slide-in 0.4s cubic-bezier(0.25, 0.46, 0.45, 0.94) forwards; }
@@ -139,33 +138,20 @@
         .grid-item.status-separado { background-color: var(--color-separado); }
         .grid-item.status-pago { background-color: var(--color-pago); }
         .modal-header { display: flex; justify-content: space-between; align-items: center; border-bottom: 1px solid var(--border-color); padding-bottom: 10px; margin-bottom: 20px; }
+        .modal-header h2 { display: flex; align-items: center; gap: 10px; font-size: 1.4em; text-align: left; }
         .close-button { color: #aaa; font-size: 28px; font-weight: bold; cursor: pointer; }
         .modal-body label { display: block; margin-top: 15px; margin-bottom: 5px; color: var(--text-dark); }
         .modal-body input, .modal-body select, .modal-body textarea { width: 100%; padding: 10px; border: 1px solid var(--border-color); border-radius: 4px; box-sizing: border-box; background-color: var(--background-light); color: var(--text-dark); }
         .modal-footer { display: flex; justify-content: flex-end; align-items: center; gap: 10px; margin-top: 20px; }
         .modal-footer button { padding: 10px 20px; border: none; border-radius: 5px; cursor: pointer; font-size: 16px; transition: background-color 0.2s, transform 0.2s; }
         .modal-footer button:hover { transform: translateY(-2px); }
-        #saveButton, #saveAllPrizesButton, #saveSettingsButton, #downloadTicketButton, #loginButton, #reauthButton { background-color: var(--color-primary); color: white; }
+        #saveButton, #saveAllPrizesButton, #saveSettingsButton, #downloadTicketButton, #loginButton, #reauthButton, #createRifaButton { background-color: var(--color-primary); color: white; }
         #deleteButton { background-color: var(--color-danger); color: white; }
         .action-btn-pago { padding: 10px 15px; background-color: var(--color-pago); color: white !important; border: none; border-radius: 5px; cursor: pointer; font-weight: bold; font-size: 16px; display: inline-flex; align-items: center; gap: 8px; transition: background-color 0.2s, transform 0.2s; }
         .action-btn-pago:hover { transform: translateY(-2px); filter: brightness(1.1); }
-        
-        /* ============================================================================== */
-        /* ========= INICIO DE MODIFICACIONES: ESTILOS DEL PANEL DE ADMINISTRADOR ========= */
-        /* ============================================================================== */
-        .raffle-manager { display: flex; flex-wrap: wrap; gap: 15px; align-items: flex-end; }
-        .raffle-selector-container { flex: 1 1 300px; display: flex; flex-direction: column; gap: 10px; min-width: 250px;}
+        .raffle-manager { display: flex; flex-direction: column; gap: 15px; align-items: stretch; }
+        .raffle-selector-container { flex-grow: 1; display: flex; flex-direction: column; gap: 10px; }
         .selector-wrapper-with-button { display: flex; align-items: center; gap: 8px; flex-wrap: wrap; }
-        .raffle-creator { flex: 2 1 400px; display: none; flex-wrap: wrap; gap: 8px; align-items: flex-end;}
-        .raffle-creator > div { flex: 1 1 180px; }
-        .raffle-creator-input-group { display: flex; flex-wrap: wrap; align-items: flex-end; gap: 8px; flex: 2 1 300px; }
-        .raffle-creator-input-group > div { flex: 1 1 150px; }
-        #createRifaButton { flex-basis: 100px; }
-        body.admin-view .raffle-creator { display: flex; }
-        /* ============================================================================ */
-        /* ========= FIN DE MODIFICACIONES: ESTILOS DEL PANEL DE ADMINISTRADOR ========== */
-        /* ============================================================================ */
-        
         .custom-select-wrapper { position: relative; user-select: none; flex-grow: 1; }
         .select-selected { background-color: var(--background-card); border: 1px solid var(--border-color); border-radius: 8px; padding: 0 40px 0 15px; font-size: 16px; color: var(--text-dark); width: 100%; height: 48px; cursor: pointer; transition: border-color 0.2s, box-shadow 0.2s; display: flex; align-items: center; box-sizing: border-box; }
         .select-selected.select-arrow-active { border-color: var(--color-primary); box-shadow: 0 0 0 3px rgba(117, 31, 255, 0.25); }
@@ -185,7 +171,7 @@
         #searchInput:focus + label, #searchInput:not(:placeholder-shown) + label { transform: translateY(-150%) scale(0.8); color: var(--color-primary); }
         #darkModeToggle { position: fixed; top: 15px; right: 15px; width: 40px; height: 40px; border-radius: 50%; border: 1px solid var(--border-color); background-color: var(--background-card); color: var(--text-light); font-size: 18px; cursor: pointer; display: flex; align-items: center; justify-content: center; z-index: 1001; transition: all var(--transition-speed) ease; }
         #deleteRifaButton, #settingsButton, #vendedoresButton, #resumenVendedoresButton { display: none; align-items: center; justify-content: center; height: 48px; width: 48px; padding: 0; background-color: transparent; border-radius: 8px; cursor: pointer; transition: all 0.2s ease; flex-shrink: 0; }
-        #prizeButton.visible { display: block; }
+        #prizeButton.visible, #openCreateRaffleModalButton.visible { display: block; }
         body.admin-view #deleteRifaButton.visible, body.admin-view #settingsButton.visible, body.admin-view #vendedoresButton.visible, body.admin-view #resumenVendedoresButton.visible { display: flex; }
         #settingsButton, #vendedoresButton, #resumenVendedoresButton { border: 1px solid var(--color-primary); color: var(--color-primary); }
         #settingsButton:hover, #vendedoresButton:hover, #resumenVendedoresButton:hover { background-color: var(--color-primary); color: white; }
@@ -203,7 +189,9 @@
         #prizeButton:active { transform: translateY(0); }
         .prize-icon { display: inline-block; transition: transform 0.3s ease; }
         #prizeButton:hover .prize-icon { transform: scale(1.2) rotate(8deg); }
-        #prizeButton.visible { display: block; }
+        #openCreateRaffleModalButton { display: none; width: 100%; padding: 12px 20px; margin-top: 10px; font-size: 1.1em; font-weight: bold; color: var(--color-primary); background-color: transparent; border: 2px solid var(--color-primary); border-radius: 8px; cursor: pointer; transition: all 0.3s ease; }
+        body.admin-view #openCreateRaffleModalButton { display: block; }
+        #openCreateRaffleModalButton:hover { background-color: var(--color-primary); color: white; }
         #prize-info-section { display: flex; flex-wrap: wrap; gap: 15px; justify-content: center; }
         .prize-card { background-color: var(--background-card); color: var(--text-dark); border: 1px solid var(--border-color); border-top: 5px solid transparent; transition: all 0.3s ease; text-align: center; border-radius: 12px; padding: 15px; flex: 1 1 250px; max-width: 320px; box-shadow: 0 4px 15px var(--shadow-color); }
         .prize-card:hover { transform: translateY(-5px); box-shadow: 0 8px 25px var(--shadow-color); }
@@ -449,11 +437,10 @@
             color: var(--text-dark);
         }
 
-        /* --- INICIO DE CAMBIOS: ESTILOS RESPONSIVE Y BOTÓN DE LOGIN --- */
         #auth-button {
             position: fixed;
-            bottom: 15px; /* Cambiado de top a bottom */
-            right: 15px;  /* Cambiado de left a right */
+            bottom: 15px;
+            right: 15px;
             height: 40px;
             padding: 0 15px;
             border-radius: 20px;
@@ -473,7 +460,6 @@
             color: var(--color-primary);
         }
         
-        /* --- INICIO DE CAMBIOS: SKELETON LOADER --- */
         @keyframes shimmer {
             100% { transform: translateX(100%); }
         }
@@ -511,19 +497,17 @@
             height: 20px;
             border-radius: 4px;
         }
-        /* --- FIN DE CAMBIOS --- */
 
-        @media (max-width: 768px) {
-            /* Se eliminaron las reglas que forzaban el apilamiento vertical aquí para permitir más flexibilidad */
-        }
-        
         @media (max-width: 650px) {
             #anticipados-list { display: flex; flex-direction: row; overflow-x: auto; scroll-snap-type: x mandatory; padding: 10px 10px 20px 10px; margin: 0 -20px; -webkit-overflow-scrolling: touch; }
             #anticipados-list::-webkit-scrollbar { display: none; }
             #anticipados-list { -ms-overflow-style: none; scrollbar-width: none; }
             .anticipado-card { flex: 0 0 85%; scroll-snap-align: start; scroll-snap-stop: always; }
         }
-        @media (max-width: 600px) { body { padding: 5px; } .raffle-manager { flex-direction: column; align-items: stretch; gap: 20px; } .prize-card { min-width: 100%;} }
+        @media (max-width: 600px) { 
+            body { padding: 5px; } 
+            .prize-card { min-width: 100%;} 
+        }
     </style>
 </head>
 <body>
@@ -532,6 +516,7 @@
 <div class="container" id="main-container">
     <button id="auth-button"><i class="fas fa-sign-in-alt"></i></button>
     <button id="darkModeToggle" aria-label="Cambiar tema"><i class="fas fa-moon"></i></button>
+    
     <div class="raffle-manager">
         <div class="raffle-selector-container">
             <label for="rifaSelect">Selecciona una Rifa:</label>
@@ -547,28 +532,10 @@
                 <button id="deleteRifaButton" title="Eliminar rifa seleccionada"><i class="fas fa-trash-alt"></i></button>
             </div>
             <button id="prizeButton" title="Ver/Editar Premios">VER PREMIOS <span class="prize-icon">🏆</span></button>
-        </div>
-        <div class="raffle-creator">
-            <div class="raffle-creator-input-group">
-                <div>
-                    <label for="newRifaName">Nombre de la nueva rifa</label>
-                    <input type="text" id="newRifaName" placeholder="Ej: Rifa de Verano">
-                </div>
-                <div>
-                    <label for="newRifaDate">Fecha del Sorteo</label>
-                    <input type="date" id="newRifaDate">
-                </div>
-            </div>
-            <div>
-                <label for="newRifaSize">Números</label>
-                <select id="newRifaSize" style="width: 100%; padding: 10px; border: 1px solid var(--border-color); border-radius: 4px; background-color: var(--background-light); color: var(--text-dark); height: 48px;">
-                    <option value="100">100 (00-99)</option>
-                    <option value="1000">1000 (000-999)</option>
-                </select>
-            </div>
-            <button id="createRifaButton" style="height: 48px;">Crear Rifa</button>
+            <button id="openCreateRaffleModalButton">Crear Rifa Nueva</button>
         </div>
     </div>
+
     <div class="summary-panel">
         <div class="summary-card" id="card-pago"><div class="card-icon"><svg xmlns="http://www.w3.org/2000/svg" fill="currentColor" viewBox="0 0 16 16"><path d="M16 8A8 8 0 1 1 0 8a8 8 0 0 1 16 0zm-3.97-3.03a.75.75 0 0 0-1.08.022L7.477 9.417 5.384 7.323a.75.75 0 0 0-1.06 1.06L6.97 11.03a.75.75 0 0 0 1.079-.02l3.992-4.99a.75.75 0 0 0-.01-1.05z"/></svg></div><span class="info-count" id="summaryPago">0</span><p class="info-label">Pagados</p></div>
         <div class="summary-card" id="card-separado"><div class="card-icon"><svg xmlns="http://www.w3.org/2000/svg" fill="currentColor" viewBox="0 0 16 16"><path d="M16 8A8 8 0 1 1 0 8a8 8 0 0 1 16 0zM8 3.5a.5.5 0 0 0-1 0V9a.5.5 0 0 0 .252.434l3.5 2a.5.5 0 0 0 .496-.868L8 8.71V3.5z"/></svg></div><span class="info-count" id="summarySeparado">0</span><p class="info-label">Separados</p></div>
@@ -608,6 +575,31 @@
         <div class="winner-input-display" id="winnerInputDisplay"><div class="digit-circle"></div><div class="digit-circle"></div><div class="digit-circle"></div><div class="digit-circle"></div><input type="tel" id="realWinningInput" maxlength="4" autocomplete="off" /></div>
         <button id="checkWinnerButton">Verificar Ganadores</button>
         <div id="winnerResults">Ingresa el número de 4 cifras de la lotería para conocer a los ganadores.</div>
+    </div>
+</div>
+
+<div id="createRaffleModal" class="modal">
+    <div class="modal-content">
+        <div class="modal-header">
+            <h2><i class="fas fa-plus-circle"></i> Crear Nueva Rifa</h2>
+            <span class="close-button">&times;</span>
+        </div>
+        <div class="modal-body">
+            <label for="newRifaName">Nombre de la Rifa:</label>
+            <input type="text" id="newRifaName" placeholder="Ej: Rifa de Verano">
+            
+            <label for="newRifaDate">Fecha del Sorteo Principal:</label>
+            <input type="date" id="newRifaDate">
+            
+            <label for="newRifaSize">Cantidad de Números:</label>
+            <select id="newRifaSize">
+                <option value="100">100 (00-99)</option>
+                <option value="1000">1000 (000-999)</option>
+            </select>
+        </div>
+        <div class="modal-footer">
+            <button id="createRifaButton">Crear Rifa</button>
+        </div>
     </div>
 </div>
 
@@ -652,7 +644,7 @@
 
 <div id="prizeModal" class="modal">
     <div class="modal-content">
-        <div class="modal-header"><h2 style="display: flex; align-items: center; gap: 10px;"><i class="fas fa-trophy" style="color: var(--color-separado);"></i> PREMIOS</h2><span class="close-button">&times;</span></div>
+        <div class="modal-header"><h2><i class="fas fa-trophy" style="color: var(--color-separado);"></i> PREMIOS</h2><span class="close-button">&times;</span></div>
         <div class="modal-body">
             <div id="prize-info-section"></div>
             <hr>
@@ -925,6 +917,9 @@
             reauthPassword: document.getElementById('reauthPassword'),
             reauthButton: document.getElementById('reauthButton'),
             reauthError: document.getElementById('reauthError'),
+            createRaffleModal: document.getElementById('createRaffleModal'),
+            openCreateRaffleModalButton: document.getElementById('openCreateRaffleModalButton'),
+            closeCreateRaffleModalButton: document.querySelector('#createRaffleModal .close-button'),
         };
 
         let rifaActivaId = null, unsubRifaListener = null, currentNumber = null, localRaffleData = {}, activeRaffleData = {}, currentPrizeData = {};
@@ -956,7 +951,6 @@
         const aplicarColoresPersonalizados = (c) => { if(!c) return; document.documentElement.style.setProperty('--color-disponible', c.disponible); document.documentElement.style.setProperty('--color-separado', c.separado); document.documentElement.style.setProperty('--color-pago', c.pago); };
         const restaurarColoresDefault = () => { document.documentElement.style.removeProperty('--color-disponible'); document.documentElement.style.removeProperty('--color-separado'); document.documentElement.style.removeProperty('--color-pago'); };
         
-        // Funciones para controlar el scroll del body
         const disableBodyScroll = () => document.body.classList.add('body-no-scroll');
         const enableBodyScroll = () => document.body.classList.remove('body-no-scroll');
 
@@ -1105,6 +1099,15 @@
 
         const applyTheme = (t) => { const i = DOM.darkModeToggle.querySelector('i'); if (t === 'dark') { document.body.classList.add('dark-mode'); i.classList.remove('fa-moon'); i.classList.add('fa-sun'); } else { document.body.classList.remove('dark-mode'); i.classList.remove('fa-sun'); i.classList.add('fa-moon'); } };
         
+        const openCreateRaffleModal = () => {
+            DOM.createRaffleModal.classList.add('visible');
+            disableBodyScroll();
+        };
+        const closeCreateRaffleModal = () => {
+            DOM.createRaffleModal.classList.remove('visible');
+            enableBodyScroll();
+        };
+
         const cargarRifas = async () => { 
             DOM.rifaSelect.style.display = 'none';
             DOM.rifaSelectSkeleton.style.display = 'block';
@@ -1176,6 +1179,7 @@
                 DOM.newRifaName.value = '';
                 DOM.newRifaDate.value = '';
                 showToast(`Rifa "${nombre}" creada.`, "success");
+                closeCreateRaffleModal();
                 await cargarRifas();
             } catch (e) {
                 console.error("Error al crear:", e);
@@ -1209,6 +1213,7 @@
             rifaActivaId = f ? null : DOM.rifaSelect.dataset.value;
             const h = !!rifaActivaId;
             DOM.prizeButton.classList.toggle('visible', h);
+            DOM.openCreateRaffleModalButton.classList.toggle('visible', true); // Siempre visible
             DOM.deleteRifaButton.classList.toggle('visible', h);
             DOM.settingsButton.classList.toggle('visible', h);
             DOM.vendedoresButton.classList.toggle('visible', h);
@@ -1983,6 +1988,8 @@
 
         DOM.darkModeToggle.addEventListener('click', () => { const n = document.body.classList.contains('dark-mode') ? 'light' : 'dark'; localStorage.setItem('theme', n); applyTheme(n); });
         DOM.createRifaButton.addEventListener('click', crearNuevaRifa);
+        DOM.openCreateRaffleModalButton.addEventListener('click', openCreateRaffleModal);
+        DOM.closeCreateRaffleModalButton.addEventListener('click', closeCreateRaffleModal);
         DOM.deleteRifaButton.addEventListener('click', deleteRifaActual);
         DOM.closeDataModalButton.addEventListener('click', closeDataModal);
         DOM.saveButton.addEventListener('click', saveData);
@@ -1998,11 +2005,8 @@
         DOM.closePrizeModalButton.addEventListener('click', closePrizeModal);
         
         DOM.modalBackdrop.addEventListener('click', (e) => { 
-            if (e.target === DOM.modalBackdrop) { 
-                // Cierra todos los modales abiertos
-                document.querySelectorAll('.modal.visible').forEach(modal => {
-                    modal.classList.remove('visible');
-                });
+            if (e.target === DOM.modalBackdrop) {
+                document.querySelectorAll('.modal.visible').forEach(modal => modal.classList.remove('visible'));
                 enableBodyScroll();
             } 
         });
