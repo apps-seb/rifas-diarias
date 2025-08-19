@@ -502,6 +502,36 @@
         }
         /* --- FIN DE CAMBIOS --- */
 
+        /* ==================================================================================== */
+        /* ========= INICIO DE MODIFICACIONES DE RESPONSIVIDAD PARA EL PANEL DE ADMIN ========= */
+        /* ==================================================================================== */
+
+        /*
+          1. Envoltura para los botones de acción del admin.
+             Esta regla permite que los botones (configurar, vendedores, etc.)
+             bajen a la siguiente línea si no hay espacio, evitando el desbordamiento.
+        */
+        .selector-wrapper-with-button {
+            flex-wrap: wrap;
+        }
+        
+        /*
+          2. Ajustes específicos para el input de nombre y el botón de IA.
+             El div que los contiene usa un estilo en línea (display:flex), por lo que necesitamos un 
+             selector específico para hacerlo responsivo sin modificar el HTML.
+        */
+        label[for="newRifaName"] + div {
+            flex-wrap: wrap; /* Permitimos que el botón de IA baje si no hay espacio */
+        }
+
+        label[for="newRifaName"] + div > input {
+            flex: 1 1 150px; /* Damos una base flexible al input para que no se encoja de más */
+        }
+        
+        /* ================================================================================== */
+        /* ========= FIN DE MODIFICACIONES DE RESPONSIVIDAD PARA EL PANEL DE ADMIN ========== */
+        /* ================================================================================== */
+
         @media (max-width: 768px) {
             .raffle-creator {
                 flex-direction: column;
@@ -511,6 +541,18 @@
             .raffle-creator-input-group {
                 flex-direction: column;
                 align-items: stretch;
+            }
+        }
+        
+        /* Media Query para pantallas muy pequeñas donde apilamos el input de nombre y su botón */
+        @media (max-width: 420px) {
+            label[for="newRifaName"] + div {
+                flex-direction: column;
+                align-items: stretch;
+            }
+
+            #suggestNameButton {
+                width: 100% !important; /* !important para sobreescribir el estilo en línea */
             }
         }
 
@@ -524,7 +566,6 @@
     </style>
 </head>
 <body>
-<!-- --- ESTRUCTURA HTML (SIN CAMBIOS SIGNIFICATIVOS, SALVO EL MODAL DE LOGIN) --- -->
 <div id="toast-notification"></div>
 
 <div class="container" id="main-container">
@@ -535,13 +576,7 @@
             <label for="rifaSelect">Selecciona una Rifa:</label>
             <div class="selector-wrapper-with-button">
                 <div class="custom-select-wrapper">
-                    <!-- ================================================================= -->
-                    <!-- =========== INICIO DE CAMBIOS: SKELETON PARA SELECTOR =========== -->
-                    <!-- ================================================================= -->
                     <div id="rifaSelectSkeleton" class="skeleton"></div>
-                    <!-- ================================================================= -->
-                    <!-- ======================= FIN DE CAMBIOS ========================== -->
-                    <!-- ================================================================= -->
                     <div id="rifaSelect" class="select-selected" style="display: none;">-- Cargando... --</div>
                     <div id="rifaSelectItems" class="select-items select-hide"></div>
                 </div>
@@ -602,18 +637,12 @@
             <i class="fas fa-chevron-down toggle-icon"></i>
         </button>
         <div id="participant-list-container" class="collapsible-content">
-            <!-- ================================================================= -->
-            <!-- ======== INICIO DE CAMBIOS: SKELETON PARA PARTICIPANTES ========= -->
-            <!-- ================================================================= -->
             <div id="participantListSkeleton">
                 <div class="skeleton-row"><span class="skeleton" style="width: 15%;"></span><span class="skeleton" style="width: 50%;"></span><span class="skeleton" style="width: 35%;"></span></div>
                 <div class="skeleton-row"><span class="skeleton" style="width: 15%;"></span><span class="skeleton" style="width: 40%;"></span><span class="skeleton" style="width: 45%;"></span></div>
                 <div class="skeleton-row"><span class="skeleton" style="width: 15%;"></span><span class="skeleton" style="width: 55%;"></span><span class="skeleton" style="width: 30%;"></span></div>
             </div>
-            <!-- ================================================================= -->
-            <!-- ======================= FIN DE CAMBIOS ========================== -->
-            <!-- ================================================================= -->
-        </div>
+            </div>
     </div>
 
     <div class="winner-section">
@@ -760,9 +789,6 @@
     </div>
 </div>
 
-<!-- ================================================================= -->
-<!-- ============ INICIO DE CAMBIOS: MODAL DE LOGIN ================== -->
-<!-- ================================================================= -->
 <div id="loginModal" class="modal">
     <div class="modal-content">
         <div class="modal-header">
@@ -800,11 +826,6 @@
         </div>
     </div>
 </div>
-<!-- ================================================================= -->
-<!-- ===================== FIN DE CAMBIOS ============================ -->
-<!-- ================================================================= -->
-
-
 <div id="ticket-template">
     <div class="ticket-container">
         <div class="ticket-header">
@@ -844,10 +865,6 @@
     </div>
 </div>
 <div class="modal-backdrop" id="modal-backdrop"></div>
-
-<!-- ================================================================= -->
-<!-- ============ INICIO DE CAMBIOS: FIREBASE SDK v11 ================ -->
-<!-- ================================================================= -->
 
 <script type="module">
     // Importar funciones de la nueva versión modular de Firebase
@@ -1958,7 +1975,7 @@
                 let chatHistory = [{ role: "user", parts: [{ text: prompt }] }];
                 const payload = { contents: chatHistory };
                 const apiKey = "AIzaSyDwLO6eJqWHENOkxUlaNwgGpXEXEhs19go";
-                const apiUrl = `https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-flash-preview-05-20:generateContent?key=${apiKey}`;
+                const apiUrl = `https://generativelanguage.googleapis.com/v1beta/models/gemini-1.5-flash-preview-0514:generateContent?key=${apiKey}`;
 
                 const response = await fetch(apiUrl, {
                     method: 'POST',
