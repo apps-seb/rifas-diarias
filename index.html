@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-    <title>Control de Rifas Inmersivo</title>
+    <title>Control de Rifas Inmersivo con IA</title>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" />
     <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
     <style>
@@ -150,6 +150,8 @@
         .selector-wrapper-with-button { display: flex; align-items: center; gap: 10px; }
         .raffle-creator { flex: 1 1 100%; display: none; flex-wrap: wrap; gap: 10px; align-items: flex-end;}
         .raffle-creator > div { flex: 1 1 200px; }
+        .raffle-creator-input-group { display: flex; align-items: flex-end; gap: 10px; flex-grow: 2; }
+        .raffle-creator-input-group > div { flex-grow: 1; }
         body.admin-view .raffle-creator { display: flex; }
         .custom-select-wrapper { position: relative; user-select: none; flex-grow: 1; }
         .select-selected { background-color: var(--background-card); border: 1px solid var(--border-color); border-radius: 8px; padding: 0 40px 0 15px; font-size: 16px; color: var(--text-dark); width: 100%; height: 48px; cursor: pointer; transition: border-color 0.2s, box-shadow 0.2s; display: flex; align-items: center; box-sizing: border-box; }
@@ -464,6 +466,10 @@
                 align-items: stretch;
                 gap: 15px;
             }
+            .raffle-creator-input-group {
+                flex-direction: column;
+                align-items: stretch;
+            }
         }
         /* --- FIN DE CAMBIOS --- */
 
@@ -499,14 +505,25 @@
             <button id="prizeButton" title="Ver/Editar Premios">VER PREMIOS <span class="prize-icon">🏆</span></button>
         </div>
         <div class="raffle-creator">
-            <div>
-                <label for="newRifaName">Nombre de la nueva rifa</label>
-                <input type="text" id="newRifaName" placeholder="Ej: Rifa de Verano">
+            <!-- ================================================================= -->
+            <!-- =========== INICIO DE CAMBIOS: GRUPO DE INPUTS PARA IA =========== -->
+            <!-- ================================================================= -->
+            <div class="raffle-creator-input-group">
+                <div>
+                    <label for="newRifaName">Nombre de la nueva rifa</label>
+                    <div style="display: flex; gap: 10px;">
+                         <input type="text" id="newRifaName" placeholder="Ej: Rifa de Verano" style="flex-grow: 1;">
+                         <button id="suggestNameButton" title="Sugerir nombre con IA" style="height: 48px; width: 48px; flex-shrink: 0; padding: 0; border-radius: 8px;"><i class="fas fa-wand-magic-sparkles"></i></button>
+                    </div>
+                </div>
+                <div>
+                    <label for="newRifaDate">Fecha del Sorteo Principal</label>
+                    <input type="date" id="newRifaDate">
+                </div>
             </div>
-            <div>
-                <label for="newRifaDate">Fecha del Sorteo Principal</label>
-                <input type="date" id="newRifaDate">
-            </div>
+            <!-- ================================================================= -->
+            <!-- ======================= FIN DE CAMBIOS ========================== -->
+            <!-- ================================================================= -->
             <div>
                 <label for="newRifaSize">Cantidad de Números</label>
                 <select id="newRifaSize" style="width: 100%; padding: 10px; border: 1px solid var(--border-color); border-radius: 4px; background-color: var(--background-light); color: var(--text-dark); height: 48px;">
@@ -878,6 +895,7 @@
             reauthPassword: document.getElementById('reauthPassword'),
             reauthButton: document.getElementById('reauthButton'),
             reauthError: document.getElementById('reauthError'),
+            suggestNameButton: document.getElementById('suggestNameButton'),
         };
 
         let rifaActivaId = null, unsubRifaListener = null, currentNumber = null, localRaffleData = {}, activeRaffleData = {}, currentPrizeData = {};
@@ -957,9 +975,6 @@
             }
         });
 
-        // =================================================================
-        // =========== INICIO DE CAMBIOS: CONFIRMACIÓN DE ACCIÓN ===========
-        // =================================================================
         const openReauthModal = (callback) => {
             actionToConfirm = callback;
             DOM.reauthPassword.value = '';
@@ -1001,9 +1016,6 @@
                 DOM.reauthError.style.display = 'block';
             }
         };
-        // =================================================================
-        // ======================= FIN DE CAMBIOS ==========================
-        // =================================================================
 
         const openSettingsModal = () => {
             if (!rifaActivaId || !auth.currentUser) return;
@@ -1871,12 +1883,74 @@
             container.innerHTML = tableHTML;
         };
 
+        // =================================================================
+        // =========== INICIO DE CAMBIOS: LÓGICA DE GEMINI API =============
+        // =================================================================
+        const suggestRaffleName = async () => {
+            const button = DOM.suggestNameButton;
+            button.disabled = true;
+            button.innerHTML = '<i class="fas fa-spinner fa-spin"></i>';
+
+            try {
+                const prompt = "Sugiere 5 nombres creativos, cortos y atractivos en español para una rifa o sorteo. Devuelve solo los nombres, separados por comas.";
+                
+                let chatHistory = [{ role: "user", parts: [{ text: prompt }] }];
+                const payload = { contents: chatHistory };
+                const apiKey = ""; // Será proveído por el entorno de Canvas
+                const apiUrl = `https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-flash-preview-05-20:generateContent?key=${apiKey}`;
+
+                const response = await fetch(apiUrl, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify(payload)
+                });
+
+                if (!response.ok) {
+                    throw new Error(`La solicitud a la API falló con estado ${response.status}`);
+                }
+
+                const result = await response.json();
+                
+                if (result.candidates && result.candidates.length > 0 &&
+                    result.candidates[0].content && result.candidates[0].content.parts &&
+                    result.candidates[0].content.parts.length > 0) {
+                    
+                    const text = result.candidates[0].content.parts[0].text;
+                    const names = text.split(',').map(name => name.trim());
+                    
+                    if (names.length > 0) {
+                        DOM.newRifaName.value = names[Math.floor(Math.random() * names.length)]; // Elige uno al azar
+                        showToast("¡Nombre sugerido!", "success");
+                    } else {
+                         throw new Error("No se recibieron nombres válidos.");
+                    }
+                } else {
+                    throw new Error("Respuesta inesperada de la API.");
+                }
+
+            } catch (error) {
+                console.error("Error llamando a la API de Gemini:", error);
+                showToast("No se pudieron obtener sugerencias.", "error");
+            } finally {
+                button.disabled = false;
+                button.innerHTML = '<i class="fas fa-wand-magic-sparkles"></i>';
+            }
+        };
+        // =================================================================
+        // ======================= FIN DE CAMBIOS ==========================
+        // =================================================================
+
         // Inicialización y Listeners
         applyTheme(localStorage.getItem('theme') || 'light');
         cargarRifas();
         fetchSellers();
         DOM.checkWinnerButton.disabled = true;
         
+        DOM.authButton.addEventListener('click', () => { auth.currentUser ? handleLogout() : openLoginModal(); });
+        DOM.loginButton.addEventListener('click', handleLogin);
+        DOM.closeLoginModalButton.addEventListener('click', closeLoginModal);
+        DOM.loginPassword.addEventListener('keyup', (e) => { if (e.key === 'Enter') handleLogin(); });
+
         DOM.settingsButton.addEventListener('click', () => { if(auth.currentUser) openSettingsModal(); else showToast("Debes iniciar sesión.", "error"); });
         DOM.closeSettingsModalButton.addEventListener('click', closeSettingsModal);
         DOM.saveSettingsButton.addEventListener('click', saveSettings);
@@ -1899,6 +1973,7 @@
         DOM.deleteButton.addEventListener('click', () => { if(auth.currentUser) openReauthModal(deleteData); else showToast("Debes iniciar sesión.", "error"); });
         DOM.reauthButton.addEventListener('click', handleReauthentication);
         DOM.closeReauthModalButton.addEventListener('click', closeReauthModal);
+        DOM.reauthPassword.addEventListener('keyup', (e) => { if(e.key === 'Enter') handleReauthentication(); });
 
         DOM.darkModeToggle.addEventListener('click', () => { const n = document.body.classList.contains('dark-mode') ? 'light' : 'dark'; localStorage.setItem('theme', n); applyTheme(n); });
         DOM.createRifaButton.addEventListener('click', crearNuevaRifa);
@@ -2006,6 +2081,8 @@
                 section.style.display = 'block';
             }
         });
+
+        DOM.suggestNameButton.addEventListener('click', suggestRaffleName);
 
         document.body.addEventListener('click', function(e) {
             const tooltip = document.querySelector('.participant-tooltip');
