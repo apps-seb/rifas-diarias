@@ -7,7 +7,6 @@
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" />
     <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
     <style>
-        /* --- ESTILOS CSS (SIN CAMBIOS) --- */
         :root {
             --color-disponible: #751FFF;
             --color-separado: #ffc107;
@@ -816,17 +815,10 @@ document.addEventListener('DOMContentLoaded', () => {
     let onPasswordSuccessCallback = null;
     let toastTimeout;
 
-    // Función de notificación mejorada para aceptar tipos
-    const showToast = (message, type = 'info') => {
+    const showToast = (message) => {
         if(toastTimeout) clearTimeout(toastTimeout);
         DOM.toastNotification.textContent = message;
         DOM.toastNotification.classList.add('show');
-        DOM.toastNotification.style.backgroundColor = ''; // Reset
-        if (type === 'success') {
-            DOM.toastNotification.style.backgroundColor = 'var(--color-pago)';
-        } else if (type === 'error') {
-            DOM.toastNotification.style.backgroundColor = 'var(--color-danger)';
-        }
         toastTimeout = setTimeout(() => {
             DOM.toastNotification.classList.remove('show');
         }, 3500);
@@ -865,7 +857,7 @@ document.addEventListener('DOMContentLoaded', () => {
         };
 
         if (!newSettings.fechaSorteo) {
-            showToast("La fecha del sorteo no puede estar vacía.", "error");
+            alert("La fecha del sorteo no puede estar vacía.");
             return;
         }
 
@@ -873,51 +865,17 @@ document.addEventListener('DOMContentLoaded', () => {
             await db.collection("rifas").doc(rifaActivaId).update(newSettings);
             aplicarColoresPersonalizados(newSettings.colores);
             activeRaffleData = {...activeRaffleData, ...newSettings};
-            showToast("Configuración actualizada.", "success");
+            showToast("Configuración actualizada.");
             closeSettingsModal();
         } catch (e) {
             console.error("Error al guardar configuración:", e);
-            showToast("No se pudo guardar la configuración.", "error");
+            alert("No se pudo guardar la configuración.");
         }
     };
 
     const applyTheme = (t) => { const i = DOM.darkModeToggle.querySelector('i'); if (t === 'dark') { document.body.classList.add('dark-mode'); i.classList.remove('fa-moon'); i.classList.add('fa-sun'); } else { document.body.classList.remove('dark-mode'); i.classList.remove('fa-sun'); i.classList.add('fa-moon'); } };
-    
     firebase.auth().onAuthStateChanged(user => { document.body.classList.toggle('admin-view', !!user); });
-    
-    const cargarRifas = async () => { 
-        const s = await db.collection("rifas").orderBy("fechaCreacion", "desc").get(); 
-        DOM.rifaSelectItems.innerHTML = ''; 
-        if (s.empty) { 
-            DOM.rifaSelect.textContent = '-- No hay rifas --'; 
-            DOM.rifaSelect.dataset.value = ""; 
-            await cambiarRifaActiva(true); 
-            return; 
-        } 
-        s.forEach(d => { 
-            const o = document.createElement('div'); 
-            o.textContent = d.data().nombre; 
-            o.dataset.value = d.id; 
-            o.addEventListener('click', async function(e) { 
-                e.stopPropagation(); 
-                if (DOM.rifaSelect.dataset.value === this.dataset.value) { 
-                    DOM.rifaSelectItems.classList.remove('select-show'); 
-                    DOM.rifaSelect.classList.remove('select-arrow-active'); 
-                    return; 
-                }; 
-                DOM.rifaSelect.textContent = this.textContent; 
-                DOM.rifaSelect.dataset.value = this.dataset.value; 
-                DOM.rifaSelectItems.classList.remove('select-show'); 
-                DOM.rifaSelect.classList.remove('select-arrow-active'); 
-                await cambiarRifaActiva(); 
-            }); 
-            DOM.rifaSelectItems.appendChild(o); 
-        }); 
-        const p = s.docs[0]; 
-        DOM.rifaSelect.textContent = p.data().nombre; 
-        DOM.rifaSelect.dataset.value = p.id; 
-        await cambiarRifaActiva(); 
-    };
+    const cargarRifas = async () => { const s = await db.collection("rifas").orderBy("fechaCreacion", "desc").get(); DOM.rifaSelectItems.innerHTML = ''; if (s.empty) { DOM.rifaSelect.textContent = '-- No hay rifas --'; DOM.rifaSelect.dataset.value = ""; await cambiarRifaActiva(true); return; } s.forEach(d => { const o = document.createElement('div'); o.textContent = d.data().nombre; o.dataset.value = d.id; o.addEventListener('click', async function(e) { e.stopPropagation(); if (DOM.rifaSelect.dataset.value === this.dataset.value) { DOM.rifaSelectItems.classList.remove('select-show'); DOM.rifaSelect.classList.remove('select-arrow-active'); return; }; DOM.rifaSelect.textContent = this.textContent; DOM.rifaSelect.dataset.value = this.dataset.value; DOM.rifaSelectItems.classList.remove('select-show'); DOM.rifaSelect.classList.remove('select-arrow-active'); await cambiarRifaActiva(); }); DOM.rifaSelectItems.appendChild(o); }); const p = s.docs[0]; DOM.rifaSelect.textContent = p.data().nombre; DOM.rifaSelect.dataset.value = p.id; await cambiarRifaActiva(); };
 
     const crearNuevaRifa = async () => {
         const nombre = DOM.newRifaName.value.trim();
@@ -925,7 +883,7 @@ document.addEventListener('DOMContentLoaded', () => {
         const fechaSorteo = DOM.newRifaDate.value;
 
         if (!nombre || !fechaSorteo) {
-            showToast("Por favor, asigna un nombre y una fecha de sorteo a la rifa.", "error");
+            alert("Por favor, asigna un nombre y una fecha de sorteo a la rifa.");
             return;
         }
         try {
@@ -945,30 +903,15 @@ document.addEventListener('DOMContentLoaded', () => {
             });
             DOM.newRifaName.value = '';
             DOM.newRifaDate.value = '';
-            showToast(`Rifa "${nombre}" creada.`, "success");
+            showToast(`Rifa "${nombre}" creada.`);
             await cargarRifas();
         } catch (e) {
             console.error("Error al crear:", e);
-            showToast("Error al crear rifa.", "error");
+            alert("Error al crear rifa.");
         }
     };
 
-    const deleteRifaActual = async () => { 
-        if (!rifaActivaId) { showToast("No hay rifa seleccionada.", "error"); return; } 
-        const n = DOM.rifaSelect.textContent; 
-        if (!confirm(`¿Borrar rifa "${n}"?\n\n¡ACCIÓN IRREVERSIBLE!`)) return; 
-        try { 
-            const r = db.collection("rifas").doc(rifaActivaId).collection("numeros"), s = await r.get(), b = db.batch(); 
-            s.docs.forEach(d => { b.delete(d.ref); }); 
-            await b.commit(); 
-            await db.collection("rifas").doc(rifaActivaId).delete(); 
-            showToast(`Rifa "${n}" eliminada.`, "success");
-            await cargarRifas(); 
-        } catch (e) { 
-            console.error("Error al eliminar:", e); 
-            showToast("Error al eliminar rifa.", "error");
-        } 
-    };
+    const deleteRifaActual = async () => { if (!rifaActivaId) { alert("No hay rifa seleccionada."); return; } const n = DOM.rifaSelect.textContent; if (!confirm(`¿Borrar rifa "${n}"?\n\n¡ACCIÓN IRREVERSIBLE!`)) return; try { const r = db.collection("rifas").doc(rifaActivaId).collection("numeros"), s = await r.get(), b = db.batch(); s.docs.forEach(d => { b.delete(d.ref); }); await b.commit(); await db.collection("rifas").doc(rifaActivaId).delete(); showToast(`Rifa "${n}" eliminada.`); await cargarRifas(); } catch (e) { console.error("Error al eliminar:", e); alert("Error al eliminar rifa."); } };
     
     const cambiarRifaActiva = async (f = false) => {
         if (unsubRifaListener) unsubRifaListener();
@@ -1078,133 +1021,65 @@ document.addEventListener('DOMContentLoaded', () => {
 
     const closeDataModal = () => { DOM.dataModal.classList.remove('visible'); currentNumber = null; };
     
-    // =================================================================
-    // =========== FUNCIÓN SAVE CON VALIDACIÓN (SINTAXIS v8) ===========
-    // =================================================================
     const saveData = () => {
         if (!currentNumber || !rifaActivaId) return;
-
-        const s = DOM.inputStatus.value;
-        const d = db.collection("rifas").doc(rifaActivaId).collection("numeros").doc(currentNumber);
         
+        if (!localRaffleData[currentNumber] && !currentVendedor) {
+            alert("Debes verificar un código de vendedor para registrar una nueva venta.");
+            return;
+        }
+
         DOM.saveButton.disabled = true;
         DOM.saveButton.textContent = 'Guardando...';
 
+        const s = DOM.inputStatus.value;
+        const n = DOM.inputName.value.trim();
+        const p = DOM.inputPhone.value.trim();
+        const d = db.collection("rifas").doc(rifaActivaId).collection("numeros").doc(currentNumber);
+        
         const resetSaveButton = () => {
             DOM.saveButton.disabled = false;
             DOM.saveButton.textContent = 'Guardar';
         };
-
+        
         if (s === 'disponible') {
             d.delete().then(() => {
-                showToast("Datos limpiados con éxito.", "success");
-                DOM.adminTicketActions.style.display = 'none';
+                showToast("Datos limpiados con éxito.");
+                DOM.adminTicketActions.style.display = 'none'; // Oculta el botón de recibo
                 resetSaveButton();
             }).catch(err => {
                 console.error("Error al limpiar datos:", err);
-                showToast("Error al limpiar datos.", "error");
+                showToast("Error al limpiar datos.");
                 resetSaveButton();
             });
-            return;
-        }
+        } else {
+            const dataToSave = {
+                status: s,
+                name: n,
+                phone: p
+            };
+            if (currentVendedor) dataToSave.vendedorId = currentVendedor.id;
 
-        const n = DOM.inputName.value.trim();
-        const p = DOM.inputPhone.value.trim();
-        const abonoValue = Number(DOM.inputAbono.value);
-
-        if (n.length === 0 || n.length >= 100) {
-            showToast("El nombre es obligatorio y debe tener menos de 100 caracteres.", "error");
-            resetSaveButton();
-            return;
+            const abonoValue = Number(DOM.inputAbono.value);
+            if (s === 'separado' && abonoValue > 0) {
+                dataToSave.abono = abonoValue;
+            }
+            d.set(dataToSave, { merge: true }).then(() => {
+                showToast("Datos guardados con éxito.");
+                DOM.adminTicketActions.style.display = 'block'; // Muestra el botón de recibo
+                resetSaveButton();
+            }).catch(err => {
+                console.error("Error al guardar datos:", err);
+                showToast("Error al guardar datos.");
+                resetSaveButton();
+            });
         }
-        if (p.length < 7 || p.length >= 16) {
-            showToast("El celular es obligatorio (entre 7 y 15 dígitos).", "error");
-            resetSaveButton();
-            return;
-        }
-        if (!currentVendedor) {
-            showToast("Se requiere un vendedor verificado para guardar.", "error");
-            resetSaveButton();
-            return;
-        }
-
-        const dataToSave = {
-            status: s,
-            name: n,
-            phone: p,
-            vendedorId: currentVendedor.id
-        };
-
-        if (s === 'separado' && abonoValue > 0) {
-            dataToSave.abono = abonoValue;
-        }
-
-        d.set(dataToSave, { merge: true }).then(() => {
-            showToast("Datos guardados con éxito.", "success");
-            DOM.adminTicketActions.style.display = 'block';
-            resetSaveButton();
-        }).catch(err => {
-            console.error("Error al guardar datos:", err);
-            showToast("Error al guardar datos: " + err.message, "error");
-            resetSaveButton();
-        });
     };
-    // =================================================================
-    // ======================= FIN DE CAMBIOS ==========================
-    // =================================================================
 
     const deleteData = () => { if (!currentNumber || !rifaActivaId) return; db.collection("rifas").doc(rifaActivaId).collection("numeros").doc(currentNumber).delete().then(closeDataModal); };
     const closePrizeModal = () => { DOM.mainContainer.classList.remove('page-blur'); DOM.modalBackdrop.classList.remove('visible'); DOM.prizeModal.classList.remove('visible'); }
-    const openPrizeModal = async () => { 
-        if (!rifaActivaId) return; 
-        DOM.mainContainer.classList.add('page-blur'); 
-        DOM.modalBackdrop.classList.add('visible'); 
-        DOM.prizeModal.classList.add('visible'); 
-        const d = await db.collection("rifas").doc(rifaActivaId).get(), a = d.data() || {}; 
-        currentPrizeData = { premios: a.premios || { mayor: {}, segundo: {}, tercero: {} }, premiosAnticipados: a.premiosAnticipados || [] }; 
-        const u = firebase.auth().currentUser; 
-        DOM.prizeInfoSection.innerHTML = ''; 
-        const t = ['mayor', 'segundo', 'tercero'], l = { mayor: '🥇 Premio Mayor', segundo: '🥈 Segundo Premio', tercero: '🥉 Tercer Premio' }; 
-        t.forEach(i => { 
-            const p = currentPrizeData.premios[i] || { descripcion: '', valor: 0, imgUrl1: '', imgUrl2: '' }; 
-            let c = ''; 
-            if (u) { 
-                c = `<div class="prize-card-admin-view"><label for="${i}DescInput">Descripción:</label><input type="text" id="${i}DescInput" value="${p.descripcion || ''}"><label for="${i}ValorInput">Valor:</label><input type="number" id="${i}ValorInput" value="${p.valor || 0}"><label for="${i}ImgUrl1Input">URL Imagen/Video 1:</label><input type="url" id="${i}ImgUrl1Input" value="${p.imgUrl1 || ''}"><label for="${i}ImgUrl2Input">URL Imagen/Video 2:</label><input type="url" id="${i}ImgUrl2Input" value="${p.imgUrl2 || ''}"></div>`; 
-            } else { 
-                c = generarHtmlDePremio(p); 
-            } 
-            DOM.prizeInfoSection.innerHTML += `<div class="prize-card ${i}"><div class="prize-card-title">${l[i]}</div>${c}</div>`; 
-        }); 
-        renderAnticipados(); 
-        DOM.saveAllPrizesButton.style.display = u ? 'inline-block' : 'none'; 
-        DOM.modalWinningInput.value = ''; 
-        DOM.prizeSimulatorSlots.forEach(s => { s.querySelector('span').textContent = ''; s.classList.remove('liquid-filled', 'selected-digit'); }); 
-        DOM.prizeZonesContainer.classList.remove('active'); 
-        DOM.modalWinnerResults.innerHTML = ''; 
-    };
-    const saveAllPrizes = async () => { 
-        if (!rifaActivaId || !firebase.auth().currentUser) return; 
-        DOM.saveAllPrizesButton.disabled = true; 
-        DOM.saveAllPrizesButton.textContent = 'Guardando...'; 
-        try { 
-            const n = { 
-                mayor: { descripcion: document.getElementById('mayorDescInput').value.trim(), valor: Number(document.getElementById('mayorValorInput').value) || 0, imgUrl1: document.getElementById('mayorImgUrl1Input').value.trim(), imgUrl2: document.getElementById('mayorImgUrl2Input').value.trim() }, 
-                segundo: { descripcion: document.getElementById('segundoDescInput').value.trim(), valor: Number(document.getElementById('segundoValorInput').value) || 0, imgUrl1: document.getElementById('segundoImgUrl1Input').value.trim(), imgUrl2: document.getElementById('segundoImgUrl2Input').value.trim() }, 
-                tercero: { descripcion: document.getElementById('terceroDescInput').value.trim(), valor: Number(document.getElementById('terceroValorInput').value) || 0, imgUrl1: document.getElementById('terceroImgUrl1Input').value.trim(), imgUrl2: document.getElementById('terceroImgUrl2Input').value.trim() } 
-            }; 
-            await db.collection("rifas").doc(rifaActivaId).update({ premios: n, premiosAnticipados: currentPrizeData.premiosAnticipados }); 
-            currentPrizeData.premios = n; 
-            showToast("Premios guardados.", "success");
-            return true; 
-        } catch (e) { 
-            console.error("Error guardando:", e); 
-            showToast("Error al guardar premios.", "error");
-            return false; 
-        } finally { 
-            DOM.saveAllPrizesButton.disabled = false; 
-            DOM.saveAllPrizesButton.textContent = 'Guardar Cambios en Premios'; 
-        } 
-    };
+    const openPrizeModal = async () => { if (!rifaActivaId) return; DOM.mainContainer.classList.add('page-blur'); DOM.modalBackdrop.classList.add('visible'); DOM.prizeModal.classList.add('visible'); const d = await db.collection("rifas").doc(rifaActivaId).get(), a = d.data() || {}; currentPrizeData = { premios: a.premios || { mayor: {}, segundo: {}, tercero: {} }, premiosAnticipados: a.premiosAnticipados || [] }; const u = firebase.auth().currentUser; DOM.prizeInfoSection.innerHTML = ''; const t = ['mayor', 'segundo', 'tercero'], l = { mayor: '🥇 Premio Mayor', segundo: '🥈 Segundo Premio', tercero: '🥉 Tercer Premio' }; t.forEach(i => { const p = currentPrizeData.premios[i] || { descripcion: '', valor: 0, imgUrl1: '', imgUrl2: '' }; let c = ''; if (u) { c = `<div class="prize-card-admin-view"><label for="${i}DescInput">Descripción:</label><input type="text" id="${i}DescInput" value="${p.descripcion || ''}"><label for="${i}ValorInput">Valor:</label><input type="number" id="${i}ValorInput" value="${p.valor || 0}"><label for="${i}ImgUrl1Input">URL Imagen/Video 1:</label><input type="url" id="${i}ImgUrl1Input" value="${p.imgUrl1 || ''}"><label for="${i}ImgUrl2Input">URL Imagen/Video 2:</label><input type="url" id="${i}ImgUrl2Input" value="${p.imgUrl2 || ''}"></div>`; } else { c = generarHtmlDePremio(p); } DOM.prizeInfoSection.innerHTML += `<div class="prize-card ${i}"><div class="prize-card-title">${l[i]}</div>${c}</div>`; }); renderAnticipados(); DOM.saveAllPrizesButton.style.display = u ? 'inline-block' : 'none'; DOM.modalWinningInput.value = ''; DOM.prizeSimulatorSlots.forEach(s => { s.querySelector('span').textContent = ''; s.classList.remove('liquid-filled', 'selected-digit'); }); DOM.prizeZonesContainer.classList.remove('active'); DOM.modalWinnerResults.innerHTML = ''; };
+    const saveAllPrizes = async () => { if (!rifaActivaId || !firebase.auth().currentUser) return; DOM.saveAllPrizesButton.disabled = true; DOM.saveAllPrizesButton.textContent = 'Guardando...'; try { const n = { mayor: { descripcion: document.getElementById('mayorDescInput').value.trim(), valor: Number(document.getElementById('mayorValorInput').value) || 0, imgUrl1: document.getElementById('mayorImgUrl1Input').value.trim(), imgUrl2: document.getElementById('mayorImgUrl2Input').value.trim() }, segundo: { descripcion: document.getElementById('segundoDescInput').value.trim(), valor: Number(document.getElementById('segundoValorInput').value) || 0, imgUrl1: document.getElementById('segundoImgUrl1Input').value.trim(), imgUrl2: document.getElementById('segundoImgUrl2Input').value.trim() }, tercero: { descripcion: document.getElementById('terceroDescInput').value.trim(), valor: Number(document.getElementById('terceroValorInput').value) || 0, imgUrl1: document.getElementById('terceroImgUrl1Input').value.trim(), imgUrl2: document.getElementById('terceroImgUrl2Input').value.trim() } }; await db.collection("rifas").doc(rifaActivaId).update({ premios: n, premiosAnticipados: currentPrizeData.premiosAnticipados }); currentPrizeData.premios = n; showToast("Premios guardados."); return true; } catch (e) { console.error("Error guardando:", e); alert("Error al guardar premios."); return false; } finally { DOM.saveAllPrizesButton.disabled = false; DOM.saveAllPrizesButton.textContent = 'Guardar Cambios en Premios'; } };
     const updateCellAppearance = (n, s) => { const c = document.querySelector(`.grid-item[data-number='${n}']`); if (c) { c.className = 'grid-item'; c.classList.add(`status-${s}`); } };
     const updateSummary = () => { let p = 0, s = 0; Object.values(localRaffleData).forEach(d => { if (d.status === 'pago') p++; else if (d.status === 'separado') s++; }); DOM.summaryPago.textContent = p; DOM.summarySeparado.textContent = s; DOM.summaryDisponible.textContent = totalNumbers - (p + s); };
     const performSearch = () => {
@@ -1239,13 +1114,7 @@ document.addEventListener('DOMContentLoaded', () => {
         }
     };
     const getWinnerInfo = (r, t, p) => { const d = localRaffleData[r], l = { mayor: '🥇 Premio Mayor', segundo: '🥈 Segundo Premio', tercero: '🥉 Tercer Premio' }, s = { mayor: 'gold', segundo: 'silver', tercero: 'bronze' }; let w; if (d && d.status === 'pago') { w = `<div class="prize-info"><div class="winner-name">${d.name||'N/A'}</div><div class="winner-phone">Cel: ${d.phone||'N/A'}</div><hr style="border-color: rgba(255,255,255,0.2); margin: 10px 0;">${generarHtmlDePremio(p)}</div>`; } else { const e = d ? `no fue pagado (estado: ${d.status})` : 'está disponible'; w = `<div class="prize-info"><div class="no-winner-text">Sin ganador (El número ${r} ${e}).</div></div>`; } return `<div class="winner-card ${d && d.status === 'pago' ? s[t] : 'no-winner'}"><div class="prize-header"><h3>${l[t]}</h3><span class="prize-number-tag">Nº ${r}</span></div>${w}</div>`; };
-    const checkWinners = async () => { 
-        const w = DOM.realWinningInput.value.trim(); 
-        DOM.winnerResults.innerHTML = ''; 
-        if (!/^\d{4}$/.test(w)) { DOM.winnerResults.innerHTML = '<div class="no-results-message">Ingresa 4 cifras.</div>'; return; } 
-        const d = await db.collection("rifas").doc(rifaActivaId).get(), p = d.data().premios || { mayor: {}, segundo: {}, tercero: {} }, m = w.slice(-numberPadding), s = w.substring(0, 2), t = w.substring(1, 3), c = [{ tier: 'mayor', number: m }, { tier: 'segundo', number: s }, { tier: 'tercero', number: t }]; 
-        c.forEach(i => DOM.winnerResults.insertAdjacentHTML('beforeend', getWinnerInfo(i.number, i.tier, p[i.tier]))); 
-    };
+    const checkWinners = async () => { const w = DOM.realWinningInput.value.trim(); DOM.winnerResults.innerHTML = ''; if (!/^\d{4}$/.test(w)) { DOM.winnerResults.innerHTML = '<div class="no-results-message">Ingresa 4 cifras.</div>'; return; } const d = await db.collection("rifas").doc(rifaActivaId).get(), p = d.data().premios || { mayor: {}, segundo: {}, tercero: {} }, m = w.slice(-numberPadding), s = w.substring(0, 2), t = w.substring(1, 3), c = [{ tier: 'mayor', number: m }, { tier: 'segundo', number: s }, { tier: 'tercero', number: t }]; c.forEach(i => DOM.winnerResults.insertAdjacentHTML('beforeend', getWinnerInfo(i.number, i.tier, p[i.tier]))); };
     
     const renderAnticipados = () => {
         DOM.anticipadosList.innerHTML = '';
@@ -1359,8 +1228,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
         preview.querySelector('#ticket-date').textContent = new Date().toLocaleDateString('es-CO', { day: 'numeric', month: 'short', year: 'numeric', hour: '2-digit', minute: '2-digit' });
 
-        const verificationUrl = new URL(window.location.href);
-        verificationUrl.pathname = '/verificacion.html'; // Asumiendo que tienes una página de verificación
+        const verificationUrl = new URL('verificacion.html', window.location.href);
         verificationUrl.searchParams.set('rifa', rifaActivaId);
         verificationUrl.searchParams.set('numero', number);
         
@@ -1375,7 +1243,7 @@ document.addEventListener('DOMContentLoaded', () => {
         if(success) {
             DOM.ticketModal.classList.add('visible');
         } else {
-            showToast("No se encontraron datos para generar este recibo.", "error");
+            alert("No se encontraron datos para generar este recibo.");
         }
     };
 
@@ -1386,7 +1254,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
         const printableElement = DOM.ticketPreview.querySelector('.ticket-container');
         if (!printableElement) {
-            showToast("Error: No se encontró el contenido del recibo.", "error");
+            showToast("Error: No se encontró el contenido del recibo.");
             button.disabled = false;
             button.innerHTML = '<i class="fas fa-share-alt"></i> Compartir';
             return;
@@ -1416,12 +1284,12 @@ document.addEventListener('DOMContentLoaded', () => {
             } else {
                 downloadTicket();
                 closeTicketModal();
-                showToast("Recibo descargado. ¡Ya puedes compartirlo!", "success");
+                showToast("Recibo descargado. ¡Ya puedes compartirlo!");
             }
         } catch (err) {
             if (err.name !== 'AbortError') {
                 console.error('Error al compartir:', err);
-                showToast("No se pudo compartir, se inició la descarga.", "info");
+                showToast("No se pudo compartir, se inició la descarga.");
                 downloadTicket();
                 closeTicketModal();
             }
@@ -1438,7 +1306,7 @@ document.addEventListener('DOMContentLoaded', () => {
         
         const printableElement = DOM.ticketPreview.querySelector('.ticket-container');
         if (!printableElement) {
-            showToast("Error al generar imagen para descargar.", "error");
+            showToast("Error al generar imagen para descargar.");
             button.textContent = 'Descargar Recibo';
             button.disabled = false;
             return;
@@ -1460,7 +1328,7 @@ document.addEventListener('DOMContentLoaded', () => {
             button.disabled = false;
         }).catch(err => { 
             console.error('Error al generar recibo:', err); 
-            showToast('Error al generar el recibo para descargar.', "error"); 
+            showToast('Error al generar el recibo para descargar.'); 
             button.textContent = 'Descargar Recibo';
             button.disabled = false; 
         });
@@ -1531,13 +1399,13 @@ document.addEventListener('DOMContentLoaded', () => {
         const id = DOM.editVendedorId.value;
 
         if (!nombre || !/^\d{4}$/.test(codigo)) {
-            showToast("Por favor, ingresa un nombre y un código numérico de 4 cifras.", "error");
+            alert("Por favor, ingresa un nombre y un código numérico de 4 cifras.");
             return;
         }
         
         const existing = await db.collection('vendedores').where('codigo', '==', codigo).get();
         if (!existing.empty && existing.docs[0].id !== id) {
-            showToast("El código de vendedor ya existe. Por favor, elige otro.", "error");
+            alert("El código de vendedor ya existe. Por favor, elige otro.");
             return;
         }
 
@@ -1645,7 +1513,7 @@ document.addEventListener('DOMContentLoaded', () => {
             DOM.vendedorInfoDisplay.style.display = 'block';
             DOM.dataFieldsContainer.classList.remove('disabled');
         } else {
-            showToast("Código de vendedor no válido.", "error");
+            alert("Código de vendedor no válido.");
             currentVendedor = null;
         }
     };
@@ -1752,7 +1620,7 @@ document.addEventListener('DOMContentLoaded', () => {
     DOM.saveAllPrizesButton.addEventListener('click', saveAllPrizes);
     DOM.rifaSelect.addEventListener('click', () => { DOM.rifaSelectItems.classList.toggle('select-show'); DOM.rifaSelect.classList.toggle('select-arrow-active'); });
     window.addEventListener('click', (e) => { if (DOM.rifaSelect.parentElement && !DOM.rifaSelect.parentElement.contains(e.target)) { DOM.rifaSelectItems.classList.remove('select-show'); DOM.rifaSelect.classList.remove('select-arrow-active'); }});
-    DOM.searchButton.addEventListener('click', () => { if (!rifaActivaId) { showToast("Selecciona una rifa para buscar.", "error"); return; } if (DOM.searchInput.value.trim().length === 10) performSearch(); else { DOM.searchResultsContainer.innerHTML = '<div class="no-results-message">Debes ingresar 10 cifras.</div>'; document.querySelectorAll('.grid-item.highlighted').forEach(i => i.classList.remove('highlighted')); } });
+    DOM.searchButton.addEventListener('click', () => { if (!rifaActivaId) { alert("Selecciona una rifa para buscar."); return; } if (DOM.searchInput.value.trim().length === 10) performSearch(); else { DOM.searchResultsContainer.innerHTML = '<div class="no-results-message">Debes ingresar 10 cifras.</div>'; document.querySelectorAll('.grid-item.highlighted').forEach(i => i.classList.remove('highlighted')); } });
     DOM.checkWinnerButton.addEventListener('click', checkWinners);
     DOM.realWinningInput.addEventListener('input', () => { const v = DOM.realWinningInput.value; DOM.digitCircles.forEach((c, i) => { const d = v[i]; if (d) { c.textContent = d; c.classList.add('filled'); } else { c.textContent = ''; c.classList.remove('filled'); } }); DOM.checkWinnerButton.disabled = v.length !== 4; });
     DOM.searchResultsContainer.addEventListener('click', (e) => { const t = e.target.closest('.generate-ticket-btn'); if (t) generateTicket(t.dataset.number); });
@@ -1773,7 +1641,7 @@ document.addEventListener('DOMContentLoaded', () => {
     
     DOM.addAnticipadoButton.addEventListener('click', async () => { 
         const v = Number(DOM.anticipadoValor.value), f = DOM.anticipadoFecha.value, l = DOM.anticipadoLoteria.value.trim(); 
-        if (!v || !f || !l) { showToast("Completa todos los campos del premio.", "error"); return; } 
+        if (!v || !f || !l) { alert("Completa todos los campos del premio."); return; } 
         currentPrizeData.premiosAnticipados.push({ valor:v, fecha:f, loteria:l, numeroGanador: "" });
         const s = await saveAllPrizes(); 
         if (s) { 
@@ -1804,8 +1672,8 @@ document.addEventListener('DOMContentLoaded', () => {
             const f = c.querySelector('.edit-fecha').value;
             const l = c.querySelector('.edit-loteria').value.trim();
             const g = c.querySelector('.edit-ganador').value.trim();
-            if (!v || !f || !l) { showToast("Completa todos los campos del premio (valor, fecha, lotería).", "error"); return; }
-            if (g && !/^\d{2}$/.test(g)) { showToast("El número ganador debe estar vacío o ser de exactamente 2 cifras.", "error"); return; }
+            if (!v || !f || !l) { alert("Completa todos los campos del premio (valor, fecha, lotería)."); return; }
+            if (g && !/^\d{2}$/.test(g)) { alert("El número ganador debe estar vacío o ser de exactamente 2 cifras."); return; }
             currentPrizeData.premiosAnticipados[i] = { valor: v, fecha: f, loteria: l, numeroGanador: g };
             saveBtn.textContent = 'Guardando...';
             saveBtn.disabled = true;
