@@ -44,6 +44,8 @@
             --skeleton-bg: #3a3a3c;
         }
         body { font-family: system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, 'Open Sans', 'Helvetica Neue', sans-serif; background-color: var(--body-bg); padding: 10px; color: var(--body-color); transition: background-color var(--transition-speed) ease, color var(--transition-speed) ease; }
+        /* Regla para bloquear el scroll cuando el modal está abierto */
+        body.body-no-scroll { overflow: hidden; }
         .container { max-width: 800px; margin: auto; padding-top: 20px; transition: filter 0.3s ease-in-out; }
         .container.page-blur { filter: blur(5px) brightness(0.7); pointer-events: none; }
         h2, h3, h4 { text-align: center; color: var(--text-dark); }
@@ -122,7 +124,7 @@
         .grid-item { display: flex; justify-content: center; align-items: center; aspect-ratio: 1 / 1; border: 1px solid var(--border-color); border-radius: 8px; font-size: clamp(0.7em, 3vw, 1.5em); font-weight: bold; color: white; cursor: pointer; transition: transform 0.2s, background-color 0.2s, border-color 0.2s; }
         .modal-backdrop { display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background-color: rgba(0,0,0,0.1); opacity: 0; z-index: 999; transition: opacity 0.3s ease-in-out; }
         .modal-backdrop.visible { display: block; opacity: 0.5; }
-        .modal { display: flex; justify-content: center; align-items: flex-start; position: fixed; z-index: 1000; left: 0; top: 0; width: 100%; height: 100%; overflow: auto; opacity: 0; visibility: hidden; transition: opacity 0.3s ease-in-out, visibility 0.3s; padding-top: 5vh; }
+        .modal { display: flex; justify-content: center; align-items: center; /* Centrado vertical */ position: fixed; z-index: 1000; left: 0; top: 0; width: 100%; height: 100%; overflow: auto; opacity: 0; visibility: hidden; transition: opacity 0.3s ease-in-out, visibility 0.3s; padding: 20px; /* Padding general para móvil */ }
         #prizeModal { padding: 0; }
         .modal.visible { opacity: 1; visibility: visible; }
         @keyframes modal-slide-in { from { transform: translateY(-50px) scale(0.95); opacity: 0; } to { transform: translateY(0) scale(1); opacity: 1; } }
@@ -147,14 +149,23 @@
         #deleteButton { background-color: var(--color-danger); color: white; }
         .action-btn-pago { padding: 10px 15px; background-color: var(--color-pago); color: white !important; border: none; border-radius: 5px; cursor: pointer; font-weight: bold; font-size: 16px; display: inline-flex; align-items: center; gap: 8px; transition: background-color 0.2s, transform 0.2s; }
         .action-btn-pago:hover { transform: translateY(-2px); filter: brightness(1.1); }
-        .raffle-manager { display: flex; flex-wrap: wrap; gap: 10px; align-items: flex-end; }
-        .raffle-selector-container { flex-grow: 1; min-width: 200px; display: flex; flex-direction: column; gap: 10px; }
-        .selector-wrapper-with-button { display: flex; align-items: center; gap: 10px; }
-        .raffle-creator { flex: 1 1 100%; display: none; flex-wrap: wrap; gap: 10px; align-items: flex-end;}
-        .raffle-creator > div { flex: 1 1 200px; }
-        .raffle-creator-input-group { display: flex; align-items: flex-end; gap: 10px; flex-grow: 2; }
-        .raffle-creator-input-group > div { flex-grow: 1; }
+        
+        /* ============================================================================== */
+        /* ========= INICIO DE MODIFICACIONES: ESTILOS DEL PANEL DE ADMINISTRADOR ========= */
+        /* ============================================================================== */
+        .raffle-manager { display: flex; flex-wrap: wrap; gap: 15px; align-items: flex-end; }
+        .raffle-selector-container { flex: 1 1 300px; display: flex; flex-direction: column; gap: 10px; min-width: 250px;}
+        .selector-wrapper-with-button { display: flex; align-items: center; gap: 8px; flex-wrap: wrap; }
+        .raffle-creator { flex: 2 1 400px; display: none; flex-wrap: wrap; gap: 8px; align-items: flex-end;}
+        .raffle-creator > div { flex: 1 1 180px; }
+        .raffle-creator-input-group { display: flex; flex-wrap: wrap; align-items: flex-end; gap: 8px; flex: 2 1 300px; }
+        .raffle-creator-input-group > div { flex: 1 1 150px; }
+        #createRifaButton { flex-basis: 100px; }
         body.admin-view .raffle-creator { display: flex; }
+        /* ============================================================================ */
+        /* ========= FIN DE MODIFICACIONES: ESTILOS DEL PANEL DE ADMINISTRADOR ========== */
+        /* ============================================================================ */
+        
         .custom-select-wrapper { position: relative; user-select: none; flex-grow: 1; }
         .select-selected { background-color: var(--background-card); border: 1px solid var(--border-color); border-radius: 8px; padding: 0 40px 0 15px; font-size: 16px; color: var(--text-dark); width: 100%; height: 48px; cursor: pointer; transition: border-color 0.2s, box-shadow 0.2s; display: flex; align-items: center; box-sizing: border-box; }
         .select-selected.select-arrow-active { border-color: var(--color-primary); box-shadow: 0 0 0 3px rgba(117, 31, 255, 0.25); }
@@ -502,60 +513,10 @@
         }
         /* --- FIN DE CAMBIOS --- */
 
-        /* ==================================================================================== */
-        /* ========= INICIO DE MODIFICACIONES DE RESPONSIVIDAD PARA EL PANEL DE ADMIN ========= */
-        /* ==================================================================================== */
-
-        /*
-          1. Envoltura para los botones de acción del admin.
-             Esta regla permite que los botones (configurar, vendedores, etc.)
-             bajen a la siguiente línea si no hay espacio, evitando el desbordamiento.
-        */
-        .selector-wrapper-with-button {
-            flex-wrap: wrap;
-        }
-        
-        /*
-          2. Ajustes específicos para el input de nombre y el botón de IA.
-             El div que los contiene usa un estilo en línea (display:flex), por lo que necesitamos un 
-             selector específico para hacerlo responsivo sin modificar el HTML.
-        */
-        label[for="newRifaName"] + div {
-            flex-wrap: wrap; /* Permitimos que el botón de IA baje si no hay espacio */
-        }
-
-        label[for="newRifaName"] + div > input {
-            flex: 1 1 150px; /* Damos una base flexible al input para que no se encoja de más */
-        }
-        
-        /* ================================================================================== */
-        /* ========= FIN DE MODIFICACIONES DE RESPONSIVIDAD PARA EL PANEL DE ADMIN ========== */
-        /* ================================================================================== */
-
         @media (max-width: 768px) {
-            .raffle-creator {
-                flex-direction: column;
-                align-items: stretch;
-                gap: 15px;
-            }
-            .raffle-creator-input-group {
-                flex-direction: column;
-                align-items: stretch;
-            }
+            /* Se eliminaron las reglas que forzaban el apilamiento vertical aquí para permitir más flexibilidad */
         }
         
-        /* Media Query para pantallas muy pequeñas donde apilamos el input de nombre y su botón */
-        @media (max-width: 420px) {
-            label[for="newRifaName"] + div {
-                flex-direction: column;
-                align-items: stretch;
-            }
-
-            #suggestNameButton {
-                width: 100% !important; /* !important para sobreescribir el estilo en línea */
-            }
-        }
-
         @media (max-width: 650px) {
             #anticipados-list { display: flex; flex-direction: row; overflow-x: auto; scroll-snap-type: x mandatory; padding: 10px 10px 20px 10px; margin: 0 -20px; -webkit-overflow-scrolling: touch; }
             #anticipados-list::-webkit-scrollbar { display: none; }
@@ -591,18 +552,15 @@
             <div class="raffle-creator-input-group">
                 <div>
                     <label for="newRifaName">Nombre de la nueva rifa</label>
-                    <div style="display: flex; gap: 10px;">
-                         <input type="text" id="newRifaName" placeholder="Ej: Rifa de Verano" style="flex-grow: 1;">
-                         <button id="suggestNameButton" title="Sugerir nombre con IA" style="height: 48px; width: 48px; flex-shrink: 0; padding: 0; border-radius: 8px;"><i class="fas fa-wand-magic-sparkles"></i></button>
-                    </div>
+                    <input type="text" id="newRifaName" placeholder="Ej: Rifa de Verano">
                 </div>
                 <div>
-                    <label for="newRifaDate">Fecha del Sorteo Principal</label>
+                    <label for="newRifaDate">Fecha del Sorteo</label>
                     <input type="date" id="newRifaDate">
                 </div>
             </div>
             <div>
-                <label for="newRifaSize">Cantidad de Números</label>
+                <label for="newRifaSize">Números</label>
                 <select id="newRifaSize" style="width: 100%; padding: 10px; border: 1px solid var(--border-color); border-radius: 4px; background-color: var(--background-light); color: var(--text-dark); height: 48px;">
                     <option value="100">100 (00-99)</option>
                     <option value="1000">1000 (000-999)</option>
@@ -642,7 +600,7 @@
                 <div class="skeleton-row"><span class="skeleton" style="width: 15%;"></span><span class="skeleton" style="width: 40%;"></span><span class="skeleton" style="width: 45%;"></span></div>
                 <div class="skeleton-row"><span class="skeleton" style="width: 15%;"></span><span class="skeleton" style="width: 55%;"></span><span class="skeleton" style="width: 30%;"></span></div>
             </div>
-            </div>
+        </div>
     </div>
 
     <div class="winner-section">
@@ -826,6 +784,7 @@
         </div>
     </div>
 </div>
+
 <div id="ticket-template">
     <div class="ticket-container">
         <div class="ticket-header">
@@ -867,7 +826,6 @@
 <div class="modal-backdrop" id="modal-backdrop"></div>
 
 <script type="module">
-    // Importar funciones de la nueva versión modular de Firebase
     import { initializeApp } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-app.js";
     import { getAuth, onAuthStateChanged, signInWithEmailAndPassword, signOut, EmailAuthProvider, reauthenticateWithCredential } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-auth.js";
     import { 
@@ -967,7 +925,6 @@
             reauthPassword: document.getElementById('reauthPassword'),
             reauthButton: document.getElementById('reauthButton'),
             reauthError: document.getElementById('reauthError'),
-            suggestNameButton: document.getElementById('suggestNameButton'),
         };
 
         let rifaActivaId = null, unsubRifaListener = null, currentNumber = null, localRaffleData = {}, activeRaffleData = {}, currentPrizeData = {};
@@ -999,15 +956,23 @@
         const aplicarColoresPersonalizados = (c) => { if(!c) return; document.documentElement.style.setProperty('--color-disponible', c.disponible); document.documentElement.style.setProperty('--color-separado', c.separado); document.documentElement.style.setProperty('--color-pago', c.pago); };
         const restaurarColoresDefault = () => { document.documentElement.style.removeProperty('--color-disponible'); document.documentElement.style.removeProperty('--color-separado'); document.documentElement.style.removeProperty('--color-pago'); };
         
+        // Funciones para controlar el scroll del body
+        const disableBodyScroll = () => document.body.classList.add('body-no-scroll');
+        const enableBodyScroll = () => document.body.classList.remove('body-no-scroll');
+
         const openLoginModal = () => {
             DOM.loginEmail.value = '';
             DOM.loginPassword.value = '';
             DOM.loginError.style.display = 'none';
             DOM.loginModal.classList.add('visible');
+            disableBodyScroll();
             DOM.loginEmail.focus();
         };
 
-        const closeLoginModal = () => DOM.loginModal.classList.remove('visible');
+        const closeLoginModal = () => {
+            DOM.loginModal.classList.remove('visible');
+            enableBodyScroll();
+        }
 
         const handleLogin = async () => {
             const email = DOM.loginEmail.value;
@@ -1052,12 +1017,14 @@
             DOM.reauthPassword.value = '';
             DOM.reauthError.style.display = 'none';
             DOM.reauthModal.classList.add('visible');
+            disableBodyScroll();
             DOM.reauthPassword.focus();
         };
 
         const closeReauthModal = () => {
             DOM.reauthModal.classList.remove('visible');
             actionToConfirm = null;
+            enableBodyScroll();
         };
 
         const handleReauthentication = async () => {
@@ -1098,9 +1065,13 @@
             DOM.editRifaDate.value = activeRaffleData.fechaSorteo || '';
             DOM.editRifaPrice.value = activeRaffleData.precioPorBoleto || '';
             DOM.settingsModal.classList.add('visible');
+            disableBodyScroll();
         };
         
-        const closeSettingsModal = () => DOM.settingsModal.classList.remove('visible');
+        const closeSettingsModal = () => {
+            DOM.settingsModal.classList.remove('visible');
+            enableBodyScroll();
+        }
 
         const saveSettings = async () => {
             if (!rifaActivaId || !auth.currentUser) return;
@@ -1306,7 +1277,6 @@
             currentNumber = n;
             currentVendedor = null;
             DOM.modalNumber.textContent = n;
-
             DOM.vendedorAuthContainer.style.display = 'block';
             DOM.vendedorInfoDisplay.style.display = 'none';
             DOM.dataFieldsContainer.classList.add('disabled');
@@ -1343,9 +1313,14 @@
 
             DOM.inputStatus.dispatchEvent(new Event('change'));
             DOM.dataModal.classList.add('visible');
+            disableBodyScroll();
         };
 
-        const closeDataModal = () => { DOM.dataModal.classList.remove('visible'); currentNumber = null; };
+        const closeDataModal = () => { 
+            DOM.dataModal.classList.remove('visible'); 
+            currentNumber = null;
+            enableBodyScroll();
+        };
         
         const saveData = async () => {
             if (!currentNumber || !rifaActivaId || !auth.currentUser) return;
@@ -1432,12 +1407,13 @@
             }
         };
 
-        const closePrizeModal = () => { DOM.mainContainer.classList.remove('page-blur'); DOM.modalBackdrop.classList.remove('visible'); DOM.prizeModal.classList.remove('visible'); }
+        const closePrizeModal = () => { DOM.mainContainer.classList.remove('page-blur'); DOM.modalBackdrop.classList.remove('visible'); DOM.prizeModal.classList.remove('visible'); enableBodyScroll(); }
         const openPrizeModal = async () => { 
             if (!rifaActivaId) return; 
             DOM.mainContainer.classList.add('page-blur'); 
             DOM.modalBackdrop.classList.add('visible'); 
-            DOM.prizeModal.classList.add('visible'); 
+            DOM.prizeModal.classList.add('visible');
+            disableBodyScroll();
             const docRef = doc(db, "rifas", rifaActivaId);
             const docSnap = await getDoc(docRef);
             const a = docSnap.data() || {}; 
@@ -1663,6 +1639,7 @@
             const success = await populateTicketPreview(number);
             if(success) {
                 DOM.ticketModal.classList.add('visible');
+                disableBodyScroll();
             } else {
                 showToast("No se encontraron datos para generar este recibo.", "error");
             }
@@ -1754,7 +1731,10 @@
                 button.disabled = false; 
             });
         };
-        const closeTicketModal = () => DOM.ticketModal.classList.remove('visible');
+        const closeTicketModal = () => {
+            DOM.ticketModal.classList.remove('visible');
+            enableBodyScroll();
+        }
 
         const fetchSellers = async () => {
             const sellersCollection = collection(db, "vendedores");
@@ -1766,9 +1746,13 @@
         const openVendedoresModal = () => {
             renderVendedores();
             DOM.vendedoresModal.classList.add('visible');
+            disableBodyScroll();
         };
 
-        const closeVendedoresModal = () => DOM.vendedoresModal.classList.remove('visible');
+        const closeVendedoresModal = () => {
+            DOM.vendedoresModal.classList.remove('visible');
+            enableBodyScroll();
+        }
 
         const renderVendedores = async () => {
             await fetchSellers();
@@ -1964,57 +1948,6 @@
             container.innerHTML = tableHTML;
         };
 
-        const suggestRaffleName = async () => {
-            const button = DOM.suggestNameButton;
-            button.disabled = true;
-            button.innerHTML = '<i class="fas fa-spinner fa-spin"></i>';
-
-            try {
-                const prompt = "Sugiere 5 nombres creativos, cortos y atractivos en español para una rifa o sorteo. Devuelve solo los nombres, separados por comas.";
-                
-                let chatHistory = [{ role: "user", parts: [{ text: prompt }] }];
-                const payload = { contents: chatHistory };
-                const apiKey = "AIzaSyDwLO6eJqWHENOkxUlaNwgGpXEXEhs19go";
-                const apiUrl = `https://generativelanguage.googleapis.com/v1beta/models/gemini-1.5-flash-preview-0514:generateContent?key=${apiKey}`;
-
-                const response = await fetch(apiUrl, {
-                    method: 'POST',
-                    headers: { 'Content-Type': 'application/json' },
-                    body: JSON.stringify(payload)
-                });
-
-                if (!response.ok) {
-                    throw new Error(`La solicitud a la API falló con estado ${response.status}`);
-                }
-
-                const result = await response.json();
-                
-                if (result.candidates && result.candidates.length > 0 &&
-                    result.candidates[0].content && result.candidates[0].content.parts &&
-                    result.candidates[0].content.parts.length > 0) {
-                    
-                    const text = result.candidates[0].content.parts[0].text;
-                    const names = text.split(',').map(name => name.trim());
-                    
-                    if (names.length > 0) {
-                        DOM.newRifaName.value = names[Math.floor(Math.random() * names.length)]; // Elige uno al azar
-                        showToast("¡Nombre sugerido!", "success");
-                    } else {
-                         throw new Error("No se recibieron nombres válidos.");
-                    }
-                } else {
-                    throw new Error("Respuesta inesperada de la API.");
-                }
-
-            } catch (error) {
-                console.error("Error llamando a la API de Gemini:", error);
-                showToast("No se pudieron obtener sugerencias.", "error");
-            } finally {
-                button.disabled = false;
-                button.innerHTML = '<i class="fas fa-wand-magic-sparkles"></i>';
-            }
-        };
-
         // Inicialización y Listeners
         applyTheme(localStorage.getItem('theme') || 'light');
         cargarRifas();
@@ -2064,7 +1997,15 @@
         DOM.prizeButton.addEventListener('click', openPrizeModal);
         DOM.closePrizeModalButton.addEventListener('click', closePrizeModal);
         
-        DOM.modalBackdrop.addEventListener('click', (e) => { if (e.target === DOM.modalBackdrop) { closePrizeModal(); closeSettingsModal(); closeDataModal(); closeTicketModal(); closeVendedoresModal(); closeLoginModal(); closeReauthModal(); } });
+        DOM.modalBackdrop.addEventListener('click', (e) => { 
+            if (e.target === DOM.modalBackdrop) { 
+                // Cierra todos los modales abiertos
+                document.querySelectorAll('.modal.visible').forEach(modal => {
+                    modal.classList.remove('visible');
+                });
+                enableBodyScroll();
+            } 
+        });
 
         DOM.saveAllPrizesButton.addEventListener('click', saveAllPrizes);
         DOM.rifaSelect.addEventListener('click', () => { DOM.rifaSelectItems.classList.toggle('select-show'); DOM.rifaSelect.classList.toggle('select-arrow-active'); });
@@ -2154,8 +2095,6 @@
                 section.style.display = 'block';
             }
         });
-
-        DOM.suggestNameButton.addEventListener('click', suggestRaffleName);
 
         document.body.addEventListener('click', function(e) {
             const tooltip = document.querySelector('.participant-tooltip');
