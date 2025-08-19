@@ -141,7 +141,7 @@
         .modal-footer { display: flex; justify-content: flex-end; align-items: center; gap: 10px; margin-top: 20px; }
         .modal-footer button { padding: 10px 20px; border: none; border-radius: 5px; cursor: pointer; font-size: 16px; transition: background-color 0.2s, transform 0.2s; }
         .modal-footer button:hover { transform: translateY(-2px); }
-        #saveButton, #saveAllPrizesButton, #saveSettingsButton, #downloadTicketButton, #loginButton { background-color: var(--color-primary); color: white; }
+        #saveButton, #saveAllPrizesButton, #saveSettingsButton, #downloadTicketButton, #loginButton, #reauthButton { background-color: var(--color-primary); color: white; }
         #deleteButton { background-color: var(--color-danger); color: white; }
         .action-btn-pago { padding: 10px 15px; background-color: var(--color-pago); color: white !important; border: none; border-radius: 5px; cursor: pointer; font-weight: bold; font-size: 16px; display: inline-flex; align-items: center; gap: 8px; transition: background-color 0.2s, transform 0.2s; }
         .action-btn-pago:hover { transform: translateY(-2px); filter: brightness(1.1); }
@@ -434,11 +434,11 @@
             color: var(--text-dark);
         }
 
-        /* --- NUEVO ESTILO PARA EL BOTÓN DE LOGIN/LOGOUT --- */
+        /* --- INICIO DE CAMBIOS: ESTILOS RESPONSIVE Y BOTÓN DE LOGIN --- */
         #auth-button {
             position: fixed;
-            top: 15px;
-            left: 15px;
+            bottom: 15px; /* Cambiado de top a bottom */
+            right: 15px;  /* Cambiado de left a right */
             height: 40px;
             padding: 0 15px;
             border-radius: 20px;
@@ -457,6 +457,15 @@
             border-color: var(--color-primary);
             color: var(--color-primary);
         }
+
+        @media (max-width: 768px) {
+            .raffle-creator {
+                flex-direction: column;
+                align-items: stretch;
+                gap: 15px;
+            }
+        }
+        /* --- FIN DE CAMBIOS --- */
 
         @media (max-width: 650px) {
             #anticipados-list { display: flex; flex-direction: row; overflow-x: auto; scroll-snap-type: x mandatory; padding: 10px 10px 20px 10px; margin: 0 -20px; -webkit-overflow-scrolling: touch; }
@@ -703,6 +712,24 @@
         </div>
     </div>
 </div>
+
+<div id="reauthModal" class="modal">
+    <div class="modal-content">
+        <div class="modal-header">
+            <h2><i class="fas fa-shield-alt"></i> Confirmar Acción Segura</h2>
+            <span class="close-button">&times;</span>
+        </div>
+        <div class="modal-body">
+            <p>Para continuar, por favor ingresa tu contraseña nuevamente.</p>
+            <label for="reauthPassword">Contraseña:</label>
+            <input type="password" id="reauthPassword" placeholder="•••••••••">
+            <p id="reauthError" style="color: var(--color-danger); display: none; margin-top: 10px; text-align: left;">Contraseña incorrecta.</p>
+        </div>
+        <div class="modal-footer">
+            <button id="reauthButton">Confirmar</button>
+        </div>
+    </div>
+</div>
 <!-- ================================================================= -->
 <!-- ===================== FIN DE CAMBIOS ============================ -->
 <!-- ================================================================= -->
@@ -755,7 +782,7 @@
 <script type="module">
     // Importar funciones de la nueva versión modular de Firebase
     import { initializeApp } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-app.js";
-    import { getAuth, onAuthStateChanged, signInWithEmailAndPassword, signOut } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-auth.js";
+    import { getAuth, onAuthStateChanged, signInWithEmailAndPassword, signOut, EmailAuthProvider, reauthenticateWithCredential } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-auth.js";
     import { 
         getFirestore, doc, getDoc, setDoc, updateDoc, deleteDoc, 
         collection, query, orderBy, getDocs, onSnapshot, serverTimestamp,
@@ -763,7 +790,6 @@
     } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-firestore.js";
 
     document.addEventListener('DOMContentLoaded', () => {
-        // Tu configuración de Firebase no cambia
         const firebaseConfig = {
             apiKey: "AIzaSyDMBARLzKnhcmSI8euhiA2Wgsf7pJQM1_0",
             authDomain: "control-rifas.firebaseapp.com",
@@ -773,13 +799,10 @@
             appId: "1:519272574756:web:b5d7cf368be58fdf604db1"
         };
         
-        // Inicializar Firebase y los servicios con la nueva sintaxis
         const app = initializeApp(firebaseConfig);
         const db = getFirestore(app);
         const auth = getAuth();
         
-        // ELIMINADO: const ADMIN_PASSWORD = 'Exito#777';
-
         const DOM = {
             mainContainer: document.getElementById('main-container'),
             modalBackdrop: document.getElementById('modal-backdrop'),
@@ -843,14 +866,18 @@
             adminTicketActions: document.getElementById('admin-ticket-actions'),
             modalGenerateTicketBtn: document.getElementById('modalGenerateTicketBtn'),
             toastNotification: document.getElementById('toast-notification'),
-            // Nuevos elementos del modal de login
             loginModal: document.getElementById('loginModal'),
             closeLoginModalButton: document.querySelector('#loginModal .close-button'),
             loginEmail: document.getElementById('loginEmail'),
             loginPassword: document.getElementById('loginPassword'),
             loginButton: document.getElementById('loginButton'),
             loginError: document.getElementById('loginError'),
-            authButton: document.getElementById('auth-button')
+            authButton: document.getElementById('auth-button'),
+            reauthModal: document.getElementById('reauthModal'),
+            closeReauthModalButton: document.querySelector('#reauthModal .close-button'),
+            reauthPassword: document.getElementById('reauthPassword'),
+            reauthButton: document.getElementById('reauthButton'),
+            reauthError: document.getElementById('reauthError'),
         };
 
         let rifaActivaId = null, unsubRifaListener = null, currentNumber = null, localRaffleData = {}, activeRaffleData = {}, currentPrizeData = {};
@@ -858,6 +885,7 @@
         let allSellers = [];
         let currentVendedor = null;
         let toastTimeout;
+        let actionToConfirm = null;
 
         const showToast = (message, type = 'info') => {
             if(toastTimeout) clearTimeout(toastTimeout);
@@ -880,10 +908,6 @@
         const generarHtmlDePremio = (p) => { if (!p) return '<div class="prize-details"><p class="prize-description">Premio no definido</p></div>'; if (p.valor && p.valor > 0) return `<div class="prize-card-value">${formatCurrency(p.valor)}</div>`; if (p.descripcion) { let h = `<div class="prize-details"><p class="prize-description">${p.descripcion}</p>`, m = ''; if (p.imgUrl1 || p.imgUrl2) { m += '<div class="prize-media-container">'; m += generateMediaTag(p.imgUrl1); m += generateMediaTag(p.imgUrl2); m += '</div>'; } h += m; h += `</div>`; return h; } return '<div class="prize-details"><p class="prize-description">Premio no definido</p></div>'; };
         const aplicarColoresPersonalizados = (c) => { if(!c) return; document.documentElement.style.setProperty('--color-disponible', c.disponible); document.documentElement.style.setProperty('--color-separado', c.separado); document.documentElement.style.setProperty('--color-pago', c.pago); };
         const restaurarColoresDefault = () => { document.documentElement.style.removeProperty('--color-disponible'); document.documentElement.style.removeProperty('--color-separado'); document.documentElement.style.removeProperty('--color-pago'); };
-        
-        // =================================================================
-        // =========== INICIO DE CAMBIOS: LÓGICA DE AUTENTICACIÓN ==========
-        // =================================================================
         
         const openLoginModal = () => {
             DOM.loginEmail.value = '';
@@ -933,18 +957,50 @@
             }
         });
 
-        DOM.authButton.addEventListener('click', () => {
-            if (auth.currentUser) {
-                handleLogout();
-            } else {
-                openLoginModal();
+        // =================================================================
+        // =========== INICIO DE CAMBIOS: CONFIRMACIÓN DE ACCIÓN ===========
+        // =================================================================
+        const openReauthModal = (callback) => {
+            actionToConfirm = callback;
+            DOM.reauthPassword.value = '';
+            DOM.reauthError.style.display = 'none';
+            DOM.reauthModal.classList.add('visible');
+            DOM.reauthPassword.focus();
+        };
+
+        const closeReauthModal = () => {
+            DOM.reauthModal.classList.remove('visible');
+            actionToConfirm = null;
+        };
+
+        const handleReauthentication = async () => {
+            const user = auth.currentUser;
+            if (!user) {
+                showToast('Error: No hay usuario activo.', 'error');
+                return;
             }
-        });
 
-        DOM.loginButton.addEventListener('click', handleLogin);
-        DOM.closeLoginModalButton.addEventListener('click', closeLoginModal);
-        DOM.loginPassword.addEventListener('keyup', (e) => { if (e.key === 'Enter') handleLogin(); });
+            const password = DOM.reauthPassword.value;
+            if (!password) {
+                DOM.reauthError.textContent = 'La contraseña es obligatoria.';
+                DOM.reauthError.style.display = 'block';
+                return;
+            }
 
+            const credential = EmailAuthProvider.credential(user.email, password);
+
+            try {
+                await reauthenticateWithCredential(user, credential);
+                if (typeof actionToConfirm === 'function') {
+                    actionToConfirm();
+                }
+                closeReauthModal();
+            } catch (error) {
+                console.error("Error de reautenticación:", error.code);
+                DOM.reauthError.textContent = 'Contraseña incorrecta.';
+                DOM.reauthError.style.display = 'block';
+            }
+        };
         // =================================================================
         // ======================= FIN DE CAMBIOS ==========================
         // =================================================================
@@ -1825,7 +1881,7 @@
         DOM.closeSettingsModalButton.addEventListener('click', closeSettingsModal);
         DOM.saveSettingsButton.addEventListener('click', saveSettings);
         
-        DOM.vendedoresButton.addEventListener('click', () => { if(auth.currentUser) openVendedoresModal(); else showToast("Debes iniciar sesión.", "error"); });
+        DOM.vendedoresButton.addEventListener('click', () => { if(auth.currentUser) openReauthModal(openVendedoresModal); else showToast("Debes iniciar sesión.", "error"); });
         DOM.closeVendedoresModalButton.addEventListener('click', closeVendedoresModal);
         DOM.addVendedorButton.addEventListener('click', addVendedor);
         DOM.vendedoresList.addEventListener('click', (e) => {
@@ -1840,7 +1896,9 @@
             }
         });
 
-        DOM.deleteButton.addEventListener('click', () => { if(auth.currentUser) deleteData(); else showToast("Debes iniciar sesión.", "error"); });
+        DOM.deleteButton.addEventListener('click', () => { if(auth.currentUser) openReauthModal(deleteData); else showToast("Debes iniciar sesión.", "error"); });
+        DOM.reauthButton.addEventListener('click', handleReauthentication);
+        DOM.closeReauthModalButton.addEventListener('click', closeReauthModal);
 
         DOM.darkModeToggle.addEventListener('click', () => { const n = document.body.classList.contains('dark-mode') ? 'light' : 'dark'; localStorage.setItem('theme', n); applyTheme(n); });
         DOM.createRifaButton.addEventListener('click', crearNuevaRifa);
@@ -1858,7 +1916,7 @@
         DOM.prizeButton.addEventListener('click', openPrizeModal);
         DOM.closePrizeModalButton.addEventListener('click', closePrizeModal);
         
-        DOM.modalBackdrop.addEventListener('click', (e) => { if (e.target === DOM.modalBackdrop) { closePrizeModal(); closeSettingsModal(); closeDataModal(); closeTicketModal(); closeVendedoresModal(); closeLoginModal(); } });
+        DOM.modalBackdrop.addEventListener('click', (e) => { if (e.target === DOM.modalBackdrop) { closePrizeModal(); closeSettingsModal(); closeDataModal(); closeTicketModal(); closeVendedoresModal(); closeLoginModal(); closeReauthModal(); } });
 
         DOM.saveAllPrizesButton.addEventListener('click', saveAllPrizes);
         DOM.rifaSelect.addEventListener('click', () => { DOM.rifaSelectItems.classList.toggle('select-show'); DOM.rifaSelect.classList.toggle('select-arrow-active'); });
