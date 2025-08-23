@@ -76,7 +76,6 @@
             background-color: #ffffff;
             border-radius: 12px;
             box-shadow: 0 10px 25px rgba(0,0,0,0.1), 0 5px 10px rgba(0,0,0,0.05);
-            /* TAMAÑO FIJO: Mantiene la misma dimensión para un look profesional */
             width: 450px;
             max-width: 90%;
             text-align: center;
@@ -84,11 +83,10 @@
             opacity: 0;
             transition: transform 0.35s cubic-bezier(0.4, 0, 0.2, 1), opacity 0.35s cubic-bezier(0.4, 0, 0.2, 1);
             overflow: hidden;
-            /* Contenedor Flex para centrar el contenido verticalmente */
             display: flex;
             align-items: center;
             justify-content: center;
-            min-height: 280px; /* Altura mínima para que no cambie de tamaño */
+            min-height: 280px;
         }
 
         .modal-backdrop.visible .modal-container {
@@ -97,7 +95,6 @@
         }
 
         .modal-loader {
-            /* Se muestra u oculta con 'display' desde JS */
             display: flex;
             justify-content: center;
             align-items: center;
@@ -119,7 +116,6 @@
 
         .modal-body-wrapper {
             width: 100%;
-            /* Se muestra u oculta con 'display' desde JS */
             display: none;
             opacity: 0;
             animation: fadeIn 0.4s 0.1s ease forwards;
@@ -137,7 +133,7 @@
         }
 
         .modal-icon {
-            color: #1a73e8; /* Azul estándar de Google para una acción */
+            color: #1a73e8;
             margin-bottom: 24px;
         }
 
@@ -163,7 +159,7 @@
 
         .modal-actions {
             display: flex;
-            justify-content: flex-end; /* Alinea los botones a la derecha */
+            justify-content: flex-end;
             padding: 0 24px 24px 24px;
             width: 100%;
             box-sizing: border-box;
@@ -180,7 +176,7 @@
             text-transform: uppercase;
             text-decoration: none;
             display: inline-block;
-            line-height: 20px; /* Alineación vertical del texto */
+            line-height: 20px;
         }
 
         .btn-secondary {
@@ -194,11 +190,56 @@
             background-color: #1a73e8;
             color: #ffffff;
             border: none;
-            margin-left: 8px; /* Espacio entre los botones */
+            margin-left: 8px;
         }
         .btn-primary:hover {
             background-color: #185abc;
             box-shadow: 0 1px 3px 1px rgba(0,0,0,0.15);
+        }
+
+        /* --- ESTILOS RESPONSIVOS PARA MÓVILES --- */
+        @media (max-width: 600px) {
+            .modal-container {
+                width: 90%;
+                min-height: auto;
+                max-height: 95vh;
+                overflow-y: auto;
+            }
+
+            .modal-content {
+                padding: 24px 24px 16px 24px;
+            }
+
+            .modal-content h2 {
+                font-size: 20px;
+            }
+
+            .modal-content p {
+                font-size: 15px;
+            }
+            
+            .modal-icon svg {
+                width: 40px;
+                height: 40px;
+            }
+
+            /* Apila los botones para que sea más fácil tocarlos */
+            .modal-actions {
+                flex-direction: column-reverse; /* Pone la acción primaria arriba */
+                padding: 0 24px 24px 24px;
+                align-items: center;
+            }
+
+            .btn {
+                width: 100%;
+                box-sizing: border-box;
+            }
+
+            /* Ajusta los márgenes para los botones apilados */
+            .btn-primary {
+                margin-left: 0;
+                margin-bottom: 12px;
+            }
         }
 
     </style>
