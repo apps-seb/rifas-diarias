@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Acción Requerida</title>
+    <title>Pago Confirmado</title>
     <style>
         /* --- Importación de la fuente Roboto de Google Fonts --- */
         @import url('https://fonts.googleapis.com/css2?family=Roboto:wght@400;500;700&display=swap');
@@ -102,7 +102,8 @@
 
         .spinner {
             border: 4px solid rgba(0, 0, 0, 0.1);
-            border-left-color: #1a73e8;
+            /* Color verde para consistencia con el mensaje de éxito */
+            border-left-color: #34a853; 
             border-radius: 50%;
             width: 44px;
             height: 44px;
@@ -133,7 +134,8 @@
         }
 
         .modal-icon {
-            color: #1a73e8;
+            /* Color de éxito (verde) */
+            color: #34a853;
             margin-bottom: 24px;
         }
 
@@ -159,7 +161,8 @@
 
         .modal-actions {
             display: flex;
-            justify-content: flex-end;
+            /* Centrar el único botón */
+            justify-content: center;
             padding: 0 24px 24px 24px;
             width: 100%;
             box-sizing: border-box;
@@ -177,23 +180,16 @@
             text-decoration: none;
             display: inline-block;
             line-height: 20px;
-        }
-
-        .btn-secondary {
-            background-color: transparent;
-            color: #1a73e8;
             border: none;
         }
-        .btn-secondary:hover { background-color: rgba(26, 115, 232, 0.08); }
         
         .btn-primary {
-            background-color: #1a73e8;
+            /* Botón de éxito (verde) */
+            background-color: #34a853;
             color: #ffffff;
-            border: none;
-            margin-left: 8px;
         }
         .btn-primary:hover {
-            background-color: #185abc;
+            background-color: #2b8a43;
             box-shadow: 0 1px 3px 1px rgba(0,0,0,0.15);
         }
 
@@ -223,9 +219,7 @@
                 height: 40px;
             }
 
-            /* Apila los botones para que sea más fácil tocarlos */
             .modal-actions {
-                flex-direction: column-reverse; /* Pone la acción primaria arriba */
                 padding: 0 24px 24px 24px;
                 align-items: center;
             }
@@ -233,12 +227,6 @@
             .btn {
                 width: 100%;
                 box-sizing: border-box;
-            }
-
-            /* Ajusta los márgenes para los botones apilados */
-            .btn-primary {
-                margin-left: 0;
-                margin-bottom: 12px;
             }
         }
 
@@ -253,7 +241,7 @@
         </div>
     </div>
 
-    <div id="firebase-modal" class="modal-backdrop">
+    <div id="payment-modal" class="modal-backdrop">
         <div class="modal-container">
             <div id="modal-loader" class="modal-loader">
                 <div class="spinner"></div>
@@ -263,17 +251,16 @@
                 <div class="modal-content">
                     <div class="modal-icon">
                         <svg fill="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
-                            <path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm1 15h-2v-6h2v6zm0-8h-2V7h2v2z"></path>
+                            <path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm-2 15l-5-5 1.41-1.41L10 14.17l7.59-7.59L19 8l-9 9z"></path>
                         </svg>
                     </div>
-                    <h2>Acción Requerida</h2>
+                    <h2>Pago Confirmado</h2>
                     <p>
-                       Actualiza tu plan actual para seguir utilizando nuestros servicios sin interrupciones y acceder a todas las funcionalidades.
+                       ¡Excelente! Hemos recibido tu pago correctamente. Pronto tu página volverá a estar completamente funcional.
                     </p>
                 </div>
                 <div class="modal-actions">
-                    <button id="later-btn" class="btn btn-secondary">Más tarde</button>
-                    <a href="https://cloud.google.com/pricing?hl=es-419" target="_blank" rel="noopener noreferrer" class="btn btn-primary">Actualizar</a>
+                    <button id="accept-btn" class="btn btn-primary">Entendido</button>
                 </div>
             </div>
         </div>
@@ -284,10 +271,9 @@
             // Selección de elementos del DOM
             const body = document.body;
             const pageWrapper = document.getElementById('page-wrapper');
-            const modal = document.getElementById('firebase-modal');
+            const modal = document.getElementById('payment-modal');
             const loader = document.getElementById('modal-loader');
             const modalBodyWrapper = document.getElementById('modal-body-wrapper');
-            const laterBtn = document.getElementById('later-btn');
 
             const showContent = () => {
                 loader.style.display = 'none';
@@ -297,13 +283,6 @@
             const showLoader = () => {
                 modalBodyWrapper.style.display = 'none';
                 loader.style.display = 'flex';
-            };
-
-            // Función para reiniciar la animación de carga
-            const restartAnimation = () => {
-                showLoader();
-                // Simula una nueva carga y vuelve a mostrar el contenido
-                setTimeout(showContent, 2000);
             };
 
             // ---- LÓGICA DE EJECUCIÓN ----
@@ -317,15 +296,14 @@
                 showLoader();
             };
 
-            // 2. Ejecutar la carga inicial
+            // 2. Ejecutar la carga inicial (simula el procesamiento del pago)
             initModal();
-            setTimeout(showContent, 2500);
+            setTimeout(showContent, 2500); // Muestra el mensaje de confirmación después de 2.5s
             
-            // 3. Asignar la animación de reinicio al botón "Más tarde"
-            laterBtn.addEventListener('click', restartAnimation);
+            // Opcional: El botón "Entendido" podría cerrar el modal si se implementara esa lógica.
+            // Por ahora, no tiene una acción asignada.
         });
     </script>
 
 </body>
 </html>
-
