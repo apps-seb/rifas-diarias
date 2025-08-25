@@ -183,8 +183,9 @@
         #settingsButton, #vendedoresButton, #resumenVendedoresButton { border: 1px solid var(--color-primary); color: var(--color-primary); }
         #settingsButton:hover, #vendedoresButton:hover, #resumenVendedoresButton:hover { background-color: var(--color-primary); color: white; }
         .color-setting { display: flex; align-items: center; justify-content: space-between; gap: 15px; margin-bottom: 20px; }
-        .color-setting label { margin: 0; font-weight: 500; color: var(--text-dark); }
-        .color-setting input[type="color"] { -webkit-appearance: none; -moz-appearance: none; appearance: none; width: 60px; height: 35px; background-color: transparent; border: 1px solid var(--border-color); border-radius: 5px; cursor: pointer; }
+        .color-setting label { margin: 0; font-weight: 500; color: var(--text-dark); flex-grow: 1; text-align: left;}
+        .color-setting input { padding: 8px; border-radius: 4px; border: 1px solid var(--border-color); }
+        .color-setting input[type="color"] { -webkit-appearance: none; -moz-appearance: none; appearance: none; width: 60px; height: 35px; background-color: transparent; border: 1px solid var(--border-color); border-radius: 5px; cursor: pointer; flex-shrink: 0;}
         .color-setting input[type="color"]::-webkit-color-swatch-wrapper { padding: 0; }
         .color-setting input[type="color"]::-webkit-color-swatch { border: none; border-radius: 4px; }
         #deleteRifaButton { border: 1px solid var(--color-danger); color: var(--color-danger); }
@@ -264,12 +265,15 @@
         .vendedor-summary-card .vsc-section h5 { margin: 0 0 10px 0; text-align: left; font-size: 0.9em; display: flex; align-items: center; gap: 8px;}
         .vendedor-summary-card .vsc-section h5 .count { background-color: var(--background-light); color: var(--text-dark); padding: 2px 8px; border-radius: 10px; font-size: 0.9em;}
         .vsc-numeros-container { display: flex; flex-wrap: wrap; gap: 6px; margin-bottom: 15px; }
+        .vsc-toggle-numbers { background: none; border: 1px solid var(--border-color); border-radius: 4px; padding: 5px 10px; cursor: pointer; font-size: 0.8em; margin-top: 10px; color: var(--text-light); width: 100%;}
+        .vsc-toggle-numbers:hover { background-color: var(--background-light); color: var(--text-dark); }
+        .vsc-numeros-details { margin-top: 15px; border-top: 1px dashed var(--border-color); padding-top: 15px; }
         .numero-tag {
             padding: 4px 8px;
             border-radius: 4px;
             font-weight: bold;
             font-size: 0.9em;
-            position: relative; /* Para posicionar el tooltip */
+            position: relative;
             cursor: pointer;
             transition: transform 0.2s ease;
         }
@@ -324,9 +328,14 @@
         #vendedor-auth-container { border: 2px dashed var(--border-color); padding: 15px; border-radius: 8px; text-align: center; }
         #vendedor-info-display { font-weight: bold; color: var(--color-pago); text-align: center; margin-bottom: 15px; padding: 10px; background-color: var(--background-light); border-radius: 4px; }
         #data-fields-container.disabled, #opportunity-section.disabled { opacity: 0.4; pointer-events: none; }
-        #opportunity-group-display { margin-top: 15px; padding: 10px; background-color: var(--background-light); border-radius: 8px; text-align: center;}
-        #opportunity-group-display p { margin: 0 0 8px 0; font-weight: bold; font-size: 0.9em; }
-        #opportunity-group-display .number-group-tags { display: flex; flex-wrap: wrap; gap: 8px; justify-content: center; }
+        
+        #multi-number-section .input-group { display: flex; gap: 8px; margin-bottom: 10px;}
+        #multi-number-section input { flex-grow: 1;}
+        #multi-number-section button { padding: 0 12px; flex-shrink: 0;}
+        #multi-number-container { display: flex; flex-wrap: wrap; gap: 8px; padding: 10px; background-color: var(--background-light); border-radius: 8px; min-height: 40px; }
+        .multi-number-tag { background-color: var(--color-primary); color: white; padding: 5px 10px; border-radius: 15px; display: flex; align-items: center; gap: 6px; font-size: 0.9em; }
+        .multi-number-tag.static { background-color: var(--text-light); }
+        .multi-number-tag button { background: none; border: none; color: white; cursor: pointer; font-size: 1.1em; line-height: 1; padding: 0; margin-left: 2px;}
 
         #ticket-template { display: none; position: absolute; left: -9999px; width: 500px; }
         #ticket-preview { width: 100%; max-width: 500px; margin: 0 auto 20px auto; transition: all 0.3s; }
@@ -648,20 +657,31 @@
             </div>
             <div id="vendedor-info-display" style="display: none;"></div>
 
+            <hr style="margin: 20px 0; border-color: var(--border-color); opacity: 0.2;" id="fields-separator">
+
             <div id="opportunity-section" style="display: none;">
-                <hr style="margin: 20px 0; border-color: var(--border-color); opacity: 0.2;">
-                <label for="opportunity-select">Selecciona las oportunidades:</label>
-                <select id="opportunity-select">
+                <label for="opportunity-count-select">Total de Oportunidades:</label>
+                <select id="opportunity-count-select">
+                    <option value="1">1 (Sólo este número)</option>
                     <option value="2">2 Oportunidades</option>
                     <option value="3">3 Oportunidades</option>
                     <option value="4">4 Oportunidades</option>
                 </select>
-                <button id="findOpportunitiesButton" style="width: 100%; margin-top: 10px;">Buscar Números Disponibles</button>
-                <div id="opportunity-group-display" style="display: none;"></div>
+                <div id="opportunity-inputs-container" style="margin-top: 15px; display: grid; grid-template-columns: repeat(auto-fit, minmax(80px, 1fr)); gap: 10px;">
+                </div>
+            </div>
+
+            <div id="multi-number-section" style="display: none;">
+                <label>Números en esta compra:</label>
+                <div id="multi-number-container"></div>
+                <label for="add-number-input" style="margin-top: 10px;">Agregar otro número:</label>
+                <div class="input-group">
+                    <input type="tel" id="add-number-input" placeholder="Ej: 45">
+                    <button id="add-number-button" class="action-btn-pago"><i class="fas fa-plus"></i></button>
+                </div>
             </div>
 
             <div id="data-fields-container" class="disabled">
-                <hr style="margin: 20px 0; border-color: var(--border-color); opacity: 0.2; display: none;" id="fields-separator">
                 <label for="inputStatus">Estado:</label>
                 <select id="inputStatus">
                     <option value="disponible">Disponible</option>
@@ -718,11 +738,25 @@
         <div class="modal-body">
             <div class="color-setting">
                 <label for="editRifaDate">Fecha del Sorteo Principal:</label>
-                <input type="date" id="editRifaDate" style="padding: 8px; border-radius: 4px; border: 1px solid var(--border-color);">
+                <input type="date" id="editRifaDate">
             </div>
-            <div class="color-setting">
-                <label for="editRifaPrice">Precio por Boleto/Oportunidad (COP):</label>
-                <input type="number" id="editRifaPrice" placeholder="Ej: 5000" style="padding: 8px; border-radius: 4px; border: 1px solid var(--border-color);">
+            <div id="price-settings-container">
+                <div class="color-setting">
+                    <label for="editRifaPrice">Precio por Boleto (COP):</label>
+                    <input type="number" id="editRifaPrice" placeholder="Ej: 5000">
+                </div>
+                <div class="color-setting" id="price-2-opp-container" style="display: none;">
+                    <label for="editRifaPrice2">Precio 2 Oportunidades (COP):</label>
+                    <input type="number" id="editRifaPrice2" placeholder="Ej: 8000">
+                </div>
+                <div class="color-setting" id="price-3-opp-container" style="display: none;">
+                    <label for="editRifaPrice3">Precio 3 Oportunidades (COP):</label>
+                    <input type="number" id="editRifaPrice3" placeholder="Ej: 10000">
+                </div>
+                <div class="color-setting" id="price-4-opp-container" style="display: none;">
+                    <label for="editRifaPrice4">Precio 4 Oportunidades (COP):</label>
+                    <input type="number" id="editRifaPrice4" placeholder="Ej: 12000">
+                </div>
             </div>
             <hr style="border-color: var(--border-color); opacity: 0.2; margin: 15px 0;">
             <h4 style="text-align:left; margin-top:0; margin-bottom: 20px;">Colores de Estado</h4>
@@ -878,7 +912,7 @@
             rifaSelect: document.getElementById('rifaSelect'), rifaSelectItems: document.getElementById('rifaSelectItems'),
             rifaSelectSkeleton: document.getElementById('rifaSelectSkeleton'),
             newRifaName: document.getElementById('newRifaName'),
-            newRifaType: document.getElementById('newRifaType'), // Nuevo
+            newRifaType: document.getElementById('newRifaType'),
             newRifaDate: document.getElementById('newRifaDate'),
             createRifaButton: document.getElementById('createRifaButton'),
             deleteRifaButton: document.getElementById('deleteRifaButton'), prizeButton: document.getElementById('prizeButton'),
@@ -905,6 +939,12 @@
             summaryPago: document.getElementById('summaryPago'), summarySeparado: document.getElementById('summarySeparado'), summaryDisponible: document.getElementById('summaryDisponible'),
             editRifaDate: document.getElementById('editRifaDate'),
             editRifaPrice: document.getElementById('editRifaPrice'),
+            editRifaPrice2: document.getElementById('editRifaPrice2'),
+            editRifaPrice3: document.getElementById('editRifaPrice3'),
+            editRifaPrice4: document.getElementById('editRifaPrice4'),
+            price2OppContainer: document.getElementById('price-2-opp-container'),
+            price3OppContainer: document.getElementById('price-3-opp-container'),
+            price4OppContainer: document.getElementById('price-4-opp-container'),
             colorDisponible: document.getElementById('colorDisponible'), colorSeparado: document.getElementById('colorSeparado'), colorPago: document.getElementById('colorPago'), saveSettingsButton: document.getElementById('saveSettingsButton'),
             anticipadoValor: document.getElementById('anticipadoValor'), anticipadoFecha: document.getElementById('anticipadoFecha'), anticipadoLoteria: document.getElementById('anticipadoLoteria'), addAnticipadoButton: document.getElementById('addAnticipadoButton'),
             anticipadosContainerPublic: document.getElementById('anticipados-container-public'), anticipadosList: document.getElementById('anticipados-list'),
@@ -960,11 +1000,13 @@
             bulkStatus: document.getElementById('bulkStatus'),
             bulkNumbersInput: document.getElementById('bulkNumbersInput'),
             bulkVendedorCode: document.getElementById('bulkVendedorCode'),
-            // Nuevos elementos para oportunidades
             opportunitySection: document.getElementById('opportunity-section'),
-            opportunitySelect: document.getElementById('opportunity-select'),
-            findOpportunitiesButton: document.getElementById('findOpportunitiesButton'),
-            opportunityGroupDisplay: document.getElementById('opportunity-group-display'),
+            opportunityCountSelect: document.getElementById('opportunity-count-select'),
+            opportunityInputsContainer: document.getElementById('opportunity-inputs-container'),
+            multiNumberSection: document.getElementById('multi-number-section'),
+            multiNumberContainer: document.getElementById('multi-number-container'),
+            addNumberInput: document.getElementById('add-number-input'),
+            addNumberButton: document.getElementById('add-number-button'),
             fieldsSeparator: document.getElementById('fields-separator'),
         };
 
@@ -974,7 +1016,6 @@
         let currentVendedor = null;
         let toastTimeout;
         let actionToConfirm = null;
-        let currentNumberGroup = []; // Para almacenar el grupo de números en el modal
 
         const showToast = (message, type = 'info', duration = 3500) => {
             if(toastTimeout) clearTimeout(toastTimeout);
@@ -1105,6 +1146,16 @@
             DOM.colorPago.value = rootStyles.getPropertyValue('--color-pago').trim();
             DOM.editRifaDate.value = activeRaffleData.fechaSorteo || '';
             DOM.editRifaPrice.value = activeRaffleData.precioPorBoleto || '';
+
+            const isThousand = activeRaffleData.totalNumeros === 1000;
+            [DOM.price2OppContainer, DOM.price3OppContainer, DOM.price4OppContainer].forEach(el => el.style.display = isThousand ? 'flex' : 'none');
+            
+            if (isThousand) {
+                DOM.editRifaPrice2.value = activeRaffleData.preciosOportunidades?.['2'] || '';
+                DOM.editRifaPrice3.value = activeRaffleData.preciosOportunidades?.['3'] || '';
+                DOM.editRifaPrice4.value = activeRaffleData.preciosOportunidades?.['4'] || '';
+            }
+
             DOM.settingsModal.classList.add('visible');
             disableBodyScroll();
         };
@@ -1123,7 +1174,12 @@
                     pago: DOM.colorPago.value,
                 },
                 fechaSorteo: DOM.editRifaDate.value,
-                precioPorBoleto: Number(DOM.editRifaPrice.value) || 0
+                precioPorBoleto: Number(DOM.editRifaPrice.value) || 0,
+                preciosOportunidades: {
+                    '2': Number(DOM.editRifaPrice2.value) || 0,
+                    '3': Number(DOM.editRifaPrice3.value) || 0,
+                    '4': Number(DOM.editRifaPrice4.value) || 0,
+                }
             };
 
             if (!newSettings.fechaSorteo) {
@@ -1201,7 +1257,7 @@
             if (!auth.currentUser) { showToast("Debes iniciar sesión para crear rifas.", "error"); return; }
             const nombre = DOM.newRifaName.value.trim();
             const fechaSorteo = DOM.newRifaDate.value;
-            const size = parseInt(DOM.newRifaType.value, 10); // Obtenemos el tamaño de la rifa
+            const size = parseInt(DOM.newRifaType.value, 10);
 
             if (!nombre || !fechaSorteo) {
                 showToast("Por favor, asigna un nombre y una fecha de sorteo a la rifa.", "error");
@@ -1214,8 +1270,9 @@
                     nombre: nombre,
                     fechaSorteo: fechaSorteo,
                     fechaCreacion: serverTimestamp(),
-                    totalNumeros: size, // Guardamos el tamaño
+                    totalNumeros: size,
                     precioPorBoleto: 0,
+                    preciosOportunidades: { '2': 0, '3': 0, '4': 0 },
                     premios: {
                         mayor: { ...premioDefault, descripcion: "Premio Mayor" },
                         segundo: { ...premioDefault, descripcion: "Segundo Premio" },
@@ -1281,20 +1338,17 @@
                 DOM.searchResultsContainer.innerHTML = '<div class="no-results-message">Crea o selecciona una rifa.</div>';
                 return;
             }
-            // ... (código previo en la función)
-      try {
-          // SOLUCIÓN: Solo cargar vendedores si el usuario es un admin
-          if (auth.currentUser) {
-              await fetchSellers();
-          }
-          const rifaRef = doc(db, "rifas", rifaActivaId);
-          const docSnap = await getDoc(rifaRef);
-      // ... (resto del código)
+            try {
+                if (auth.currentUser) {
+                    await fetchSellers();
+                }
+                const rifaRef = doc(db, "rifas", rifaActivaId);
+                const docSnap = await getDoc(rifaRef);
                 if (docSnap.exists()) {
                     activeRaffleData = docSnap.data();
                     totalNumbers = activeRaffleData.totalNumeros || 100;
                     numberPadding = String(totalNumbers - 1).length;
-                    DOM.openBulkAddModalButton.style.display = totalNumbers === 1000 ? 'none' : 'block';
+                    DOM.openBulkAddModalButton.style.display = auth.currentUser ? 'block' : 'none';
                     if (activeRaffleData.colores) aplicarColoresPersonalizados(activeRaffleData.colores);
                     else restaurarColoresDefault();
                 } else {
@@ -1328,12 +1382,8 @@
 
         const initializeGrid = () => {
             DOM.gridContainer.innerHTML = '';
-            DOM.gridContainer.className = ''; // Limpiar clases
-            if (totalNumbers === 1000) {
-                DOM.gridContainer.classList.add('thousand-numbers');
-            } else {
-                DOM.gridContainer.classList.add('hundred-numbers');
-            }
+            DOM.gridContainer.className = '';
+            DOM.gridContainer.classList.add(totalNumbers === 1000 ? 'thousand-numbers' : 'hundred-numbers');
             for (let i = 0; i < totalNumbers; i++) {
                 const n = i.toString().padStart(numberPadding, '0');
                 const c = document.createElement('div');
@@ -1345,6 +1395,44 @@
                 DOM.gridContainer.appendChild(c);
             }
         };
+
+        const generateOpportunityInputs = (count, existingGroup = []) => {
+            DOM.opportunityInputsContainer.innerHTML = '';
+            const group = existingGroup.length ? existingGroup.sort() : [currentNumber];
+            
+            const firstNumEl = document.createElement('div');
+            firstNumEl.textContent = group[0];
+            firstNumEl.style.cssText = 'padding: 10px; border: 1px solid var(--border-color); border-radius: 4px; background-color: var(--background-light); text-align: center; font-weight: bold;';
+            DOM.opportunityInputsContainer.appendChild(firstNumEl);
+            
+            for (let i = 1; i < count; i++) {
+                const input = document.createElement('input');
+                input.type = 'tel';
+                input.maxLength = numberPadding;
+                input.placeholder = `Número ${i + 1}`;
+                input.value = group[i] || '';
+                input.style.cssText = 'width: 100%; padding: 10px; border: 1px solid var(--border-color); border-radius: 4px; background-color: var(--background-light); color: var(--text-dark); text-align: center;';
+                DOM.opportunityInputsContainer.appendChild(input);
+            }
+        };
+
+        const renderMultiNumberTags = (numbers = []) => {
+            DOM.multiNumberContainer.innerHTML = '';
+            numbers.forEach((num, index) => {
+                const isStatic = (num === currentNumber);
+                const tag = document.createElement('div');
+                tag.className = `multi-number-tag ${isStatic ? 'static' : ''}`;
+                tag.dataset.number = num;
+                tag.textContent = num;
+                if (!isStatic) {
+                    const removeBtn = document.createElement('button');
+                    removeBtn.innerHTML = '&times;';
+                    removeBtn.onclick = () => { tag.remove(); };
+                    tag.appendChild(removeBtn);
+                }
+                DOM.multiNumberContainer.appendChild(tag);
+            });
+        };
         
         const openDataModal = async (n) => {
             if (!auth.currentUser) { showToast("Debes iniciar sesión para editar.", "error"); return; }
@@ -1352,36 +1440,34 @@
 
             currentNumber = n;
             currentVendedor = null;
-            currentNumberGroup = [];
             DOM.modalNumber.textContent = n;
             DOM.vendedorAuthContainer.style.display = 'block';
             DOM.vendedorInfoDisplay.style.display = 'none';
             DOM.dataFieldsContainer.classList.add('disabled');
             DOM.inputVendedorCode.value = '';
+            DOM.fieldsSeparator.style.display = 'block';
 
-            // Lógica específica por tipo de rifa
+            const d = localRaffleData[n];
+            const existingGroup = d?.numberGroup || (d ? [n] : []);
+
             if (totalNumbers === 1000) {
                 DOM.opportunitySection.style.display = 'block';
-                DOM.opportunitySection.classList.remove('disabled');
-                DOM.opportunityGroupDisplay.style.display = 'none';
-                DOM.dataFieldsContainer.style.display = 'none'; // Ocultar campos de datos al inicio
-                DOM.fieldsSeparator.style.display = 'block';
+                DOM.multiNumberSection.style.display = 'none';
+                const opportunityCount = existingGroup.length || 1;
+                DOM.opportunityCountSelect.value = opportunityCount;
+                generateOpportunityInputs(opportunityCount, existingGroup);
             } else {
                 DOM.opportunitySection.style.display = 'none';
-                DOM.dataFieldsContainer.style.display = 'block'; // Mostrar campos de datos para rifa normal
-                DOM.fieldsSeparator.style.display = 'none';
+                DOM.multiNumberSection.style.display = 'block';
+                DOM.addNumberInput.value = '';
+                renderMultiNumberTags(existingGroup.length > 0 ? existingGroup.sort() : [n]);
             }
             
-            const d = localRaffleData[n];
             if (d) {
                 DOM.inputStatus.value = d.status;
                 DOM.inputName.value = d.name || '';
                 DOM.inputPhone.value = d.phone || '';
                 DOM.inputAbono.value = d.abono || '';
-                // Si el número es parte de un grupo, deshabilitamos la edición de oportunidades
-                if(d.purchaseId) {
-                    DOM.opportunitySection.classList.add('disabled');
-                }
                 if (d.vendedorId) {
                     const vendedor = allSellers.find(v => v.id === d.vendedorId);
                     if(vendedor){
@@ -1392,7 +1478,7 @@
                         DOM.dataFieldsContainer.classList.remove('disabled');
                     }
                 }
-            } else { // Si el número está disponible
+            } else { 
                 DOM.inputStatus.value = 'disponible';
                 DOM.inputName.value = '';
                 DOM.inputPhone.value = '';
@@ -1409,106 +1495,105 @@
         const closeDataModal = () => { 
             DOM.dataModal.classList.remove('visible'); 
             currentNumber = null;
-            currentNumberGroup = [];
             enableBodyScroll();
         };
         
-        const saveData = async () => {
-            if (!rifaActivaId || !auth.currentUser) return;
-
-            DOM.saveButton.disabled = true;
-            DOM.saveButton.textContent = 'Guardando...';
-
-            const status = DOM.inputStatus.value;
-            const numbersToUpdate = totalNumbers === 1000 && currentNumberGroup.length > 0 ? currentNumberGroup : [currentNumber];
-            
-            if (!numbersToUpdate.length) {
-                showToast("No se ha seleccionado ningún número para guardar.", "error");
-                resetSaveButton();
-                return;
-            }
-
-            // Si es 'disponible', es una operación de borrado para el grupo
-            if (status === 'disponible') {
-                await deleteData(true); // Llama a deleteData para manejar la lógica de borrado de grupo
-                resetSaveButton();
-                return;
-            }
-
-            const name = DOM.inputName.value.trim();
-            const phone = DOM.inputPhone.value.trim();
-            const abonoValue = Number(DOM.inputAbono.value);
-
-            if (name.length === 0 || phone.length < 7) {
-                showToast("Nombre y celular son obligatorios.", "error");
-                resetSaveButton();
-                return;
-            }
-            if (!currentVendedor) {
-                showToast("Se requiere un vendedor verificado.", "error");
-                resetSaveButton();
-                return;
-            }
-            
-            const purchaseId = totalNumbers === 1000 ? (Date.now().toString(36) + Math.random().toString(36).substr(2)) : null;
-
-            try {
-                const batch = writeBatch(db);
-                const dataToSave = {
-                    status, name, phone,
-                    vendedorId: currentVendedor.id,
-                    abono: (status === 'separado' && abonoValue > 0) ? abonoValue : 0
-                };
-                if (purchaseId) {
-                    dataToSave.purchaseId = purchaseId;
-                    dataToSave.numberGroup = numbersToUpdate;
-                }
-
-                numbersToUpdate.forEach(num => {
-                    const docRef = doc(db, "rifas", rifaActivaId, "numeros", num);
-                    batch.set(docRef, dataToSave, { merge: true });
-                });
-
-                await batch.commit();
-                showToast(`${numbersToUpdate.length} número(s) guardado(s).`, "success");
-                DOM.adminTicketActions.style.display = 'block';
-            } catch (err) {
-                console.error("Error al guardar datos:", err);
-                showToast("Error al guardar: " + err.message, "error");
-            } finally {
-                resetSaveButton();
-            }
-        };
-
         const resetSaveButton = () => {
             DOM.saveButton.disabled = false;
             DOM.saveButton.textContent = 'Guardar';
         };
-        
-        const deleteData = async (calledFromSave = false) => { 
-            if (!currentNumber || !rifaActivaId || !auth.currentUser) return; 
 
-            const numberData = localRaffleData[currentNumber];
-            const numbersToDelete = (numberData && numberData.numberGroup) ? numberData.numberGroup : [currentNumber];
-            
-            if (!calledFromSave) {
-                 if (!confirm(`¿Seguro que deseas limpiar los datos de ${numbersToDelete.length > 1 ? `los números ${numbersToDelete.join(', ')}` : `el número ${currentNumber}`}?`)) {
-                    return;
+        const saveData = async () => {
+            if (!rifaActivaId || !auth.currentUser) return;
+            DOM.saveButton.disabled = true;
+            DOM.saveButton.textContent = 'Guardando...';
+
+            const status = DOM.inputStatus.value;
+            const name = DOM.inputName.value.trim();
+            const phone = DOM.inputPhone.value.trim();
+            const abonoValue = Number(DOM.inputAbono.value);
+
+            if (status !== 'disponible' && (name.length === 0 || phone.length < 7)) {
+                showToast("Nombre y celular son obligatorios.", "error"); resetSaveButton(); return;
+            }
+            if (status !== 'disponible' && !currentVendedor) {
+                showToast("Se requiere un vendedor verificado.", "error"); resetSaveButton(); return;
+            }
+
+            const originalData = localRaffleData[currentNumber];
+            const originalNumberGroup = originalData?.numberGroup || (originalData ? [currentNumber] : []);
+            let newNumberGroup = [];
+
+            if (totalNumbers === 1000) {
+                const opportunityInputs = DOM.opportunityInputsContainer.querySelectorAll('input');
+                newNumberGroup = [currentNumber, ...Array.from(opportunityInputs).map(input => input.value.trim())];
+            } else {
+                const numberTags = DOM.multiNumberContainer.querySelectorAll('.multi-number-tag');
+                newNumberGroup = Array.from(numberTags).map(tag => tag.dataset.number);
+            }
+
+            const finalNumbers = [];
+            for (const numStr of newNumberGroup) {
+                if (!numStr || numStr.length !== numberPadding) {
+                    showToast(`Todos los números deben tener ${numberPadding} cifras.`, "error"); resetSaveButton(); return;
+                }
+                finalNumbers.push(numStr);
+            }
+
+            const uniqueNumbers = new Set(finalNumbers);
+            if (uniqueNumbers.size !== finalNumbers.length) {
+                showToast("No puedes ingresar números duplicados.", "error"); resetSaveButton(); return;
+            }
+
+            for (const num of uniqueNumbers) {
+                if (localRaffleData[num] && !originalNumberGroup.includes(num)) {
+                     showToast(`El número ${num} no está disponible.`, "error"); resetSaveButton(); return;
                 }
             }
 
             try {
                 const batch = writeBatch(db);
-                numbersToDelete.forEach(num => {
-                    const docRef = doc(db, "rifas", rifaActivaId, "numeros", num);
-                    batch.delete(docRef);
-                });
+                const numbersToSet = [...uniqueNumbers].sort();
+                const numbersToDelete = originalNumberGroup.filter(n => !numbersToSet.includes(n));
+
+                numbersToDelete.forEach(num => batch.delete(doc(db, "rifas", rifaActivaId, "numeros", num)));
+
+                if (status === 'disponible') {
+                    numbersToSet.forEach(num => batch.delete(doc(db, "rifas", rifaActivaId, "numeros", num)));
+                } else {
+                    const purchaseId = originalData?.purchaseId || (Date.now().toString(36) + Math.random().toString(36).substr(2));
+                    const dataToSave = { status, name, phone, vendedorId: currentVendedor.id, abono: (status === 'separado' && abonoValue > 0) ? abonoValue : 0, purchaseId, numberGroup: numbersToSet };
+                    numbersToSet.forEach(num => batch.set(doc(db, "rifas", rifaActivaId, "numeros", num), dataToSave, { merge: true }));
+                }
+
+                await batch.commit();
+                showToast(status === 'disponible' ? "Datos limpiados." : "Datos guardados.", "success");
+                
+                if (status === 'disponible') { closeDataModal(); } 
+                else { currentNumber = numbersToSet[0]; DOM.adminTicketActions.style.display = 'block'; }
+
+            } catch (err) {
+                console.error("Error al guardar datos:", err); showToast("Error al guardar: " + err.message, "error");
+            } finally {
+                resetSaveButton();
+            }
+        };
+        
+        const deleteData = async () => { 
+            if (!currentNumber || !rifaActivaId || !auth.currentUser) return;
+            const numberData = localRaffleData[currentNumber];
+            const numbersToDelete = (numberData && numberData.numberGroup) ? numberData.numberGroup : [currentNumber];
+            
+            if (!confirm(`¿Seguro que deseas limpiar los datos de ${numbersToDelete.length > 1 ? `los números ${numbersToDelete.join(', ')}` : `el número ${currentNumber}`}?`)) { return; }
+
+            try {
+                const batch = writeBatch(db);
+                numbersToDelete.forEach(num => batch.delete(doc(db, "rifas", rifaActivaId, "numeros", num)));
                 await batch.commit();
                 showToast("Datos limpiados con éxito.", "success");
                 closeDataModal();
             } catch (e) {
-                console.error("Error al borrar:", e);
-                showToast("Error al borrar el/los número(s).", "error");
+                console.error("Error al borrar:", e); showToast("Error al borrar el/los número(s).", "error");
             }
         };
 
@@ -1575,10 +1660,7 @@
                 if (data.phone && data.phone.includes(q)) {
                     const id = data.purchaseId || number;
                     if (!matchingPurchases[id]) {
-                        matchingPurchases[id] = {
-                            ...data,
-                            numbers: data.numberGroup ? data.numberGroup.sort() : [number]
-                        };
+                        matchingPurchases[id] = { ...data, numbers: data.numberGroup ? data.numberGroup.sort() : [number] };
                     }
                 }
             });
@@ -1587,17 +1669,7 @@
                 results.forEach((d, i) => {
                     let abonoInfo = (d.status === 'separado' && d.abono > 0) ? `<p class="abono-info">Abono: ${formatCurrency(d.abono)}</p>` : '';
                     const numberTags = d.numbers.map(n => `<span class="result-number-tag">${n}</span>`).join('');
-                    DOM.searchResultsContainer.insertAdjacentHTML('beforeend', `
-                        <div class="result-card" style="animation-delay: ${i * 100}ms;">
-                            <div class="result-number">${numberTags}</div>
-                            <div class="result-info">
-                                <p class="name">${d.name || 'Sin nombre'}</p>
-                                <p class="phone">${d.phone}</p>
-                                ${abonoInfo}
-                            </div>
-                            <span class="status-badge status-${d.status}">${d.status}</span>
-                            <button class="generate-ticket-btn" data-number="${d.numbers[0]}" title="Generar Recibo"><i class="fas fa-receipt"></i></button>
-                        </div>`);
+                    DOM.searchResultsContainer.insertAdjacentHTML('beforeend', `<div class="result-card" style="animation-delay: ${i * 100}ms;"><div class="result-number">${numberTags}</div><div class="result-info"><p class="name">${d.name || 'Sin nombre'}</p><p class="phone">${d.phone}</p>${abonoInfo}</div><span class="status-badge status-${d.status}">${d.status}</span><button class="generate-ticket-btn" data-number="${d.numbers[0]}" title="Generar Recibo"><i class="fas fa-receipt"></i></button></div>`);
                 });
             } else {
                 DOM.searchResultsContainer.innerHTML = `<div class="no-results-message">No se encontraron coincidencias.</div>`;
@@ -1613,10 +1685,10 @@
             const p = docSnap.exists() ? docSnap.data().premios : {};
             
             const checks = [];
-            if (totalNumbers === 1000) { // Lógica para rifa de 1000
+            if (totalNumbers === 1000) {
                 checks.push({ tier: 'mayor', number: w.slice(-3) });
                 checks.push({ tier: 'segundo', number: w.slice(0, 3) });
-            } else { // Lógica original para rifa de 100
+            } else {
                 checks.push({ tier: 'mayor', number: w.slice(-2) });
                 checks.push({ tier: 'segundo', number: w.slice(0, 2) });
                 checks.push({ tier: 'tercero', number: w.substring(1, 3) });
@@ -1823,31 +1895,79 @@
         const updateVendedorSummary = () => {
             DOM.vendedorSummaryList.innerHTML = '';
             if (!auth.currentUser) return;
-            if (!activeRaffleData.precioPorBoleto) {
-                DOM.vendedorSummaryList.innerHTML = `<div class="no-results-message">Establece un precio en configuración para ver el resumen.</div>`; return;
-            }
-            const precio = activeRaffleData.precioPorBoleto;
-            const summary = {};
-            allSellers.forEach(v => { summary[v.id] = { name: v.nombre, pagos: [], separados: [], abonos: 0 }; });
-            Object.entries(localRaffleData).forEach(([numero, data]) => {
-                if (data.vendedorId && summary[data.vendedorId]) {
-                    if (data.status === 'pago') summary[data.vendedorId].pagos.push(numero);
-                    else if (data.status === 'separado') {
-                        summary[data.vendedorId].separados.push(numero);
-                        summary[data.vendedorId].abonos += (Number(data.abono) || 0);
-                    }
+            
+            if (totalNumbers === 1000) {
+                // Lógica para rifas de 1000 números
+                if (!activeRaffleData.preciosOportunidades || Object.values(activeRaffleData.preciosOportunidades).every(p => p === 0)) {
+                    DOM.vendedorSummaryList.innerHTML = `<div class="no-results-message">Establece los precios por oportunidades en la configuración.</div>`; return;
                 }
-            });
-            if (Object.keys(summary).length === 0) { DOM.vendedorSummaryList.innerHTML = `<div class="no-results-message">No hay vendedores.</div>`; return; }
-            for (const id in summary) {
-                const data = summary[id];
-                if (data.pagos.length === 0 && data.separados.length === 0) continue;
-                const recaudado = (data.pagos.length * precio) + data.abonos;
-                const pendiente = (data.separados.length * precio) - data.abonos;
-                const pagosHTML = data.pagos.length > 0 ? data.pagos.map(n => `<span class="numero-tag status-pago">${n}</span>`).join('') : '<small>Ninguno</small>';
-                const separadosHTML = data.separados.length > 0 ? data.separados.map(n => `<span class="numero-tag status-separado">${n}</span>`).join('') : '<small>Ninguno</small>';
-                DOM.vendedorSummaryList.innerHTML += `<div class="vendedor-summary-card"><div class="vsc-header">${data.name}</div><div class="vsc-body"><div class="vsc-section"><h5><i class="fas fa-check-circle" style="color:var(--color-pago)"></i> Pagados <span class="count">${data.pagos.length}</span></h5><div class="vsc-numeros-container">${pagosHTML}</div></div><div class="vsc-section"><h5><i class="fas fa-clock" style="color:var(--color-separado)"></i> Separados <span class="count">${data.separados.length}</span></h5><div class="vsc-numeros-container">${separadosHTML}</div></div></div><div class="vsc-footer"><span class="vsc-footer-stat">Recaudado: <span class="stat-value recaudado">${formatCurrency(recaudado)}</span></span><span class="vsc-footer-stat">Pendiente: <span class="stat-value pendiente">${formatCurrency(pendiente)}</span></span></div></div>`;
+                const summary = {};
+                allSellers.forEach(v => { summary[v.id] = { name: v.nombre, totalRecaudado: 0, totalPendiente: 0, salesByType: {}, pagos: [], separados: [] }; });
+
+                const uniquePurchases = {};
+                Object.values(localRaffleData).forEach(data => { if (data.purchaseId && !uniquePurchases[data.purchaseId]) uniquePurchases[data.purchaseId] = data; });
+
+                Object.values(uniquePurchases).forEach(purchase => {
+                    if (!purchase.vendedorId || !summary[purchase.vendedorId]) return;
+                    const sellerSummary = summary[purchase.vendedorId];
+                    const groupSize = purchase.numberGroup.length;
+                    const price = activeRaffleData.preciosOportunidades?.[groupSize] || 0;
+                    if (price === 0) return;
+
+                    if (purchase.status === 'pago') {
+                        sellerSummary.totalRecaudado += price;
+                        sellerSummary.pagos.push(purchase.numberGroup);
+                    } else if (purchase.status === 'separado') {
+                        const abono = Number(purchase.abono) || 0;
+                        sellerSummary.totalRecaudado += abono;
+                        sellerSummary.totalPendiente += price - abono;
+                        sellerSummary.separados.push(purchase.numberGroup);
+                    }
+                    const typeKey = `${groupSize}-nums`;
+                    if (!sellerSummary.salesByType[typeKey]) sellerSummary.salesByType[typeKey] = 0;
+                    sellerSummary.salesByType[typeKey]++;
+                });
+
+                Object.values(summary).forEach(data => {
+                    if (data.totalRecaudado === 0 && data.totalPendiente === 0) return;
+                    const salesDetailHtml = Object.entries(data.salesByType).map(([type, count]) => `<li>${count} venta(s) de ${type.replace('nums', 'números')}</li>`).join('') || "<li>Sin ventas detalladas</li>";
+                    const pagadosHTML = data.pagos.flat().map(n => `<span class="numero-tag status-pago">${n}</span>`).join('') || '<small>Ninguno</small>';
+                    const separadosHTML = data.separados.flat().map(n => `<span class="numero-tag status-separado">${n}</span>`).join('') || '<small>Ninguno</small>';
+
+                    DOM.vendedorSummaryList.innerHTML += `<div class="vendedor-summary-card"><div class="vsc-header">${data.name}</div><div class="vsc-body"><div class="vsc-section"><h5><i class="fas fa-clipboard-list" style="color:var(--color-primary)"></i> Resumen de Ventas</h5><ul style="text-align: left; padding-left: 20px; font-size: 0.9em;">${salesDetailHtml}</ul></div><button class="vsc-toggle-numbers">Mostrar/Ocultar Números</button><div class="vsc-numeros-details" style="display:none;"><div class="vsc-section"><h5><i class="fas fa-check-circle" style="color:var(--color-pago)"></i> Pagados</h5><div class="vsc-numeros-container">${pagadosHTML}</div></div><div class="vsc-section"><h5><i class="fas fa-clock" style="color:var(--color-separado)"></i> Separados</h5><div class="vsc-numeros-container">${separadosHTML}</div></div></div></div><div class="vsc-footer"><span class="vsc-footer-stat">Recaudado: <span class="stat-value recaudado">${formatCurrency(data.totalRecaudado)}</span></span><span class="vsc-footer-stat">Pendiente: <span class="stat-value pendiente">${formatCurrency(data.totalPendiente)}</span></span></div></div>`;
+                });
+
+            } else {
+                // Lógica para rifas de 100 números (original)
+                if (!activeRaffleData.precioPorBoleto) {
+                     DOM.vendedorSummaryList.innerHTML = `<div class="no-results-message">Establece un precio por boleto en la configuración.</div>`; return;
+                }
+                const precio = activeRaffleData.precioPorBoleto;
+                const summary = {};
+                allSellers.forEach(v => { summary[v.id] = { name: v.nombre, pagos: [], separados: [], abonos: 0 }; });
+
+                Object.entries(localRaffleData).forEach(([numero, data]) => {
+                    if (data.vendedorId && summary[data.vendedorId]) {
+                        if (data.status === 'pago') summary[data.vendedorId].pagos.push(numero);
+                        else if (data.status === 'separado') {
+                            summary[data.vendedorId].separados.push(numero);
+                            summary[data.vendedorId].abonos += (Number(data.abono) || 0);
+                        }
+                    }
+                });
+
+                Object.values(summary).forEach(data => {
+                    if (data.pagos.length === 0 && data.separados.length === 0) return;
+                    const recaudado = (data.pagos.length * precio) + data.abonos;
+                    const pendiente = (data.separados.length * precio) - data.abonos;
+                    const pagosHTML = data.pagos.length > 0 ? data.pagos.map(n => `<span class="numero-tag status-pago">${n}</span>`).join('') : '<small>Ninguno</small>';
+                    const separadosHTML = data.separados.length > 0 ? data.separados.map(n => `<span class="numero-tag status-separado">${n}</span>`).join('') : '<small>Ninguno</small>';
+                    
+                    DOM.vendedorSummaryList.innerHTML += `<div class="vendedor-summary-card"><div class="vsc-header">${data.name}</div><div class="vsc-body"><div class="vsc-section"><h5><i class="fas fa-check-circle" style="color:var(--color-pago)"></i> Pagados <span class="count">${data.pagos.length}</span></h5><div class="vsc-numeros-container">${pagosHTML}</div></div><div class="vsc-section"><h5><i class="fas fa-clock" style="color:var(--color-separado)"></i> Separados <span class="count">${data.separados.length}</span></h5><div class="vsc-numeros-container">${separadosHTML}</div></div></div><div class="vsc-footer"><span class="vsc-footer-stat">Recaudado: <span class="stat-value recaudado">${formatCurrency(recaudado)}</span></span><span class="vsc-footer-stat">Pendiente: <span class="stat-value pendiente">${formatCurrency(pendiente)}</span></span></div></div>`;
+                });
             }
+
+            if (DOM.vendedorSummaryList.innerHTML === '') { DOM.vendedorSummaryList.innerHTML = `<div class="no-results-message">No hay ventas registradas.</div>`; }
         };
 
         const verifyVendedorCode = async () => {
@@ -1884,39 +2004,31 @@
             DOM.participantListContainer.innerHTML = tableHTML + '</tbody></table></div>';
         };
 
-        const findAvailableNumbers = () => {
-            const requestedCount = parseInt(DOM.opportunitySelect.value, 10);
-            const availableNumbers = [];
-            for (let i = 0; i < totalNumbers; i++) {
-                const numStr = i.toString().padStart(numberPadding, '0');
-                if (!localRaffleData[numStr]) {
-                    availableNumbers.push(numStr);
-                }
-            }
-
-            if (availableNumbers.length < requestedCount) {
-                showToast(`No hay suficientes números disponibles para ${requestedCount} oportunidades.`, "error", 5000);
-                return;
-            }
-            
-            // Lógica para seleccionar números
-            const selectedNumbers = [currentNumber];
-            availableNumbers.splice(availableNumbers.indexOf(currentNumber), 1); // Remover el actual de la lista de disponibles
-
-            for (let i = 0; i < requestedCount - 1; i++) {
-                const randomIndex = Math.floor(Math.random() * availableNumbers.length);
-                selectedNumbers.push(availableNumbers[randomIndex]);
-                availableNumbers.splice(randomIndex, 1);
-            }
-
-            currentNumberGroup = selectedNumbers.sort();
-            DOM.opportunityGroupDisplay.innerHTML = `<p>Números Seleccionados:</p><div class="number-group-tags">${currentNumberGroup.map(n => `<span class="numero-tag status-disponible">${n}</span>`).join('')}</div>`;
-            DOM.opportunityGroupDisplay.style.display = 'block';
-            DOM.dataFieldsContainer.style.display = 'block';
-        };
-
         // EVENT LISTENERS
-        DOM.findOpportunitiesButton.addEventListener('click', findAvailableNumbers);
+        DOM.opportunityCountSelect.addEventListener('change', (e) => {
+            const count = parseInt(e.target.value, 10);
+            generateOpportunityInputs(count, [currentNumber]); 
+        });
+
+        DOM.addNumberButton.addEventListener('click', () => {
+            const numStr = DOM.addNumberInput.value.trim().padStart(numberPadding, '0');
+            if (numStr.length !== numberPadding || isNaN(numStr)) {
+                showToast(`Ingresa un número válido de ${numberPadding} cifras.`, "error"); return;
+            }
+            const currentTags = DOM.multiNumberContainer.querySelectorAll('.multi-number-tag');
+            const currentNumbers = Array.from(currentTags).map(t => t.dataset.number);
+            if (currentNumbers.includes(numStr)) {
+                showToast(`El número ${numStr} ya está en la lista.`, "error"); return;
+            }
+            const originalData = localRaffleData[currentNumber];
+            const originalGroup = originalData?.numberGroup || (originalData ? [currentNumber] : []);
+            if(localRaffleData[numStr] && !originalGroup.includes(numStr)) {
+                 showToast(`El número ${numStr} no está disponible.`, "error"); return;
+            }
+            renderMultiNumberTags([...currentNumbers, numStr].sort());
+            DOM.addNumberInput.value = '';
+            DOM.addNumberInput.focus();
+        });
         
         applyTheme(localStorage.getItem('theme') || 'light');
         cargarRifas();
@@ -1945,7 +2057,7 @@
             }
         });
 
-        DOM.deleteButton.addEventListener('click', () => { if(auth.currentUser) openReauthModal(() => deleteData(false)); else showToast("Debes iniciar sesión.", "error"); });
+        DOM.deleteButton.addEventListener('click', () => { if(auth.currentUser) openReauthModal(() => deleteData()); else showToast("Debes iniciar sesión.", "error"); });
         DOM.reauthButton.addEventListener('click', handleReauthentication);
         DOM.closeReauthModalButton.addEventListener('click', closeReauthModal);
         DOM.reauthPassword.addEventListener('keyup', (e) => { if(e.key === 'Enter') handleReauthentication(); });
@@ -2032,6 +2144,18 @@
         DOM.toggleParticipantsBtn.addEventListener('click', function() { this.classList.toggle('active'); });
         DOM.resumenVendedoresButton.addEventListener('click', () => { DOM.vendedorSummarySection.style.display = (DOM.vendedorSummarySection.style.display === 'block') ? 'none' : 'block'; });
 
+        DOM.vendedorSummaryList.addEventListener('click', e => {
+            const toggleBtn = e.target.closest('.vsc-toggle-numbers');
+            if (toggleBtn) {
+                const detailsContainer = toggleBtn.nextElementSibling;
+                if (detailsContainer && detailsContainer.classList.contains('vsc-numeros-details')) {
+                    const isHidden = detailsContainer.style.display === 'none';
+                    detailsContainer.style.display = isHidden ? 'block' : 'none';
+                    toggleBtn.innerHTML = isHidden ? 'Ocultar Números <i class="fas fa-chevron-up"></i>' : 'Mostrar Números <i class="fas fa-chevron-down"></i>';
+                }
+            }
+        });
+
         document.body.addEventListener('click', function(e) {
             let tooltip = document.querySelector('.participant-tooltip');
             const clickedTag = e.target.closest('.numero-tag');
@@ -2051,4 +2175,3 @@
 </script>
 </body>
 </html>
-
