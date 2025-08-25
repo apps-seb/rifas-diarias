@@ -1758,7 +1758,7 @@
             preview.querySelector('#ticket-date').textContent = new Date().toLocaleDateString('es-CO', { day: 'numeric', month: 'short', year: 'numeric', hour: '2-digit', minute: '2-digit' });
 
             const verificationUrl = new URL('verificacion.html', window.location.href);
-            verificationUrl.search = `?rifa=${rifaActivaId}&numero=${number}`;
+            verificationUrl.search = `?rifa=${rifaActivaId}&numeros=${numbersForTicket.join(',')}`;
             preview.querySelector('#ticket-qr-code').src = `https://api.qrserver.com/v1/create-qr-code/?size=120x120&data=${encodeURIComponent(verificationUrl.href)}&qzone=1`;
             
             return true;
@@ -2175,4 +2175,5 @@
 </script>
 </body>
 </html>
+
 
