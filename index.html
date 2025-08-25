@@ -70,7 +70,8 @@
         #searchResultsContainer { display: flex; flex-direction: column; gap: 12px; min-height: 50px; }
         @keyframes fadeIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
         .result-card { display: flex; align-items: center; gap: 15px; padding: 12px; background-color: var(--background-light); border-radius: 8px; border: 1px solid var(--border-color); animation: fadeIn 0.4s ease-out forwards; flex-wrap: wrap; }
-        .result-number { flex-shrink: 0; width: 40px; height: 40px; border-radius: 50%; background-color: var(--color-primary); color: white; display: flex; justify-content: center; align-items: center; font-size: 1.2em; font-weight: bold; }
+        .result-number { flex-shrink: 0; display: flex; flex-wrap: wrap; gap: 5px; justify-content: center; align-items: center; font-weight: bold; }
+        .result-number-tag { padding: 5px 10px; border-radius: 6px; background-color: var(--color-primary); color: white; font-size: 1.1em; }
         .result-info { flex-grow: 1; min-width: 150px; }
         .result-info .name { font-weight: bold; color: var(--text-dark); margin: 0; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; font-size: 0.9em; }
         .result-info .phone { color: var(--text-light); font-size: 0.8em; margin: 2px 0 0 0; }
@@ -150,7 +151,7 @@
         .modal-footer { display: flex; justify-content: flex-end; align-items: center; gap: 10px; margin-top: 20px; flex-wrap: wrap; }
         .modal-footer button { padding: 10px 20px; border: none; border-radius: 5px; cursor: pointer; font-size: 16px; transition: background-color 0.2s, transform 0.2s; }
         .modal-footer button:hover { transform: translateY(-2px); }
-        #saveButton, #saveAllPrizesButton, #saveSettingsButton, #downloadTicketButton, #loginButton, #reauthButton, #createRifaButton, #saveBulkButton { background-color: var(--color-primary); color: white; }
+        #saveButton, #saveAllPrizesButton, #saveSettingsButton, #downloadTicketButton, #loginButton, #reauthButton, #createRifaButton, #saveBulkButton, #findOpportunitiesButton { background-color: var(--color-primary); color: white; }
         #deleteButton { background-color: var(--color-danger); color: white; }
         .action-btn-pago { padding: 10px 15px; background-color: var(--color-pago); color: white !important; border: none; border-radius: 5px; cursor: pointer; font-weight: bold; font-size: 16px; display: inline-flex; align-items: center; gap: 8px; transition: background-color 0.2s, transform 0.2s; }
         .action-btn-pago:hover { transform: translateY(-2px); filter: brightness(1.1); }
@@ -322,7 +323,10 @@
 
         #vendedor-auth-container { border: 2px dashed var(--border-color); padding: 15px; border-radius: 8px; text-align: center; }
         #vendedor-info-display { font-weight: bold; color: var(--color-pago); text-align: center; margin-bottom: 15px; padding: 10px; background-color: var(--background-light); border-radius: 4px; }
-        #data-fields-container.disabled { opacity: 0.4; pointer-events: none; }
+        #data-fields-container.disabled, #opportunity-section.disabled { opacity: 0.4; pointer-events: none; }
+        #opportunity-group-display { margin-top: 15px; padding: 10px; background-color: var(--background-light); border-radius: 8px; text-align: center;}
+        #opportunity-group-display p { margin: 0 0 8px 0; font-weight: bold; font-size: 0.9em; }
+        #opportunity-group-display .number-group-tags { display: flex; flex-wrap: wrap; gap: 8px; justify-content: center; }
 
         #ticket-template { display: none; position: absolute; left: -9999px; width: 500px; }
         #ticket-preview { width: 100%; max-width: 500px; margin: 0 auto 20px auto; transition: all 0.3s; }
@@ -345,7 +349,8 @@
         #ticket-anticipados-section { display: none; }
         .ticket-number-section { background-color: var(--background-light); border: 1px solid var(--border-color); border-radius: 8px; padding: 12px; margin-bottom: 12px; text-align: center; }
         .ticket-number-section p { font-size: 0.7em; color: var(--text-light); margin: 0 0 2px 0; text-transform: uppercase; }
-        .ticket-number { font-family: 'Roboto Mono', monospace; font-size: 4em; font-weight: 700; color: var(--color-pago); margin: 0; letter-spacing: 2px; line-height: 1; }
+        .ticket-number { font-family: 'Roboto Mono', monospace; font-size: 2.5em; font-weight: 700; color: var(--color-pago); margin: 0; letter-spacing: 2px; line-height: 1; display: flex; flex-wrap: wrap; justify-content: center; gap: 5px; }
+        .ticket-number-tag { padding: 5px 10px; font-size: 1.1em; background: none; } /* Adjusting for multiple numbers */
         .ticket-status { font-weight: bold; text-transform: uppercase; font-size: 0.7em; padding: 4px 8px; border-radius: 5px; display: inline-block; margin-top: 5px; }
         .ticket-status.pago { background-color: var(--color-pago); color: white; }
         .ticket-status.separado { background-color: var(--color-separado); color: var(--text-dark); }
@@ -413,6 +418,7 @@
             visibility: hidden;
             opacity: 0;
             transition: opacity 0.4s, bottom 0.4s, visibility 0.4s;
+            max-width: 90%;
         }
         #toast-notification.show {
             visibility: visible;
@@ -493,10 +499,8 @@
         }
         
         @media (max-width: 480px) {
-            #gridContainer.thousand-numbers .grid-item,
-            #gridContainer.hundred-numbers .grid-item {
-                font-size: 0.7em;
-            }
+            #gridContainer.thousand-numbers .grid-item { font-size: 0.6em; }
+            #gridContainer.hundred-numbers .grid-item { font-size: 0.7em; }
         }
 
         @media (max-width: 600px) {
@@ -586,14 +590,14 @@
             <label for="newRifaName">Nombre de la Rifa:</label>
             <input type="text" id="newRifaName" placeholder="Ej: Rifa de Verano">
             
+            <label for="newRifaType">Tipo de Rifa:</label>
+            <select id="newRifaType">
+                <option value="100">100 Números (00-99)</option>
+                <option value="1000">1000 Números (000-999)</option>
+            </select>
+
             <label for="newRifaDate">Fecha del Sorteo Principal:</label>
             <input type="date" id="newRifaDate">
-            
-            <label for="newRifaSize">Cantidad de Números:</label>
-            <select id="newRifaSize">
-                <option value="100">100 (00-99)</option>
-                <option value="1000">1000 (000-999)</option>
-            </select>
         </div>
         <div class="modal-footer">
             <button id="createRifaButton">Crear Rifa</button>
@@ -621,7 +625,7 @@
             </select>
 
             <label for="bulkNumbersInput">Números (separados por coma, espacio o nueva línea):</label>
-            <textarea id="bulkNumbersInput" placeholder="Ej: 001, 005, 123, 456"></textarea>
+            <textarea id="bulkNumbersInput" placeholder="Ej: 01, 05, 23, 56"></textarea>
 
             <label for="bulkVendedorCode">Tu Código de Vendedor (4 cifras):</label>
             <input type="tel" id="bulkVendedorCode" placeholder="Ingresa tu código para confirmar" maxlength="4">
@@ -643,7 +647,21 @@
                 </div>
             </div>
             <div id="vendedor-info-display" style="display: none;"></div>
+
+            <div id="opportunity-section" style="display: none;">
+                <hr style="margin: 20px 0; border-color: var(--border-color); opacity: 0.2;">
+                <label for="opportunity-select">Selecciona las oportunidades:</label>
+                <select id="opportunity-select">
+                    <option value="2">2 Oportunidades</option>
+                    <option value="3">3 Oportunidades</option>
+                    <option value="4">4 Oportunidades</option>
+                </select>
+                <button id="findOpportunitiesButton" style="width: 100%; margin-top: 10px;">Buscar Números Disponibles</button>
+                <div id="opportunity-group-display" style="display: none;"></div>
+            </div>
+
             <div id="data-fields-container" class="disabled">
+                <hr style="margin: 20px 0; border-color: var(--border-color); opacity: 0.2; display: none;" id="fields-separator">
                 <label for="inputStatus">Estado:</label>
                 <select id="inputStatus">
                     <option value="disponible">Disponible</option>
@@ -703,7 +721,7 @@
                 <input type="date" id="editRifaDate" style="padding: 8px; border-radius: 4px; border: 1px solid var(--border-color);">
             </div>
             <div class="color-setting">
-                <label for="editRifaPrice">Precio por Boleto (COP):</label>
+                <label for="editRifaPrice">Precio por Boleto/Oportunidad (COP):</label>
                 <input type="number" id="editRifaPrice" placeholder="Ej: 5000" style="padding: 8px; border-radius: 4px; border: 1px solid var(--border-color);">
             </div>
             <hr style="border-color: var(--border-color); opacity: 0.2; margin: 15px 0;">
@@ -799,7 +817,7 @@
         </div>
         <div class="ticket-body">
             <div class="ticket-number-section">
-                <p>Tu Número</p>
+                <p>Tus Números</p>
                 <div class="ticket-number" id="ticket-number"></div>
                 <div class="ticket-status" id="ticket-status"></div>
             </div>
@@ -855,13 +873,12 @@
         const auth = getAuth();
         
         const DOM = {
-            // ... (elementos existentes)
             mainContainer: document.getElementById('main-container'),
             modalBackdrop: document.getElementById('modal-backdrop'),
             rifaSelect: document.getElementById('rifaSelect'), rifaSelectItems: document.getElementById('rifaSelectItems'),
             rifaSelectSkeleton: document.getElementById('rifaSelectSkeleton'),
-            newRifaName: document.getElementById('newRifaName'), 
-            newRifaSize: document.getElementById('newRifaSize'),
+            newRifaName: document.getElementById('newRifaName'),
+            newRifaType: document.getElementById('newRifaType'), // Nuevo
             newRifaDate: document.getElementById('newRifaDate'),
             createRifaButton: document.getElementById('createRifaButton'),
             deleteRifaButton: document.getElementById('deleteRifaButton'), prizeButton: document.getElementById('prizeButton'),
@@ -934,8 +951,6 @@
             createRaffleModal: document.getElementById('createRaffleModal'),
             openCreateRaffleModalButton: document.getElementById('openCreateRaffleModalButton'),
             closeCreateRaffleModalButton: document.querySelector('#createRaffleModal .close-button'),
-
-            // === NUEVOS ELEMENTOS PARA VENTA MÚLTIPLE ===
             bulkAddModal: document.getElementById('bulkAddModal'),
             openBulkAddModalButton: document.getElementById('openBulkAddModalButton'),
             closeBulkAddModalButton: document.querySelector('#bulkAddModal .close-button'),
@@ -945,6 +960,12 @@
             bulkStatus: document.getElementById('bulkStatus'),
             bulkNumbersInput: document.getElementById('bulkNumbersInput'),
             bulkVendedorCode: document.getElementById('bulkVendedorCode'),
+            // Nuevos elementos para oportunidades
+            opportunitySection: document.getElementById('opportunity-section'),
+            opportunitySelect: document.getElementById('opportunity-select'),
+            findOpportunitiesButton: document.getElementById('findOpportunitiesButton'),
+            opportunityGroupDisplay: document.getElementById('opportunity-group-display'),
+            fieldsSeparator: document.getElementById('fields-separator'),
         };
 
         let rifaActivaId = null, unsubRifaListener = null, currentNumber = null, localRaffleData = {}, activeRaffleData = {}, currentPrizeData = {};
@@ -953,8 +974,9 @@
         let currentVendedor = null;
         let toastTimeout;
         let actionToConfirm = null;
+        let currentNumberGroup = []; // Para almacenar el grupo de números en el modal
 
-        const showToast = (message, type = 'info') => {
+        const showToast = (message, type = 'info', duration = 3500) => {
             if(toastTimeout) clearTimeout(toastTimeout);
             DOM.toastNotification.textContent = message;
             DOM.toastNotification.classList.add('show');
@@ -966,7 +988,7 @@
             }
             toastTimeout = setTimeout(() => {
                 DOM.toastNotification.classList.remove('show');
-            }, 3500);
+            }, duration);
         };
 
         const formatCurrency = (value) => new Intl.NumberFormat('es-CO', { style: 'currency', currency: 'COP', minimumFractionDigits: 0, maximumFractionDigits: 0 }).format(value);
@@ -1178,8 +1200,8 @@
         const crearNuevaRifa = async () => {
             if (!auth.currentUser) { showToast("Debes iniciar sesión para crear rifas.", "error"); return; }
             const nombre = DOM.newRifaName.value.trim();
-            const size = parseInt(DOM.newRifaSize.value, 10);
             const fechaSorteo = DOM.newRifaDate.value;
+            const size = parseInt(DOM.newRifaType.value, 10); // Obtenemos el tamaño de la rifa
 
             if (!nombre || !fechaSorteo) {
                 showToast("Por favor, asigna un nombre y una fecha de sorteo a la rifa.", "error");
@@ -1192,7 +1214,7 @@
                     nombre: nombre,
                     fechaSorteo: fechaSorteo,
                     fechaCreacion: serverTimestamp(),
-                    totalNumeros: size,
+                    totalNumeros: size, // Guardamos el tamaño
                     precioPorBoleto: 0,
                     premios: {
                         mayor: { ...premioDefault, descripcion: "Premio Mayor" },
@@ -1245,7 +1267,7 @@
             DOM.participantListSection.style.display = h ? 'block' : 'none';
             DOM.participantListContainer.innerHTML = '';
             DOM.participantListSkeleton.style.display = 'block';
-
+            
             if (!rifaActivaId) {
                 totalNumbers = 100;
                 numberPadding = 2;
@@ -1267,6 +1289,7 @@
                     activeRaffleData = docSnap.data();
                     totalNumbers = activeRaffleData.totalNumeros || 100;
                     numberPadding = String(totalNumbers - 1).length;
+                    DOM.openBulkAddModalButton.style.display = totalNumbers === 1000 ? 'none' : 'block';
                     if (activeRaffleData.colores) aplicarColoresPersonalizados(activeRaffleData.colores);
                     else restaurarColoresDefault();
                 } else {
@@ -1300,8 +1323,8 @@
 
         const initializeGrid = () => {
             DOM.gridContainer.innerHTML = '';
-            DOM.gridContainer.classList.remove('thousand-numbers', 'hundred-numbers');
-            if (Number(totalNumbers) === 1000) {
+            DOM.gridContainer.className = ''; // Limpiar clases
+            if (totalNumbers === 1000) {
                 DOM.gridContainer.classList.add('thousand-numbers');
             } else {
                 DOM.gridContainer.classList.add('hundred-numbers');
@@ -1321,20 +1344,39 @@
         const openDataModal = async (n) => {
             if (!auth.currentUser) { showToast("Debes iniciar sesión para editar.", "error"); return; }
             if (!rifaActivaId) return;
+
             currentNumber = n;
             currentVendedor = null;
+            currentNumberGroup = [];
             DOM.modalNumber.textContent = n;
             DOM.vendedorAuthContainer.style.display = 'block';
             DOM.vendedorInfoDisplay.style.display = 'none';
             DOM.dataFieldsContainer.classList.add('disabled');
             DOM.inputVendedorCode.value = '';
 
+            // Lógica específica por tipo de rifa
+            if (totalNumbers === 1000) {
+                DOM.opportunitySection.style.display = 'block';
+                DOM.opportunitySection.classList.remove('disabled');
+                DOM.opportunityGroupDisplay.style.display = 'none';
+                DOM.dataFieldsContainer.style.display = 'none'; // Ocultar campos de datos al inicio
+                DOM.fieldsSeparator.style.display = 'block';
+            } else {
+                DOM.opportunitySection.style.display = 'none';
+                DOM.dataFieldsContainer.style.display = 'block'; // Mostrar campos de datos para rifa normal
+                DOM.fieldsSeparator.style.display = 'none';
+            }
+            
             const d = localRaffleData[n];
             if (d) {
                 DOM.inputStatus.value = d.status;
                 DOM.inputName.value = d.name || '';
                 DOM.inputPhone.value = d.phone || '';
                 DOM.inputAbono.value = d.abono || '';
+                // Si el número es parte de un grupo, deshabilitamos la edición de oportunidades
+                if(d.purchaseId) {
+                    DOM.opportunitySection.classList.add('disabled');
+                }
                 if (d.vendedorId) {
                     const vendedor = allSellers.find(v => v.id === d.vendedorId);
                     if(vendedor){
@@ -1345,18 +1387,14 @@
                         DOM.dataFieldsContainer.classList.remove('disabled');
                     }
                 }
-            } else {
+            } else { // Si el número está disponible
                 DOM.inputStatus.value = 'disponible';
                 DOM.inputName.value = '';
                 DOM.inputPhone.value = '';
                 DOM.inputAbono.value = '';
             }
 
-            if (auth.currentUser && d && d.status !== 'disponible') {
-                DOM.adminTicketActions.style.display = 'block';
-            } else {
-                DOM.adminTicketActions.style.display = 'none';
-            }
+            DOM.adminTicketActions.style.display = (auth.currentUser && d && d.status !== 'disponible') ? 'block' : 'none';
 
             DOM.inputStatus.dispatchEvent(new Event('change'));
             DOM.dataModal.classList.add('visible');
@@ -1366,34 +1404,29 @@
         const closeDataModal = () => { 
             DOM.dataModal.classList.remove('visible'); 
             currentNumber = null;
+            currentNumberGroup = [];
             enableBodyScroll();
         };
         
         const saveData = async () => {
-            if (!currentNumber || !rifaActivaId || !auth.currentUser) return;
+            if (!rifaActivaId || !auth.currentUser) return;
 
-            const status = DOM.inputStatus.value;
-            const docRef = doc(db, "rifas", rifaActivaId, "numeros", currentNumber);
-            
             DOM.saveButton.disabled = true;
             DOM.saveButton.textContent = 'Guardando...';
 
-            const resetSaveButton = () => {
-                DOM.saveButton.disabled = false;
-                DOM.saveButton.textContent = 'Guardar';
-            };
+            const status = DOM.inputStatus.value;
+            const numbersToUpdate = totalNumbers === 1000 && currentNumberGroup.length > 0 ? currentNumberGroup : [currentNumber];
+            
+            if (!numbersToUpdate.length) {
+                showToast("No se ha seleccionado ningún número para guardar.", "error");
+                resetSaveButton();
+                return;
+            }
 
+            // Si es 'disponible', es una operación de borrado para el grupo
             if (status === 'disponible') {
-                try {
-                    await deleteDoc(docRef);
-                    showToast("Datos limpiados con éxito.", "success");
-                    DOM.adminTicketActions.style.display = 'none';
-                } catch (err) {
-                    console.error("Error al limpiar datos:", err);
-                    showToast("Error al limpiar datos.", "error");
-                } finally {
-                    resetSaveButton();
-                }
+                await deleteData(true); // Llama a deleteData para manejar la lógica de borrado de grupo
+                resetSaveButton();
                 return;
             }
 
@@ -1401,38 +1434,38 @@
             const phone = DOM.inputPhone.value.trim();
             const abonoValue = Number(DOM.inputAbono.value);
 
-            if (name.length === 0 || name.length >= 100) {
-                showToast("El nombre es obligatorio y debe tener menos de 100 caracteres.", "error");
-                resetSaveButton();
-                return;
-            }
-            if (phone.length < 7 || phone.length >= 16) {
-                showToast("El celular es obligatorio (entre 7 y 15 dígitos).", "error");
+            if (name.length === 0 || phone.length < 7) {
+                showToast("Nombre y celular son obligatorios.", "error");
                 resetSaveButton();
                 return;
             }
             if (!currentVendedor) {
-                showToast("Se requiere un vendedor verificado para guardar.", "error");
+                showToast("Se requiere un vendedor verificado.", "error");
                 resetSaveButton();
                 return;
             }
-
-            const dataToSave = {
-                status: status,
-                name: name,
-                phone: phone,
-                vendedorId: currentVendedor.id
-            };
-
-            if (status === 'separado' && abonoValue > 0) {
-                dataToSave.abono = abonoValue;
-            } else {
-                dataToSave.abono = 0;
-            }
+            
+            const purchaseId = totalNumbers === 1000 ? (Date.now().toString(36) + Math.random().toString(36).substr(2)) : null;
 
             try {
-                await setDoc(docRef, dataToSave, { merge: true });
-                showToast("Datos guardados con éxito.", "success");
+                const batch = writeBatch(db);
+                const dataToSave = {
+                    status, name, phone,
+                    vendedorId: currentVendedor.id,
+                    abono: (status === 'separado' && abonoValue > 0) ? abonoValue : 0
+                };
+                if (purchaseId) {
+                    dataToSave.purchaseId = purchaseId;
+                    dataToSave.numberGroup = numbersToUpdate;
+                }
+
+                numbersToUpdate.forEach(num => {
+                    const docRef = doc(db, "rifas", rifaActivaId, "numeros", num);
+                    batch.set(docRef, dataToSave, { merge: true });
+                });
+
+                await batch.commit();
+                showToast(`${numbersToUpdate.length} número(s) guardado(s).`, "success");
                 DOM.adminTicketActions.style.display = 'block';
             } catch (err) {
                 console.error("Error al guardar datos:", err);
@@ -1441,16 +1474,36 @@
                 resetSaveButton();
             }
         };
+
+        const resetSaveButton = () => {
+            DOM.saveButton.disabled = false;
+            DOM.saveButton.textContent = 'Guardar';
+        };
         
-        const deleteData = async () => { 
+        const deleteData = async (calledFromSave = false) => { 
             if (!currentNumber || !rifaActivaId || !auth.currentUser) return; 
+
+            const numberData = localRaffleData[currentNumber];
+            const numbersToDelete = (numberData && numberData.numberGroup) ? numberData.numberGroup : [currentNumber];
+            
+            if (!calledFromSave) {
+                 if (!confirm(`¿Seguro que deseas limpiar los datos de ${numbersToDelete.length > 1 ? `los números ${numbersToDelete.join(', ')}` : `el número ${currentNumber}`}?`)) {
+                    return;
+                }
+            }
+
             try {
-                const docRef = doc(db, "rifas", rifaActivaId, "numeros", currentNumber);
-                await deleteDoc(docRef);
+                const batch = writeBatch(db);
+                numbersToDelete.forEach(num => {
+                    const docRef = doc(db, "rifas", rifaActivaId, "numeros", num);
+                    batch.delete(docRef);
+                });
+                await batch.commit();
+                showToast("Datos limpiados con éxito.", "success");
                 closeDataModal();
             } catch (e) {
                 console.error("Error al borrar:", e);
-                showToast("Error al borrar el número.", "error");
+                showToast("Error al borrar el/los número(s).", "error");
             }
         };
 
@@ -1512,56 +1565,57 @@
         const performSearch = () => {
             const q = DOM.searchInput.value.trim();
             DOM.searchResultsContainer.innerHTML = '';
-            document.querySelectorAll('.grid-item.highlighted').forEach(i => i.classList.remove('highlighted'));
-            const m = Object.entries(localRaffleData).filter(([_, d]) => d.phone && d.phone.includes(q)).map(([n, d]) => ({ number: n, ...d }));
-            if (m.length > 0) {
-                m.forEach((d, i) => {
-                    let abonoInfo = '';
-                    if (d.status === 'separado' && d.abono && d.abono > 0) {
-                        abonoInfo = `<p class="abono-info">Abono: ${formatCurrency(d.abono)}</p>`;
+            const matchingPurchases = {};
+            Object.entries(localRaffleData).forEach(([number, data]) => {
+                if (data.phone && data.phone.includes(q)) {
+                    const id = data.purchaseId || number;
+                    if (!matchingPurchases[id]) {
+                        matchingPurchases[id] = {
+                            ...data,
+                            numbers: data.numberGroup ? data.numberGroup.sort() : [number]
+                        };
                     }
+                }
+            });
+            const results = Object.values(matchingPurchases);
+            if (results.length > 0) {
+                results.forEach((d, i) => {
+                    let abonoInfo = (d.status === 'separado' && d.abono > 0) ? `<p class="abono-info">Abono: ${formatCurrency(d.abono)}</p>` : '';
+                    const numberTags = d.numbers.map(n => `<span class="result-number-tag">${n}</span>`).join('');
                     DOM.searchResultsContainer.insertAdjacentHTML('beforeend', `
                         <div class="result-card" style="animation-delay: ${i * 100}ms;">
-                            <div class="result-number">${d.number}</div>
+                            <div class="result-number">${numberTags}</div>
                             <div class="result-info">
                                 <p class="name">${d.name || 'Sin nombre'}</p>
                                 <p class="phone">${d.phone}</p>
                                 ${abonoInfo}
                             </div>
                             <span class="status-badge status-${d.status}">${d.status}</span>
-                            <button class="generate-ticket-btn" data-number="${d.number}" title="Generar Recibo"><i class="fas fa-receipt"></i></button>
+                            <button class="generate-ticket-btn" data-number="${d.numbers[0]}" title="Generar Recibo"><i class="fas fa-receipt"></i></button>
                         </div>`);
-                    const c = document.getElementById(`grid-item-${d.number}`);
-                    if (c) c.classList.add('highlighted');
                 });
-                const f = document.getElementById(`grid-item-${m[0].number}`);
-                if(f) f.scrollIntoView({ behavior: 'smooth', block: 'center' });
             } else {
-                DOM.searchResultsContainer.innerHTML = `<div class="no-results-message"><div>No se encontraron coincidencias.</div></div>`;
+                DOM.searchResultsContainer.innerHTML = `<div class="no-results-message">No se encontraron coincidencias.</div>`;
             }
         };
+
         const getWinnerInfo = (r, t, p) => { const d = localRaffleData[r], l = { mayor: '🥇 Premio Mayor', segundo: '🥈 Segundo Premio', tercero: '🥉 Tercer Premio' }, s = { mayor: 'gold', segundo: 'silver', tercero: 'bronze' }; let w; if (d && d.status === 'pago') { w = `<div class="prize-info"><div class="winner-name">${d.name||'N/A'}</div><div class="winner-phone">Cel: ${d.phone||'N/A'}</div><hr style="border-color: rgba(255,255,255,0.2); margin: 10px 0;">${generarHtmlDePremio(p)}</div>`; } else { const e = d ? `no fue pagado (estado: ${d.status})` : 'está disponible'; w = `<div class="prize-info"><div class="no-winner-text">Sin ganador (El número ${r} ${e}).</div></div>`; } return `<div class="winner-card ${d && d.status === 'pago' ? s[t] : 'no-winner'}"><div class="prize-header"><h3>${l[t]}</h3><span class="prize-number-tag">Nº ${r}</span></div>${w}</div>`; };
         const checkWinners = async () => { 
             const w = DOM.realWinningInput.value.trim(); 
             DOM.winnerResults.innerHTML = ''; 
             if (!/^\d{4}$/.test(w)) { DOM.winnerResults.innerHTML = '<div class="no-results-message">Ingresa 4 cifras.</div>'; return; } 
-            const rifaRef = doc(db, "rifas", rifaActivaId);
-            const docSnap = await getDoc(rifaRef);
-            const p = docSnap.data().premios || { mayor: {}, segundo: {}, tercero: {} };
+            const docSnap = await getDoc(doc(db, "rifas", rifaActivaId));
+            const p = docSnap.exists() ? docSnap.data().premios : {};
             
-            const mayorNum = w.slice(-numberPadding);
-            const segundoNum = w.slice(0, numberPadding);
-            
-            const checks = [
-                { tier: 'mayor', number: mayorNum },
-                { tier: 'segundo', number: segundoNum }
-            ];
-
-            if (numberPadding === 2) {
-                const tercerNum = w.substring(1, 3);
-                checks.push({ tier: 'tercero', number: tercerNum });
+            const checks = [];
+            if (totalNumbers === 1000) { // Lógica para rifa de 1000
+                checks.push({ tier: 'mayor', number: w.slice(-3) });
+                checks.push({ tier: 'segundo', number: w.slice(0, 3) });
+            } else { // Lógica original para rifa de 100
+                checks.push({ tier: 'mayor', number: w.slice(-2) });
+                checks.push({ tier: 'segundo', number: w.slice(0, 2) });
+                checks.push({ tier: 'tercero', number: w.substring(1, 3) });
             }
-            
             checks.forEach(i => DOM.winnerResults.insertAdjacentHTML('beforeend', getWinnerInfo(i.number, i.tier, p[i.tier]))); 
         };
         
@@ -1575,46 +1629,8 @@
                     const fecha = p.fecha || '';
                     const loteria = p.loteria ? String(p.loteria).replace(/"/g, '&quot;') : '';
                     const numeroGanador = p.numeroGanador || '';
-
-                    let winnerDisplayHTML = '';
-                    if (numeroGanador && numeroGanador.length === 2) {
-                        winnerDisplayHTML = `
-                            <div class="anticipado-winner-display">
-                                <p class="winner-label">Número Ganador</p>
-                                <div class="winner-circles-container">
-                                    <div class="winner-digit-circle">${numeroGanador.charAt(0)}</div>
-                                    <div class="winner-digit-circle">${numeroGanador.charAt(1)}</div>
-                                </div>
-                            </div>`;
-                    }
-                    
-                    const h = `
-                        <div class="anticipado-card" data-index="${index}">
-                            <div class="view-mode">
-                                <div class="anticipado-info">
-                                    <div class="anticipado-valor-display"><i class="fas fa-coins"></i><span>${formatCurrency(valor)}</span></div>
-                                    <div class="anticipado-meta">
-                                        <div><i class="fas fa-calendar-alt"></i> ${fecha ? new Date(fecha + 'T00:00:00').toLocaleDateString('es-ES', { day: 'numeric', month: 'long', year: 'numeric' }) : 'Fecha no definida'}</div>
-                                        <div><i class="fas fa-ticket-alt"></i> ${loteria || 'Sorteo no definido'}</div>
-                                    </div>
-                                    ${winnerDisplayHTML}
-                                </div>
-                                <div class="anticipado-card-actions">
-                                    <button class="edit-anticipado-btn admin-action-btn" title="Editar"><i class="fas fa-pencil-alt"></i></button>
-                                    <button class="delete-anticipado-btn admin-action-btn" title="Eliminar"><i class="fas fa-trash-alt"></i></button>
-                                </div>
-                            </div>
-                            <div class="edit-mode">
-                                <div><label>Valor:</label><input type="number" class="edit-valor" value="${valor}"></div>
-                                <div><label>Fecha:</label><input type="date" class="edit-fecha" value="${fecha}"></div>
-                                <div><label>Lotería:</label><input type="text" class="edit-loteria" value="${loteria}"></div>
-                                <div><label>Nº Ganador (2 cifras):</label><input type="tel" class="edit-ganador" value="${numeroGanador}" maxlength="2" placeholder="Ej: 42"></div>
-                                <div class="edit-mode-actions">
-                                    <button class="cancel-edit-anticipado-btn">Cancelar</button>
-                                    <button class="save-edit-anticipado-btn">Guardar</button>
-                                </div>
-                            </div>
-                        </div>`;
+                    let winnerDisplayHTML = (numeroGanador && numeroGanador.length === 2) ? `<div class="anticipado-winner-display"><p class="winner-label">Número Ganador</p><div class="winner-circles-container"><div class="winner-digit-circle">${numeroGanador.charAt(0)}</div><div class="winner-digit-circle">${numeroGanador.charAt(1)}</div></div></div>` : '';
+                    const h = `<div class="anticipado-card" data-index="${index}"><div class="view-mode"><div class="anticipado-info"><div class="anticipado-valor-display"><i class="fas fa-coins"></i><span>${formatCurrency(valor)}</span></div><div class="anticipado-meta"><div><i class="fas fa-calendar-alt"></i> ${fecha ? new Date(fecha + 'T00:00:00').toLocaleDateString('es-ES', { day: 'numeric', month: 'long', year: 'numeric' }) : 'Fecha no definida'}</div><div><i class="fas fa-ticket-alt"></i> ${loteria || 'Sorteo no definido'}</div></div>${winnerDisplayHTML}</div><div class="anticipado-card-actions"><button class="edit-anticipado-btn admin-action-btn" title="Editar"><i class="fas fa-pencil-alt"></i></button><button class="delete-anticipado-btn admin-action-btn" title="Eliminar"><i class="fas fa-trash-alt"></i></button></div></div><div class="edit-mode"><div><label>Valor:</label><input type="number" class="edit-valor" value="${valor}"></div><div><label>Fecha:</label><input type="date" class="edit-fecha" value="${fecha}"></div><div><label>Lotería:</label><input type="text" class="edit-loteria" value="${loteria}"></div><div><label>Nº Ganador (2 cifras):</label><input type="tel" class="edit-ganador" value="${numeroGanador}" maxlength="2" placeholder="Ej: 42"></div><div class="edit-mode-actions"><button class="cancel-edit-anticipado-btn">Cancelar</button><button class="save-edit-anticipado-btn">Guardar</button></div></div></div>`;
                     DOM.anticipadosList.innerHTML += h;
                 });
                 DOM.anticipadosContainerPublic.style.display = 'block';
@@ -1626,51 +1642,37 @@
         const populateTicketPreview = async (number) => {
             if (!rifaActivaId) return false;
             
-            const raffleDocRef = doc(db, "rifas", rifaActivaId);
-            const raffleDoc = await getDoc(raffleDocRef);
+            const raffleDoc = await getDoc(doc(db, "rifas", rifaActivaId));
             if (!raffleDoc.exists()) return false;
-
             const raffleData = raffleDoc.data();
             const clientData = localRaffleData[number];
             if (!clientData) return false;
+
+            const numbersForTicket = clientData.numberGroup || [number];
             
             DOM.ticketPreview.innerHTML = DOM.ticketTemplate.innerHTML;
-            
             const preview = DOM.ticketPreview;
             preview.querySelector('#ticket-rifa-name').textContent = raffleData.nombre;
             preview.querySelector('#ticket-client-name').textContent = clientData.name || 'N/A';
             preview.querySelector('#ticket-client-phone').textContent = clientData.phone || 'N/A';
-            preview.querySelector('#ticket-number').textContent = number;
+            preview.querySelector('#ticket-number').innerHTML = numbersForTicket.map(n => `<span class="ticket-number-tag">${n}</span>`).join('');
             
             const statusEl = preview.querySelector('#ticket-status');
             statusEl.textContent = clientData.status;
             statusEl.className = `ticket-status ${clientData.status}`;
 
-            const ticketInfo = preview.querySelector('.ticket-info');
-            if (clientData.status === 'separado' && clientData.abono && clientData.abono > 0) {
-                const abonoP = document.createElement('p');
-                abonoP.innerHTML = `<strong>Abono Realizado:</strong> <span>${formatCurrency(clientData.abono)}</span>`;
-                const phoneP = ticketInfo.querySelector('p:last-child');
-                if (phoneP) phoneP.after(abonoP);
-                else ticketInfo.appendChild(abonoP);
+            if (clientData.status === 'separado' && clientData.abono > 0) {
+                preview.querySelector('.ticket-info').innerHTML += `<p><strong>Abono:</strong> <span>${formatCurrency(clientData.abono)}</span></p>`;
             }
 
             const drawDateEl = preview.querySelector('#ticket-main-draw-date');
-            if (raffleData.fechaSorteo) {
-                drawDateEl.innerHTML = `<i class="fas fa-calendar-alt"></i> <strong>Sorteo Principal:</strong> ${new Date(raffleData.fechaSorteo + 'T00:00:00').toLocaleDateString('es-ES', { year: 'numeric', month: 'long', day: 'numeric' })}`;
-            } else {
-                drawDateEl.style.display = 'none';
-            }
+            drawDateEl.innerHTML = raffleData.fechaSorteo ? `<i class="fas fa-calendar-alt"></i> <strong>Sorteo Principal:</strong> ${new Date(raffleData.fechaSorteo + 'T00:00:00').toLocaleDateString('es-ES', { year: 'numeric', month: 'long', day: 'numeric' })}` : '';
 
             preview.querySelector('#ticket-prizes').innerHTML = `<ul><li><strong>Mayor:</strong> ${raffleData.premios.mayor.descripcion || 'No definido'}</li><li><strong>Segundo:</strong> ${raffleData.premios.segundo.descripcion || 'No definido'}</li><li><strong>Tercero:</strong> ${raffleData.premios.tercero.descripcion || 'No definido'}</li></ul>`;
             
             const anticipadosSection = preview.querySelector('#ticket-anticipados-section');
-            const anticipadosList = preview.querySelector('#ticket-anticipados-list');
-            if (raffleData.premiosAnticipados && raffleData.premiosAnticipados.length > 0) {
-                anticipadosList.innerHTML = '<ul>' + raffleData.premiosAnticipados.map(p => {
-                    let winnerInfo = p.numeroGanador ? ` <strong style="color: var(--color-pago);">(Ganador: ${p.numeroGanador})</strong>` : '';
-                    return `<li><strong>${formatCurrency(p.valor)}:</strong> Juega el ${new Date(p.fecha + 'T00:00:00').toLocaleDateString('es-ES', {day: 'numeric', month: 'long'})} con ${p.loteria}${winnerInfo}</li>`;
-                }).join('') + '</ul>';
+            if (raffleData.premiosAnticipados?.length > 0) {
+                preview.querySelector('#ticket-anticipados-list').innerHTML = '<ul>' + raffleData.premiosAnticipados.map(p => `<li><strong>${formatCurrency(p.valor)}:</strong> Juega el ${new Date(p.fecha + 'T00:00:00').toLocaleDateString('es-ES', {day: 'numeric', month: 'long'})} con ${p.loteria}${p.numeroGanador ? ` <strong style="color: var(--color-pago);">(Ganador: ${p.numeroGanador})</strong>` : ''}</li>`).join('') + '</ul>';
                 anticipadosSection.style.display = 'block';
             } else {
                 anticipadosSection.style.display = 'none';
@@ -1678,19 +1680,15 @@
 
             preview.querySelector('#ticket-date').textContent = new Date().toLocaleDateString('es-CO', { day: 'numeric', month: 'short', year: 'numeric', hour: '2-digit', minute: '2-digit' });
 
-            const verificationUrl = new URL('verificacion.html', window.location.href);
-            verificationUrl.searchParams.set('rifa', rifaActivaId);
-            verificationUrl.searchParams.set('numero', number);
+            const verificationUrl = new URL(window.location.href);
+            verificationUrl.search = `?rifa=${rifaActivaId}&numero=${number}`;
+            preview.querySelector('#ticket-qr-code').src = `https://api.qrserver.com/v1/create-qr-code/?size=120x120&data=${encodeURIComponent(verificationUrl.href)}&qzone=1`;
             
-            const qrApiUrl = `https://api.qrserver.com/v1/create-qr-code/?size=120x120&data=${encodeURIComponent(verificationUrl.href)}&qzone=1`;
-            preview.querySelector('#ticket-qr-code').src = qrApiUrl;
-
             return true;
         };
         
         const generateTicket = async (number) => {
-            const success = await populateTicketPreview(number);
-            if(success) {
+            if (await populateTicketPreview(number)) {
                 DOM.ticketModal.classList.add('visible');
                 disableBodyScroll();
             } else {
@@ -1698,51 +1696,28 @@
             }
         };
 
-        const shareTicket = async (number) => {
+        const shareTicket = async () => {
             const button = DOM.shareTicketButton;
             button.disabled = true;
             button.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Preparando...';
 
-            const printableElement = DOM.ticketPreview.querySelector('.ticket-container');
-            if (!printableElement) {
-                showToast("Error: No se encontró el contenido del recibo.", "error");
-                button.disabled = false;
-                button.innerHTML = '<i class="fas fa-share-alt"></i> Compartir';
-                return;
-            }
-
             try {
-                const canvas = await html2canvas(printableElement, { 
-                    scale: 3, 
-                    useCORS: true,
-                    backgroundColor: document.body.classList.contains('dark-mode') ? getComputedStyle(document.documentElement).getPropertyValue('--background-card') : '#FFFFFF'
-                });
+                const canvas = await html2canvas(DOM.ticketPreview.querySelector('.ticket-container'), { scale: 3, useCORS: true, backgroundColor: document.body.classList.contains('dark-mode') ? getComputedStyle(document.documentElement).getPropertyValue('--background-card') : '#FFFFFF' });
                 const blob = await new Promise(resolve => canvas.toBlob(resolve, 'image/png'));
-                
                 const clientName = DOM.ticketPreview.querySelector('#ticket-client-name').textContent.trim().replace(/\s+/g, '_');
-                const ticketNumber = DOM.ticketPreview.querySelector('#ticket-number').textContent.trim();
-                const fileName = `Recibo-Rifa-${clientName}-${ticketNumber}.png`;
-                const file = new File([blob], fileName, { type: 'image/png' });
-                const raffleName = activeRaffleData.nombre || 'nuestra rifa';
-                const shareData = {
-                    files: [file],
-                    title: `Recibo Rifa ${raffleName}`,
-                    text: `¡Gracias por participar en ${raffleName}! Aquí está tu recibo para el número ${ticketNumber}.`,
-                };
-
+                const ticketNumber = DOM.ticketPreview.querySelector('#ticket-number').textContent.trim().replace(/\s+/g, '-');
+                const file = new File([blob], `Recibo-Rifa-${clientName}-${ticketNumber}.png`, { type: 'image/png' });
+                const shareData = { files: [file], title: `Recibo Rifa ${activeRaffleData.nombre}`, text: `¡Gracias por participar en ${activeRaffleData.nombre}! Aquí está tu recibo.` };
                 if (navigator.share && navigator.canShare(shareData)) {
                     await navigator.share(shareData);
                 } else {
                     downloadTicket();
-                    closeTicketModal();
-                    showToast("Recibo descargado. ¡Ya puedes compartirlo!", "success");
                 }
             } catch (err) {
                 if (err.name !== 'AbortError') {
                     console.error('Error al compartir:', err);
                     showToast("No se pudo compartir, se inició la descarga.", "info");
                     downloadTicket();
-                    closeTicketModal();
                 }
             } finally {
                 button.disabled = false;
@@ -1754,36 +1729,23 @@
             const button = DOM.downloadTicketButton;
             button.textContent = 'Generando...';
             button.disabled = true;
-            
-            const printableElement = DOM.ticketPreview.querySelector('.ticket-container');
-            if (!printableElement) {
-                showToast("Error al generar imagen para descargar.", "error");
-                button.textContent = 'Descargar Recibo';
-                button.disabled = false;
-                return;
-            }
-
-            html2canvas(printableElement, { 
-                scale: 3, 
-                useCORS: true, 
-                backgroundColor: document.body.classList.contains('dark-mode') ? getComputedStyle(document.documentElement).getPropertyValue('--background-card') : '#FFFFFF'
-            }).then(canvas => {
+            html2canvas(DOM.ticketPreview.querySelector('.ticket-container'), { scale: 3, useCORS: true, backgroundColor: document.body.classList.contains('dark-mode') ? getComputedStyle(document.documentElement).getPropertyValue('--background-card') : '#FFFFFF' })
+            .then(canvas => {
                 const link = document.createElement('a');
                 const clientName = DOM.ticketPreview.querySelector('#ticket-client-name').textContent.trim().replace(/\s+/g, '_');
-                const ticketNumber = DOM.ticketPreview.querySelector('#ticket-number').textContent.trim();
+                const ticketNumber = DOM.ticketPreview.querySelector('#ticket-number').textContent.trim().replace(/\s+/g, '-');
                 link.download = `Recibo-Rifa-${clientName}-${ticketNumber}.png`;
                 link.href = canvas.toDataURL('image/png');
                 link.click();
-                
-                button.textContent = 'Descargar Recibo';
-                button.disabled = false;
             }).catch(err => { 
                 console.error('Error al generar recibo:', err); 
                 showToast('Error al generar el recibo para descargar.', "error"); 
+            }).finally(() => {
                 button.textContent = 'Descargar Recibo';
                 button.disabled = false; 
             });
         };
+
         const closeTicketModal = () => {
             DOM.ticketModal.classList.remove('visible');
             enableBodyScroll();
@@ -1817,13 +1779,7 @@
             allSellers.forEach(v => {
                 const item = document.createElement('div');
                 item.className = 'vendedor-list-item';
-                item.innerHTML = `
-                    <span><strong>${v.nombre}</strong> - Código: ${v.codigo}</span>
-                    <div class="actions">
-                        <button class="edit-vendedor-btn" data-id="${v.id}" data-nombre="${v.nombre}" data-codigo="${v.codigo}" title="Editar Vendedor"><i class="fas fa-pencil-alt"></i></button>
-                        <button class="delete-vendedor-btn" data-id="${v.id}" title="Eliminar Vendedor"><i class="fas fa-trash-alt"></i></button>
-                    </div>
-                `;
+                item.innerHTML = `<span><strong>${v.nombre}</strong> - Código: ${v.codigo}</span><div class="actions"><button class="edit-vendedor-btn" data-id="${v.id}" data-nombre="${v.nombre}" data-codigo="${v.codigo}" title="Editar Vendedor"><i class="fas fa-pencil-alt"></i></button><button class="delete-vendedor-btn" data-id="${v.id}" title="Eliminar Vendedor"><i class="fas fa-trash-alt"></i></button></div>`;
                 DOM.vendedoresList.appendChild(item);
             });
         };
@@ -1834,112 +1790,60 @@
             const id = DOM.editVendedorId.value;
 
             if (!nombre || !/^\d{4}$/.test(codigo)) {
-                showToast("Por favor, ingresa un nombre y un código numérico de 4 cifras.", "error");
-                return;
+                showToast("Ingresa un nombre y un código de 4 cifras.", "error"); return;
             }
-            
             const sellersCollection = collection(db, "vendedores");
             const q = query(sellersCollection, where('codigo', '==', codigo));
             const existing = await getDocs(q);
             if (!existing.empty && existing.docs[0].id !== id) {
-                showToast("El código de vendedor ya existe. Por favor, elige otro.", "error");
-                return;
+                showToast("El código de vendedor ya existe.", "error"); return;
             }
-
             if(id) {
-                const docRef = doc(db, "vendedores", id);
-                await updateDoc(docRef, { nombre, codigo });
+                await updateDoc(doc(db, "vendedores", id), { nombre, codigo });
             } else {
                 await setDoc(doc(sellersCollection), { nombre, codigo });
             }
-            
-            DOM.newVendedorName.value = '';
-            DOM.newVendedorCode.value = '';
-            DOM.editVendedorId.value = '';
+            DOM.newVendedorName.value = ''; DOM.newVendedorCode.value = ''; DOM.editVendedorId.value = '';
             DOM.addVendedorButton.textContent = 'Agregar';
             renderVendedores();
         };
 
         const deleteVendedor = async (id) => {
-            if (confirm("¿Seguro que deseas eliminar a este vendedor? Esto no se puede deshacer.")) {
-                const docRef = doc(db, "vendedores", id);
-                await deleteDoc(docRef);
+            if (confirm("¿Seguro que deseas eliminar a este vendedor?")) {
+                await deleteDoc(doc(db, "vendedores", id));
                 renderVendedores();
             }
         };
         
         const updateVendedorSummary = () => {
-            const summaryContainer = DOM.vendedorSummaryList;
-            summaryContainer.innerHTML = '';
+            DOM.vendedorSummaryList.innerHTML = '';
             if (!auth.currentUser) return;
-            
-            if (!activeRaffleData.precioPorBoleto || activeRaffleData.precioPorBoleto === 0) {
-                summaryContainer.innerHTML = `<div class="no-results-message">Establece un precio por boleto en la configuración para ver el resumen detallado.</div>`;
-                return;
+            if (!activeRaffleData.precioPorBoleto) {
+                DOM.vendedorSummaryList.innerHTML = `<div class="no-results-message">Establece un precio en configuración para ver el resumen.</div>`; return;
             }
-
             const precio = activeRaffleData.precioPorBoleto;
             const summary = {};
-
-            allSellers.forEach(v => {
-                summary[v.id] = { name: v.nombre, pagos: [], separados: [], abonos: 0 };
-            });
-
+            allSellers.forEach(v => { summary[v.id] = { name: v.nombre, pagos: [], separados: [], abonos: 0 }; });
             Object.entries(localRaffleData).forEach(([numero, data]) => {
                 if (data.vendedorId && summary[data.vendedorId]) {
-                    if (data.status === 'pago') {
-                        summary[data.vendedorId].pagos.push(numero);
-                    } else if (data.status === 'separado') {
+                    if (data.status === 'pago') summary[data.vendedorId].pagos.push(numero);
+                    else if (data.status === 'separado') {
                         summary[data.vendedorId].separados.push(numero);
                         summary[data.vendedorId].abonos += (Number(data.abono) || 0);
                     }
                 }
             });
-
-            if (Object.keys(summary).length === 0) {
-                summaryContainer.innerHTML = `<div class="no-results-message">No hay vendedores para mostrar.</div>`;
-                return;
-            }
-
+            if (Object.keys(summary).length === 0) { DOM.vendedorSummaryList.innerHTML = `<div class="no-results-message">No hay vendedores.</div>`; return; }
             for (const id in summary) {
                 const data = summary[id];
                 if (data.pagos.length === 0 && data.separados.length === 0) continue;
-
                 const recaudado = (data.pagos.length * precio) + data.abonos;
                 const pendiente = (data.separados.length * precio) - data.abonos;
-                
-                const card = document.createElement('div');
-                card.className = 'vendedor-summary-card';
-                
-                const pagosHTML = data.pagos.length > 0
-                    ? data.pagos.map(n => `<span class="numero-tag status-pago">${n}</span>`).join('')
-                    : '<small>Ninguno</small>';
-                
-                const separadosHTML = data.separados.length > 0
-                    ? data.separados.map(n => `<span class="numero-tag status-separado">${n}</span>`).join('')
-                    : '<small>Ninguno</small>';
-
-                card.innerHTML = `
-                    <div class="vsc-header">${data.name}</div>
-                    <div class="vsc-body">
-                        <div class="vsc-section">
-                            <h5><i class="fas fa-check-circle" style="color:var(--color-pago)"></i> Pagados <span class="count">${data.pagos.length}</span></h5>
-                            <div class="vsc-numeros-container">${pagosHTML}</div>
-                        </div>
-                        <div class="vsc-section">
-                            <h5><i class="fas fa-clock" style="color:var(--color-separado)"></i> Separados <span class="count">${data.separados.length}</span></h5>
-                            <div class="vsc-numeros-container">${separadosHTML}</div>
-                        </div>
-                    </div>
-                    <div class="vsc-footer">
-                        <span class="vsc-footer-stat">Recaudado: <span class="stat-value recaudado">${formatCurrency(recaudado)}</span></span>
-                        <span class="vsc-footer-stat">Pendiente: <span class="stat-value pendiente">${formatCurrency(pendiente)}</span></span>
-                    </div>
-                `;
-                summaryContainer.appendChild(card);
+                const pagosHTML = data.pagos.length > 0 ? data.pagos.map(n => `<span class="numero-tag status-pago">${n}</span>`).join('') : '<small>Ninguno</small>';
+                const separadosHTML = data.separados.length > 0 ? data.separados.map(n => `<span class="numero-tag status-separado">${n}</span>`).join('') : '<small>Ninguno</small>';
+                DOM.vendedorSummaryList.innerHTML += `<div class="vendedor-summary-card"><div class="vsc-header">${data.name}</div><div class="vsc-body"><div class="vsc-section"><h5><i class="fas fa-check-circle" style="color:var(--color-pago)"></i> Pagados <span class="count">${data.pagos.length}</span></h5><div class="vsc-numeros-container">${pagosHTML}</div></div><div class="vsc-section"><h5><i class="fas fa-clock" style="color:var(--color-separado)"></i> Separados <span class="count">${data.separados.length}</span></h5><div class="vsc-numeros-container">${separadosHTML}</div></div></div><div class="vsc-footer"><span class="vsc-footer-stat">Recaudado: <span class="stat-value recaudado">${formatCurrency(recaudado)}</span></span><span class="vsc-footer-stat">Pendiente: <span class="stat-value pendiente">${formatCurrency(pendiente)}</span></span></div></div>`;
             }
         };
-
 
         const verifyVendedorCode = async () => {
             const code = DOM.inputVendedorCode.value;
@@ -1957,154 +1861,58 @@
             }
         };
         
-        const maskPhoneNumber = (phone) => {
-            if (!phone || typeof phone !== 'string' || phone.length <= 4) return 'N/A';
-            const hiddenPart = '*'.repeat(phone.length - 4);
-            const visiblePart = phone.slice(-4);
-            return `${hiddenPart}${visiblePart}`;
-        };
+        const maskPhoneNumber = (phone) => (!phone || phone.length <= 4) ? 'N/A' : '*'.repeat(phone.length - 4) + phone.slice(-4);
 
         const renderParticipantList = () => {
             DOM.participantListSkeleton.style.display = 'none';
-            const container = DOM.participantListContainer;
-            
             const participants = Object.entries(localRaffleData)
-                .filter(([_, data]) => (data.status === 'pago' || data.status === 'separado') && data.name)
-                .map(([number, data]) => ({
-                    number: number,
-                    name: data.name,
-                    phone: data.phone,
-                    status: data.status
-                }))
+                .filter(([_, data]) => data.name)
+                .map(([number, data]) => ({ number, ...data }))
                 .sort((a, b) => a.number.localeCompare(b.number));
-            
             if (participants.length === 0) {
-                container.innerHTML = '<p class="no-results-message" style="padding: 20px;">Aún no hay participantes en esta rifa.</p>';
-                return;
+                DOM.participantListContainer.innerHTML = '<p class="no-results-message">Aún no hay participantes.</p>'; return;
             }
-
-            let tableHTML = `<div class="table-scroll-wrapper"><table id="participant-table">
-                                <thead><tr><th>N°</th><th>Nombre</th><th>Teléfono</th></tr></thead>
-                                <tbody>`;
-
+            let tableHTML = `<div class="table-scroll-wrapper"><table id="participant-table"><thead><tr><th>N°</th><th>Nombre</th><th>Teléfono</th></tr></thead><tbody>`;
             participants.forEach(p => {
-                tableHTML += `<tr>
-                                <td>
-                                   <span class="numero-tag-participante status-${p.status}">${p.number}</span>
-                                </td>
-                                <td>${p.name}</td>
-                                <td>${maskPhoneNumber(p.phone)}</td>
-                            </tr>`;
+                tableHTML += `<tr><td><span class="numero-tag-participante status-${p.status}">${p.number}</span></td><td>${p.name}</td><td>${maskPhoneNumber(p.phone)}</td></tr>`;
             });
-
-            tableHTML += '</tbody></table></div>';
-            container.innerHTML = tableHTML;
+            DOM.participantListContainer.innerHTML = tableHTML + '</tbody></table></div>';
         };
 
-        // === INICIO: LÓGICA PARA VENTA MÚLTIPLE ===
-        const openBulkAddModal = () => {
-            if (!rifaActivaId) {
-                showToast("Por favor, selecciona una rifa primero.", "error");
-                return;
-            }
-            // Limpiar campos del modal
-            DOM.bulkClientName.value = '';
-            DOM.bulkClientPhone.value = '';
-            DOM.bulkNumbersInput.value = '';
-            DOM.bulkVendedorCode.value = '';
-            DOM.bulkStatus.value = 'pago';
-
-            DOM.bulkAddModal.classList.add('visible');
-            disableBodyScroll();
-        };
-
-        const closeBulkAddModal = () => {
-            DOM.bulkAddModal.classList.remove('visible');
-            enableBodyScroll();
-        };
-
-        const saveBulkPurchase = async () => {
-            if (!rifaActivaId) {
-                showToast("No hay una rifa activa seleccionada.", "error");
-                return;
-            }
-
-            const name = DOM.bulkClientName.value.trim();
-            const phone = DOM.bulkClientPhone.value.trim();
-            const status = DOM.bulkStatus.value;
-            const vendedorCode = DOM.bulkVendedorCode.value.trim();
-            const numbersRaw = DOM.bulkNumbersInput.value;
-
-            // Validaciones de datos básicos
-            if (!name || !phone || !vendedorCode || !numbersRaw) {
-                showToast("Todos los campos son obligatorios.", "error");
-                return;
-            }
-            if (phone.length < 7 || phone.length >= 16) {
-                showToast("El número de celular no es válido.", "error");
-                return;
-            }
-            const vendedor = allSellers.find(v => v.codigo === vendedorCode);
-            if (!vendedor) {
-                showToast("El código de vendedor no es válido.", "error");
-                return;
-            }
-
-            // Procesar y validar números
-            const numbersToProcess = numbersRaw.split(/\s*[,;\s\n]+\s*/).filter(n => n.trim() !== '');
-            if (numbersToProcess.length === 0) {
-                showToast("No se ingresaron números válidos.", "error");
-                return;
-            }
-
-            const unavailableOrInvalid = [];
-            for (const num of numbersToProcess) {
-                const paddedNum = num.padStart(numberPadding, '0');
-                // Validar que el número sea del largo correcto y esté disponible
-                if (paddedNum.length !== numberPadding || localRaffleData[paddedNum]) {
-                    unavailableOrInvalid.push(num);
+        const findAvailableNumbers = () => {
+            const requestedCount = parseInt(DOM.opportunitySelect.value, 10);
+            const availableNumbers = [];
+            for (let i = 0; i < totalNumbers; i++) {
+                const numStr = i.toString().padStart(numberPadding, '0');
+                if (!localRaffleData[numStr]) {
+                    availableNumbers.push(numStr);
                 }
             }
 
-            if (unavailableOrInvalid.length > 0) {
-                showToast(`Error: Los siguientes números no son válidos o ya están ocupados: ${unavailableOrInvalid.join(', ')}`, "error");
+            if (availableNumbers.length < requestedCount) {
+                showToast(`No hay suficientes números disponibles para ${requestedCount} oportunidades.`, "error", 5000);
                 return;
             }
+            
+            // Lógica para seleccionar números
+            const selectedNumbers = [currentNumber];
+            availableNumbers.splice(availableNumbers.indexOf(currentNumber), 1); // Remover el actual de la lista de disponibles
 
-            DOM.saveBulkButton.disabled = true;
-            DOM.saveBulkButton.textContent = 'Guardando...';
-
-            try {
-                const batch = writeBatch(db);
-                const dataToSave = {
-                    name,
-                    phone,
-                    status,
-                    vendedorId: vendedor.id,
-                    abono: 0 // La venta múltiple no maneja abonos para simplificar
-                };
-
-                numbersToProcess.forEach(num => {
-                    const paddedNum = num.padStart(numberPadding, '0');
-                    const docRef = doc(db, "rifas", rifaActivaId, "numeros", paddedNum);
-                    batch.set(docRef, dataToSave);
-                });
-
-                await batch.commit();
-                showToast(`${numbersToProcess.length} números guardados exitosamente.`, "success");
-                closeBulkAddModal();
-
-            } catch (error) {
-                console.error("Error guardando la compra múltiple:", error);
-                showToast("Ocurrió un error al guardar los números.", "error");
-            } finally {
-                DOM.saveBulkButton.disabled = false;
-                DOM.saveBulkButton.textContent = 'Guardar Compra';
+            for (let i = 0; i < requestedCount - 1; i++) {
+                const randomIndex = Math.floor(Math.random() * availableNumbers.length);
+                selectedNumbers.push(availableNumbers[randomIndex]);
+                availableNumbers.splice(randomIndex, 1);
             }
-        };
-        // === FIN: LÓGICA PARA VENTA MÚLTIPLE ===
 
-        // Inicialización y Listeners
+            currentNumberGroup = selectedNumbers.sort();
+            DOM.opportunityGroupDisplay.innerHTML = `<p>Números Seleccionados:</p><div class="number-group-tags">${currentNumberGroup.map(n => `<span class="numero-tag status-disponible">${n}</span>`).join('')}</div>`;
+            DOM.opportunityGroupDisplay.style.display = 'block';
+            DOM.dataFieldsContainer.style.display = 'block';
+        };
+
+        // EVENT LISTENERS
+        DOM.findOpportunitiesButton.addEventListener('click', findAvailableNumbers);
+        
         applyTheme(localStorage.getItem('theme') || 'light');
         cargarRifas();
         
@@ -2132,7 +1940,7 @@
             }
         });
 
-        DOM.deleteButton.addEventListener('click', () => { if(auth.currentUser) openReauthModal(deleteData); else showToast("Debes iniciar sesión.", "error"); });
+        DOM.deleteButton.addEventListener('click', () => { if(auth.currentUser) openReauthModal(() => deleteData(false)); else showToast("Debes iniciar sesión.", "error"); });
         DOM.reauthButton.addEventListener('click', handleReauthentication);
         DOM.closeReauthModalButton.addEventListener('click', closeReauthModal);
         DOM.reauthPassword.addEventListener('keyup', (e) => { if(e.key === 'Enter') handleReauthentication(); });
@@ -2142,12 +1950,10 @@
         DOM.openCreateRaffleModalButton.addEventListener('click', openCreateRaffleModal);
         DOM.closeCreateRaffleModalButton.addEventListener('click', closeCreateRaffleModal);
         
-        // === NUEVOS LISTENERS ===
-        DOM.openBulkAddModalButton.addEventListener('click', openBulkAddModal);
-        DOM.closeBulkAddModalButton.addEventListener('click', closeBulkAddModal);
-        DOM.saveBulkButton.addEventListener('click', saveBulkPurchase);
-
-        DOM.deleteRifaButton.addEventListener('click', deleteRifaActual);
+        DOM.openBulkAddModalButton.addEventListener('click', () => DOM.bulkAddModal.classList.add('visible'));
+        DOM.closeBulkAddModalButton.addEventListener('click', () => DOM.bulkAddModal.classList.remove('visible'));
+        
+        DOM.deleteRifaButton.addEventListener('click', () => openReauthModal(deleteRifaActual));
         DOM.closeDataModalButton.addEventListener('click', closeDataModal);
         DOM.saveButton.addEventListener('click', saveData);
         
@@ -2171,35 +1977,24 @@
         DOM.saveAllPrizesButton.addEventListener('click', saveAllPrizes);
         DOM.rifaSelect.addEventListener('click', () => { DOM.rifaSelectItems.classList.toggle('select-show'); DOM.rifaSelect.classList.toggle('select-arrow-active'); });
         window.addEventListener('click', (e) => { if (DOM.rifaSelect.parentElement && !DOM.rifaSelect.parentElement.contains(e.target)) { DOM.rifaSelectItems.classList.remove('select-show'); DOM.rifaSelect.classList.remove('select-arrow-active'); }});
-        DOM.searchButton.addEventListener('click', () => { if (!rifaActivaId) { showToast("Selecciona una rifa para buscar.", "error"); return; } if (DOM.searchInput.value.trim().length === 10) performSearch(); else { DOM.searchResultsContainer.innerHTML = '<div class="no-results-message">Debes ingresar 10 cifras.</div>'; document.querySelectorAll('.grid-item.highlighted').forEach(i => i.classList.remove('highlighted')); } });
+        DOM.searchButton.addEventListener('click', () => { if (!rifaActivaId) { showToast("Selecciona una rifa para buscar.", "error"); return; } if (DOM.searchInput.value.trim().length === 10) performSearch(); else { DOM.searchResultsContainer.innerHTML = '<div class="no-results-message">Debes ingresar 10 cifras.</div>'; } });
         DOM.checkWinnerButton.addEventListener('click', checkWinners);
         DOM.realWinningInput.addEventListener('input', () => { const v = DOM.realWinningInput.value; DOM.digitCircles.forEach((c, i) => { const d = v[i]; if (d) { c.textContent = d; c.classList.add('filled'); } else { c.textContent = ''; c.classList.remove('filled'); } }); DOM.checkWinnerButton.disabled = v.length !== 4; });
         DOM.searchResultsContainer.addEventListener('click', (e) => { const t = e.target.closest('.generate-ticket-btn'); if (t) generateTicket(t.dataset.number); });
         
-        DOM.modalGenerateTicketBtn.addEventListener('click', () => {
-            if (currentNumber) {
-                generateTicket(currentNumber);
-                closeDataModal();
-            }
-        });
+        DOM.modalGenerateTicketBtn.addEventListener('click', () => { if (currentNumber) { generateTicket(currentNumber); closeDataModal(); }});
         
         DOM.closeTicketModalButton.addEventListener('click', closeTicketModal);
         DOM.downloadTicketButton.addEventListener('click', downloadTicket);
-        DOM.shareTicketButton.addEventListener('click', () => {
-            const number = DOM.ticketPreview.querySelector('#ticket-number')?.textContent;
-            if(number) shareTicket(number);
-        });
+        DOM.shareTicketButton.addEventListener('click', shareTicket);
         
         DOM.addAnticipadoButton.addEventListener('click', async () => { 
             const v = Number(DOM.anticipadoValor.value), f = DOM.anticipadoFecha.value, l = DOM.anticipadoLoteria.value.trim(); 
             if (!v || !f || !l) { showToast("Completa todos los campos del premio.", "error"); return; } 
             currentPrizeData.premiosAnticipados.push({ valor:v, fecha:f, loteria:l, numeroGanador: "" });
-            const s = await saveAllPrizes(); 
-            if (s) { 
+            if (await saveAllPrizes()) { 
                 renderAnticipados(); 
-                DOM.anticipadoValor.value = ''; 
-                DOM.anticipadoFecha.value = ''; 
-                DOM.anticipadoLoteria.value = ''; 
+                DOM.anticipadoValor.value = ''; DOM.anticipadoFecha.value = ''; DOM.anticipadoLoteria.value = ''; 
             } 
         });
 
@@ -2208,91 +2003,46 @@
             if (!c || !auth.currentUser) return;
             const i = Number(c.dataset.index);
             const editBtn = e.target.closest('.edit-anticipado-btn'), 
-                    cancelBtn = e.target.closest('.cancel-edit-anticipado-btn'), 
-                    saveBtn = e.target.closest('.save-edit-anticipado-btn'), 
-                    deleteBtn = e.target.closest('.delete-anticipado-btn');
+                  cancelBtn = e.target.closest('.cancel-edit-anticipado-btn'), 
+                  saveBtn = e.target.closest('.save-edit-anticipado-btn'), 
+                  deleteBtn = e.target.closest('.delete-anticipado-btn');
             
-            if (editBtn) {
-                c.querySelector('.view-mode').style.display = 'none';
-                c.querySelector('.edit-mode').style.display = 'flex';
-            } else if (cancelBtn) {
-                c.querySelector('.view-mode').style.display = 'flex';
-                c.querySelector('.edit-mode').style.display = 'none';
-            } else if (saveBtn) {
-                const v = Number(c.querySelector('.edit-valor').value);
-                const f = c.querySelector('.edit-fecha').value;
-                const l = c.querySelector('.edit-loteria').value.trim();
-                const g = c.querySelector('.edit-ganador').value.trim();
-                if (!v || !f || !l) { showToast("Completa todos los campos del premio (valor, fecha, lotería).", "error"); return; }
-                if (g && !/^\d{2}$/.test(g)) { showToast("El número ganador debe estar vacío o ser de exactamente 2 cifras.", "error"); return; }
+            if (editBtn) { c.querySelector('.view-mode').style.display = 'none'; c.querySelector('.edit-mode').style.display = 'flex'; }
+            else if (cancelBtn) { c.querySelector('.view-mode').style.display = 'flex'; c.querySelector('.edit-mode').style.display = 'none'; }
+            else if (saveBtn) {
+                const v = Number(c.querySelector('.edit-valor').value), f = c.querySelector('.edit-fecha').value, l = c.querySelector('.edit-loteria').value.trim(), g = c.querySelector('.edit-ganador').value.trim();
+                if (!v || !f || !l) { showToast("Completa valor, fecha y lotería.", "error"); return; }
+                if (g && !/^\d{2}$/.test(g)) { showToast("El nº ganador debe ser de 2 cifras.", "error"); return; }
                 currentPrizeData.premiosAnticipados[i] = { valor: v, fecha: f, loteria: l, numeroGanador: g };
-                saveBtn.textContent = 'Guardando...';
-                saveBtn.disabled = true;
-                const s = await saveAllPrizes();
-                if (s) {
-                    renderAnticipados();
-                } else { 
-                    saveBtn.textContent = 'Guardar'; 
-                    saveBtn.disabled = false; 
-                }
+                saveBtn.textContent = 'Guardando...'; saveBtn.disabled = true;
+                if (await saveAllPrizes()) { renderAnticipados(); } else { saveBtn.textContent = 'Guardar'; saveBtn.disabled = false; }
             } else if (deleteBtn) {
-                if (confirm("¿Seguro que deseas eliminar este premio anticipado?")) {
+                if (confirm("¿Eliminar este premio anticipado?")) {
                     currentPrizeData.premiosAnticipados.splice(i, 1);
-                    const s = await saveAllPrizes();
-                    if (s) renderAnticipados();
+                    if (await saveAllPrizes()) renderAnticipados();
                 }
             }
         });
 
-        DOM.toggleParticipantsBtn.addEventListener('click', function() {
-            this.classList.toggle('active');
-        });
-
-        DOM.resumenVendedoresButton.addEventListener('click', function() {
-            const section = DOM.vendedorSummarySection;
-            if (section.style.display === 'block') {
-                section.style.display = 'none';
-            } else {
-                section.style.display = 'block';
-            }
-        });
+        DOM.toggleParticipantsBtn.addEventListener('click', function() { this.classList.toggle('active'); });
+        DOM.resumenVendedoresButton.addEventListener('click', () => { DOM.vendedorSummarySection.style.display = (DOM.vendedorSummarySection.style.display === 'block') ? 'none' : 'block'; });
 
         document.body.addEventListener('click', function(e) {
-            const tooltip = document.querySelector('.participant-tooltip');
+            let tooltip = document.querySelector('.participant-tooltip');
             const clickedTag = e.target.closest('.numero-tag');
-
+            if (tooltip && (!clickedTag || tooltip.parentElement !== clickedTag)) { tooltip.remove(); }
             if (clickedTag && clickedTag.closest('#vendedor-summary-list')) {
-                if (tooltip && tooltip.parentElement === clickedTag) {
-                    tooltip.remove();
-                    return;
-                }
-                if (tooltip) {
-                    tooltip.remove();
-                }
-                
                 const number = clickedTag.textContent.trim();
                 const participantData = localRaffleData[number];
-
                 if (participantData && participantData.name) {
                     const newTooltip = document.createElement('div');
                     newTooltip.className = 'participant-tooltip';
-                    
-                    let content = `<strong>${participantData.name}</strong>`;
-                    if (participantData.phone) {
-                         content += `<br><small style="opacity: 0.7;">${participantData.phone}</small>`;
-                    }
-                    newTooltip.innerHTML = content;
-                    
+                    newTooltip.innerHTML = `<strong>${participantData.name}</strong><br><small>${participantData.phone}</small>`;
                     clickedTag.appendChild(newTooltip);
                 }
-                return;
-            }
-            if (tooltip) {
-                tooltip.remove();
             }
         });
     });
 </script>
-
 </body>
 </html>
