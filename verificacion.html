@@ -91,8 +91,27 @@
         .card-header h2 { margin: 0; font-size: 1.5em; color: var(--text-dark); font-weight: 600; }
         .card-header p { margin: 4px 0 0; font-size: 0.9em; color: var(--text-light); }
         .card-body { padding: 30px 25px; }
-        .ticket-number { font-family: 'Roboto Mono', monospace; font-size: clamp(4em, 20vw, 7em); font-weight: 700; line-height: 1; color: var(--color-primary); margin: 0 0 25px 0; opacity: 0; }
-        .ticket-number.animate { animation: popInNumber 0.7s cubic-bezier(0.25, 0.46, 0.45, 0.94) 0.5s forwards; }
+        /* NEW: Styles for multiple numbers */
+        .ticket-numbers-container {
+            display: flex;
+            flex-wrap: wrap;
+            justify-content: center;
+            gap: 10px;
+            margin-bottom: 25px;
+        }
+        .ticket-number {
+            font-family: 'Roboto Mono', monospace;
+            font-size: clamp(2em, 10vw, 3.5em);
+            font-weight: 700;
+            line-height: 1;
+            color: var(--color-primary);
+            background-color: var(--background-light);
+            padding: 10px 15px;
+            border-radius: 8px;
+            border: 1px solid var(--border-color);
+            opacity: 0;
+        }
+        .ticket-number.animate { animation: popInNumber 0.7s cubic-bezier(0.25, 0.46, 0.45, 0.94) forwards; }
         .ticket-details ul { list-style: none; padding: 0; margin: 0; text-align: left; }
         .ticket-details li { display: flex; align-items: center; font-size: 1em; color: var(--text-light); padding: 12px 0; border-top: 1px solid var(--border-color); }
         .ticket-details i { width: 30px; margin-right: 15px; color: var(--color-primary); text-align: center; }
@@ -141,14 +160,14 @@
             const verificationCard = document.getElementById('verification-card');
             const params = new URLSearchParams(window.location.search);
             const rifaId = params.get('rifa');
-            const numero = params.get('numero');
+            
+            // CAMBIO 1: Leer 'numeros' en lugar de 'numero'
+            const numerosStr = params.get('numeros');
 
-            // Detectar modo oscuro del sistema
             if (window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches) {
                 document.body.classList.add('dark-mode');
             }
 
-            // Función para mostrar errores
             const showError = (title, message) => {
                 document.body.classList.add('status-error');
                 verificationCard.innerHTML = `
@@ -161,10 +180,15 @@
                     </div>`;
             };
 
-            if (!rifaId || !numero) {
+            // CAMBIO 2: Validar 'numerosStr' en lugar de 'numero'
+            if (!rifaId || !numerosStr) {
                 showError('Enlace Inválido', 'Faltan los datos necesarios para la verificación.');
                 return;
             }
+
+            // CAMBIO 3: Obtener el primer número para la consulta
+            const numeros = numerosStr.split(',');
+            const primerNumero = numeros[0];
 
             try {
                 const rifaDoc = await db.collection('rifas').doc(rifaId).get();
@@ -173,14 +197,14 @@
                 }
                 const rifaData = rifaDoc.data();
                 
-                const numeroDoc = await db.collection('rifas').doc(rifaId).collection('numeros').doc(numero).get();
+                // Usamos el primer número para obtener los datos del cliente, ya que todos en el grupo son iguales.
+                const numeroDoc = await db.collection('rifas').doc(rifaId).collection('numeros').doc(primerNumero).get();
                 
                 let clientData = { status: 'disponible', name: 'No Asignado', phone: 'N/A' };
                 if (numeroDoc.exists) {
                     clientData = numeroDoc.data();
                 }
 
-                // Definir información del estado
                 let statusInfo = {};
                 switch(clientData.status) {
                     case 'pago':
@@ -206,13 +230,20 @@
                         </li>`;
                 }
 
+                // CAMBIO 4: Crear los elementos HTML para todos los números
+                const numerosHtml = numeros.map((num, index) => 
+                    `<div class="ticket-number animate" style="animation-delay: ${0.5 + index * 0.1}s">${num}</div>`
+                ).join('');
+
                 verificationCard.innerHTML = `
                     <div class="card-header">
                         <h2>${rifaData.nombre}</h2>
                         <p>Sorteo: ${new Date(rifaData.fechaSorteo + 'T00:00:00').toLocaleDateString('es-ES', { day: 'numeric', month: 'long', year: 'numeric' })}</p>
                     </div>
                     <div class="card-body">
-                        <div class="ticket-number animate">${numero}</div>
+                        <div class="ticket-numbers-container">
+                            ${numerosHtml}
+                        </div>
                         <div class="ticket-details">
                             <ul>
                                 <li>
@@ -240,7 +271,7 @@
                             <strong>Importante:</strong> La validez final del boleto está sujeta a los términos del organizador.
                         </p>
                     </div>
-                `;
+                    `;
 
             } catch (error) {
                 showError('Error de Verificación', error.message);
@@ -249,4 +280,3 @@
     </script>
 </body>
 </html>
-
