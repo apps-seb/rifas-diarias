@@ -385,23 +385,73 @@
             padding: 0 20px 20px;
         }
 
-        #participant-list-container { padding: 0; }
-        .table-scroll-wrapper { overflow-x: auto; width: 100%; }
-        #participant-table { width: 100%; border-collapse: collapse; text-align: left; font-size: 0.85em; }
-        #participant-table th, #participant-table td { padding: 10px 12px; border-bottom: 1px solid var(--border-color); white-space: nowrap; }
-        #participant-table tbody tr:last-child td { border-bottom: none; }
-        #participant-table thead th { background-color: var(--background-light); font-weight: 600; position: sticky; top: 0; z-index: 1; }
-        #participant-table tbody tr:hover { background-color: rgba(117, 31, 255, 0.08); }
+        #participant-list-container {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 8px;
+            padding-top: 10px;
+        }
 
-        .numero-tag-participante {
-            display: inline-block;
-            padding: 5px 10px;
+        #participant-list-container > .no-results-message {
+            grid-column: 1 / -1;
+        }
+
+        .participant-item {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            background-color: var(--background-light);
             border-radius: 6px;
+            padding: 6px 8px;
+            font-size: 0.75em;
+            border: 1px solid var(--border-color);
+            overflow: hidden;
+            transition: background-color 0.2s;
+        }
+
+        .participant-item:hover {
+            background-color: rgba(117, 31, 255, 0.08);
+        }
+
+        .participant-item .participant-name {
+            font-weight: 500;
+            color: var(--text-dark);
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
+            flex-grow: 1;
+        }
+        
+        .participant-item .participant-phone {
+            color: var(--text-light);
+            font-size: 0.9em;
+            flex-shrink: 0;
+        }
+        
+        @media (max-width: 768px) {
+            #participant-list-container {
+                grid-template-columns: repeat(2, 1fr);
+            }
+        }
+
+        @media (max-width: 480px) {
+            #participant-list-container {
+                grid-template-columns: 1fr;
+            }
+        }
+        
+        .numero-tag-participante {
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            padding: 4px 8px;
+            border-radius: 4px;
             font-weight: bold;
             color: white;
             font-size: 0.9em;
             text-align: center;
-            min-width: 45px;
+            min-width: 35px;
+            flex-shrink: 0;
         }
         .numero-tag-participante.status-pago {
             background-color: var(--color-pago);
@@ -499,6 +549,148 @@
             height: 20px;
             border-radius: 4px;
         }
+        
+        /* === ESTILOS PARA LA NUEVA SECCIÓN DE RESULTADO OFICIAL === */
+        #lottery-winner-section {
+            background-color: var(--background-card);
+            padding: 20px;
+            border-radius: 12px;
+            box-shadow: 0 4px 25px var(--shadow-color);
+            margin-top: 25px;
+            margin-bottom: 25px;
+            text-align: center;
+            border-top: 4px solid var(--color-separado);
+        }
+        #lottery-winner-section.not-set {
+            display: none;
+        }
+        #lottery-winner-section h3 {
+            margin-top: 0;
+            margin-bottom: 20px;
+            font-weight: 700;
+            color: var(--text-dark);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 10px;
+        }
+        #lottery-winner-section h3 .fa-award {
+            color: var(--color-separado);
+        }
+        .lottery-input-group {
+            margin-bottom: 20px;
+            text-align: left;
+        }
+        .lottery-input-group label {
+            display: block;
+            margin-bottom: 8px;
+            font-weight: 500;
+            color: var(--text-light);
+            font-size: 0.9em;
+        }
+        #lotteryNameInput {
+            width: 100%;
+            padding: 12px;
+            border: 1px solid var(--border-color);
+            border-radius: 8px;
+            background-color: var(--background-light);
+            color: var(--text-dark);
+            font-size: 1.1em;
+            transition: border-color 0.2s, box-shadow 0.2s, background-color 0.2s;
+        }
+        #lotteryNameInput:focus {
+            outline: none;
+            border-color: var(--color-separado);
+            box-shadow: 0 0 0 3px rgba(255, 193, 7, 0.3);
+        }
+        #lotteryNameInput[readonly] {
+            background: transparent;
+            border-color: transparent;
+            padding-left: 0;
+            cursor: default;
+            color: var(--text-dark);
+            box-shadow: none !important;
+        }
+        .lottery-number-display {
+            position: relative;
+            display: flex;
+            justify-content: center;
+            gap: 15px;
+            margin-bottom: 10px;
+            cursor: default;
+        }
+        body.admin-view .lottery-number-display {
+            cursor: text;
+        }
+        .lottery-digit-circle {
+            width: clamp(45px, 13vw, 70px);
+            height: clamp(45px, 13vw, 70px);
+            border-radius: 50%;
+            border: 3px solid var(--border-color);
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            font-size: clamp(1.8em, 6vw, 2.8em);
+            font-weight: bold;
+            color: var(--text-light);
+            transition: all 0.3s ease;
+            background-color: var(--background-light);
+            box-shadow: inset 0 3px 6px rgba(0,0,0,0.08);
+        }
+        .lottery-digit-circle.filled {
+            background: linear-gradient(135deg, #FFD700, #FFC107); /* Gold gradient */
+            border-color: #DAA520;
+            color: #333;
+            text-shadow: 0 1px 1px rgba(255,255,255,0.5);
+            animation: popIn 0.3s ease-out forwards;
+        }
+        #realLotteryWinningInput {
+            position: absolute;
+            top: 0; left: 0;
+            width: 100%; height: 100%;
+            opacity: 0;
+            border: none;
+            background: transparent;
+            outline: none;
+            -webkit-text-security: disc;
+        }
+        .lottery-winner-label {
+            color: var(--text-light);
+            font-size: 0.9em;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            margin-top: 0;
+            margin-bottom: 20px;
+        }
+        #saveLotteryWinnerButton {
+            display: none;
+            padding: 12px 25px;
+            border: none;
+            border-radius: 8px;
+            cursor: pointer;
+            font-size: 1.1em;
+            background: linear-gradient(135deg, var(--color-separado), #e6a100);
+            color: #333;
+            font-weight: bold;
+            transition: all 0.3s ease;
+            box-shadow: 0 4px 15px rgba(255, 193, 7, 0.2);
+        }
+        body.admin-view #saveLotteryWinnerButton {
+            display: inline-block;
+        }
+        #saveLotteryWinnerButton:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 6px 20px rgba(255, 193, 7, 0.3);
+            filter: brightness(1.05);
+        }
+        #saveLotteryWinnerButton:disabled {
+            background: #9e9e9e;
+            cursor: not-allowed;
+            transform: none;
+            box-shadow: none;
+            filter: none;
+        }
+        /* === FIN ESTILOS === */
 
         @media (max-width: 650px) {
             #anticipados-list { display: flex; flex-direction: row; overflow-x: auto; scroll-snap-type: x mandatory; padding: 10px 10px 20px 10px; margin: 0 -20px; -webkit-overflow-scrolling: touch; }
@@ -567,6 +759,22 @@
     </div>
     <div id="gridContainer"></div>
     
+    <div id="lottery-winner-section" class="not-set">
+        <h3><i class="fas fa-award"></i> Resultado Oficial del Sorteo</h3>
+        <div class="lottery-input-group">
+            <label for="lotteryNameInput">Lotería o Sorteo Principal:</label>
+            <input type="text" id="lotteryNameInput" placeholder="Ej: Lotería del Cauca">
+        </div>
+        <div class="lottery-number-display" id="lotteryNumberDisplay">
+            <div class="lottery-digit-circle"></div>
+            <div class="lottery-digit-circle"></div>
+            <div class="lottery-digit-circle"></div>
+            <div class="lottery-digit-circle"></div>
+            <input type="tel" id="realLotteryWinningInput" maxlength="4" autocomplete="off" />
+        </div>
+        <p class="lottery-winner-label">Número ganador de la lotería</p>
+        <button id="saveLotteryWinnerButton">Guardar Resultado Oficial</button>
+    </div>
     <div id="participant-list-section">
         <button id="toggle-participants-btn" class="collapsible-header">
             <h3><i class="fas fa-clipboard-list"></i> Listado de Participantes</h3>
@@ -1008,6 +1216,12 @@
             addNumberInput: document.getElementById('add-number-input'),
             addNumberButton: document.getElementById('add-number-button'),
             fieldsSeparator: document.getElementById('fields-separator'),
+            lotteryWinnerSection: document.getElementById('lottery-winner-section'),
+            lotteryNameInput: document.getElementById('lotteryNameInput'),
+            lotteryNumberDisplay: document.getElementById('lotteryNumberDisplay'),
+            lotteryDigitCircles: document.querySelectorAll('.lottery-number-display .lottery-digit-circle'),
+            realLotteryWinningInput: document.getElementById('realLotteryWinningInput'),
+            saveLotteryWinnerButton: document.getElementById('saveLotteryWinnerButton'),
         };
 
         let rifaActivaId = null, unsubRifaListener = null, currentNumber = null, localRaffleData = {}, activeRaffleData = {}, currentPrizeData = {};
@@ -1092,6 +1306,8 @@
                 DOM.authButton.innerHTML = '<i class="fas fa-sign-in-alt"></i>';
                 DOM.authButton.title = 'Iniciar Sesión';
             }
+            DOM.lotteryNameInput.readOnly = !isAdmin;
+            DOM.realLotteryWinningInput.readOnly = !isAdmin;
         });
 
         const openReauthModal = (callback) => {
@@ -1336,6 +1552,7 @@
                 DOM.vendedorSummaryList.innerHTML = '';
                 DOM.participantListSkeleton.style.display = 'none';
                 DOM.searchResultsContainer.innerHTML = '<div class="no-results-message">Crea o selecciona una rifa.</div>';
+                DOM.lotteryWinnerSection.classList.add('not-set');
                 return;
             }
             try {
@@ -1351,6 +1568,18 @@
                     DOM.openBulkAddModalButton.style.display = auth.currentUser ? 'block' : 'none';
                     if (activeRaffleData.colores) aplicarColoresPersonalizados(activeRaffleData.colores);
                     else restaurarColoresDefault();
+
+                    if (activeRaffleData.numeroGanadorOficial) {
+                        DOM.lotteryWinnerSection.classList.remove('not-set');
+                        DOM.lotteryNameInput.value = activeRaffleData.loteriaGanadora || '';
+                        DOM.realLotteryWinningInput.value = activeRaffleData.numeroGanadorOficial || '';
+                        DOM.realLotteryWinningInput.dispatchEvent(new Event('input'));
+                    } else {
+                        DOM.lotteryWinnerSection.classList.add('not-set');
+                        DOM.lotteryNameInput.value = '';
+                        DOM.realLotteryWinningInput.value = '';
+                        DOM.realLotteryWinningInput.dispatchEvent(new Event('input'));
+                    }
                 } else {
                     restaurarColoresDefault();
                     activeRaffleData = {};
@@ -1994,14 +2223,67 @@
                 .filter(([_, data]) => data.name)
                 .map(([number, data]) => ({ number, ...data }))
                 .sort((a, b) => a.number.localeCompare(b.number));
+
+            DOM.participantListContainer.innerHTML = ''; // Limpiar contenido anterior
+
             if (participants.length === 0) {
-                DOM.participantListContainer.innerHTML = '<p class="no-results-message">Aún no hay participantes.</p>'; return;
+                DOM.participantListContainer.innerHTML = '<p class="no-results-message">Aún no hay participantes.</p>';
+                return;
             }
-            let tableHTML = `<div class="table-scroll-wrapper"><table id="participant-table"><thead><tr><th>N°</th><th>Nombre</th><th>Teléfono</th></tr></thead><tbody>`;
+
+            // Usar un DocumentFragment para mejor rendimiento
+            const fragment = document.createDocumentFragment();
             participants.forEach(p => {
-                tableHTML += `<tr><td><span class="numero-tag-participante status-${p.status}">${p.number}</span></td><td>${p.name}</td><td>${maskPhoneNumber(p.phone)}</td></tr>`;
+                const itemDiv = document.createElement('div');
+                itemDiv.className = 'participant-item';
+                itemDiv.innerHTML = `
+                    <span class="numero-tag-participante status-${p.status}">${p.number}</span>
+                    <span class="participant-name" title="${p.name}">${p.name}</span>
+                    <span class="participant-phone">${maskPhoneNumber(p.phone)}</span>
+                `;
+                fragment.appendChild(itemDiv);
             });
-            DOM.participantListContainer.innerHTML = tableHTML + '</tbody></table></div>';
+            DOM.participantListContainer.appendChild(fragment);
+        };
+
+        const saveLotteryWinner = async () => {
+            if (!rifaActivaId || !auth.currentUser) {
+                showToast("No tienes permiso para realizar esta acción.", "error");
+                return;
+            }
+
+            const loteria = DOM.lotteryNameInput.value.trim();
+            const numero = DOM.realLotteryWinningInput.value.trim();
+
+            if (!loteria) {
+                showToast("Debes ingresar el nombre de la lotería o sorteo.", "error");
+                return;
+            }
+            if (!/^\d{4}$/.test(numero)) {
+                showToast("El número ganador debe ser de 4 cifras.", "error");
+                return;
+            }
+
+            DOM.saveLotteryWinnerButton.disabled = true;
+            DOM.saveLotteryWinnerButton.textContent = 'Guardando...';
+
+            try {
+                const rifaRef = doc(db, "rifas", rifaActivaId);
+                await updateDoc(rifaRef, {
+                    loteriaGanadora: loteria,
+                    numeroGanadorOficial: numero
+                });
+                activeRaffleData.loteriaGanadora = loteria;
+                activeRaffleData.numeroGanadorOficial = numero;
+                DOM.lotteryWinnerSection.classList.remove('not-set');
+                showToast("Resultado oficial guardado con éxito.", "success");
+            } catch (e) {
+                console.error("Error al guardar el resultado oficial:", e);
+                showToast("Error al guardar. Inténtalo de nuevo.", "error");
+            } finally {
+                DOM.saveLotteryWinnerButton.disabled = false;
+                DOM.saveLotteryWinnerButton.textContent = 'Guardar Resultado Oficial';
+            }
         };
 
         // EVENT LISTENERS
@@ -2120,9 +2402,9 @@
             if (!c || !auth.currentUser) return;
             const i = Number(c.dataset.index);
             const editBtn = e.target.closest('.edit-anticipado-btn'), 
-                  cancelBtn = e.target.closest('.cancel-edit-anticipado-btn'), 
-                  saveBtn = e.target.closest('.save-edit-anticipado-btn'), 
-                  deleteBtn = e.target.closest('.delete-anticipado-btn');
+                    cancelBtn = e.target.closest('.cancel-edit-anticipado-btn'), 
+                    saveBtn = e.target.closest('.save-edit-anticipado-btn'), 
+                    deleteBtn = e.target.closest('.delete-anticipado-btn');
             
             if (editBtn) { c.querySelector('.view-mode').style.display = 'none'; c.querySelector('.edit-mode').style.display = 'flex'; }
             else if (cancelBtn) { c.querySelector('.view-mode').style.display = 'flex'; c.querySelector('.edit-mode').style.display = 'none'; }
@@ -2171,9 +2453,26 @@
                 }
             }
         });
+        
+        DOM.saveLotteryWinnerButton.addEventListener('click', () => {
+            openReauthModal(saveLotteryWinner);
+        });
+
+        DOM.realLotteryWinningInput.addEventListener('input', () => {
+            const v = DOM.realLotteryWinningInput.value;
+            DOM.lotteryDigitCircles.forEach((c, i) => {
+                const d = v[i];
+                if (d) {
+                    c.textContent = d;
+                    c.classList.add('filled');
+                } else {
+                    c.textContent = '';
+                    c.classList.remove('filled');
+                }
+            });
+        });
+
     });
 </script>
 </body>
 </html>
-
-
