@@ -4,13 +4,105 @@
     <meta charset="UTF-8">
     <title>Login de Administrador</title>
     <style>
-        body { font-family: system-ui, sans-serif; display: flex; justify-content: center; align-items: center; height: 100vh; background-color: #f0f2f5; }
-        .login-card { padding: 40px; background: white; border-radius: 12px; box-shadow: 0 4px 20px rgba(0,0,0,0.1); text-align: center; }
-        h2 { margin-top: 0; }
-        input { display: block; width: 100%; padding: 10px; margin-bottom: 15px; border: 1px solid #ccc; border-radius: 4px; box-sizing: border-box; }
-        button { width: 100%; padding: 12px; background-color: #007bff; color: white; border: none; border-radius: 4px; cursor: pointer; font-size: 16px; }
-        button:hover { background-color: #0056b3; }
-        #message { margin-top: 15px; color: red; }
+        :root {
+            --primary-gradient: linear-gradient(135deg, rgba(117, 31, 255, 0.95), rgba(88, 11, 189, 0.9));
+            --accent-gradient: linear-gradient(135deg, rgba(255, 95, 109, 0.95), rgba(255, 65, 108, 0.85));
+            --glass-bg: rgba(255, 255, 255, 0.18);
+            --glass-border: rgba(255, 255, 255, 0.45);
+            --text-strong: #f8f5ff;
+            --text-soft: rgba(245, 240, 255, 0.78);
+        }
+        * { box-sizing: border-box; }
+        body {
+            font-family: 'Segoe UI', system-ui, sans-serif;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh;
+            margin: 0;
+            background: radial-gradient(circle at 15% 20%, rgba(155, 84, 255, 0.85), rgba(63, 9, 183, 0.92)), linear-gradient(135deg, #3613a4, #140734);
+            color: var(--text-strong);
+            overflow: hidden;
+            position: relative;
+        }
+        body::before, body::after {
+            content: "";
+            position: fixed;
+            inset: -10% -15%;
+            pointer-events: none;
+            z-index: -1;
+        }
+        body::before {
+            background: radial-gradient(circle at 20% 25%, rgba(255, 255, 255, 0.25), transparent 55%),
+                        radial-gradient(circle at 80% 20%, rgba(255, 112, 196, 0.35), transparent 55%);
+        }
+        body::after {
+            background: radial-gradient(circle at 70% 80%, rgba(13, 230, 255, 0.22), transparent 55%),
+                        radial-gradient(circle at 5% 80%, rgba(117, 31, 255, 0.28), transparent 45%);
+        }
+        .login-card {
+            width: min(420px, 92vw);
+            padding: 44px 40px;
+            background: var(--glass-bg);
+            border-radius: 28px;
+            border: 1px solid var(--glass-border);
+            box-shadow: 0 35px 75px rgba(10, 0, 45, 0.45);
+            text-align: center;
+            backdrop-filter: blur(20px);
+            -webkit-backdrop-filter: blur(20px);
+            position: relative;
+            overflow: hidden;
+        }
+        .login-card::before {
+            content: "";
+            position: absolute;
+            inset: 0;
+            background: linear-gradient(135deg, rgba(255, 255, 255, 0.25), transparent 60%);
+            pointer-events: none;
+        }
+        h2 {
+            margin: 0 0 25px;
+            font-size: clamp(1.8rem, 4vw, 2.1rem);
+            letter-spacing: 0.5px;
+        }
+        input {
+            display: block;
+            width: 100%;
+            padding: 14px 18px;
+            margin-bottom: 18px;
+            border: 1px solid var(--glass-border);
+            border-radius: 18px;
+            background: linear-gradient(135deg, rgba(255, 255, 255, 0.28), rgba(255, 255, 255, 0.05));
+            color: var(--text-strong);
+            font-size: 1rem;
+            box-shadow: inset 0 1px 3px rgba(255,255,255,0.35), 0 18px 30px rgba(12, 0, 40, 0.32);
+            backdrop-filter: blur(16px);
+            -webkit-backdrop-filter: blur(16px);
+        }
+        input::placeholder { color: var(--text-soft); }
+        button {
+            width: 100%;
+            padding: 14px 18px;
+            background: var(--primary-gradient);
+            color: white;
+            border: 1px solid var(--glass-border);
+            border-radius: 20px;
+            cursor: pointer;
+            font-size: 1.05rem;
+            font-weight: 600;
+            box-shadow: 0 25px 55px rgba(117, 31, 255, 0.35);
+            transition: transform 0.2s ease, box-shadow 0.2s ease;
+            backdrop-filter: blur(16px);
+            -webkit-backdrop-filter: blur(16px);
+        }
+        button:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 32px 65px rgba(117, 31, 255, 0.45);
+        }
+        button:active { transform: translateY(0); }
+        #message { margin-top: 18px; color: var(--text-soft); font-size: 0.95rem; min-height: 1.2em; }
+        #message.error { color: rgba(255, 138, 157, 0.9); }
+        #message.success { color: rgba(132, 224, 89, 0.95); }
     </style>
 </head>
 <body>
@@ -51,7 +143,8 @@
         auth.signInWithEmailAndPassword(email, password)
             .then((userCredential) => {
                 // ¡Éxito!
-                message.style.color = 'green';
+                message.classList.remove('error');
+                message.classList.add('success');
                 message.textContent = '¡Inicio de sesión exitoso! Ya puedes ir a la página de la rifa.';
                 // Opcional: Redirigir automáticamente después de 2 segundos
                 setTimeout(() => {
@@ -60,7 +153,8 @@
             })
             .catch((error) => {
                 // Error
-                message.style.color = 'red';
+                message.classList.remove('success');
+                message.classList.add('error');
                 message.textContent = 'Error: ' + error.message;
             });
     });
