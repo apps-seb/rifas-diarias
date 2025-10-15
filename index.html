@@ -136,9 +136,10 @@
         .prize-card-admin-view { display: flex; flex-direction: column; gap: 8px; }
         .prize-card-admin-view label { font-size: 0.8em; text-align: left; margin-bottom: -4px; opacity: 0.8; }
         .prize-card-admin-view input { font-size: 0.9em !important; padding: 8px !important; }
-        #gridContainer { display: grid; gap: 4px; margin-top: 20px; }
+        #gridContainer { display: grid; gap: 8px; margin-top: 20px; padding: 18px; border-radius: 26px; background: var(--background-card); border: 1px solid var(--glass-border); box-shadow: 0 30px 65px var(--shadow-color); position: relative; overflow: hidden; backdrop-filter: blur(var(--glass-blur)); -webkit-backdrop-filter: blur(var(--glass-blur)); }
+        #gridContainer::before { content: ""; position: absolute; inset: 0; background: linear-gradient(135deg, rgba(255, 255, 255, 0.16), transparent 65%); pointer-events: none; z-index: 0; opacity: 0.9; }
         #gridContainer.hundred-numbers, #gridContainer.thousand-numbers { grid-template-columns: repeat(10, 1fr); }
-        .grid-item { display: flex; justify-content: center; align-items: center; aspect-ratio: 1 / 1; border: 1px solid var(--border-color); border-radius: 8px; font-size: clamp(0.7em, 3vw, 1.2em); font-weight: bold; color: white; cursor: pointer; transition: transform 0.2s, background-color 0.2s, border-color 0.2s; }
+        .grid-item { display: flex; justify-content: center; align-items: center; aspect-ratio: 1 / 1; border: 1px solid var(--glass-border); border-radius: 14px; font-size: clamp(0.7em, 3vw, 1.2em); font-weight: 700; color: white; cursor: pointer; transition: transform 0.2s ease, background 0.25s ease, border-color 0.25s ease, box-shadow 0.25s ease; position: relative; z-index: 1; background: linear-gradient(135deg, rgba(255, 255, 255, 0.22), rgba(255, 255, 255, 0.06)); box-shadow: 0 18px 40px rgba(15, 0, 45, 0.22); backdrop-filter: blur(calc(var(--glass-blur) - 6px)); -webkit-backdrop-filter: blur(calc(var(--glass-blur) - 6px)); }
         .modal-backdrop { display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: radial-gradient(circle at 30% 20%, rgba(117, 31, 255, 0.3), transparent 55%), radial-gradient(circle at 75% 80%, rgba(13, 230, 255, 0.25), transparent 60%); opacity: 0; z-index: 999; transition: opacity 0.3s ease-in-out; backdrop-filter: blur(18px); -webkit-backdrop-filter: blur(18px); }
         .modal-backdrop.visible { display: block; opacity: 0.5; }
         .modal { display: flex; justify-content: center; align-items: center; position: fixed; z-index: 1000; left: 0; top: 0; width: 100%; height: 100%; overflow-y: auto; opacity: 0; visibility: hidden; transition: opacity 0.3s ease-in-out, visibility 0.3s; padding: 20px; }
@@ -151,10 +152,10 @@
         #prizeModal h2 { margin-bottom: 15px; }
         #prizeModal hr { margin: 25px 0; border-color: var(--border-color); opacity: 0.5; }
         #prizeModal h4 { margin-top: 0; margin-bottom: 15px; }
-        .grid-item:hover { transform: scale(1.05); }
-        .grid-item.status-disponible { background-color: var(--color-disponible); }
-        .grid-item.status-separado { background-color: var(--color-separado); }
-        .grid-item.status-pago { background-color: var(--color-pago); }
+        .grid-item:hover { transform: translateY(-3px) scale(1.04); box-shadow: 0 24px 55px rgba(10, 0, 45, 0.35); }
+        .grid-item.status-disponible { background: linear-gradient(135deg, rgba(117, 31, 255, 0.78), rgba(143, 62, 255, 0.92)); border-color: rgba(214, 193, 255, 0.65); box-shadow: 0 22px 45px rgba(117, 31, 255, 0.45); }
+        .grid-item.status-separado { background: linear-gradient(135deg, rgba(255, 193, 7, 0.78), rgba(255, 166, 0, 0.92)); border-color: rgba(255, 231, 184, 0.65); box-shadow: 0 22px 45px rgba(255, 193, 7, 0.35); color: #2f1b00; }
+        .grid-item.status-pago { background: linear-gradient(135deg, rgba(132, 224, 89, 0.85), rgba(87, 190, 60, 0.95)); border-color: rgba(220, 255, 210, 0.7); box-shadow: 0 22px 45px rgba(132, 224, 89, 0.4); }
         .modal-header { display: flex; justify-content: space-between; align-items: center; border-bottom: 1px solid var(--border-color); padding-bottom: 10px; margin-bottom: 20px; }
         .modal-header h2 { display: flex; align-items: center; gap: 10px; font-size: 1.4em; text-align: left; }
         .close-button { color: #aaa; font-size: 28px; font-weight: bold; cursor: pointer; }
