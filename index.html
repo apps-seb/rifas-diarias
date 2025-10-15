@@ -12,47 +12,58 @@
             --color-separado: #ffc107;
             --color-pago: #84E059;
             --color-primary: #751FFF;
-            --color-danger: #dc3545;
-            --border-color: #ddd;
-            --shadow-color: rgba(0, 0, 0, 0.05);
-            --background-light: #f8f9fa;
-            --background-card: #fff;
-            --text-dark: #343a40;
-            --text-light: #6c757d;
-            --body-bg: #f8f9fa;
-            --body-color: #333;
-            --modal-bg: #fefefe;
-            --modal-glass-bg: rgba(255, 255, 255, 0.10);
-            --winner-card-silver-bg: linear-gradient(135deg, #e0e0e0, #bdbdbd);
-            --winner-card-silver-color: #333;
+            --color-danger: #ff5f6d;
+            --border-color: rgba(255, 255, 255, 0.35);
+            --shadow-color: rgba(25, 6, 69, 0.25);
+            --background-light: rgba(255, 255, 255, 0.22);
+            --background-card: rgba(255, 255, 255, 0.18);
+            --text-dark: #f8f5ff;
+            --text-light: rgba(245, 240, 255, 0.78);
+            --body-bg: radial-gradient(circle at 15% 20%, rgba(155, 84, 255, 0.85), rgba(63, 9, 183, 0.92)), linear-gradient(135deg, #3613a4, #140734);
+            --body-color: #f1efff;
+            --modal-bg: rgba(255, 255, 255, 0.16);
+            --modal-glass-bg: rgba(255, 255, 255, 0.1);
+            --winner-card-silver-bg: linear-gradient(135deg, rgba(255, 255, 255, 0.35), rgba(210, 210, 220, 0.3));
+            --winner-card-silver-color: #120c2b;
             --transition-speed: 0.3s;
-            --skeleton-bg: #e2e8f0;
+            --skeleton-bg: rgba(255, 255, 255, 0.28);
+            --glass-border: rgba(255, 255, 255, 0.35);
+            --glass-highlight: rgba(255, 255, 255, 0.55);
+            --glass-blur: 18px;
         }
         .dark-mode {
-            --border-color: #4d4d4d;
-            --shadow-color: rgba(0, 0, 0, 0.2);
-            --background-light: #2c2c2e;
-            --background-card: #1c1c1e;
-            --text-dark: #f2f2f7;
-            --text-light: #a0a0a5;
-            --body-bg: #121212;
-            --body-color: #f2f2f7;
-            --modal-bg: #2c2c2e;
-            --modal-glass-bg: rgba(44, 44, 46, 0.5);
-            --winner-card-silver-bg: linear-gradient(135deg, #a8a8a8, #8c8c8c);
-            --winner-card-silver-color: #f2f2f7;
-            --skeleton-bg: #3a3a3c;
+            --border-color: rgba(255, 255, 255, 0.18);
+            --shadow-color: rgba(4, 0, 25, 0.55);
+            --background-light: rgba(30, 24, 52, 0.55);
+            --background-card: rgba(22, 16, 46, 0.65);
+            --text-dark: #f7f7ff;
+            --text-light: rgba(225, 220, 255, 0.75);
+            --body-bg: radial-gradient(circle at 20% 20%, rgba(119, 62, 210, 0.72), rgba(28, 15, 66, 0.95)), linear-gradient(135deg, #120826, #060415);
+            --body-color: #f1f1ff;
+            --modal-bg: rgba(19, 12, 40, 0.82);
+            --modal-glass-bg: rgba(24, 18, 50, 0.65);
+            --winner-card-silver-bg: linear-gradient(135deg, rgba(118, 120, 130, 0.75), rgba(82, 84, 96, 0.75));
+            --winner-card-silver-color: #f5f5ff;
+            --skeleton-bg: rgba(255, 255, 255, 0.18);
+            --glass-border: rgba(255, 255, 255, 0.18);
+            --glass-highlight: rgba(255, 255, 255, 0.35);
+            --glass-blur: 22px;
         }
         * { box-sizing: border-box; }
 
-        body { font-family: system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, 'Open Sans', 'Helvetica Neue', sans-serif; background-color: var(--body-bg); padding: 10px; color: var(--body-color); transition: background-color var(--transition-speed) ease, color var(--transition-speed) ease; }
+        body { font-family: system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, 'Open Sans', 'Helvetica Neue', sans-serif; background: var(--body-bg); padding: 10px; color: var(--body-color); transition: background var(--transition-speed) ease, color var(--transition-speed) ease; min-height: 100vh; position: relative; overflow-x: hidden; }
+        body::before, body::after { content: ""; position: fixed; inset: 0; pointer-events: none; z-index: -2; }
+        body::before { background: radial-gradient(circle at 20% 20%, rgba(255, 255, 255, 0.25), transparent 55%), radial-gradient(circle at 85% 15%, rgba(255, 112, 196, 0.35), transparent 45%), radial-gradient(circle at 20% 80%, rgba(117, 31, 255, 0.35), transparent 55%); filter: blur(0); opacity: 0.9; }
+        body::after { background: radial-gradient(circle at 70% 80%, rgba(13, 230, 255, 0.2), transparent 50%), radial-gradient(circle at 10% 100%, rgba(117, 31, 255, 0.25), transparent 40%); filter: blur(0); opacity: 0.75; }
         body.body-no-scroll { overflow: hidden; }
-        .container { max-width: 800px; margin: auto; padding-top: 20px; transition: filter 0.3s ease-in-out; }
+        .container { max-width: 800px; margin: auto; padding-top: 20px; transition: filter 0.3s ease-in-out; position: relative; z-index: 1; }
         .container.page-blur { filter: blur(5px) brightness(0.7); pointer-events: none; }
         h2, h3, h4 { text-align: center; color: var(--text-dark); }
         .summary-panel { display: flex; flex-wrap: nowrap; gap: 10px; margin-bottom: 25px; }
-        .summary-card { display: flex; flex-direction: column; align-items: center; justify-content: center; padding: 12px 5px; background-color: var(--background-card); border-radius: 12px; box-shadow: 0 5px 25px var(--shadow-color); transition: transform 0.2s ease, box-shadow 0.2s ease, background-color var(--transition-speed) ease; border-top: 4px solid; flex: 1 1 0; min-width: 0; text-align: center; }
-        .summary-card:hover { transform: translateY(-5px); box-shadow: 0 10px 30px rgba(0,0,0,0.08); }
+        .summary-card { display: flex; flex-direction: column; align-items: center; justify-content: center; padding: 12px 5px; background: var(--background-card); border-radius: 20px; box-shadow: 0 25px 55px var(--shadow-color); transition: transform 0.25s ease, box-shadow 0.25s ease, background-color var(--transition-speed) ease; border-top: 4px solid; flex: 1 1 0; min-width: 0; text-align: center; position: relative; overflow: hidden; backdrop-filter: blur(var(--glass-blur)); -webkit-backdrop-filter: blur(var(--glass-blur)); border: 1px solid var(--glass-border); }
+        .summary-card::before { content: ""; position: absolute; inset: 0; background: linear-gradient(135deg, rgba(255, 255, 255, 0.28), transparent 60%); opacity: 0.75; pointer-events: none; transition: opacity 0.3s ease; }
+        .summary-card:hover { transform: translateY(-6px); box-shadow: 0 35px 65px rgba(18, 3, 60, 0.45); }
+        .summary-card:hover::before { opacity: 1; }
         #card-pago { border-top-color: var(--color-pago); }
         #card-separado { border-top-color: var(--color-separado); }
         #card-disponible { border-top-color: var(--color-disponible); }
@@ -63,20 +74,23 @@
         #card-disponible .card-icon { background-color: var(--color-disponible); }
         .info-count { font-size: clamp(1.8em, 4vw, 2.2em); font-weight: 700; color: var(--text-dark); }
         .info-label { font-size: clamp(0.7em, 2.5vw, 0.8em); margin-top: 4px; color: var(--text-light); text-transform: uppercase; letter-spacing: 0.5px; line-height: 1.1; }
-        .search-section, .raffle-manager, .winner-section, #participant-list-section, #vendedor-summary-section { background-color: var(--background-card); padding: 20px; border-radius: 12px; box-shadow: 0 4px 25px var(--shadow-color); margin-bottom: 25px; transition: background-color var(--transition-speed) ease; }
+        .search-section, .raffle-manager, .winner-section, #participant-list-section, #vendedor-summary-section { background: var(--background-card); padding: 24px; border-radius: 26px; box-shadow: 0 30px 65px var(--shadow-color); margin-bottom: 25px; transition: background-color var(--transition-speed) ease, transform 0.25s ease; backdrop-filter: blur(var(--glass-blur)); -webkit-backdrop-filter: blur(var(--glass-blur)); border: 1px solid var(--glass-border); position: relative; overflow: hidden; }
+        .search-section::before, .raffle-manager::before, .winner-section::before, #participant-list-section::before, #vendedor-summary-section::before { content: ""; position: absolute; inset: 0; background: linear-gradient(135deg, rgba(255, 255, 255, 0.18), transparent 65%); pointer-events: none; opacity: 0.85; transition: opacity 0.3s ease; }
+        .search-section:hover, .raffle-manager:hover, .winner-section:hover, #participant-list-section:hover, #vendedor-summary-section:hover { transform: translateY(-4px); }
+        .search-section:hover::before, .raffle-manager:hover::before, .winner-section:hover::before, #participant-list-section:hover::before, #vendedor-summary-section:hover::before { opacity: 1; }
         .search-box { display: flex; align-items: flex-start; gap: 10px; margin-bottom: 15px; }
-        #searchButton { flex-shrink: 0; width: 48px; height: 48px; padding: 0; border: none; background-color: var(--color-primary); color: white; font-size: 18px; border-radius: 8px; cursor: pointer; transition: background-color 0.2s; display: flex; align-items: center; justify-content: center; }
-        #searchButton:hover { background-color: #5a0dbd; }
+        #searchButton { flex-shrink: 0; width: 54px; height: 54px; padding: 0; border: 1px solid var(--glass-highlight); background: linear-gradient(135deg, rgba(117, 31, 255, 0.95), rgba(92, 42, 255, 0.85)); color: white; font-size: 20px; border-radius: 16px; cursor: pointer; transition: transform 0.2s ease, box-shadow 0.2s ease; display: flex; align-items: center; justify-content: center; box-shadow: 0 16px 35px rgba(117, 31, 255, 0.4); backdrop-filter: blur(calc(var(--glass-blur) - 8px)); -webkit-backdrop-filter: blur(calc(var(--glass-blur) - 8px)); }
+        #searchButton:hover { transform: translateY(-2px); box-shadow: 0 22px 45px rgba(117, 31, 255, 0.45); }
         #searchResultsContainer { display: flex; flex-direction: column; gap: 12px; min-height: 50px; }
         @keyframes fadeIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
-        .result-card { display: flex; align-items: center; gap: 15px; padding: 12px; background-color: var(--background-light); border-radius: 8px; border: 1px solid var(--border-color); animation: fadeIn 0.4s ease-out forwards; flex-wrap: wrap; }
+        .result-card { display: flex; align-items: center; gap: 15px; padding: 16px; background: var(--background-light); border-radius: 18px; border: 1px solid var(--glass-border); animation: fadeIn 0.4s ease-out forwards; flex-wrap: wrap; box-shadow: 0 18px 40px rgba(15, 0, 45, 0.25); backdrop-filter: blur(calc(var(--glass-blur) - 6px)); -webkit-backdrop-filter: blur(calc(var(--glass-blur) - 6px)); }
         .result-number { flex-shrink: 0; display: flex; flex-wrap: wrap; gap: 5px; justify-content: center; align-items: center; font-weight: bold; }
-        .result-number-tag { padding: 5px 10px; border-radius: 6px; background-color: var(--color-primary); color: white; font-size: 1.1em; }
+        .result-number-tag { padding: 6px 12px; border-radius: 12px; background: linear-gradient(135deg, rgba(117, 31, 255, 0.9), rgba(133, 49, 255, 0.8)); color: white; font-size: 1.1em; box-shadow: 0 10px 20px rgba(117, 31, 255, 0.4); }
         .result-info { flex-grow: 1; min-width: 150px; }
         .result-info .name { font-weight: bold; color: var(--text-dark); margin: 0; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; font-size: 0.9em; }
         .result-info .phone { color: var(--text-light); font-size: 0.8em; margin: 2px 0 0 0; }
         .result-info .abono-info { color: var(--color-pago); font-weight: bold; font-size: 0.75em; margin: 4px 0 0; }
-        .status-badge { padding: 4px 8px; border-radius: 12px; color: white; font-size: 0.7em; font-weight: bold; text-transform: uppercase; margin-left: auto; }
+        .status-badge { padding: 6px 12px; border-radius: 999px; color: white; font-size: 0.75em; font-weight: bold; text-transform: uppercase; margin-left: auto; letter-spacing: 0.6px; box-shadow: 0 12px 25px rgba(0, 0, 0, 0.18); }
         .generate-ticket-btn { margin-left: 5px; }
         @media (max-width: 480px) {
             .result-info { flex-basis: 100%; order: 3; margin: 5px 0 0 0; }
@@ -91,14 +105,14 @@
         @keyframes popIn { 0% { transform: scale(0.8); opacity: 0; } 70% { transform: scale(1.15); opacity: 1; } 100% { transform: scale(1); opacity: 1; } }
         .winner-section h2, #prizeModal h2 { margin-top: 0; margin-bottom: 25px; font-size: clamp(1.8em, 5vw, 2.2em); font-weight: 700; color: var(--text-dark); }
         .winner-section h2 span { color: var(--color-separado); }
-        .winner-input-display { position: relative; display: flex; justify-content: center; gap: 15px; margin-bottom: 25px; cursor: text; transition: box-shadow 0.3s ease; padding: 10px; border-radius: 12px; }
-        .winner-input-display:focus-within { box-shadow: 0 0 0 4px rgba(117, 31, 255, 0.4); }
-        .digit-circle { width: clamp(40px, 12vw, 65px); height: clamp(40px, 12vw, 65px); border-radius: 50%; border: 2px solid var(--border-color); display: flex; justify-content: center; align-items: center; font-size: clamp(1.6em, 5vw, 2.4em); font-weight: bold; color: var(--text-light); transition: all 0.3s ease; background-color: var(--background-light); box-shadow: inset 0 2px 4px rgba(0,0,0,0.05); }
+        .winner-input-display { position: relative; display: flex; justify-content: center; gap: 15px; margin-bottom: 25px; cursor: text; transition: box-shadow 0.3s ease, transform 0.3s ease; padding: 18px; border-radius: 30px; background: var(--background-card); border: 1px solid var(--glass-border); backdrop-filter: blur(var(--glass-blur)); -webkit-backdrop-filter: blur(var(--glass-blur)); box-shadow: 0 25px 50px rgba(12, 0, 40, 0.4); }
+        .winner-input-display:focus-within { box-shadow: 0 0 0 4px rgba(117, 31, 255, 0.35), 0 28px 55px rgba(12, 0, 40, 0.5); transform: translateY(-2px); }
+        .digit-circle { width: clamp(40px, 12vw, 65px); height: clamp(40px, 12vw, 65px); border-radius: 50%; border: 1px solid var(--glass-border); display: flex; justify-content: center; align-items: center; font-size: clamp(1.6em, 5vw, 2.4em); font-weight: bold; color: var(--text-light); transition: all 0.3s ease; background: linear-gradient(135deg, rgba(255, 255, 255, 0.3), rgba(255, 255, 255, 0.05)); box-shadow: inset 0 1px 4px rgba(255,255,255,0.25), 0 12px 25px rgba(14, 0, 40, 0.35); }
         .digit-circle.filled { background: linear-gradient(135deg, var(--color-pago), #008200); border-color: var(--color-pago); color: white; text-shadow: 0 1px 2px rgba(0,0,0,0.2); animation: popIn 0.3s ease-out forwards; }
         #realWinningInput { position: absolute; top: 0; left: 0; width: 100%; height: 100%; opacity: 0; border: none; background: transparent; outline: none; -webkit-text-security: disc; }
-        #checkWinnerButton { padding: 14px 30px; border: none; border-radius: 8px; cursor: pointer; font-size: 1.2em; background: linear-gradient(135deg, var(--color-primary), #5a0dbd); color: white; font-weight: bold; transition: all 0.3s ease; box-shadow: 0 4px 15px rgba(117, 31, 255, 0.2); }
-        #checkWinnerButton:hover { transform: translateY(-2px); box-shadow: 0 6px 20px rgba(117, 31, 255, 0.3); filter: brightness(1.1); }
-        #checkWinnerButton:disabled { background: #9e9e9e; cursor: not-allowed; transform: none; box-shadow: none; filter: none; }
+        #checkWinnerButton { padding: 16px 36px; border: 1px solid var(--glass-highlight); border-radius: 14px; cursor: pointer; font-size: 1.15em; background: linear-gradient(135deg, rgba(117, 31, 255, 0.9), rgba(88, 11, 189, 0.85)); color: white; font-weight: 600; transition: all 0.3s ease; box-shadow: 0 20px 45px rgba(117, 31, 255, 0.35); backdrop-filter: blur(calc(var(--glass-blur) - 10px)); -webkit-backdrop-filter: blur(calc(var(--glass-blur) - 10px)); }
+        #checkWinnerButton:hover { transform: translateY(-3px) scale(1.01); box-shadow: 0 28px 60px rgba(117, 31, 255, 0.4); filter: brightness(1.08); }
+        #checkWinnerButton:disabled { background: rgba(158, 158, 158, 0.65); cursor: not-allowed; transform: none; box-shadow: none; filter: none; border-color: transparent; }
         #winnerResults, #modalWinnerResults { margin-top: 20px; display: flex; flex-direction: column; gap: 15px; min-height: auto; text-align: left; font-size: 1.1em; }
         .winner-card { border-radius: 12px; padding: 20px; color: white; box-shadow: 0 8px 25px rgba(0, 0, 0, 0.15); transition: transform 0.3s ease, box-shadow 0.3s ease; border: 1px solid rgba(255, 255, 255, 0.2); animation: fadeIn 0.5s ease-out forwards; }
         .winner-card:hover { transform: translateY(-5px); box-shadow: 0 12px 30px rgba(0, 0, 0, 0.2); }
@@ -125,14 +139,14 @@
         #gridContainer { display: grid; gap: 4px; margin-top: 20px; }
         #gridContainer.hundred-numbers, #gridContainer.thousand-numbers { grid-template-columns: repeat(10, 1fr); }
         .grid-item { display: flex; justify-content: center; align-items: center; aspect-ratio: 1 / 1; border: 1px solid var(--border-color); border-radius: 8px; font-size: clamp(0.7em, 3vw, 1.2em); font-weight: bold; color: white; cursor: pointer; transition: transform 0.2s, background-color 0.2s, border-color 0.2s; }
-        .modal-backdrop { display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background-color: rgba(0,0,0,0.1); opacity: 0; z-index: 999; transition: opacity 0.3s ease-in-out; }
+        .modal-backdrop { display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: radial-gradient(circle at 30% 20%, rgba(117, 31, 255, 0.3), transparent 55%), radial-gradient(circle at 75% 80%, rgba(13, 230, 255, 0.25), transparent 60%); opacity: 0; z-index: 999; transition: opacity 0.3s ease-in-out; backdrop-filter: blur(18px); -webkit-backdrop-filter: blur(18px); }
         .modal-backdrop.visible { display: block; opacity: 0.5; }
         .modal { display: flex; justify-content: center; align-items: center; position: fixed; z-index: 1000; left: 0; top: 0; width: 100%; height: 100%; overflow-y: auto; opacity: 0; visibility: hidden; transition: opacity 0.3s ease-in-out, visibility 0.3s; padding: 20px; }
         #prizeModal { padding: 0; align-items: flex-start; }
         .modal.visible { opacity: 1; visibility: visible; }
         @keyframes modal-slide-in { from { transform: translateY(-50px) scale(0.95); opacity: 0; } to { transform: translateY(0) scale(1); opacity: 1; } }
         .modal.visible .modal-content { animation: modal-slide-in 0.4s cubic-bezier(0.25, 0.46, 0.45, 0.94) forwards; }
-        .modal-content { background-color: var(--modal-bg); padding: 20px; border: 1px solid var(--border-color); width: 100%; max-width: 500px; border-radius: 8px; box-shadow: 0 4px 8px rgba(0,0,0,0.2); transition: background-color var(--transition-speed) ease; margin: auto; }
+        .modal-content { background: var(--modal-bg); padding: 28px; border: 1px solid var(--glass-border); width: 100%; max-width: 540px; border-radius: 26px; box-shadow: 0 35px 75px rgba(10, 0, 45, 0.45); transition: background-color var(--transition-speed) ease, transform 0.3s ease; margin: auto; backdrop-filter: blur(var(--glass-blur)); -webkit-backdrop-filter: blur(var(--glass-blur)); position: relative; overflow: hidden; }
         #prizeModal .modal-content { width: 100%; height: 100%; max-width: none; border-radius: 0; border: none; background-color: var(--body-bg); backdrop-filter: none; -webkit-backdrop-filter: none; box-shadow: none; display: flex; flex-direction: column; justify-content: flex-start; padding: 20px; overflow-y: auto; margin: 0; }
         #prizeModal h2 { margin-bottom: 15px; }
         #prizeModal hr { margin: 25px 0; border-color: var(--border-color); opacity: 0.5; }
@@ -145,16 +159,16 @@
         .modal-header h2 { display: flex; align-items: center; gap: 10px; font-size: 1.4em; text-align: left; }
         .close-button { color: #aaa; font-size: 28px; font-weight: bold; cursor: pointer; }
         .modal-body label { display: block; margin-top: 15px; margin-bottom: 5px; color: var(--text-dark); }
-        .modal-body input, .modal-body select, .modal-body textarea { width: 100%; padding: 10px; border: 1px solid var(--border-color); border-radius: 4px; background-color: var(--background-light); color: var(--text-dark); }
+        .modal-body input, .modal-body select, .modal-body textarea { width: 100%; padding: 12px 14px; border: 1px solid var(--glass-border); border-radius: 16px; background: linear-gradient(135deg, rgba(255, 255, 255, 0.3), rgba(255, 255, 255, 0.05)); color: var(--text-dark); box-shadow: inset 0 1px 3px rgba(255,255,255,0.35), 0 12px 28px rgba(10, 0, 32, 0.25); backdrop-filter: blur(calc(var(--glass-blur) - 8px)); -webkit-backdrop-filter: blur(calc(var(--glass-blur) - 8px)); }
         #bulkNumbersInput { min-height: 100px; resize: vertical; font-family: monospace; }
         .modal-body select { height: 41px; }
         .modal-footer { display: flex; justify-content: flex-end; align-items: center; gap: 10px; margin-top: 20px; flex-wrap: wrap; }
-        .modal-footer button { padding: 10px 20px; border: none; border-radius: 5px; cursor: pointer; font-size: 16px; transition: background-color 0.2s, transform 0.2s; }
-        .modal-footer button:hover { transform: translateY(-2px); }
-        #saveButton, #saveAllPrizesButton, #saveSettingsButton, #downloadTicketButton, #loginButton, #reauthButton, #createRifaButton, #saveBulkButton, #findOpportunitiesButton { background-color: var(--color-primary); color: white; }
-        #deleteButton { background-color: var(--color-danger); color: white; }
-        .action-btn-pago { padding: 10px 15px; background-color: var(--color-pago); color: white !important; border: none; border-radius: 5px; cursor: pointer; font-weight: bold; font-size: 16px; display: inline-flex; align-items: center; gap: 8px; transition: background-color 0.2s, transform 0.2s; }
-        .action-btn-pago:hover { transform: translateY(-2px); filter: brightness(1.1); }
+        .modal-footer button { padding: 12px 24px; border-radius: 16px; cursor: pointer; font-size: 16px; transition: transform 0.2s ease, box-shadow 0.2s ease; border: 1px solid transparent; background: rgba(255, 255, 255, 0.08); color: var(--text-dark); backdrop-filter: blur(calc(var(--glass-blur) - 8px)); -webkit-backdrop-filter: blur(calc(var(--glass-blur) - 8px)); box-shadow: 0 18px 32px rgba(6, 0, 28, 0.25); }
+        .modal-footer button:hover { transform: translateY(-2px); box-shadow: 0 22px 40px rgba(6, 0, 28, 0.3); }
+        #saveButton, #saveAllPrizesButton, #saveSettingsButton, #downloadTicketButton, #loginButton, #reauthButton, #createRifaButton, #saveBulkButton, #findOpportunitiesButton { background: linear-gradient(135deg, rgba(117, 31, 255, 0.9), rgba(92, 42, 255, 0.85)); color: white; border-color: var(--glass-highlight); }
+        #deleteButton { background: linear-gradient(135deg, rgba(255, 95, 109, 0.9), rgba(255, 65, 108, 0.85)); color: white; border-color: transparent; box-shadow: 0 18px 40px rgba(255, 95, 109, 0.45); }
+        .action-btn-pago { padding: 12px 18px; background: linear-gradient(135deg, rgba(132, 224, 89, 0.95), rgba(110, 207, 75, 0.9)); color: white !important; border: 1px solid rgba(255,255,255,0.35); border-radius: 14px; cursor: pointer; font-weight: 600; font-size: 16px; display: inline-flex; align-items: center; gap: 8px; transition: transform 0.2s ease, filter 0.2s ease; box-shadow: 0 18px 35px rgba(132, 224, 89, 0.35); }
+        .action-btn-pago:hover { transform: translateY(-3px); filter: brightness(1.05); }
         .raffle-manager { display: flex; flex-direction: column; gap: 15px; align-items: stretch; }
         .raffle-selector-container { flex-grow: 1; display: flex; flex-direction: column; gap: 10px; }
         .admin-buttons-container { display: flex; flex-wrap: wrap; gap: 10px; }
@@ -172,39 +186,41 @@
         .select-show { opacity: 1; visibility: visible; transform: translateY(0); }
         .search-input-group { position: relative; flex-grow: 1; }
         .search-input-group .search-icon { position: absolute; left: 15px; top: 50%; transform: translateY(-50%); color: var(--text-light); width: 18px; height: 18px; z-index: 10; }
-        #searchInput { width: 100%; height: 48px; padding: 12px 12px 12px 45px; border: 1px solid var(--border-color); border-radius: 8px; font-size: 16px; transition: border-color 0.2s, box-shadow 0.2s; background-color: transparent; color: var(--text-dark); }
-        .search-input-group label { position: absolute; pointer-events: none; left: 45px; top: 50%; transform: translateY(-50%); color: var(--text-light); transition: all 0.2s ease-in-out; background-color: var(--background-card); padding: 0 5px; }
+        #searchInput { width: 100%; height: 54px; padding: 14px 16px 14px 54px; border: 1px solid var(--glass-border); border-radius: 18px; font-size: 16px; transition: border-color 0.2s, box-shadow 0.2s; background: linear-gradient(135deg, rgba(255, 255, 255, 0.25), rgba(255, 255, 255, 0.05)); color: var(--text-dark); box-shadow: inset 0 1px 3px rgba(255,255,255,0.35), 0 14px 28px rgba(15, 0, 40, 0.25); backdrop-filter: blur(calc(var(--glass-blur) - 8px)); -webkit-backdrop-filter: blur(calc(var(--glass-blur) - 8px)); }
+        .search-input-group label { position: absolute; pointer-events: none; left: 60px; top: 50%; transform: translateY(-50%); color: var(--text-light); transition: all 0.2s ease-in-out; background: rgba(13, 0, 40, 0.2); padding: 0 6px; border-radius: 999px; }
         #searchInput:focus { outline: none; border-color: var(--color-primary); box-shadow: 0 0 0 3px rgba(117, 31, 255, 0.25); }
         #searchInput:focus + label, #searchInput:not(:placeholder-shown) + label { transform: translateY(-150%) scale(0.8); color: var(--color-primary); }
-        #darkModeToggle { position: fixed; top: 15px; right: 15px; width: 40px; height: 40px; border-radius: 50%; border: 1px solid var(--border-color); background-color: var(--background-card); color: var(--text-light); font-size: 18px; cursor: pointer; display: flex; align-items: center; justify-content: center; z-index: 1001; transition: all var(--transition-speed) ease; }
+        #darkModeToggle { position: fixed; top: 15px; right: 15px; width: 48px; height: 48px; border-radius: 50%; border: 1px solid var(--glass-highlight); background: linear-gradient(135deg, rgba(255, 255, 255, 0.22), rgba(255, 255, 255, 0.08)); color: var(--text-light); font-size: 18px; cursor: pointer; display: flex; align-items: center; justify-content: center; z-index: 1001; transition: all var(--transition-speed) ease; backdrop-filter: blur(calc(var(--glass-blur) - 10px)); -webkit-backdrop-filter: blur(calc(var(--glass-blur) - 10px)); box-shadow: 0 20px 35px rgba(0, 0, 30, 0.35); }
         #deleteRifaButton, #settingsButton, #vendedoresButton, #resumenVendedoresButton { display: none; align-items: center; justify-content: center; height: 48px; width: 48px; padding: 0; background-color: transparent; border-radius: 8px; cursor: pointer; transition: all 0.2s ease; flex-shrink: 0; }
         #prizeButton.visible { display: block; }
         body.admin-view #deleteRifaButton.visible, body.admin-view #settingsButton.visible, body.admin-view #vendedoresButton.visible, body.admin-view #resumenVendedoresButton.visible { display: flex; }
-        #settingsButton, #vendedoresButton, #resumenVendedoresButton { border: 1px solid var(--color-primary); color: var(--color-primary); }
-        #settingsButton:hover, #vendedoresButton:hover, #resumenVendedoresButton:hover { background-color: var(--color-primary); color: white; }
+        #settingsButton, #vendedoresButton, #resumenVendedoresButton { border: 1px solid var(--glass-highlight); color: var(--text-dark); background: linear-gradient(135deg, rgba(117, 31, 255, 0.25), rgba(255, 255, 255, 0.08)); backdrop-filter: blur(calc(var(--glass-blur) - 10px)); -webkit-backdrop-filter: blur(calc(var(--glass-blur) - 10px)); box-shadow: 0 15px 32px rgba(14, 0, 40, 0.35); }
+        #settingsButton:hover, #vendedoresButton:hover, #resumenVendedoresButton:hover { background: linear-gradient(135deg, rgba(117, 31, 255, 0.5), rgba(117, 31, 255, 0.2)); color: white; }
         .color-setting { display: flex; align-items: center; justify-content: space-between; gap: 15px; margin-bottom: 20px; }
         .color-setting label { margin: 0; font-weight: 500; color: var(--text-dark); flex-grow: 1; text-align: left;}
-        .color-setting input { padding: 8px; border-radius: 4px; border: 1px solid var(--border-color); }
-        .color-setting input[type="color"] { -webkit-appearance: none; -moz-appearance: none; appearance: none; width: 60px; height: 35px; background-color: transparent; border: 1px solid var(--border-color); border-radius: 5px; cursor: pointer; flex-shrink: 0;}
+        .color-setting input { padding: 10px 14px; border-radius: 14px; border: 1px solid var(--glass-border); background: linear-gradient(135deg, rgba(255,255,255,0.25), rgba(255,255,255,0.05)); color: var(--text-dark); box-shadow: inset 0 1px 3px rgba(255,255,255,0.35), 0 12px 24px rgba(12, 0, 40, 0.25); }
+        .color-setting input[type="color"] { -webkit-appearance: none; -moz-appearance: none; appearance: none; width: 60px; height: 35px; background-color: transparent; border: 1px solid var(--glass-border); border-radius: 12px; cursor: pointer; flex-shrink: 0; box-shadow: 0 12px 22px rgba(12, 0, 40, 0.25); }
         .color-setting input[type="color"]::-webkit-color-swatch-wrapper { padding: 0; }
         .color-setting input[type="color"]::-webkit-color-swatch { border: none; border-radius: 4px; }
-        #deleteRifaButton { border: 1px solid var(--color-danger); color: var(--color-danger); }
-        #deleteRifaButton:hover { background-color: var(--color-danger); color: white; }
+        #deleteRifaButton { border: 1px solid rgba(255, 95, 109, 0.5); color: white; background: linear-gradient(135deg, rgba(255, 95, 109, 0.35), rgba(255, 65, 108, 0.25)); backdrop-filter: blur(calc(var(--glass-blur) - 10px)); -webkit-backdrop-filter: blur(calc(var(--glass-blur) - 10px)); box-shadow: 0 18px 38px rgba(255, 95, 109, 0.3); }
+        #deleteRifaButton:hover { background: linear-gradient(135deg, rgba(255, 95, 109, 0.8), rgba(255, 65, 108, 0.6)); }
         @keyframes prizeButtonShimmer { 0% { transform: translateX(-100%) skewX(-20deg); } 100% { transform: translateX(100%) skewX(-20deg); } }
-        #prizeButton { display: none; position: relative; width: 100%; padding: 12px 20px; font-size: 1.1em; font-weight: bold; color: white; background: linear-gradient(135deg, #84E059, #6ACF4F); border: none; border-radius: 8px; cursor: pointer; box-shadow: 0 4px 15px rgba(132, 224, 89, 0.2); transition: all 0.3s cubic-bezier(0.25, 0.8, 0.25, 1); overflow: hidden; background-size: 100% 100%; }
+        #prizeButton { display: none; position: relative; width: 100%; padding: 16px 24px; font-size: 1.1em; font-weight: bold; color: white; background: linear-gradient(135deg, rgba(132, 224, 89, 0.95), rgba(106, 207, 79, 0.9)); border: 1px solid rgba(255,255,255,0.35); border-radius: 18px; cursor: pointer; box-shadow: 0 22px 45px rgba(132, 224, 89, 0.35); transition: all 0.3s cubic-bezier(0.25, 0.8, 0.25, 1); overflow: hidden; background-size: 100% 100%; backdrop-filter: blur(calc(var(--glass-blur) - 8px)); -webkit-backdrop-filter: blur(calc(var(--glass-blur) - 8px)); }
         #prizeButton::after { content: ''; position: absolute; top: 0; left: 0; width: 50%; height: 100%; background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.4), transparent); transform: translateX(-100%) skewX(-20deg); animation: prizeButtonShimmer 3s infinite; animation-delay: 1s; }
-        #prizeButton:hover { transform: translateY(-4px); background-size: 120% 120%; box-shadow: 0 8px 25px rgba(132, 224, 89, 0.3); filter: brightness(1.05); }
+        #prizeButton:hover { transform: translateY(-4px); background-size: 120% 120%; box-shadow: 0 28px 60px rgba(132, 224, 89, 0.45); filter: brightness(1.05); }
         #prizeButton:active { transform: translateY(0); }
         .prize-icon { display: inline-block; transition: transform 0.3s ease; }
         #prizeButton:hover .prize-icon { transform: scale(1.2) rotate(8deg); }
-        #openCreateRaffleModalButton, #openBulkAddModalButton { display: none; flex-grow: 1; padding: 12px 20px; font-size: 1.1em; font-weight: bold; color: var(--color-primary); background-color: transparent; border: 2px solid var(--color-primary); border-radius: 8px; cursor: pointer; transition: all 0.3s ease; }
+        #openCreateRaffleModalButton, #openBulkAddModalButton { display: none; flex-grow: 1; padding: 14px 22px; font-size: 1.05em; font-weight: 600; color: var(--text-dark); background: linear-gradient(135deg, rgba(117, 31, 255, 0.22), rgba(255, 255, 255, 0.05)); border: 1px solid var(--glass-highlight); border-radius: 16px; cursor: pointer; transition: all 0.3s ease; box-shadow: 0 18px 35px rgba(20, 0, 50, 0.32); backdrop-filter: blur(calc(var(--glass-blur) - 8px)); -webkit-backdrop-filter: blur(calc(var(--glass-blur) - 8px)); }
         body.admin-view #openCreateRaffleModalButton, body.admin-view #openBulkAddModalButton { display: block; }
-        #openCreateRaffleModalButton:hover, #openBulkAddModalButton:hover { background-color: var(--color-primary); color: white; }
+        #openCreateRaffleModalButton:hover, #openBulkAddModalButton:hover { background: linear-gradient(135deg, rgba(117, 31, 255, 0.55), rgba(117, 31, 255, 0.28)); color: white; transform: translateY(-3px); }
         #prize-info-section { display: flex; flex-wrap: wrap; gap: 15px; justify-content: center; }
-        .prize-card { background-color: var(--background-card); color: var(--text-dark); border: 1px solid var(--border-color); border-top: 5px solid transparent; transition: all 0.3s ease; text-align: center; border-radius: 12px; padding: 15px; flex: 1 1 250px; max-width: 320px; box-shadow: 0 4px 15px var(--shadow-color); }
-        .prize-card:hover { transform: translateY(-5px); box-shadow: 0 8px 25px var(--shadow-color); }
+        .prize-card { background: var(--background-card); color: var(--text-dark); border: 1px solid var(--glass-border); border-top: 5px solid transparent; transition: all 0.3s ease; text-align: center; border-radius: 22px; padding: 20px; flex: 1 1 250px; max-width: 320px; box-shadow: 0 26px 55px rgba(10, 0, 45, 0.38); backdrop-filter: blur(var(--glass-blur)); -webkit-backdrop-filter: blur(var(--glass-blur)); position: relative; overflow: hidden; }
+        .prize-card::before { content: ""; position: absolute; inset: 0; background: linear-gradient(145deg, rgba(255, 255, 255, 0.18), transparent 60%); pointer-events: none; opacity: 0.85; transition: opacity 0.3s ease; }
+        .prize-card:hover { transform: translateY(-6px); box-shadow: 0 32px 65px rgba(10, 0, 45, 0.45); }
+        .prize-card:hover::before { opacity: 1; }
         @keyframes card-pulse-glow { 50% { transform: scale(1.07); box-shadow: 0 0 25px 5px var(--glow-color, #fff); } }
-        .prize-card.highlight { transform: translateY(-5px) scale(1.02); box-shadow: 0 8px 25px rgba(0,0,0,0.2); }
+        .prize-card.highlight { transform: translateY(-6px) scale(1.02); box-shadow: 0 35px 70px rgba(0,0,0,0.35); }
         .prize-card-title { font-size: 1.1em; font-weight: bold; display: flex; align-items: center; justify-content: center; gap: 8px; margin-bottom: 10px; transition: color 0.3s ease; }
         .prize-card.mayor { border-top-color: var(--color-separado); }
         .prize-card.mayor .prize-card-title { color: var(--color-separado); }
@@ -213,15 +229,15 @@
         .prize-card.tercero { border-top-color: var(--color-pago); }
         .prize-card.tercero .prize-card-title { color: var(--color-pago); }
         #anticipados-section { margin-top: 25px; }
-        #admin-anticipado-form { display: none; background-color: var(--background-card); border: 1px solid var(--border-color); padding: 20px; border-radius: 8px; margin-bottom: 25px; }
+        #admin-anticipado-form { display: none; background: var(--background-card); border: 1px solid var(--glass-border); padding: 24px; border-radius: 24px; margin-bottom: 25px; box-shadow: 0 26px 55px rgba(12, 0, 40, 0.35); backdrop-filter: blur(var(--glass-blur)); -webkit-backdrop-filter: blur(var(--glass-blur)); position: relative; overflow: hidden; }
         body.admin-view #admin-anticipado-form { display: flex; flex-direction: column; gap: 15px; }
         #admin-anticipado-form h4 { margin: 0 0 5px 0; text-align: left; }
-        #addAnticipadoButton { padding: 10px; background-color: var(--color-pago); color: white; border: none; border-radius: 5px; cursor: pointer; font-weight: bold; font-size: 1em; }
+        #addAnticipadoButton { padding: 14px 20px; background: linear-gradient(135deg, rgba(132, 224, 89, 0.95), rgba(106, 207, 79, 0.9)); color: white; border: 1px solid rgba(255,255,255,0.35); border-radius: 16px; cursor: pointer; font-weight: 600; font-size: 1em; box-shadow: 0 20px 45px rgba(132, 224, 89, 0.35); transition: transform 0.3s ease; backdrop-filter: blur(calc(var(--glass-blur) - 8px)); -webkit-backdrop-filter: blur(calc(var(--glass-blur) - 8px)); }
         #anticipados-container-public { display: none; }
         #anticipados-list { display: grid; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); gap: 15px; }
-        .anticipado-card { background-color: var(--background-card); border: 1px solid var(--border-color); border-radius: 12px; padding: 20px; display: flex; flex-direction: column; justify-content: space-between; box-shadow: 0 4px 15px var(--shadow-color); transition: transform 0.3s ease, box-shadow 0.3s ease; animation: fadeIn 0.4s ease-out; }
-        .anticipado-card:hover { transform: translateY(-4px); box-shadow: 0 8px 25px rgba(0,0,0,0.1); }
-        .dark-mode .anticipado-card:hover { box-shadow: 0 8px 25px rgba(0,0,0,0.25); }
+        .anticipado-card { background: var(--background-card); border: 1px solid var(--glass-border); border-radius: 24px; padding: 24px; display: flex; flex-direction: column; justify-content: space-between; box-shadow: 0 26px 55px rgba(12, 0, 40, 0.32); transition: transform 0.3s ease, box-shadow 0.3s ease; animation: fadeIn 0.4s ease-out; backdrop-filter: blur(var(--glass-blur)); -webkit-backdrop-filter: blur(var(--glass-blur)); position: relative; overflow: hidden; }
+        .anticipado-card:hover { transform: translateY(-6px); box-shadow: 0 32px 65px rgba(12, 0, 40, 0.4); }
+        .dark-mode .anticipado-card:hover { box-shadow: 0 32px 65px rgba(0,0,0,0.35); }
         .anticipado-card .view-mode { display: flex; flex-direction: column; justify-content: space-between; width: 100%; gap: 15px; flex-grow: 1; }
         .anticipado-info .anticipado-valor-display { font-size: 1.8em; font-weight: 700; color: var(--color-pago); display: flex; align-items: center; gap: 10px; margin-bottom: 15px; border-bottom: 1px solid var(--border-color); padding-bottom: 12px; }
         .anticipado-info .anticipado-valor-display .fa-coins { color: var(--color-separado); }
@@ -251,17 +267,12 @@
         
         #vendedor-summary-section {
             display: none;
-            background-color: var(--background-card);
-            border-radius: 12px;
-            box-shadow: 0 4px 25px var(--shadow-color);
-            margin-bottom: 25px;
-            padding: 20px;
         }
         #vendedor-summary-list { display: grid; grid-template-columns: 1fr; gap: 15px;}
-        .vendedor-summary-card { border: 1px solid var(--border-color); border-radius: 8px; transition: all 0.3s ease; }
-        .vendedor-summary-card:hover { box-shadow: 0 4px 15px var(--shadow-color); }
-        .vendedor-summary-card .vsc-header { padding: 12px 15px; font-weight: bold; border-bottom: 1px solid var(--border-color); font-size: 1.1em; }
-        .vendedor-summary-card .vsc-body { padding: 15px; }
+        .vendedor-summary-card { border: 1px solid var(--glass-border); border-radius: 20px; transition: all 0.3s ease; background: var(--background-card); box-shadow: 0 26px 55px rgba(12, 0, 40, 0.3); backdrop-filter: blur(calc(var(--glass-blur) - 6px)); -webkit-backdrop-filter: blur(calc(var(--glass-blur) - 6px)); overflow: hidden; }
+        .vendedor-summary-card:hover { box-shadow: 0 32px 65px rgba(12, 0, 40, 0.42); transform: translateY(-4px); }
+        .vendedor-summary-card .vsc-header { padding: 16px 20px; font-weight: bold; border-bottom: 1px solid rgba(255,255,255,0.2); font-size: 1.05em; display: flex; align-items: center; justify-content: space-between; }
+        .vendedor-summary-card .vsc-body { padding: 20px; }
         .vendedor-summary-card .vsc-section h5 { margin: 0 0 10px 0; text-align: left; font-size: 0.9em; display: flex; align-items: center; gap: 8px;}
         .vendedor-summary-card .vsc-section h5 .count { background-color: var(--background-light); color: var(--text-dark); padding: 2px 8px; border-radius: 10px; font-size: 0.9em;}
         .vsc-numeros-container { display: flex; flex-wrap: wrap; gap: 6px; margin-bottom: 15px; }
@@ -281,7 +292,7 @@
             transform: translateY(-2px);
         }
         .numero-tag.status-pago { background-color: var(--color-pago); color: white; }
-        .numero-tag.status-separado { background-color: var(--color-separado); color: var(--text-dark); }
+        .numero-tag.status-separado { background-color: var(--color-separado); color: #3c2500; }
         .participant-tooltip {
             position: absolute;
             bottom: 100%;
