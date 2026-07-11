@@ -15,55 +15,56 @@
             --color-danger: #ff5f6d;
             --border-color: rgba(255, 255, 255, 0.35);
             --shadow-color: rgba(25, 6, 69, 0.25);
-            --background-light: rgba(255, 255, 255, 0.22);
-            --background-card: rgba(255, 255, 255, 0.18);
-            --text-dark: #f8f5ff;
-            --text-light: rgba(245, 240, 255, 0.78);
-            --body-bg: radial-gradient(circle at 15% 20%, rgba(155, 84, 255, 0.85), rgba(63, 9, 183, 0.92)), linear-gradient(135deg, #3613a4, #140734);
-            --body-color: #f1efff;
-            --modal-bg: rgba(255, 255, 255, 0.16);
-            --modal-glass-bg: rgba(255, 255, 255, 0.1);
-            --winner-card-silver-bg: linear-gradient(135deg, rgba(255, 255, 255, 0.35), rgba(210, 210, 220, 0.3));
-            --winner-card-silver-color: #120c2b;
+            --background-light: rgba(255, 255, 255, 0.15);
+            --background-card: rgba(255, 255, 255, 0.12);
+            --text-dark: #ffffff;
+            --text-light: rgba(255, 255, 255, 0.85);
+            --body-bg: linear-gradient(135deg, #2a0845 0%, #6441a5 100%);
+            --body-color: #ffffff;
+            --modal-bg: #2a0845;
+            --modal-glass-bg: rgba(255, 255, 255, 0.05);
+            --winner-card-silver-bg: linear-gradient(135deg, #bdc3c7, #2c3e50);
+            --winner-card-silver-color: #ffffff;
             --transition-speed: 0.3s;
-            --skeleton-bg: rgba(255, 255, 255, 0.28);
-            --glass-border: rgba(255, 255, 255, 0.35);
-            --glass-highlight: rgba(255, 255, 255, 0.55);
-            --glass-blur: 18px;
+            --skeleton-bg: rgba(255, 255, 255, 0.1);
+            --glass-border: rgba(255, 255, 255, 0.2);
+            --glass-highlight: rgba(255, 255, 255, 0.3);
+            --glass-blur: 0px;
         }
         .dark-mode {
-            --border-color: rgba(255, 255, 255, 0.18);
-            --shadow-color: rgba(4, 0, 25, 0.55);
-            --background-light: rgba(30, 24, 52, 0.55);
-            --background-card: rgba(22, 16, 46, 0.65);
-            --text-dark: #f7f7ff;
-            --text-light: rgba(225, 220, 255, 0.75);
-            --body-bg: radial-gradient(circle at 20% 20%, rgba(119, 62, 210, 0.72), rgba(28, 15, 66, 0.95)), linear-gradient(135deg, #120826, #060415);
+            --border-color: rgba(255, 255, 255, 0.1);
+            --shadow-color: rgba(0, 0, 0, 0.5);
+            --background-light: rgba(0, 0, 0, 0.3);
+            --background-card: rgba(0, 0, 0, 0.4);
+            --text-dark: #ffffff;
+            --text-light: rgba(255, 255, 255, 0.7);
+            --body-bg: #0f0c29;
+            --body-bg: linear-gradient(to right, #24243e, #302b63, #0f0c29);
             --body-color: #f1f1ff;
-            --modal-bg: rgba(19, 12, 40, 0.82);
-            --modal-glass-bg: rgba(24, 18, 50, 0.65);
-            --winner-card-silver-bg: linear-gradient(135deg, rgba(118, 120, 130, 0.75), rgba(82, 84, 96, 0.75));
+            --modal-bg: #1a1a2e;
+            --modal-glass-bg: rgba(0, 0, 0, 0.5);
+            --winner-card-silver-bg: linear-gradient(135deg, #434343, #000000);
             --winner-card-silver-color: #f5f5ff;
-            --skeleton-bg: rgba(255, 255, 255, 0.18);
-            --glass-border: rgba(255, 255, 255, 0.18);
-            --glass-highlight: rgba(255, 255, 255, 0.35);
-            --glass-blur: 22px;
+            --skeleton-bg: rgba(255, 255, 255, 0.05);
+            --glass-border: rgba(255, 255, 255, 0.1);
+            --glass-highlight: rgba(255, 255, 255, 0.2);
+            --glass-blur: 0px;
         }
         * { box-sizing: border-box; }
 
         body { font-family: system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, 'Open Sans', 'Helvetica Neue', sans-serif; background: var(--body-bg); padding: 10px; color: var(--body-color); transition: background var(--transition-speed) ease, color var(--transition-speed) ease; min-height: 100vh; position: relative; overflow-x: hidden; }
         body::before, body::after { content: ""; position: fixed; inset: 0; pointer-events: none; z-index: -2; }
-        body::before { background: radial-gradient(circle at 20% 20%, rgba(255, 255, 255, 0.25), transparent 55%), radial-gradient(circle at 85% 15%, rgba(255, 112, 196, 0.35), transparent 45%), radial-gradient(circle at 20% 80%, rgba(117, 31, 255, 0.35), transparent 55%); filter: blur(0); opacity: 0.9; }
-        body::after { background: radial-gradient(circle at 70% 80%, rgba(13, 230, 255, 0.2), transparent 50%), radial-gradient(circle at 10% 100%, rgba(117, 31, 255, 0.25), transparent 40%); filter: blur(0); opacity: 0.75; }
+        body::before { background: radial-gradient(circle at 20% 20%, rgba(255, 255, 255, 0.15), transparent 55%), radial-gradient(circle at 85% 15%, rgba(255, 112, 196, 0.2), transparent 45%), radial-gradient(circle at 20% 80%, rgba(117, 31, 255, 0.2), transparent 55%); filter: blur(0); opacity: 0.7; }
+        body::after { background: radial-gradient(circle at 70% 80%, rgba(13, 230, 255, 0.1), transparent 50%), radial-gradient(circle at 10% 100%, rgba(117, 31, 255, 0.15), transparent 40%); filter: blur(0); opacity: 0.6; }
         body.body-no-scroll { overflow: hidden; }
         .container { max-width: 800px; margin: auto; padding-top: 20px; transition: filter 0.3s ease-in-out; position: relative; z-index: 1; }
         .container.page-blur { filter: blur(5px) brightness(0.7); pointer-events: none; }
         h2, h3, h4 { text-align: center; color: var(--text-dark); }
         .summary-panel { display: flex; flex-wrap: nowrap; gap: 10px; margin-bottom: 25px; }
-        .summary-card { display: flex; flex-direction: column; align-items: center; justify-content: center; padding: 12px 5px; background: var(--background-card); border-radius: 20px; box-shadow: 0 25px 55px var(--shadow-color); transition: transform 0.25s ease, box-shadow 0.25s ease, background-color var(--transition-speed) ease; border-top: 4px solid; flex: 1 1 0; min-width: 0; text-align: center; position: relative; overflow: hidden; backdrop-filter: blur(var(--glass-blur)); -webkit-backdrop-filter: blur(var(--glass-blur)); border: 1px solid var(--glass-border); }
-        .summary-card::before { content: ""; position: absolute; inset: 0; background: linear-gradient(135deg, rgba(255, 255, 255, 0.28), transparent 60%); opacity: 0.75; pointer-events: none; transition: opacity 0.3s ease; }
-        .summary-card:hover { transform: translateY(-6px); box-shadow: 0 35px 65px rgba(18, 3, 60, 0.45); }
-        .summary-card:hover::before { opacity: 1; }
+        .summary-card { display: flex; flex-direction: column; align-items: center; justify-content: center; padding: 12px 5px; background: var(--background-card); border-radius: 20px; box-shadow: 0 8px 32px var(--shadow-color); transition: transform 0.25s ease, box-shadow 0.25s ease, background-color var(--transition-speed) ease; border-top: 4px solid; flex: 1 1 0; min-width: 0; text-align: center; position: relative; overflow: hidden; border: 1px solid var(--glass-border); }
+        .summary-card::before { content: ""; position: absolute; inset: 0; background: linear-gradient(135deg, rgba(255, 255, 255, 0.1), transparent 60%); opacity: 0.5; pointer-events: none; transition: opacity 0.3s ease; }
+        .summary-card:hover { transform: translateY(-4px); box-shadow: 0 12px 40px rgba(18, 3, 60, 0.4); }
+        .summary-card:hover::before { opacity: 0.7; }
         #card-pago { border-top-color: var(--color-pago); }
         #card-separado { border-top-color: var(--color-separado); }
         #card-disponible { border-top-color: var(--color-disponible); }
@@ -74,16 +75,16 @@
         #card-disponible .card-icon { background-color: var(--color-disponible); }
         .info-count { font-size: clamp(1.8em, 4vw, 2.2em); font-weight: 700; color: var(--text-dark); }
         .info-label { font-size: clamp(0.7em, 2.5vw, 0.8em); margin-top: 4px; color: var(--text-light); text-transform: uppercase; letter-spacing: 0.5px; line-height: 1.1; }
-        .search-section, .raffle-manager, .winner-section, #participant-list-section, #vendedor-summary-section { background: var(--background-card); padding: 24px; border-radius: 26px; box-shadow: 0 30px 65px var(--shadow-color); margin-bottom: 25px; transition: background-color var(--transition-speed) ease, transform 0.25s ease; backdrop-filter: blur(var(--glass-blur)); -webkit-backdrop-filter: blur(var(--glass-blur)); border: 1px solid var(--glass-border); position: relative; overflow: hidden; }
-        .search-section::before, .raffle-manager::before, .winner-section::before, #participant-list-section::before, #vendedor-summary-section::before { content: ""; position: absolute; inset: 0; background: linear-gradient(135deg, rgba(255, 255, 255, 0.18), transparent 65%); pointer-events: none; opacity: 0.85; transition: opacity 0.3s ease; }
+        .search-section, .raffle-manager, .winner-section, #participant-list-section, #vendedor-summary-section { background: var(--background-card); padding: 24px; border-radius: 26px; box-shadow: 0 12px 40px var(--shadow-color); margin-bottom: 25px; transition: background-color var(--transition-speed) ease, transform 0.25s ease; border: 1px solid var(--glass-border); position: relative; overflow: hidden; }
+        .search-section::before, .raffle-manager::before, .winner-section::before, #participant-list-section::before, #vendedor-summary-section::before { content: ""; position: absolute; inset: 0; background: linear-gradient(135deg, rgba(255, 255, 255, 0.1), transparent 65%); pointer-events: none; opacity: 0.5; transition: opacity 0.3s ease; }
         .search-section:hover, .raffle-manager:hover, .winner-section:hover, #participant-list-section:hover, #vendedor-summary-section:hover { transform: translateY(-4px); }
         .search-section:hover::before, .raffle-manager:hover::before, .winner-section:hover::before, #participant-list-section:hover::before, #vendedor-summary-section:hover::before { opacity: 1; }
         .search-box { display: flex; align-items: flex-start; gap: 10px; margin-bottom: 15px; }
-        #searchButton { flex-shrink: 0; width: 54px; height: 54px; padding: 0; border: 1px solid var(--glass-highlight); background: linear-gradient(135deg, rgba(117, 31, 255, 0.95), rgba(92, 42, 255, 0.85)); color: white; font-size: 20px; border-radius: 16px; cursor: pointer; transition: transform 0.2s ease, box-shadow 0.2s ease; display: flex; align-items: center; justify-content: center; box-shadow: 0 16px 35px rgba(117, 31, 255, 0.4); backdrop-filter: blur(calc(var(--glass-blur) - 8px)); -webkit-backdrop-filter: blur(calc(var(--glass-blur) - 8px)); }
-        #searchButton:hover { transform: translateY(-2px); box-shadow: 0 22px 45px rgba(117, 31, 255, 0.45); }
+        #searchButton { flex-shrink: 0; width: 54px; height: 54px; padding: 0; border: 1px solid var(--glass-highlight); background: linear-gradient(135deg, rgba(117, 31, 255, 1), rgba(92, 42, 255, 1)); color: white; font-size: 20px; border-radius: 16px; cursor: pointer; transition: transform 0.2s ease, box-shadow 0.2s ease; display: flex; align-items: center; justify-content: center; box-shadow: 0 8px 24px rgba(117, 31, 255, 0.4); }
+        #searchButton:hover { transform: translateY(-2px); box-shadow: 0 12px 32px rgba(117, 31, 255, 0.5); }
         #searchResultsContainer { display: flex; flex-direction: column; gap: 12px; min-height: 50px; }
         @keyframes fadeIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
-        .result-card { display: flex; align-items: center; gap: 15px; padding: 16px; background: var(--background-light); border-radius: 18px; border: 1px solid var(--glass-border); animation: fadeIn 0.4s ease-out forwards; flex-wrap: wrap; box-shadow: 0 18px 40px rgba(15, 0, 45, 0.25); backdrop-filter: blur(calc(var(--glass-blur) - 6px)); -webkit-backdrop-filter: blur(calc(var(--glass-blur) - 6px)); }
+        .result-card { display: flex; align-items: center; gap: 15px; padding: 16px; background: var(--background-light); border-radius: 18px; border: 1px solid var(--glass-border); animation: fadeIn 0.4s ease-out forwards; flex-wrap: wrap; box-shadow: 0 8px 24px rgba(15, 0, 45, 0.2); }
         .result-number { flex-shrink: 0; display: flex; flex-wrap: wrap; gap: 5px; justify-content: center; align-items: center; font-weight: bold; }
         .result-number-tag { padding: 6px 12px; border-radius: 12px; background: linear-gradient(135deg, rgba(117, 31, 255, 0.9), rgba(133, 49, 255, 0.8)); color: white; font-size: 1.1em; box-shadow: 0 10px 20px rgba(117, 31, 255, 0.4); }
         .result-info { flex-grow: 1; min-width: 150px; }
@@ -105,13 +106,13 @@
         @keyframes popIn { 0% { transform: scale(0.8); opacity: 0; } 70% { transform: scale(1.15); opacity: 1; } 100% { transform: scale(1); opacity: 1; } }
         .winner-section h2, #prizeModal h2 { margin-top: 0; margin-bottom: 25px; font-size: clamp(1.8em, 5vw, 2.2em); font-weight: 700; color: var(--text-dark); }
         .winner-section h2 span { color: var(--color-separado); }
-        .winner-input-display { position: relative; display: flex; justify-content: center; gap: 15px; margin-bottom: 25px; cursor: text; transition: box-shadow 0.3s ease, transform 0.3s ease; padding: 18px; border-radius: 30px; background: var(--background-card); border: 1px solid var(--glass-border); backdrop-filter: blur(var(--glass-blur)); -webkit-backdrop-filter: blur(var(--glass-blur)); box-shadow: 0 25px 50px rgba(12, 0, 40, 0.4); }
-        .winner-input-display:focus-within { box-shadow: 0 0 0 4px rgba(117, 31, 255, 0.35), 0 28px 55px rgba(12, 0, 40, 0.5); transform: translateY(-2px); }
+        .winner-input-display { position: relative; display: flex; justify-content: center; gap: 15px; margin-bottom: 25px; cursor: text; transition: box-shadow 0.3s ease, transform 0.3s ease; padding: 18px; border-radius: 30px; background: var(--background-card); border: 1px solid var(--glass-border); box-shadow: 0 12px 40px rgba(12, 0, 40, 0.4); }
+        .winner-input-display:focus-within { box-shadow: 0 0 0 4px rgba(117, 31, 255, 0.35), 0 16px 48px rgba(12, 0, 40, 0.5); transform: translateY(-2px); }
         .digit-circle { width: clamp(40px, 12vw, 65px); height: clamp(40px, 12vw, 65px); border-radius: 50%; border: 1px solid var(--glass-border); display: flex; justify-content: center; align-items: center; font-size: clamp(1.6em, 5vw, 2.4em); font-weight: bold; color: var(--text-light); transition: all 0.3s ease; background: linear-gradient(135deg, rgba(255, 255, 255, 0.3), rgba(255, 255, 255, 0.05)); box-shadow: inset 0 1px 4px rgba(255,255,255,0.25), 0 12px 25px rgba(14, 0, 40, 0.35); }
         .digit-circle.filled { background: linear-gradient(135deg, var(--color-pago), #008200); border-color: var(--color-pago); color: white; text-shadow: 0 1px 2px rgba(0,0,0,0.2); animation: popIn 0.3s ease-out forwards; }
         #realWinningInput { position: absolute; top: 0; left: 0; width: 100%; height: 100%; opacity: 0; border: none; background: transparent; outline: none; -webkit-text-security: disc; }
-        #checkWinnerButton { padding: 16px 36px; border: 1px solid var(--glass-highlight); border-radius: 14px; cursor: pointer; font-size: 1.15em; background: linear-gradient(135deg, rgba(117, 31, 255, 0.9), rgba(88, 11, 189, 0.85)); color: white; font-weight: 600; transition: all 0.3s ease; box-shadow: 0 20px 45px rgba(117, 31, 255, 0.35); backdrop-filter: blur(calc(var(--glass-blur) - 10px)); -webkit-backdrop-filter: blur(calc(var(--glass-blur) - 10px)); }
-        #checkWinnerButton:hover { transform: translateY(-3px) scale(1.01); box-shadow: 0 28px 60px rgba(117, 31, 255, 0.4); filter: brightness(1.08); }
+        #checkWinnerButton { padding: 16px 36px; border: 1px solid var(--glass-highlight); border-radius: 14px; cursor: pointer; font-size: 1.15em; background: linear-gradient(135deg, rgba(117, 31, 255, 1), rgba(88, 11, 189, 1)); color: white; font-weight: 600; transition: all 0.3s ease; box-shadow: 0 12px 32px rgba(117, 31, 255, 0.35); }
+        #checkWinnerButton:hover { transform: translateY(-3px) scale(1.01); box-shadow: 0 16px 40px rgba(117, 31, 255, 0.4); filter: brightness(1.08); }
         #checkWinnerButton:disabled { background: rgba(158, 158, 158, 0.65); cursor: not-allowed; transform: none; box-shadow: none; filter: none; border-color: transparent; }
         #winnerResults, #modalWinnerResults { margin-top: 20px; display: flex; flex-direction: column; gap: 15px; min-height: auto; text-align: left; font-size: 1.1em; }
         .winner-card { border-radius: 12px; padding: 20px; color: white; box-shadow: 0 8px 25px rgba(0, 0, 0, 0.15); transition: transform 0.3s ease, box-shadow 0.3s ease; border: 1px solid rgba(255, 255, 255, 0.2); animation: fadeIn 0.5s ease-out forwards; }
@@ -136,39 +137,39 @@
         .prize-card-admin-view { display: flex; flex-direction: column; gap: 8px; }
         .prize-card-admin-view label { font-size: 0.8em; text-align: left; margin-bottom: -4px; opacity: 0.8; }
         .prize-card-admin-view input { font-size: 0.9em !important; padding: 8px !important; }
-        #gridContainer { display: grid; gap: 8px; margin-top: 20px; padding: 18px; border-radius: 26px; background: var(--background-card); border: 1px solid var(--glass-border); box-shadow: 0 30px 65px var(--shadow-color); position: relative; overflow: hidden; backdrop-filter: blur(var(--glass-blur)); -webkit-backdrop-filter: blur(var(--glass-blur)); }
-        #gridContainer::before { content: ""; position: absolute; inset: 0; background: linear-gradient(135deg, rgba(255, 255, 255, 0.16), transparent 65%); pointer-events: none; z-index: 0; opacity: 0.9; }
+        #gridContainer { display: grid; gap: 8px; margin-top: 20px; padding: 18px; border-radius: 26px; background: var(--background-card); border: 1px solid var(--glass-border); box-shadow: 0 12px 40px var(--shadow-color); position: relative; overflow: hidden; }
+        #gridContainer::before { content: ""; position: absolute; inset: 0; background: linear-gradient(135deg, rgba(255, 255, 255, 0.1), transparent 65%); pointer-events: none; z-index: 0; opacity: 0.7; }
         #gridContainer.hundred-numbers, #gridContainer.thousand-numbers { grid-template-columns: repeat(10, 1fr); }
-        .grid-item { display: flex; justify-content: center; align-items: center; aspect-ratio: 1 / 1; border: 1px solid var(--glass-border); border-radius: 14px; font-size: clamp(0.7em, 3vw, 1.2em); font-weight: 700; color: white; cursor: pointer; transition: transform 0.2s ease, background 0.25s ease, border-color 0.25s ease, box-shadow 0.25s ease; position: relative; z-index: 1; background: linear-gradient(135deg, rgba(255, 255, 255, 0.22), rgba(255, 255, 255, 0.06)); box-shadow: 0 18px 40px rgba(15, 0, 45, 0.22); backdrop-filter: blur(calc(var(--glass-blur) - 6px)); -webkit-backdrop-filter: blur(calc(var(--glass-blur) - 6px)); }
-        .modal-backdrop { display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: radial-gradient(circle at 30% 20%, rgba(117, 31, 255, 0.3), transparent 55%), radial-gradient(circle at 75% 80%, rgba(13, 230, 255, 0.25), transparent 60%); opacity: 0; z-index: 999; transition: opacity 0.3s ease-in-out; backdrop-filter: blur(18px); -webkit-backdrop-filter: blur(18px); }
+        .grid-item { display: flex; justify-content: center; align-items: center; aspect-ratio: 1 / 1; border: 1px solid var(--glass-border); border-radius: 14px; font-size: clamp(0.7em, 3vw, 1.2em); font-weight: 700; color: white; cursor: pointer; transition: transform 0.2s ease, background 0.25s ease, border-color 0.25s ease, box-shadow 0.25s ease; position: relative; z-index: 1; background: linear-gradient(135deg, rgba(255, 255, 255, 0.15), rgba(255, 255, 255, 0.05)); box-shadow: 0 8px 24px rgba(15, 0, 45, 0.2); }
+        .modal-backdrop { display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.7); opacity: 0; z-index: 999; transition: opacity 0.3s ease-in-out; }
         .modal-backdrop.visible { display: block; opacity: 0.5; }
         .modal { display: flex; justify-content: center; align-items: center; position: fixed; z-index: 1000; left: 0; top: 0; width: 100%; height: 100%; overflow-y: auto; opacity: 0; visibility: hidden; transition: opacity 0.3s ease-in-out, visibility 0.3s; padding: 20px; }
         #prizeModal { padding: 0; align-items: flex-start; }
         .modal.visible { opacity: 1; visibility: visible; }
         @keyframes modal-slide-in { from { transform: translateY(-50px) scale(0.95); opacity: 0; } to { transform: translateY(0) scale(1); opacity: 1; } }
         .modal.visible .modal-content { animation: modal-slide-in 0.4s cubic-bezier(0.25, 0.46, 0.45, 0.94) forwards; }
-        .modal-content { background: var(--modal-bg); padding: 28px; border: 1px solid var(--glass-border); width: 100%; max-width: 540px; border-radius: 26px; box-shadow: 0 35px 75px rgba(10, 0, 45, 0.45); transition: background-color var(--transition-speed) ease, transform 0.3s ease; margin: auto; backdrop-filter: blur(var(--glass-blur)); -webkit-backdrop-filter: blur(var(--glass-blur)); position: relative; overflow: hidden; }
-        #prizeModal .modal-content { width: 100%; height: 100%; max-width: none; border-radius: 0; border: none; background-color: var(--body-bg); backdrop-filter: none; -webkit-backdrop-filter: none; box-shadow: none; display: flex; flex-direction: column; justify-content: flex-start; padding: 20px; overflow-y: auto; margin: 0; }
+        .modal-content { background: var(--modal-bg); padding: 28px; border: 1px solid var(--glass-border); width: 100%; max-width: 540px; border-radius: 26px; box-shadow: 0 24px 60px rgba(0, 0, 0, 0.5); transition: background-color var(--transition-speed) ease, transform 0.3s ease; margin: auto; position: relative; overflow: hidden; }
+        #prizeModal .modal-content { width: 100%; height: 100%; max-width: none; border-radius: 0; border: none; background: var(--body-bg); box-shadow: none; display: flex; flex-direction: column; justify-content: flex-start; padding: 20px; overflow-y: auto; margin: 0; }
         #prizeModal h2 { margin-bottom: 15px; }
         #prizeModal hr { margin: 25px 0; border-color: var(--border-color); opacity: 0.5; }
         #prizeModal h4 { margin-top: 0; margin-bottom: 15px; }
-        .grid-item:hover { transform: translateY(-3px) scale(1.04); box-shadow: 0 24px 55px rgba(10, 0, 45, 0.35); }
-        .grid-item.status-disponible { background: linear-gradient(135deg, rgba(117, 31, 255, 0.78), rgba(143, 62, 255, 0.92)); border-color: rgba(214, 193, 255, 0.65); box-shadow: 0 22px 45px rgba(117, 31, 255, 0.45); }
-        .grid-item.status-separado { background: linear-gradient(135deg, rgba(255, 193, 7, 0.78), rgba(255, 166, 0, 0.92)); border-color: rgba(255, 231, 184, 0.65); box-shadow: 0 22px 45px rgba(255, 193, 7, 0.35); color: #2f1b00; }
-        .grid-item.status-pago { background: linear-gradient(135deg, rgba(132, 224, 89, 0.85), rgba(87, 190, 60, 0.95)); border-color: rgba(220, 255, 210, 0.7); box-shadow: 0 22px 45px rgba(132, 224, 89, 0.4); }
+        .grid-item:hover { transform: translateY(-3px) scale(1.04); box-shadow: 0 12px 32px rgba(0, 0, 0, 0.3); }
+        .grid-item.status-disponible { background: linear-gradient(135deg, rgba(117, 31, 255, 0.9), rgba(143, 62, 255, 1)); border-color: rgba(214, 193, 255, 0.4); box-shadow: 0 8px 16px rgba(117, 31, 255, 0.3); }
+        .grid-item.status-separado { background: linear-gradient(135deg, rgba(255, 193, 7, 0.9), rgba(255, 166, 0, 1)); border-color: rgba(255, 231, 184, 0.4); box-shadow: 0 8px 16px rgba(255, 193, 7, 0.3); color: #2f1b00; }
+        .grid-item.status-pago { background: linear-gradient(135deg, rgba(132, 224, 89, 0.9), rgba(87, 190, 60, 1)); border-color: rgba(220, 255, 210, 0.4); box-shadow: 0 8px 16px rgba(132, 224, 89, 0.3); }
         .modal-header { display: flex; justify-content: space-between; align-items: center; border-bottom: 1px solid var(--border-color); padding-bottom: 10px; margin-bottom: 20px; }
         .modal-header h2 { display: flex; align-items: center; gap: 10px; font-size: 1.4em; text-align: left; }
         .close-button { color: #aaa; font-size: 28px; font-weight: bold; cursor: pointer; }
         .modal-body label { display: block; margin-top: 15px; margin-bottom: 5px; color: var(--text-dark); }
-        .modal-body input, .modal-body select, .modal-body textarea { width: 100%; padding: 12px 14px; border: 1px solid var(--glass-border); border-radius: 16px; background: linear-gradient(135deg, rgba(255, 255, 255, 0.3), rgba(255, 255, 255, 0.05)); color: var(--text-dark); box-shadow: inset 0 1px 3px rgba(255,255,255,0.35), 0 12px 28px rgba(10, 0, 32, 0.25); backdrop-filter: blur(calc(var(--glass-blur) - 8px)); -webkit-backdrop-filter: blur(calc(var(--glass-blur) - 8px)); }
+        .modal-body input, .modal-body select, .modal-body textarea { width: 100%; padding: 12px 14px; border: 1px solid var(--glass-border); border-radius: 16px; background: rgba(255,255,255,0.08); color: var(--text-dark); box-shadow: inset 0 1px 3px rgba(255,255,255,0.1); }
         #bulkNumbersInput { min-height: 100px; resize: vertical; font-family: monospace; }
         .modal-body select { height: 41px; }
         .modal-footer { display: flex; justify-content: flex-end; align-items: center; gap: 10px; margin-top: 20px; flex-wrap: wrap; }
-        .modal-footer button { padding: 12px 24px; border-radius: 16px; cursor: pointer; font-size: 16px; transition: transform 0.2s ease, box-shadow 0.2s ease; border: 1px solid transparent; background: rgba(255, 255, 255, 0.08); color: var(--text-dark); backdrop-filter: blur(calc(var(--glass-blur) - 8px)); -webkit-backdrop-filter: blur(calc(var(--glass-blur) - 8px)); box-shadow: 0 18px 32px rgba(6, 0, 28, 0.25); }
+        .modal-footer button { padding: 12px 24px; border-radius: 16px; cursor: pointer; font-size: 16px; transition: transform 0.2s ease, box-shadow 0.2s ease; border: 1px solid transparent; background: rgba(255, 255, 255, 0.1); color: var(--text-dark); box-shadow: 0 8px 24px rgba(0, 0, 0, 0.25); }
         .modal-footer button:hover { transform: translateY(-2px); box-shadow: 0 22px 40px rgba(6, 0, 28, 0.3); }
-        #saveButton, #saveAllPrizesButton, #saveSettingsButton, #downloadTicketButton, #loginButton, #reauthButton, #createRifaButton, #saveBulkButton, #findOpportunitiesButton { background: linear-gradient(135deg, rgba(117, 31, 255, 0.9), rgba(92, 42, 255, 0.85)); color: white; border-color: var(--glass-highlight); }
-        #deleteButton { background: linear-gradient(135deg, rgba(255, 95, 109, 0.9), rgba(255, 65, 108, 0.85)); color: white; border-color: transparent; box-shadow: 0 18px 40px rgba(255, 95, 109, 0.45); }
-        .action-btn-pago { padding: 12px 18px; background: linear-gradient(135deg, rgba(132, 224, 89, 0.95), rgba(110, 207, 75, 0.9)); color: white !important; border: 1px solid rgba(255,255,255,0.35); border-radius: 14px; cursor: pointer; font-weight: 600; font-size: 16px; display: inline-flex; align-items: center; gap: 8px; transition: transform 0.2s ease, filter 0.2s ease; box-shadow: 0 18px 35px rgba(132, 224, 89, 0.35); }
+        #saveButton, #saveAllPrizesButton, #saveSettingsButton, #downloadTicketButton, #loginButton, #reauthButton, #createRifaButton, #saveBulkButton, #findOpportunitiesButton { background: linear-gradient(135deg, rgba(117, 31, 255, 1), rgba(92, 42, 255, 1)); color: white; border-color: var(--glass-highlight); }
+        #deleteButton { background: linear-gradient(135deg, rgba(255, 95, 109, 1), rgba(255, 65, 108, 1)); color: white; border-color: transparent; box-shadow: 0 8px 24px rgba(255, 95, 109, 0.4); }
+        .action-btn-pago { padding: 12px 18px; background: linear-gradient(135deg, rgba(132, 224, 89, 1), rgba(110, 207, 75, 1)); color: white !important; border: 1px solid rgba(255,255,255,0.3); border-radius: 14px; cursor: pointer; font-weight: 600; font-size: 16px; display: inline-flex; align-items: center; gap: 8px; transition: transform 0.2s ease, filter 0.2s ease; box-shadow: 0 8px 24px rgba(132, 224, 89, 0.35); }
         .action-btn-pago:hover { transform: translateY(-3px); filter: brightness(1.05); }
         .raffle-manager { display: flex; flex-direction: column; gap: 15px; align-items: stretch; }
         .raffle-selector-container { flex-grow: 1; display: flex; flex-direction: column; gap: 10px; }
@@ -187,15 +188,15 @@
         .select-show { opacity: 1; visibility: visible; transform: translateY(0); }
         .search-input-group { position: relative; flex-grow: 1; }
         .search-input-group .search-icon { position: absolute; left: 15px; top: 50%; transform: translateY(-50%); color: var(--text-light); width: 18px; height: 18px; z-index: 10; }
-        #searchInput { width: 100%; height: 54px; padding: 14px 16px 14px 54px; border: 1px solid var(--glass-border); border-radius: 18px; font-size: 16px; transition: border-color 0.2s, box-shadow 0.2s; background: linear-gradient(135deg, rgba(255, 255, 255, 0.25), rgba(255, 255, 255, 0.05)); color: var(--text-dark); box-shadow: inset 0 1px 3px rgba(255,255,255,0.35), 0 14px 28px rgba(15, 0, 40, 0.25); backdrop-filter: blur(calc(var(--glass-blur) - 8px)); -webkit-backdrop-filter: blur(calc(var(--glass-blur) - 8px)); }
+        #searchInput { width: 100%; height: 54px; padding: 14px 16px 14px 54px; border: 1px solid var(--glass-border); border-radius: 18px; font-size: 16px; transition: border-color 0.2s, box-shadow 0.2s; background: rgba(255, 255, 255, 0.1); color: var(--text-dark); box-shadow: inset 0 1px 3px rgba(255,255,255,0.1); }
         .search-input-group label { position: absolute; pointer-events: none; left: 60px; top: 50%; transform: translateY(-50%); color: var(--text-light); transition: all 0.2s ease-in-out; background: rgba(13, 0, 40, 0.2); padding: 0 6px; border-radius: 999px; }
         #searchInput:focus { outline: none; border-color: var(--color-primary); box-shadow: 0 0 0 3px rgba(117, 31, 255, 0.25); }
         #searchInput:focus + label, #searchInput:not(:placeholder-shown) + label { transform: translateY(-150%) scale(0.8); color: var(--color-primary); }
-        #darkModeToggle { position: fixed; top: 15px; right: 15px; width: 48px; height: 48px; border-radius: 50%; border: 1px solid var(--glass-highlight); background: linear-gradient(135deg, rgba(255, 255, 255, 0.22), rgba(255, 255, 255, 0.08)); color: var(--text-light); font-size: 18px; cursor: pointer; display: flex; align-items: center; justify-content: center; z-index: 1001; transition: all var(--transition-speed) ease; backdrop-filter: blur(calc(var(--glass-blur) - 10px)); -webkit-backdrop-filter: blur(calc(var(--glass-blur) - 10px)); box-shadow: 0 20px 35px rgba(0, 0, 30, 0.35); }
+        #darkModeToggle { position: fixed; top: 15px; right: 15px; width: 48px; height: 48px; border-radius: 50%; border: 1px solid var(--glass-highlight); background: rgba(255, 255, 255, 0.1); color: var(--text-light); font-size: 18px; cursor: pointer; display: flex; align-items: center; justify-content: center; z-index: 1001; transition: all var(--transition-speed) ease; box-shadow: 0 8px 24px rgba(0, 0, 30, 0.3); }
         #deleteRifaButton, #settingsButton, #vendedoresButton, #resumenVendedoresButton { display: none; align-items: center; justify-content: center; height: 48px; width: 48px; padding: 0; background-color: transparent; border-radius: 8px; cursor: pointer; transition: all 0.2s ease; flex-shrink: 0; }
         #prizeButton.visible { display: block; }
         body.admin-view #deleteRifaButton.visible, body.admin-view #settingsButton.visible, body.admin-view #vendedoresButton.visible, body.admin-view #resumenVendedoresButton.visible { display: flex; }
-        #settingsButton, #vendedoresButton, #resumenVendedoresButton { border: 1px solid var(--glass-highlight); color: var(--text-dark); background: linear-gradient(135deg, rgba(117, 31, 255, 0.25), rgba(255, 255, 255, 0.08)); backdrop-filter: blur(calc(var(--glass-blur) - 10px)); -webkit-backdrop-filter: blur(calc(var(--glass-blur) - 10px)); box-shadow: 0 15px 32px rgba(14, 0, 40, 0.35); }
+        #settingsButton, #vendedoresButton, #resumenVendedoresButton { border: 1px solid var(--glass-highlight); color: var(--text-dark); background: rgba(117, 31, 255, 0.2); box-shadow: 0 8px 24px rgba(14, 0, 40, 0.3); }
         #settingsButton:hover, #vendedoresButton:hover, #resumenVendedoresButton:hover { background: linear-gradient(135deg, rgba(117, 31, 255, 0.5), rgba(117, 31, 255, 0.2)); color: white; }
         .color-setting { display: flex; align-items: center; justify-content: space-between; gap: 15px; margin-bottom: 20px; }
         .color-setting label { margin: 0; font-weight: 500; color: var(--text-dark); flex-grow: 1; text-align: left;}
@@ -203,22 +204,22 @@
         .color-setting input[type="color"] { -webkit-appearance: none; -moz-appearance: none; appearance: none; width: 60px; height: 35px; background-color: transparent; border: 1px solid var(--glass-border); border-radius: 12px; cursor: pointer; flex-shrink: 0; box-shadow: 0 12px 22px rgba(12, 0, 40, 0.25); }
         .color-setting input[type="color"]::-webkit-color-swatch-wrapper { padding: 0; }
         .color-setting input[type="color"]::-webkit-color-swatch { border: none; border-radius: 4px; }
-        #deleteRifaButton { border: 1px solid rgba(255, 95, 109, 0.5); color: white; background: linear-gradient(135deg, rgba(255, 95, 109, 0.35), rgba(255, 65, 108, 0.25)); backdrop-filter: blur(calc(var(--glass-blur) - 10px)); -webkit-backdrop-filter: blur(calc(var(--glass-blur) - 10px)); box-shadow: 0 18px 38px rgba(255, 95, 109, 0.3); }
+        #deleteRifaButton { border: 1px solid rgba(255, 95, 109, 0.5); color: white; background: rgba(255, 95, 109, 0.3); box-shadow: 0 8px 24px rgba(255, 95, 109, 0.3); }
         #deleteRifaButton:hover { background: linear-gradient(135deg, rgba(255, 95, 109, 0.8), rgba(255, 65, 108, 0.6)); }
         @keyframes prizeButtonShimmer { 0% { transform: translateX(-100%) skewX(-20deg); } 100% { transform: translateX(100%) skewX(-20deg); } }
-        #prizeButton { display: none; position: relative; width: 100%; padding: 16px 24px; font-size: 1.1em; font-weight: bold; color: white; background: linear-gradient(135deg, rgba(132, 224, 89, 0.95), rgba(106, 207, 79, 0.9)); border: 1px solid rgba(255,255,255,0.35); border-radius: 18px; cursor: pointer; box-shadow: 0 22px 45px rgba(132, 224, 89, 0.35); transition: all 0.3s cubic-bezier(0.25, 0.8, 0.25, 1); overflow: hidden; background-size: 100% 100%; backdrop-filter: blur(calc(var(--glass-blur) - 8px)); -webkit-backdrop-filter: blur(calc(var(--glass-blur) - 8px)); }
-        #prizeButton::after { content: ''; position: absolute; top: 0; left: 0; width: 50%; height: 100%; background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.4), transparent); transform: translateX(-100%) skewX(-20deg); animation: prizeButtonShimmer 3s infinite; animation-delay: 1s; }
-        #prizeButton:hover { transform: translateY(-4px); background-size: 120% 120%; box-shadow: 0 28px 60px rgba(132, 224, 89, 0.45); filter: brightness(1.05); }
+        #prizeButton { display: none; position: relative; width: 100%; padding: 16px 24px; font-size: 1.1em; font-weight: bold; color: white; background: linear-gradient(135deg, rgba(132, 224, 89, 1), rgba(106, 207, 79, 1)); border: 1px solid rgba(255,255,255,0.3); border-radius: 18px; cursor: pointer; box-shadow: 0 12px 32px rgba(132, 224, 89, 0.35); transition: all 0.3s cubic-bezier(0.25, 0.8, 0.25, 1); overflow: hidden; background-size: 100% 100%; }
+        #prizeButton::after { content: ''; position: absolute; top: 0; left: 0; width: 50%; height: 100%; background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.3), transparent); transform: translateX(-100%) skewX(-20deg); animation: prizeButtonShimmer 3s infinite; animation-delay: 1s; }
+        #prizeButton:hover { transform: translateY(-4px); background-size: 120% 120%; box-shadow: 0 16px 40px rgba(132, 224, 89, 0.45); filter: brightness(1.05); }
         #prizeButton:active { transform: translateY(0); }
         .prize-icon { display: inline-block; transition: transform 0.3s ease; }
         #prizeButton:hover .prize-icon { transform: scale(1.2) rotate(8deg); }
-        #openCreateRaffleModalButton, #openBulkAddModalButton { display: none; flex-grow: 1; padding: 14px 22px; font-size: 1.05em; font-weight: 600; color: var(--text-dark); background: linear-gradient(135deg, rgba(117, 31, 255, 0.22), rgba(255, 255, 255, 0.05)); border: 1px solid var(--glass-highlight); border-radius: 16px; cursor: pointer; transition: all 0.3s ease; box-shadow: 0 18px 35px rgba(20, 0, 50, 0.32); backdrop-filter: blur(calc(var(--glass-blur) - 8px)); -webkit-backdrop-filter: blur(calc(var(--glass-blur) - 8px)); }
+        #openCreateRaffleModalButton, #openBulkAddModalButton { display: none; flex-grow: 1; padding: 14px 22px; font-size: 1.05em; font-weight: 600; color: var(--text-dark); background: rgba(255, 255, 255, 0.1); border: 1px solid var(--glass-highlight); border-radius: 16px; cursor: pointer; transition: all 0.3s ease; box-shadow: 0 8px 24px rgba(20, 0, 50, 0.3); }
         body.admin-view #openCreateRaffleModalButton, body.admin-view #openBulkAddModalButton { display: block; }
         #openCreateRaffleModalButton:hover, #openBulkAddModalButton:hover { background: linear-gradient(135deg, rgba(117, 31, 255, 0.55), rgba(117, 31, 255, 0.28)); color: white; transform: translateY(-3px); }
         #prize-info-section { display: flex; flex-wrap: wrap; gap: 15px; justify-content: center; }
-        .prize-card { background: var(--background-card); color: var(--text-dark); border: 1px solid var(--glass-border); border-top: 5px solid transparent; transition: all 0.3s ease; text-align: center; border-radius: 22px; padding: 20px; flex: 1 1 250px; max-width: 320px; box-shadow: 0 26px 55px rgba(10, 0, 45, 0.38); backdrop-filter: blur(var(--glass-blur)); -webkit-backdrop-filter: blur(var(--glass-blur)); position: relative; overflow: hidden; }
-        .prize-card::before { content: ""; position: absolute; inset: 0; background: linear-gradient(145deg, rgba(255, 255, 255, 0.18), transparent 60%); pointer-events: none; opacity: 0.85; transition: opacity 0.3s ease; }
-        .prize-card:hover { transform: translateY(-6px); box-shadow: 0 32px 65px rgba(10, 0, 45, 0.45); }
+        .prize-card { background: var(--background-card); color: var(--text-dark); border: 1px solid var(--glass-border); border-top: 5px solid transparent; transition: all 0.3s ease; text-align: center; border-radius: 22px; padding: 20px; flex: 1 1 250px; max-width: 320px; box-shadow: 0 12px 40px rgba(10, 0, 45, 0.35); position: relative; overflow: hidden; }
+        .prize-card::before { content: ""; position: absolute; inset: 0; background: linear-gradient(145deg, rgba(255, 255, 255, 0.1), transparent 60%); pointer-events: none; opacity: 0.6; transition: opacity 0.3s ease; }
+        .prize-card:hover { transform: translateY(-6px); box-shadow: 0 16px 48px rgba(10, 0, 45, 0.4); }
         .prize-card:hover::before { opacity: 1; }
         @keyframes card-pulse-glow { 50% { transform: scale(1.07); box-shadow: 0 0 25px 5px var(--glow-color, #fff); } }
         .prize-card.highlight { transform: translateY(-6px) scale(1.02); box-shadow: 0 35px 70px rgba(0,0,0,0.35); }
@@ -230,14 +231,14 @@
         .prize-card.tercero { border-top-color: var(--color-pago); }
         .prize-card.tercero .prize-card-title { color: var(--color-pago); }
         #anticipados-section { margin-top: 25px; }
-        #admin-anticipado-form { display: none; background: var(--background-card); border: 1px solid var(--glass-border); padding: 24px; border-radius: 24px; margin-bottom: 25px; box-shadow: 0 26px 55px rgba(12, 0, 40, 0.35); backdrop-filter: blur(var(--glass-blur)); -webkit-backdrop-filter: blur(var(--glass-blur)); position: relative; overflow: hidden; }
+        #admin-anticipado-form { display: none; background: var(--background-card); border: 1px solid var(--glass-border); padding: 24px; border-radius: 24px; margin-bottom: 25px; box-shadow: 0 12px 40px rgba(12, 0, 40, 0.35); position: relative; overflow: hidden; }
         body.admin-view #admin-anticipado-form { display: flex; flex-direction: column; gap: 15px; }
         #admin-anticipado-form h4 { margin: 0 0 5px 0; text-align: left; }
-        #addAnticipadoButton { padding: 14px 20px; background: linear-gradient(135deg, rgba(132, 224, 89, 0.95), rgba(106, 207, 79, 0.9)); color: white; border: 1px solid rgba(255,255,255,0.35); border-radius: 16px; cursor: pointer; font-weight: 600; font-size: 1em; box-shadow: 0 20px 45px rgba(132, 224, 89, 0.35); transition: transform 0.3s ease; backdrop-filter: blur(calc(var(--glass-blur) - 8px)); -webkit-backdrop-filter: blur(calc(var(--glass-blur) - 8px)); }
+        #addAnticipadoButton { padding: 14px 20px; background: linear-gradient(135deg, rgba(132, 224, 89, 1), rgba(106, 207, 79, 1)); color: white; border: 1px solid rgba(255,255,255,0.3); border-radius: 16px; cursor: pointer; font-weight: 600; font-size: 1em; box-shadow: 0 8px 24px rgba(132, 224, 89, 0.35); transition: transform 0.3s ease; }
         #anticipados-container-public { display: none; }
         #anticipados-list { display: grid; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); gap: 15px; }
-        .anticipado-card { background: var(--background-card); border: 1px solid var(--glass-border); border-radius: 24px; padding: 24px; display: flex; flex-direction: column; justify-content: space-between; box-shadow: 0 26px 55px rgba(12, 0, 40, 0.32); transition: transform 0.3s ease, box-shadow 0.3s ease; animation: fadeIn 0.4s ease-out; backdrop-filter: blur(var(--glass-blur)); -webkit-backdrop-filter: blur(var(--glass-blur)); position: relative; overflow: hidden; }
-        .anticipado-card:hover { transform: translateY(-6px); box-shadow: 0 32px 65px rgba(12, 0, 40, 0.4); }
+        .anticipado-card { background: var(--background-card); border: 1px solid var(--glass-border); border-radius: 24px; padding: 24px; display: flex; flex-direction: column; justify-content: space-between; box-shadow: 0 12px 40px rgba(12, 0, 40, 0.3); transition: transform 0.3s ease, box-shadow 0.3s ease; animation: fadeIn 0.4s ease-out; position: relative; overflow: hidden; }
+        .anticipado-card:hover { transform: translateY(-6px); box-shadow: 0 16px 48px rgba(12, 0, 40, 0.35); }
         .dark-mode .anticipado-card:hover { box-shadow: 0 32px 65px rgba(0,0,0,0.35); }
         .anticipado-card .view-mode { display: flex; flex-direction: column; justify-content: space-between; width: 100%; gap: 15px; flex-grow: 1; }
         .anticipado-info .anticipado-valor-display { font-size: 1.8em; font-weight: 700; color: var(--color-pago); display: flex; align-items: center; gap: 10px; margin-bottom: 15px; border-bottom: 1px solid var(--border-color); padding-bottom: 12px; }
@@ -265,13 +266,13 @@
         .anticipado-card .edit-mode-actions button { padding: 8px 12px; border-radius: 5px; border: none; cursor: pointer; }
         .anticipado-card .edit-mode-actions .save-edit-anticipado-btn { background-color: var(--color-primary); color: white; }
         .anticipado-card .edit-mode-actions .cancel-edit-anticipado-btn { background-color: var(--background-light); color: var(--text-dark); border: 1px solid var(--border-color); }
-        
+
         #vendedor-summary-section {
             display: none;
         }
         #vendedor-summary-list { display: grid; grid-template-columns: 1fr; gap: 15px;}
-        .vendedor-summary-card { border: 1px solid var(--glass-border); border-radius: 20px; transition: all 0.3s ease; background: var(--background-card); box-shadow: 0 26px 55px rgba(12, 0, 40, 0.3); backdrop-filter: blur(calc(var(--glass-blur) - 6px)); -webkit-backdrop-filter: blur(calc(var(--glass-blur) - 6px)); overflow: hidden; }
-        .vendedor-summary-card:hover { box-shadow: 0 32px 65px rgba(12, 0, 40, 0.42); transform: translateY(-4px); }
+        .vendedor-summary-card { border: 1px solid var(--glass-border); border-radius: 20px; transition: all 0.3s ease; background: var(--background-card); box-shadow: 0 12px 40px rgba(12, 0, 40, 0.3); overflow: hidden; }
+        .vendedor-summary-card:hover { box-shadow: 0 16px 48px rgba(12, 0, 40, 0.35); transform: translateY(-4px); }
         .vendedor-summary-card .vsc-header { padding: 16px 20px; font-weight: bold; border-bottom: 1px solid rgba(255,255,255,0.2); font-size: 1.05em; display: flex; align-items: center; justify-content: space-between; }
         .vendedor-summary-card .vsc-body { padding: 20px; }
         .vendedor-summary-card .vsc-section h5 { margin: 0 0 10px 0; text-align: left; font-size: 0.9em; display: flex; align-items: center; gap: 8px;}
@@ -330,7 +331,7 @@
         .vsc-footer-stat .stat-value { font-weight: bold; }
         .vsc-footer-stat .recaudado { color: var(--color-pago); }
         .vsc-footer-stat .pendiente { color: var(--color-danger); }
-        
+
         .vendedor-form { display: flex; gap: 10px; margin-bottom: 20px; }
         .vendedor-list-item { display: flex; justify-content: space-between; align-items: center; padding: 8px; border-radius: 4px; background-color: var(--background-light); margin-bottom: 8px; }
         .vendedor-list-item .actions button { background: none; border: none; cursor: pointer; font-size: 16px; margin-left: 10px; }
@@ -340,7 +341,7 @@
         #vendedor-auth-container { border: 2px dashed var(--border-color); padding: 15px; border-radius: 8px; text-align: center; }
         #vendedor-info-display { font-weight: bold; color: var(--color-pago); text-align: center; margin-bottom: 15px; padding: 10px; background-color: var(--background-light); border-radius: 4px; }
         #data-fields-container.disabled, #opportunity-section.disabled { opacity: 0.4; pointer-events: none; }
-        
+
         #multi-number-section .input-group { display: flex; gap: 8px; margin-bottom: 10px;}
         #multi-number-section input { flex-grow: 1;}
         #multi-number-section button { padding: 0 12px; flex-shrink: 0;}
@@ -379,18 +380,18 @@
         #ticket-qr-code { width: 60px; height: 60px; background-color: white; border-radius: 4px; }
         .qr-section p { font-size: 0.65em; color: var(--text-light); margin-top: 4px; }
         .ticket-footer { padding-top: 10px; text-align: center; font-size: 0.7em; color: var(--text-light); border-top: 1px dashed var(--border-color); margin-top: 10px; }
-        
+
         #participant-list-section { padding: 0; margin-top: 25px; }
         .collapsible-header { background: none; border: none; width: 100%; display: flex; justify-content: space-between; align-items: center; cursor: pointer; padding: 20px; border-radius: 12px; }
         .collapsible-header h3 { margin: 0; text-align: left; display: flex; align-items: center; gap: 10px; font-size: 1.2em;}
         .collapsible-header .toggle-icon { transition: transform 0.3s ease; color: var(--text-light); }
         .collapsible-header.active .toggle-icon { transform: rotate(180deg); }
-        .collapsible-content {  
-            max-height: 0;  
-            overflow: hidden;  
-            transition: max-height 0.4s ease-out;  
+        .collapsible-content {
+            max-height: 0;
+            overflow: hidden;
+            transition: max-height 0.4s ease-out;
         }
-        
+
         .collapsible-header.active + .collapsible-content {
             max-height: 400px;
             overflow-y: auto;
@@ -433,13 +434,13 @@
             text-overflow: ellipsis;
             flex-grow: 1;
         }
-        
+
         .participant-item .participant-phone {
             color: var(--text-light);
             font-size: 0.9em;
             flex-shrink: 0;
         }
-        
+
         @media (max-width: 768px) {
             #participant-list-container {
                 grid-template-columns: repeat(2, 1fr);
@@ -451,7 +452,7 @@
                 grid-template-columns: 1fr;
             }
         }
-        
+
         .numero-tag-participante {
             display: inline-flex;
             align-items: center;
@@ -523,7 +524,7 @@
             border-color: var(--color-primary);
             color: var(--color-primary);
         }
-        
+
         @keyframes shimmer {
             100% { transform: translateX(100%); }
         }
@@ -561,7 +562,7 @@
             height: 20px;
             border-radius: 4px;
         }
-        
+
         /* === ESTILOS PARA LA NUEVA SECCIÓN DE RESULTADO OFICIAL === */
         #lottery-winner-section {
             background-color: var(--background-card);
@@ -710,7 +711,7 @@
             #anticipados-list { -ms-overflow-style: none; scrollbar-width: none; }
             .anticipado-card { flex: 0 0 85%; scroll-snap-align: start; scroll-snap-stop: always; }
         }
-        
+
         @media (max-width: 480px) {
             #gridContainer.thousand-numbers .grid-item { font-size: 0.6em; }
             #gridContainer.hundred-numbers .grid-item { font-size: 0.7em; }
@@ -728,7 +729,7 @@
 <div class="container" id="main-container">
     <button id="auth-button"><i class="fas fa-sign-in-alt"></i></button>
     <button id="darkModeToggle" aria-label="Cambiar tema"><i class="fas fa-moon"></i></button>
-    
+
     <div class="raffle-manager">
         <div class="raffle-selector-container">
             <label for="rifaSelect">Selecciona una Rifa:</label>
@@ -756,7 +757,7 @@
         <div class="summary-card" id="card-separado"><div class="card-icon"><svg xmlns="http://www.w3.org/2000/svg" fill="currentColor" viewBox="0 0 16 16"><path d="M16 8A8 8 0 1 1 0 8a8 8 0 0 1 16 0zM8 3.5a.5.5 0 0 0-1 0V9a.5.5 0 0 0 .252.434l3.5 2a.5.5 0 0 0 .496-.868L8 8.71V3.5z"/></svg></div><span class="info-count" id="summarySeparado">0</span><p class="info-label">Separados</p></div>
         <div class="summary-card" id="card-disponible"><div class="card-icon"><svg xmlns="http://www.w3.org/2000/svg" fill="currentColor" viewBox="0 0 16 16"> <path d="M0 4.5A1.5 1.5 0 0 1 1.5 3h13A1.5 1.5 0 0 1 16 4.5V6a.5.5 0 0 1-.5.5 1.5 1.5 0 0 0 0 3 .5.5 0 0 1 .5.5v1.5a1.5 1.5 0 0 1-1.5 1.5h-13A1.5 1.5 0 0 1 0 11.5V10a.5.5 0 0 1 .5-.5 1.5 1.5 0 1 0 0-3A.5.5 0 0 1 0 6V4.5Zm4 1a.5.5 0 0 0 .5.5h7a.5.5 0 0 0 0-1h-7a.5.5 0 0 0-.5.5Zm0 5a.5.5 0 0 0 .5.5h7a.5.5 0 0 0 0-1h-7a.5.5 0 0 0-.5.5ZM4 8.5a.5.5 0 0 0 .5.5h7a.5.5 0 0 0 0-1h-7a.5.5 0 0 0-.5.5Z"/></svg></div><span class="info-count" id="summaryDisponible">100</span><p class="info-label">Disponibles</p></div>
     </div>
-    
+
     <div id="vendedor-summary-section">
         <h3><i class="fas fa-chart-bar"></i> Resumen de Vendedores</h3>
         <div id="vendedor-summary-list"></div>
@@ -770,7 +771,7 @@
         <div id="searchResultsContainer"><div class="no-results-message">Escribe un número de celular y presiona la lupa para buscar.</div></div>
     </div>
     <div id="gridContainer"></div>
-    
+
     <div id="lottery-winner-section" class="not-set">
         <h3><i class="fas fa-award"></i> Resultado Oficial del Sorteo</h3>
         <div class="lottery-input-group">
@@ -818,7 +819,7 @@
         <div class="modal-body">
             <label for="newRifaName">Nombre de la Rifa:</label>
             <input type="text" id="newRifaName" placeholder="Ej: Rifa de Verano">
-            
+
             <label for="newRifaType">Tipo de Rifa:</label>
             <select id="newRifaType">
                 <option value="100">100 Números (00-99)</option>
@@ -1106,10 +1107,10 @@
 <script type="module">
     import { initializeApp } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-app.js";
     import { getAuth, onAuthStateChanged, signInWithEmailAndPassword, signOut, EmailAuthProvider, reauthenticateWithCredential } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-auth.js";
-    import { 
-        getFirestore, doc, getDoc, setDoc, updateDoc, deleteDoc, 
-        collection, query, orderBy, getDocs, onSnapshot, serverTimestamp, 
-        writeBatch, where 
+    import {
+        getFirestore, doc, getDoc, setDoc, updateDoc, deleteDoc,
+        collection, query, orderBy, getDocs, onSnapshot, serverTimestamp,
+        writeBatch, where
     } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-firestore.js";
 
     document.addEventListener('DOMContentLoaded', () => {
@@ -1121,11 +1122,11 @@
             messagingSenderId: "519272574756",
             appId: "1:519272574756:web:b5d7cf368be58fdf604db1"
         };
-        
+
         const app = initializeApp(firebaseConfig);
         const db = getFirestore(app);
         const auth = getAuth();
-        
+
         const DOM = {
             mainContainer: document.getElementById('main-container'),
             modalBackdrop: document.getElementById('modal-backdrop'),
@@ -1144,7 +1145,7 @@
             searchButton: document.getElementById('searchButton'), searchResultsContainer: document.getElementById('searchResultsContainer'),
             dataModal: document.getElementById('dataModal'), modalNumber: document.getElementById('modalNumber'),
             inputStatus: document.getElementById('inputStatus'), inputName: document.getElementById('inputName'),
-            inputPhone: document.getElementById('inputPhone'), 
+            inputPhone: document.getElementById('inputPhone'),
             abonoContainer: document.getElementById('abonoContainer'),
             inputAbono: document.getElementById('inputAbono'),
             saveButton: document.getElementById('saveButton'),
@@ -1259,12 +1260,12 @@
         };
 
         const formatCurrency = (value) => new Intl.NumberFormat('es-CO', { style: 'currency', currency: 'COP', minimumFractionDigits: 0, maximumFractionDigits: 0 }).format(value);
-        
+
         const generateMediaTag = (url) => { if (!url) return ''; const l = url.toLowerCase(); return (l.includes('.mp4') || l.includes('.webm')) ? `<video src="${url}" class="prize-media" autoplay muted loop playsinline></video>` : `<img src="${url}" alt="Premio" class="prize-media">`; };
         const generarHtmlDePremio = (p) => { if (!p) return '<div class="prize-details"><p class="prize-description">Premio no definido</p></div>'; if (p.valor && p.valor > 0) return `<div class="prize-card-value">${formatCurrency(p.valor)}</div>`; if (p.descripcion) { let h = `<div class="prize-details"><p class="prize-description">${p.descripcion}</p>`, m = ''; if (p.imgUrl1 || p.imgUrl2) { m += '<div class="prize-media-container">'; m += generateMediaTag(p.imgUrl1); m += generateMediaTag(p.imgUrl2); m += '</div>'; } h += m; h += `</div>`; return h; } return '<div class="prize-details"><p class="prize-description">Premio no definido</p></div>'; };
         const aplicarColoresPersonalizados = (c) => { if(!c) return; document.documentElement.style.setProperty('--color-disponible', c.disponible); document.documentElement.style.setProperty('--color-separado', c.separado); document.documentElement.style.setProperty('--color-pago', c.pago); };
         const restaurarColoresDefault = () => { document.documentElement.style.removeProperty('--color-disponible'); document.documentElement.style.removeProperty('--color-separado'); document.documentElement.style.removeProperty('--color-pago'); };
-        
+
         const disableBodyScroll = () => document.body.classList.add('body-no-scroll');
         const enableBodyScroll = () => document.body.classList.remove('body-no-scroll');
 
@@ -1377,7 +1378,7 @@
 
             const isThousand = activeRaffleData.totalNumeros === 1000;
             [DOM.price2OppContainer, DOM.price3OppContainer, DOM.price4OppContainer].forEach(el => el.style.display = isThousand ? 'flex' : 'none');
-            
+
             if (isThousand) {
                 DOM.editRifaPrice2.value = activeRaffleData.preciosOportunidades?.['2'] || '';
                 DOM.editRifaPrice3.value = activeRaffleData.preciosOportunidades?.['3'] || '';
@@ -1387,7 +1388,7 @@
             DOM.settingsModal.classList.add('visible');
             disableBodyScroll();
         };
-        
+
         const closeSettingsModal = () => {
             DOM.settingsModal.classList.remove('visible');
             enableBodyScroll();
@@ -1429,7 +1430,7 @@
         };
 
         const applyTheme = (t) => { const i = DOM.darkModeToggle.querySelector('i'); if (t === 'dark') { document.body.classList.add('dark-mode'); i.classList.remove('fa-moon'); i.classList.add('fa-sun'); } else { document.body.classList.remove('dark-mode'); i.classList.remove('fa-sun'); i.classList.add('fa-moon'); } };
-        
+
         const openCreateRaffleModal = () => {
             DOM.createRaffleModal.classList.add('visible');
             disableBodyScroll();
@@ -1439,7 +1440,7 @@
             enableBodyScroll();
         };
 
-        const cargarRifas = async () => { 
+        const cargarRifas = async () => {
             DOM.rifaSelect.style.display = 'none';
             DOM.rifaSelectSkeleton.style.display = 'block';
 
@@ -1447,35 +1448,35 @@
             const q = query(rifasCollection, orderBy("fechaCreacion", "desc"));
             const snapshot = await getDocs(q);
 
-            DOM.rifaSelectItems.innerHTML = ''; 
-            if (snapshot.empty) { 
-                DOM.rifaSelect.textContent = '-- No hay rifas --'; 
-                DOM.rifaSelect.dataset.value = ""; 
-                await cambiarRifaActiva(true); 
+            DOM.rifaSelectItems.innerHTML = '';
+            if (snapshot.empty) {
+                DOM.rifaSelect.textContent = '-- No hay rifas --';
+                DOM.rifaSelect.dataset.value = "";
+                await cambiarRifaActiva(true);
             } else {
-                snapshot.forEach(doc => { 
-                    const o = document.createElement('div'); 
-                    o.textContent = doc.data().nombre; 
-                    o.dataset.value = doc.id; 
-                    o.addEventListener('click', async function(e) { 
-                        e.stopPropagation(); 
-                        if (DOM.rifaSelect.dataset.value === this.dataset.value) { 
-                            DOM.rifaSelectItems.classList.remove('select-show'); 
-                            DOM.rifaSelect.classList.remove('select-arrow-active'); 
-                            return; 
-                        }; 
-                        DOM.rifaSelect.textContent = this.textContent; 
-                        DOM.rifaSelect.dataset.value = this.dataset.value; 
-                        DOM.rifaSelectItems.classList.remove('select-show'); 
-                        DOM.rifaSelect.classList.remove('select-arrow-active'); 
-                        await cambiarRifaActiva(); 
-                    }); 
-                    DOM.rifaSelectItems.appendChild(o); 
-                }); 
-                const primeraRifa = snapshot.docs[0]; 
-                DOM.rifaSelect.textContent = primeraRifa.data().nombre; 
-                DOM.rifaSelect.dataset.value = primeraRifa.id; 
-                await cambiarRifaActiva(); 
+                snapshot.forEach(doc => {
+                    const o = document.createElement('div');
+                    o.textContent = doc.data().nombre;
+                    o.dataset.value = doc.id;
+                    o.addEventListener('click', async function(e) {
+                        e.stopPropagation();
+                        if (DOM.rifaSelect.dataset.value === this.dataset.value) {
+                            DOM.rifaSelectItems.classList.remove('select-show');
+                            DOM.rifaSelect.classList.remove('select-arrow-active');
+                            return;
+                        };
+                        DOM.rifaSelect.textContent = this.textContent;
+                        DOM.rifaSelect.dataset.value = this.dataset.value;
+                        DOM.rifaSelectItems.classList.remove('select-show');
+                        DOM.rifaSelect.classList.remove('select-arrow-active');
+                        await cambiarRifaActiva();
+                    });
+                    DOM.rifaSelectItems.appendChild(o);
+                });
+                const primeraRifa = snapshot.docs[0];
+                DOM.rifaSelect.textContent = primeraRifa.data().nombre;
+                DOM.rifaSelect.dataset.value = primeraRifa.id;
+                await cambiarRifaActiva();
             }
             DOM.rifaSelectSkeleton.style.display = 'none';
             DOM.rifaSelect.style.display = 'flex';
@@ -1519,27 +1520,27 @@
             }
         };
 
-        const deleteRifaActual = async () => { 
-            if (!rifaActivaId || !auth.currentUser) { showToast("No hay rifa seleccionada o no tienes permiso.", "error"); return; } 
-            const n = DOM.rifaSelect.textContent; 
-            if (!confirm(`¿Borrar rifa "${n}"?\n\n¡ACCIÓN IRREVERSIBLE!`)) return; 
-            try { 
+        const deleteRifaActual = async () => {
+            if (!rifaActivaId || !auth.currentUser) { showToast("No hay rifa seleccionada o no tienes permiso.", "error"); return; }
+            const n = DOM.rifaSelect.textContent;
+            if (!confirm(`¿Borrar rifa "${n}"?\n\n¡ACCIÓN IRREVERSIBLE!`)) return;
+            try {
                 const numerosCollection = collection(db, "rifas", rifaActivaId, "numeros");
                 const snapshot = await getDocs(numerosCollection);
                 const batch = writeBatch(db);
-                snapshot.docs.forEach(doc => { 
-                    batch.delete(doc.ref); 
-                }); 
-                await batch.commit(); 
+                snapshot.docs.forEach(doc => {
+                    batch.delete(doc.ref);
+                });
+                await batch.commit();
                 await deleteDoc(doc(db, "rifas", rifaActivaId));
                 showToast(`Rifa "${n}" eliminada.`, "success");
-                await cargarRifas(); 
-            } catch (e) { 
-                console.error("Error al eliminar:", e); 
+                await cargarRifas();
+            } catch (e) {
+                console.error("Error al eliminar:", e);
                 showToast("Error al eliminar rifa.", "error");
-            } 
+            }
         };
-        
+
         const cambiarRifaActiva = async (f = false) => {
             if (unsubRifaListener) unsubRifaListener();
             rifaActivaId = f ? null : DOM.rifaSelect.dataset.value;
@@ -1552,7 +1553,7 @@
             DOM.participantListSection.style.display = h ? 'block' : 'none';
             DOM.participantListContainer.innerHTML = '';
             DOM.participantListSkeleton.style.display = 'block';
-            
+
             if (!rifaActivaId) {
                 totalNumbers = 100;
                 numberPadding = 2;
@@ -1604,7 +1605,7 @@
             }
             initializeGrid();
             DOM.searchResultsContainer.innerHTML = '<div class="no-results-message">Busca por celular.</div>';
-            
+
             const numerosCollection = collection(db, "rifas", rifaActivaId, "numeros");
             unsubRifaListener = onSnapshot(numerosCollection, (snapshot) => {
                 localRaffleData = {};
@@ -1640,12 +1641,12 @@
         const generateOpportunityInputs = (count, existingGroup = []) => {
             DOM.opportunityInputsContainer.innerHTML = '';
             const group = existingGroup.length ? existingGroup.sort() : [currentNumber];
-            
+
             const firstNumEl = document.createElement('div');
             firstNumEl.textContent = group[0];
             firstNumEl.style.cssText = 'padding: 10px; border: 1px solid var(--border-color); border-radius: 4px; background-color: var(--background-light); text-align: center; font-weight: bold;';
             DOM.opportunityInputsContainer.appendChild(firstNumEl);
-            
+
             for (let i = 1; i < count; i++) {
                 const input = document.createElement('input');
                 input.type = 'tel';
@@ -1674,7 +1675,7 @@
                 DOM.multiNumberContainer.appendChild(tag);
             });
         };
-        
+
         const openDataModal = async (n) => {
             if (!auth.currentUser) { showToast("Debes iniciar sesión para editar.", "error"); return; }
             if (!rifaActivaId) return;
@@ -1703,7 +1704,7 @@
                 DOM.addNumberInput.value = '';
                 renderMultiNumberTags(existingGroup.length > 0 ? existingGroup.sort() : [n]);
             }
-            
+
             if (d) {
                 DOM.inputStatus.value = d.status;
                 DOM.inputName.value = d.name || '';
@@ -1719,7 +1720,7 @@
                         DOM.dataFieldsContainer.classList.remove('disabled');
                     }
                 }
-            } else { 
+            } else {
                 DOM.inputStatus.value = 'disponible';
                 DOM.inputName.value = '';
                 DOM.inputPhone.value = '';
@@ -1733,12 +1734,12 @@
             disableBodyScroll();
         };
 
-        const closeDataModal = () => { 
-            DOM.dataModal.classList.remove('visible'); 
+        const closeDataModal = () => {
+            DOM.dataModal.classList.remove('visible');
             currentNumber = null;
             enableBodyScroll();
         };
-        
+
         const resetSaveButton = () => {
             DOM.saveButton.disabled = false;
             DOM.saveButton.textContent = 'Guardar';
@@ -1809,8 +1810,8 @@
 
                 await batch.commit();
                 showToast(status === 'disponible' ? "Datos limpiados." : "Datos guardados.", "success");
-                
-                if (status === 'disponible') { closeDataModal(); } 
+
+                if (status === 'disponible') { closeDataModal(); }
                 else { currentNumber = numbersToSet[0]; DOM.adminTicketActions.style.display = 'block'; }
 
             } catch (err) {
@@ -1819,12 +1820,12 @@
                 resetSaveButton();
             }
         };
-        
-        const deleteData = async () => { 
+
+        const deleteData = async () => {
             if (!currentNumber || !rifaActivaId || !auth.currentUser) return;
             const numberData = localRaffleData[currentNumber];
             const numbersToDelete = (numberData && numberData.numberGroup) ? numberData.numberGroup : [currentNumber];
-            
+
             if (!confirm(`¿Seguro que deseas limpiar los datos de ${numbersToDelete.length > 1 ? `los números ${numbersToDelete.join(', ')}` : `el número ${currentNumber}`}?`)) { return; }
 
             try {
@@ -1839,58 +1840,62 @@
         };
 
         const closePrizeModal = () => { DOM.mainContainer.classList.remove('page-blur'); DOM.modalBackdrop.classList.remove('visible'); DOM.prizeModal.classList.remove('visible'); enableBodyScroll(); }
-        const openPrizeModal = async () => { 
-            if (!rifaActivaId) return; 
-            DOM.mainContainer.classList.add('page-blur'); 
-            DOM.modalBackdrop.classList.add('visible'); 
+        const openPrizeModal = async () => {
+            if (!rifaActivaId) return;
+            DOM.mainContainer.classList.add('page-blur');
+            DOM.modalBackdrop.classList.add('visible');
             DOM.prizeModal.classList.add('visible');
             disableBodyScroll();
             const docRef = doc(db, "rifas", rifaActivaId);
             const docSnap = await getDoc(docRef);
-            const a = docSnap.data() || {}; 
-            currentPrizeData = { premios: a.premios || { mayor: {}, segundo: {}, tercero: {} }, premiosAnticipados: a.premiosAnticipados || [] }; 
-            const u = auth.currentUser; 
-            DOM.prizeInfoSection.innerHTML = ''; 
-            const t = ['mayor', 'segundo', 'tercero'], l = { mayor: '🥇 Premio Mayor', segundo: '🥈 Segundo Premio', tercero: '🥉 Tercer Premio' }; 
-            t.forEach(i => { 
-                const p = currentPrizeData.premios[i] || { descripcion: '', valor: 0, imgUrl1: '', imgUrl2: '' }; 
-                let c = ''; 
-                if (u) { 
-                    c = `<div class="prize-card-admin-view"><label for="${i}DescInput">Descripción:</label><input type="text" id="${i}DescInput" value="${p.descripcion || ''}"><label for="${i}ValorInput">Valor:</label><input type="number" id="${i}ValorInput" value="${p.valor || 0}"><label for="${i}ImgUrl1Input">URL Imagen/Video 1:</label><input type="url" id="${i}ImgUrl1Input" value="${p.imgUrl1 || ''}"><label for="${i}ImgUrl2Input">URL Imagen/Video 2:</label><input type="url" id="${i}ImgUrl2Input" value="${p.imgUrl2 || ''}"></div>`; 
-                } else { 
-                    c = generarHtmlDePremio(p); 
-                } 
-                DOM.prizeInfoSection.innerHTML += `<div class="prize-card ${i}"><div class="prize-card-title">${l[i]}</div>${c}</div>`; 
-            }); 
-            renderAnticipados(); 
-            DOM.saveAllPrizesButton.style.display = u ? 'inline-block' : 'none'; 
+            const a = docSnap.data() || {};
+            currentPrizeData = { premios: a.premios || { mayor: {}, segundo: {}, tercero: {} }, premiosAnticipados: a.premiosAnticipados || [] };
+            const u = auth.currentUser;
+            DOM.prizeInfoSection.innerHTML = '';
+            const t = ['mayor', 'segundo', 'tercero'], l = { mayor: '🥇 Premio Mayor', segundo: '🥈 Segundo Premio', tercero: '🥉 Tercer Premio' };
+            t.forEach(i => {
+                const p = currentPrizeData.premios[i] || { descripcion: '', valor: 0, imgUrl1: '', imgUrl2: '' };
+                const isLoaded = (p.valor && p.valor > 0) || (p.imgUrl1 || p.imgUrl2) || (p.descripcion && !['Premio Mayor', 'Segundo Premio', 'Tercer Premio', ''].includes(p.descripcion));
+
+                if (!u && !isLoaded) return;
+
+                let c = '';
+                if (u) {
+                    c = `<div class="prize-card-admin-view"><label for="${i}DescInput">Descripción:</label><input type="text" id="${i}DescInput" value="${p.descripcion || ''}"><label for="${i}ValorInput">Valor:</label><input type="number" id="${i}ValorInput" value="${p.valor || 0}"><label for="${i}ImgUrl1Input">URL Imagen/Video 1:</label><input type="url" id="${i}ImgUrl1Input" value="${p.imgUrl1 || ''}"><label for="${i}ImgUrl2Input">URL Imagen/Video 2:</label><input type="url" id="${i}ImgUrl2Input" value="${p.imgUrl2 || ''}"></div>`;
+                } else {
+                    c = generarHtmlDePremio(p);
+                }
+                DOM.prizeInfoSection.innerHTML += `<div class="prize-card ${i}"><div class="prize-card-title">${l[i]}</div>${c}</div>`;
+            });
+            renderAnticipados();
+            DOM.saveAllPrizesButton.style.display = u ? 'inline-block' : 'none';
         };
-        
-        const saveAllPrizes = async () => { 
-            if (!rifaActivaId || !auth.currentUser) return; 
-            DOM.saveAllPrizesButton.disabled = true; 
-            DOM.saveAllPrizesButton.textContent = 'Guardando...'; 
-            try { 
-                const n = { 
-                    mayor: { descripcion: document.getElementById('mayorDescInput').value.trim(), valor: Number(document.getElementById('mayorValorInput').value) || 0, imgUrl1: document.getElementById('mayorImgUrl1Input').value.trim(), imgUrl2: document.getElementById('mayorImgUrl2Input').value.trim() }, 
-                    segundo: { descripcion: document.getElementById('segundoDescInput').value.trim(), valor: Number(document.getElementById('segundoValorInput').value) || 0, imgUrl1: document.getElementById('segundoImgUrl1Input').value.trim(), imgUrl2: document.getElementById('segundoImgUrl2Input').value.trim() }, 
-                    tercero: { descripcion: document.getElementById('terceroDescInput').value.trim(), valor: Number(document.getElementById('terceroValorInput').value) || 0, imgUrl1: document.getElementById('terceroImgUrl1Input').value.trim(), imgUrl2: document.getElementById('terceroImgUrl2Input').value.trim() } 
-                }; 
+
+        const saveAllPrizes = async () => {
+            if (!rifaActivaId || !auth.currentUser) return;
+            DOM.saveAllPrizesButton.disabled = true;
+            DOM.saveAllPrizesButton.textContent = 'Guardando...';
+            try {
+                const n = {
+                    mayor: { descripcion: document.getElementById('mayorDescInput').value.trim(), valor: Number(document.getElementById('mayorValorInput').value) || 0, imgUrl1: document.getElementById('mayorImgUrl1Input').value.trim(), imgUrl2: document.getElementById('mayorImgUrl2Input').value.trim() },
+                    segundo: { descripcion: document.getElementById('segundoDescInput').value.trim(), valor: Number(document.getElementById('segundoValorInput').value) || 0, imgUrl1: document.getElementById('segundoImgUrl1Input').value.trim(), imgUrl2: document.getElementById('segundoImgUrl2Input').value.trim() },
+                    tercero: { descripcion: document.getElementById('terceroDescInput').value.trim(), valor: Number(document.getElementById('terceroValorInput').value) || 0, imgUrl1: document.getElementById('terceroImgUrl1Input').value.trim(), imgUrl2: document.getElementById('terceroImgUrl2Input').value.trim() }
+                };
                 const rifaRef = doc(db, "rifas", rifaActivaId);
                 await updateDoc(rifaRef, { premios: n, premiosAnticipados: currentPrizeData.premiosAnticipados });
-                currentPrizeData.premios = n; 
+                currentPrizeData.premios = n;
                 showToast("Premios guardados.", "success");
-                return true; 
-            } catch (e) { 
-                console.error("Error guardando:", e); 
+                return true;
+            } catch (e) {
+                console.error("Error guardando:", e);
                 showToast("Error al guardar premios.", "error");
-                return false; 
-            } finally { 
-                DOM.saveAllPrizesButton.disabled = false; 
-                DOM.saveAllPrizesButton.textContent = 'Guardar Cambios en Premios'; 
-            } 
+                return false;
+            } finally {
+                DOM.saveAllPrizesButton.disabled = false;
+                DOM.saveAllPrizesButton.textContent = 'Guardar Cambios en Premios';
+            }
         };
-        
+
         const updateCellAppearance = (n, s) => { const c = document.querySelector(`.grid-item[data-number='${n}']`); if (c) { c.className = 'grid-item'; c.classList.add(`status-${s}`); } };
         const updateSummary = () => { let p = 0, s = 0; Object.values(localRaffleData).forEach(d => { if (d.status === 'pago') p++; else if (d.status === 'separado') s++; }); DOM.summaryPago.textContent = p; DOM.summarySeparado.textContent = s; DOM.summaryDisponible.textContent = totalNumbers - (p + s); };
         const performSearch = () => {
@@ -1918,13 +1923,13 @@
         };
 
         const getWinnerInfo = (r, t, p) => { const d = localRaffleData[r], l = { mayor: '🥇 Premio Mayor', segundo: '🥈 Segundo Premio', tercero: '🥉 Tercer Premio' }, s = { mayor: 'gold', segundo: 'silver', tercero: 'bronze' }; let w; if (d && d.status === 'pago') { w = `<div class="prize-info"><div class="winner-name">${d.name||'N/A'}</div><div class="winner-phone">Cel: ${d.phone||'N/A'}</div><hr style="border-color: rgba(255,255,255,0.2); margin: 10px 0;">${generarHtmlDePremio(p)}</div>`; } else { const e = d ? `no fue pagado (estado: ${d.status})` : 'está disponible'; w = `<div class="prize-info"><div class="no-winner-text">Sin ganador (El número ${r} ${e}).</div></div>`; } return `<div class="winner-card ${d && d.status === 'pago' ? s[t] : 'no-winner'}"><div class="prize-header"><h3>${l[t]}</h3><span class="prize-number-tag">Nº ${r}</span></div>${w}</div>`; };
-        const checkWinners = async () => { 
-            const w = DOM.realWinningInput.value.trim(); 
-            DOM.winnerResults.innerHTML = ''; 
-            if (!/^\d{4}$/.test(w)) { DOM.winnerResults.innerHTML = '<div class="no-results-message">Ingresa 4 cifras.</div>'; return; } 
+        const checkWinners = async () => {
+            const w = DOM.realWinningInput.value.trim();
+            DOM.winnerResults.innerHTML = '';
+            if (!/^\d{4}$/.test(w)) { DOM.winnerResults.innerHTML = '<div class="no-results-message">Ingresa 4 cifras.</div>'; return; }
             const docSnap = await getDoc(doc(db, "rifas", rifaActivaId));
             const p = docSnap.exists() ? docSnap.data().premios : {};
-            
+
             const checks = [];
             if (totalNumbers === 1000) {
                 checks.push({ tier: 'mayor', number: w.slice(-3) });
@@ -1934,9 +1939,9 @@
                 checks.push({ tier: 'segundo', number: w.slice(0, 2) });
                 checks.push({ tier: 'tercero', number: w.substring(1, 3) });
             }
-            checks.forEach(i => DOM.winnerResults.insertAdjacentHTML('beforeend', getWinnerInfo(i.number, i.tier, p[i.tier]))); 
+            checks.forEach(i => DOM.winnerResults.insertAdjacentHTML('beforeend', getWinnerInfo(i.number, i.tier, p[i.tier])));
         };
-        
+
         const renderAnticipados = () => {
             DOM.anticipadosList.innerHTML = '';
             const l = [...(currentPrizeData.premiosAnticipados || [])];
@@ -1956,10 +1961,10 @@
                 DOM.anticipadosContainerPublic.style.display = 'none';
             }
         };
-        
+
         const populateTicketPreview = async (number) => {
             if (!rifaActivaId) return false;
-            
+
             const raffleDoc = await getDoc(doc(db, "rifas", rifaActivaId));
             if (!raffleDoc.exists()) return false;
             const raffleData = raffleDoc.data();
@@ -1967,14 +1972,14 @@
             if (!clientData) return false;
 
             const numbersForTicket = clientData.numberGroup || [number];
-            
+
             DOM.ticketPreview.innerHTML = DOM.ticketTemplate.innerHTML;
             const preview = DOM.ticketPreview;
             preview.querySelector('#ticket-rifa-name').textContent = raffleData.nombre;
             preview.querySelector('#ticket-client-name').textContent = clientData.name || 'N/A';
             preview.querySelector('#ticket-client-phone').textContent = clientData.phone || 'N/A';
             preview.querySelector('#ticket-number').innerHTML = numbersForTicket.map(n => `<span class="ticket-number-tag">${n}</span>`).join('');
-            
+
             const statusEl = preview.querySelector('#ticket-status');
             statusEl.textContent = clientData.status;
             statusEl.className = `ticket-status ${clientData.status}`;
@@ -1986,8 +1991,8 @@
             const drawDateEl = preview.querySelector('#ticket-main-draw-date');
             drawDateEl.innerHTML = raffleData.fechaSorteo ? `<i class="fas fa-calendar-alt"></i> <strong>Sorteo Principal:</strong> ${new Date(raffleData.fechaSorteo + 'T00:00:00').toLocaleDateString('es-ES', { year: 'numeric', month: 'long', day: 'numeric' })}` : '';
 
-            preview.querySelector('#ticket-prizes').innerHTML = `<ul><li><strong>Mayor:</strong> ${raffleData.premios.mayor.descripcion || 'No definido'}</li><li><strong>Segundo:</strong> ${raffleData.premios.segundo.descripcion || 'No definido'}</li><li><strong>Tercero:</strong> ${raffleData.premios.tercero.descripcion || 'No definido'}</li></ul>`;
-            
+            const prizesHtml = []; const prizeLabels = { mayor: 'Mayor', segundo: 'Segundo', tercero: 'Tercero' }; ['mayor', 'segundo', 'tercero'].forEach(tier => { const p = raffleData.premios[tier]; const isLoaded = p && ((p.valor && p.valor > 0) || (p.imgUrl1 || p.imgUrl2) || (p.descripcion && !['Premio Mayor', 'Segundo Premio', 'Tercer Premio', ''].includes(p.descripcion))); if (isLoaded) { const desc = p.valor > 0 ? formatCurrency(p.valor) : p.descripcion; prizesHtml.push(`<li><strong>${prizeLabels[tier]}:</strong> ${desc}</li>`); } }); preview.querySelector('#ticket-prizes').innerHTML = prizesHtml.length > 0 ? `<ul>${prizesHtml.join('')}</ul>` : '<p>Sin premios definidos</p>';
+
             const anticipadosSection = preview.querySelector('#ticket-anticipados-section');
             if (raffleData.premiosAnticipados?.length > 0) {
                 preview.querySelector('#ticket-anticipados-list').innerHTML = '<ul>' + raffleData.premiosAnticipados.map(p => `<li><strong>${formatCurrency(p.valor)}:</strong> Juega el ${new Date(p.fecha + 'T00:00:00').toLocaleDateString('es-ES', {day: 'numeric', month: 'long'})} con ${p.loteria}${p.numeroGanador ? ` <strong style="color: var(--color-pago);">(Ganador: ${p.numeroGanador})</strong>` : ''}</li>`).join('') + '</ul>';
@@ -2001,10 +2006,10 @@
             const verificationUrl = new URL('verificacion.html', window.location.href);
             verificationUrl.search = `?rifa=${rifaActivaId}&numeros=${numbersForTicket.join(',')}`;
             preview.querySelector('#ticket-qr-code').src = `https://api.qrserver.com/v1/create-qr-code/?size=120x120&data=${encodeURIComponent(verificationUrl.href)}&qzone=1`;
-            
+
             return true;
         };
-        
+
         const generateTicket = async (number) => {
             if (await populateTicketPreview(number)) {
                 DOM.ticketModal.classList.add('visible');
@@ -2055,12 +2060,12 @@
                 link.download = `Recibo-Rifa-${clientName}-${ticketNumber}.png`;
                 link.href = canvas.toDataURL('image/png');
                 link.click();
-            }).catch(err => { 
-                console.error('Error al generar recibo:', err); 
-                showToast('Error al generar el recibo para descargar.', "error"); 
+            }).catch(err => {
+                console.error('Error al generar recibo:', err);
+                showToast('Error al generar el recibo para descargar.', "error");
             }).finally(() => {
                 button.textContent = 'Descargar Recibo';
-                button.disabled = false; 
+                button.disabled = false;
             });
         };
 
@@ -2132,11 +2137,11 @@
                 renderVendedores();
             }
         };
-        
+
         const updateVendedorSummary = () => {
             DOM.vendedorSummaryList.innerHTML = '';
             if (!auth.currentUser) return;
-            
+
             if (totalNumbers === 1000) {
                 // Lógica para rifas de 1000 números
                 if (!activeRaffleData.preciosOportunidades || Object.values(activeRaffleData.preciosOportunidades).every(p => p === 0)) {
@@ -2203,7 +2208,7 @@
                     const pendiente = (data.separados.length * precio) - data.abonos;
                     const pagosHTML = data.pagos.length > 0 ? data.pagos.map(n => `<span class="numero-tag status-pago">${n}</span>`).join('') : '<small>Ninguno</small>';
                     const separadosHTML = data.separados.length > 0 ? data.separados.map(n => `<span class="numero-tag status-separado">${n}</span>`).join('') : '<small>Ninguno</small>';
-                    
+
                     DOM.vendedorSummaryList.innerHTML += `<div class="vendedor-summary-card"><div class="vsc-header">${data.name}</div><div class="vsc-body"><div class="vsc-section"><h5><i class="fas fa-check-circle" style="color:var(--color-pago)"></i> Pagados <span class="count">${data.pagos.length}</span></h5><div class="vsc-numeros-container">${pagosHTML}</div></div><div class="vsc-section"><h5><i class="fas fa-clock" style="color:var(--color-separado)"></i> Separados <span class="count">${data.separados.length}</span></h5><div class="vsc-numeros-container">${separadosHTML}</div></div></div><div class="vsc-footer"><span class="vsc-footer-stat">Recaudado: <span class="stat-value recaudado">${formatCurrency(recaudado)}</span></span><span class="vsc-footer-stat">Pendiente: <span class="stat-value pendiente">${formatCurrency(pendiente)}</span></span></div></div>`;
                 });
             }
@@ -2226,7 +2231,7 @@
                 currentVendedor = null;
             }
         };
-        
+
         const maskPhoneNumber = (phone) => (!phone || phone.length <= 4) ? 'N/A' : '*'.repeat(phone.length - 4) + phone.slice(-4);
 
         const renderParticipantList = () => {
@@ -2301,7 +2306,7 @@
         // EVENT LISTENERS
         DOM.opportunityCountSelect.addEventListener('change', (e) => {
             const count = parseInt(e.target.value, 10);
-            generateOpportunityInputs(count, [currentNumber]); 
+            generateOpportunityInputs(count, [currentNumber]);
         });
 
         DOM.addNumberButton.addEventListener('click', () => {
@@ -2323,10 +2328,10 @@
             DOM.addNumberInput.value = '';
             DOM.addNumberInput.focus();
         });
-        
+
         applyTheme(localStorage.getItem('theme') || 'light');
         cargarRifas();
-        
+
         DOM.authButton.addEventListener('click', () => { auth.currentUser ? handleLogout() : openLoginModal(); });
         DOM.loginButton.addEventListener('click', handleLogin);
         DOM.closeLoginModalButton.addEventListener('click', closeLoginModal);
@@ -2335,7 +2340,7 @@
         DOM.settingsButton.addEventListener('click', () => { if(auth.currentUser) openSettingsModal(); else showToast("Debes iniciar sesión.", "error"); });
         DOM.closeSettingsModalButton.addEventListener('click', closeSettingsModal);
         DOM.saveSettingsButton.addEventListener('click', saveSettings);
-        
+
         DOM.vendedoresButton.addEventListener('click', () => { if(auth.currentUser) openReauthModal(openVendedoresModal); else showToast("Debes iniciar sesión.", "error"); });
         DOM.closeVendedoresModalButton.addEventListener('click', closeVendedoresModal);
         DOM.addVendedorButton.addEventListener('click', addVendedor);
@@ -2360,14 +2365,14 @@
         DOM.createRifaButton.addEventListener('click', crearNuevaRifa);
         DOM.openCreateRaffleModalButton.addEventListener('click', openCreateRaffleModal);
         DOM.closeCreateRaffleModalButton.addEventListener('click', closeCreateRaffleModal);
-        
+
         DOM.openBulkAddModalButton.addEventListener('click', () => DOM.bulkAddModal.classList.add('visible'));
         DOM.closeBulkAddModalButton.addEventListener('click', () => DOM.bulkAddModal.classList.remove('visible'));
-        
+
         DOM.deleteRifaButton.addEventListener('click', () => openReauthModal(deleteRifaActual));
         DOM.closeDataModalButton.addEventListener('click', closeDataModal);
         DOM.saveButton.addEventListener('click', saveData);
-        
+
         DOM.inputStatus.addEventListener('change', (e) => {
             DOM.abonoContainer.style.display = e.target.value === 'separado' ? 'block' : 'none';
             if (e.target.value !== 'separado') { DOM.inputAbono.value = ''; }
@@ -2377,12 +2382,12 @@
 
         DOM.prizeButton.addEventListener('click', openPrizeModal);
         DOM.closePrizeModalButton.addEventListener('click', closePrizeModal);
-        
-        DOM.modalBackdrop.addEventListener('click', (e) => { 
+
+        DOM.modalBackdrop.addEventListener('click', (e) => {
             if (e.target === DOM.modalBackdrop) {
                 document.querySelectorAll('.modal.visible').forEach(modal => modal.classList.remove('visible'));
                 enableBodyScroll();
-            } 
+            }
         });
 
         DOM.saveAllPrizesButton.addEventListener('click', saveAllPrizes);
@@ -2392,32 +2397,32 @@
         DOM.checkWinnerButton.addEventListener('click', checkWinners);
         DOM.realWinningInput.addEventListener('input', () => { const v = DOM.realWinningInput.value; DOM.digitCircles.forEach((c, i) => { const d = v[i]; if (d) { c.textContent = d; c.classList.add('filled'); } else { c.textContent = ''; c.classList.remove('filled'); } }); DOM.checkWinnerButton.disabled = v.length !== 4; });
         DOM.searchResultsContainer.addEventListener('click', (e) => { const t = e.target.closest('.generate-ticket-btn'); if (t) generateTicket(t.dataset.number); });
-        
+
         DOM.modalGenerateTicketBtn.addEventListener('click', () => { if (currentNumber) { generateTicket(currentNumber); closeDataModal(); }});
-        
+
         DOM.closeTicketModalButton.addEventListener('click', closeTicketModal);
         DOM.downloadTicketButton.addEventListener('click', downloadTicket);
         DOM.shareTicketButton.addEventListener('click', shareTicket);
-        
-        DOM.addAnticipadoButton.addEventListener('click', async () => { 
-            const v = Number(DOM.anticipadoValor.value), f = DOM.anticipadoFecha.value, l = DOM.anticipadoLoteria.value.trim(); 
-            if (!v || !f || !l) { showToast("Completa todos los campos del premio.", "error"); return; } 
+
+        DOM.addAnticipadoButton.addEventListener('click', async () => {
+            const v = Number(DOM.anticipadoValor.value), f = DOM.anticipadoFecha.value, l = DOM.anticipadoLoteria.value.trim();
+            if (!v || !f || !l) { showToast("Completa todos los campos del premio.", "error"); return; }
             currentPrizeData.premiosAnticipados.push({ valor:v, fecha:f, loteria:l, numeroGanador: "" });
-            if (await saveAllPrizes()) { 
-                renderAnticipados(); 
-                DOM.anticipadoValor.value = ''; DOM.anticipadoFecha.value = ''; DOM.anticipadoLoteria.value = ''; 
-            } 
+            if (await saveAllPrizes()) {
+                renderAnticipados();
+                DOM.anticipadoValor.value = ''; DOM.anticipadoFecha.value = ''; DOM.anticipadoLoteria.value = '';
+            }
         });
 
         DOM.anticipadosList.addEventListener('click', async (e) => {
             const c = e.target.closest('.anticipado-card');
             if (!c || !auth.currentUser) return;
             const i = Number(c.dataset.index);
-            const editBtn = e.target.closest('.edit-anticipado-btn'), 
-                    cancelBtn = e.target.closest('.cancel-edit-anticipado-btn'), 
-                    saveBtn = e.target.closest('.save-edit-anticipado-btn'), 
+            const editBtn = e.target.closest('.edit-anticipado-btn'),
+                    cancelBtn = e.target.closest('.cancel-edit-anticipado-btn'),
+                    saveBtn = e.target.closest('.save-edit-anticipado-btn'),
                     deleteBtn = e.target.closest('.delete-anticipado-btn');
-            
+
             if (editBtn) { c.querySelector('.view-mode').style.display = 'none'; c.querySelector('.edit-mode').style.display = 'flex'; }
             else if (cancelBtn) { c.querySelector('.view-mode').style.display = 'flex'; c.querySelector('.edit-mode').style.display = 'none'; }
             else if (saveBtn) {
@@ -2465,7 +2470,7 @@
                 }
             }
         });
-        
+
         DOM.saveLotteryWinnerButton.addEventListener('click', () => {
             openReauthModal(saveLotteryWinner);
         });
